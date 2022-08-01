@@ -5,6 +5,12 @@
 /.pnp
 .pnp.js
 
+# tests
+/test
+
+# mantine stuff
+/src
+
 # testing
 /coverage
 
