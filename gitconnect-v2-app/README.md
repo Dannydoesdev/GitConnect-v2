@@ -1,4 +1,5 @@
-# GitConnect; v2 App
+# Note - gitconnect-v2-next is the new app
+##GitConnect; v2 App
 
 ## v1 project:
 https://github.com/Dannydoesdev/project3
