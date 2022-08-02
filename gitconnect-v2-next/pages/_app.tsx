@@ -2,7 +2,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AuthProvider } from '../context/AuthContext'
 import { MantineProvider, ColorSchemeProvider } from '@mantine/core';
-import {getCookie, setCookies} from 'cookies-next'
+import {getCookie, setCookie} from 'cookies-next'
 import { mantineCache } from '../mantine/cache';
 import { useColorScheme } from '@mantine/hooks'
 import { AppContainer } from '../components/AppContainer'
@@ -24,7 +24,7 @@ import App from 'next/app';
       // console.log('value' + value)
     const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
     setColorScheme(nextColorScheme);
-    setCookies('mantine-color-scheme', nextColorScheme, {maxAge: 60*60*24*30})
+    setCookie('mantine-color-scheme', nextColorScheme, {maxAge: 60*60*24*30})
   }
     
 
