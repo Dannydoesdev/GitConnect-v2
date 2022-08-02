@@ -7,8 +7,6 @@ import { auth } from "../firebase/clientApp"
 import { signOut } from "firebase/auth"
 import AuthRoute from "../HoC/authRoute"
 import { AuthContext } from "../context/AuthContext"
-import { HeaderAction } from '../components/Header/Header'
-import attributes from '../components/Header/attributes.json';
 import { ColorModeSwitcher } from "../components/ColorModeSwitcher"
 
 
