@@ -15,6 +15,7 @@
     "@mantine/hooks": "^5.0.2",
     "@mantine/next": "^5.0.2",
     "@tabler/icons": "^1.78.1",
+    "cookies-next": "^2.1.1",
     "firebase": "^9.9.1",
     "next": "latest",
     "react": "18.1.0",

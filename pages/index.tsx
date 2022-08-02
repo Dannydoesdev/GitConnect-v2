@@ -9,6 +9,8 @@ import AuthRoute from "../HoC/authRoute"
 import { AuthContext } from "../context/AuthContext"
 import { HeaderAction } from '../components/Header/Header'
 import attributes from '../components/Header/attributes.json';
+import { ColorModeSwitcher } from "../components/ColorModeSwitcher"
+
 
 const Index: NextPage = () => {
 
@@ -93,7 +95,7 @@ const Index: NextPage = () => {
       <div>
         {/* Can't get this component to work */}
         {/* <HeaderAction  />
-         */}
+         */}        
         <h1 className="text-8xl text-center font-black">Home</h1>
       <div className = 'flex flex-col justify-center items-center sm:flex-row'>
         <button
