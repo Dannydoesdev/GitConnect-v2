@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "test/_document.tsx.test", "components/AppContainer.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "test/_document.tsx.test", "components/AppContainer.js", "components/EmailSignup.tsx.notworking"],
   "exclude": ["node_modules"]
 }
