@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AuthProvider } from '../context/AuthContext'
-import { MantineProvider, ColorSchemeProvider } from '@mantine/core';
+import { MantineProvider, Button, AppShell, ColorSchemeProvider } from '@mantine/core';
 import {getCookie, setCookie} from 'cookies-next'
 import { mantineCache } from '../mantine/cache';
 import { useColorScheme } from '@mantine/hooks'
@@ -24,21 +24,47 @@ import App from 'next/app';
       // console.log('value' + value)
     const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
     setColorScheme(nextColorScheme);
-    setCookie('mantine-color-scheme', nextColorScheme, {maxAge: 60*60*24*30})
+      setCookie('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 })
+      
+      const [twColorScheme, setTwColorScheme] = useState('light')
+
+      // IN PROGRESS: NEED TO USE COOKIES
+// On page load or when changing themes, best to add inline in `head` to avoid FOUC
+if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  setTwColorScheme('dark')
+} else {
+  setTwColorScheme('dark')
+}
+
+// Whenever the user explicitly chooses light mode
+localStorage.theme = 'light'
+
+// Whenever the user explicitly chooses dark mode
+localStorage.theme = 'dark'
+
+// Whenever the user explicitly chooses to respect the OS preference
+localStorage.removeItem('theme')
+
+
   }
-    
-
-
+  
   return (
     <AuthProvider>
        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-      <MantineProvider
+        <MantineProvider
+          
         withGlobalStyles
         withNormalizeCSS
-        emotionCache={mantineCache}
+          emotionCache={mantineCache}
         theme={{
           /** Put mantine theme override here */
-          colorScheme
+          colorScheme,
+            components: {
+          // add class styles for tailwind
+            AppShell: {
+                classNames: { root: 'button-root'}
+            }
+          }        
         }}
         >
           <AppContainer>
