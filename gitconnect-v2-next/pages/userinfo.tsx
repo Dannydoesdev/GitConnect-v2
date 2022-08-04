@@ -13,7 +13,7 @@ const UserInfo: NextPage = () => {
   console.log('userInfo page')
 
   const { userData } = useContext(AuthContext)
-
+  console.log(userData)
   const signOutHandler = async () => {
     await signOut(auth)
   }

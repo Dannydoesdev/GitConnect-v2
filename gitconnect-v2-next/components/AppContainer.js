@@ -106,7 +106,7 @@ export const AppContainer = ({ children }, props) => {
             <>
                 <Group position='center'>
                   <Link href='/userinfo' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">User Info</Text></Link>
-                  <Link href='/' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check Repos</Text></Link>
+                  <Link href='/getrepos' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check Repos</Text></Link>
               </Group>
               <Group>
            
