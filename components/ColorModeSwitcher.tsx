@@ -9,7 +9,7 @@ export function ColorModeSwitcher() {
       <ActionIcon
         aria-label="light or dark mode toggle"
         onClick={() => toggleColorScheme()}
-        size="md"
+        size="sm"
         // sx allows accessing the themes etc - pass in a function as props
         // if dark = dark else gray bg
         sx={(theme) => ({
@@ -18,8 +18,8 @@ export function ColorModeSwitcher() {
         })}
       >
         {colorScheme === "dark" ? (
-          <Sun size={16} />) : (
-          <Moon size={16} />
+          <Sun size={15} />) : (
+          <Moon size={15} />
         )}
       </ActionIcon>
     </Group>
