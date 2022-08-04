@@ -8,6 +8,7 @@ import { signOut } from "firebase/auth"
 import AuthRoute from "../HoC/authRoute"
 import { AuthContext } from "../context/AuthContext"
 import { ColorModeSwitcher } from "../components/ColorModeSwitcher"
+import { Space } from '@mantine/core'
 
 
 const Index: NextPage = () => {
@@ -35,11 +36,19 @@ const Index: NextPage = () => {
   if (currentUser) {
     return (
       // <AuthRoute>
-      <div>
+      <div className="">
         <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1>
-    
+        <Space h='xl' />
+        <Space h='xl' />
+  
+        <h3 className="text-4xl dark:text-white text-center font-black">Hi {userData.userName}</h3>
+        <Space h='xl' />
+        <Space h='xl' />
+        <h4 className="text-2xl dark:text-white text-center font-black">Landing page is under construction!</h4>
+         {/* Lay out logged in user data on page */}
+    {/*  
         <div className="mt-4 flex flex-col gap-y-2">
-          {/* Lay out logged in user data on page */}
+         
           {Object.entries(userData).map(([key, value]: any, index) => {
             return (
               <div key={index} className="flex gap-x-3 items-center justify-center">
@@ -63,7 +72,11 @@ const Index: NextPage = () => {
             )}
           </div>
         </div>
-      </div>
+
+          */}
+      </div >
+        
+  
       // /* </AuthRoute> */
     )
   } else {
