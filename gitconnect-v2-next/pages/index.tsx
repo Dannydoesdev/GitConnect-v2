@@ -36,15 +36,10 @@ const Index: NextPage = () => {
     return (
       // <AuthRoute>
       <div>
-        <h1 className="text-8xl text-center font-black">Home</h1>
-        <button
-          className="text-center p-3 border-2 bg-gray-800 text-white rounded-lg mx-auto block mt-10"
-          onClick={signOutHandler}
-        >
-          Sign out
-        </button>
+        <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1>
+    
         <div className="mt-4 flex flex-col gap-y-2">
-
+          {/* Lay out logged in user data on page */}
           {Object.entries(userData).map(([key, value]: any, index) => {
             return (
               <div key={index} className="flex gap-x-3 items-center justify-center">
@@ -53,23 +48,6 @@ const Index: NextPage = () => {
               </div>
             )
           })}
-
-          {/* <div className="flex gap-x-3 items-center justify-center">
-            <h4>Authentication method:</h4>
-            <h6>{userData.userProviderId}</h6>
-          </div>
-          <div className="flex gap-x-3 items-center justify-center">
-            <h4>userId:</h4>
-            <h6>{userData.userId}</h6>
-          </div>
-          <div className="flex gap-x-3 items-center justify-center">
-            <h4>display name:</h4>
-            <h6>{userData.userName ? userData.userName : "null"}</h6>
-          </div>
-          <div className="flex gap-x-3 items-center justify-center">
-            <h4>email:</h4>
-            <h6>{userData.userEmail}</h6>
-          </div> */}
 
 
           <div className="flex gap-x-3 items-center justify-center">
@@ -94,20 +72,9 @@ const Index: NextPage = () => {
         {/* Can't get this component to work */}
         {/* <HeaderAction  />
          */}        
-        <h1 className="text-8xl text-center font-black">Home</h1>
+        <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1>
       <div className = 'flex flex-col justify-center items-center sm:flex-row'>
-        <button
-          className="text-center p-3 border-2 bg-gray-800 text-white rounded-lg mx-10 block mt-10"
-          onClick={signInHandler}
-        >
-          Sign in
-        </button>
-        <button
-          className="text-center p-3 border-2 bg-gray-800 text-white rounded-lg mx-10 block mt-10"
-          onClick={registerHandler}
-        >
-          Create account
-        </button>
+       
         </div>
       </div>
     )

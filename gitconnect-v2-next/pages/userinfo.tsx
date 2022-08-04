@@ -21,20 +21,15 @@ const UserInfo: NextPage = () => {
   return (
     <AuthRoute>
       <div>
-        <h1 className="text-8xl text-center font-black">Home</h1>
-        <button
-          className="text-center p-3 border-2 bg-gray-800 text-white rounded-lg mx-auto block mt-10"
-          onClick={signOutHandler}
-        >
-          Sign out
-        </button>
+        <h1 className="text-8xl text-center dark:text-white font-black">User Info:</h1>
+    
         <div className="mt-4 flex flex-col gap-y-2">
   
         {Object.entries(userData).map(([key, value]: any, userInfo) => {
           return (
             <div key={userInfo} className="flex gap-x-3 items-center justify-center">
-              <h4>{key}:</h4>
-              <h6>{value ? value : 'Not Provided'}</h6>
+              <h4 className='font-bold dark:text-white'>{key}:</h4>
+              <h6 className='dark:text-white'>{value ? value : 'Not Provided'}</h6>
               </div>
             )
         })}
