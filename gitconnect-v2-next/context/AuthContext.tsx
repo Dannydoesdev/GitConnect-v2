@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect, useState } from "react"
 import { auth } from "../firebase/clientApp"
 import { Auth, onAuthStateChanged } from "firebase/auth"
 import { AuthData } from "../types"
+import { getCookie, setCookie } from 'cookies-next'
 
 //Create the context to store user data
 // Note the type goes in angled brackets before the initial state
@@ -53,7 +54,7 @@ export const AuthProvider = ({ children }: Props) => {
         }
         console.log(requiredData)
         console.log(user)
-
+        setCookie('username', requiredData.userName)
         setUserData(requiredData)
         setCurrentUser(user)
       } else {

@@ -11,7 +11,7 @@ import { ColorModeSwitcher } from "../components/ColorModeSwitcher"
 
 
 const Index: NextPage = () => {
-
+  
   console.log('index page')
 
   const { userData, currentUser } = useContext(AuthContext)
