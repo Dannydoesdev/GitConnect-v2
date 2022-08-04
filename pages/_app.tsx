@@ -1,25 +1,50 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AuthProvider } from '../context/AuthContext'
-import { MantineProvider, Button, AppShell, ColorSchemeProvider } from '@mantine/core';
+import { MantineProvider, Button, AppShell, ColorSchemeProvider, ColorScheme } from '@mantine/core';
 import {getCookie, setCookie} from 'cookies-next'
 import { mantineCache } from '../mantine/cache';
 import { useColorScheme } from '@mantine/hooks'
 import { AppContainer } from '../components/AppContainer'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import App from 'next/app';
 import { stringify } from 'querystring';
 
-// export default function MyApp({ Component, pageProps }: AppProps) {
-  export default function MyApp( props: any ) {
 
+
+// export default function MyApp({ Component, pageProps }: AppProps) {
+function MyApp( props: any ) {
+
+    console.log('props')
   console.log(props)
-  const { Component, pageProps } = props;
+    const { Component, pageProps } = props;
+    
+    console.log(getCookie('mantine-color-scheme'))
+    // let firstColorScheme
+    // // Run on render
+   
+  const firstCookie = JSON.stringify(getCookie('mantine-color-scheme'))
+    // console.log(firstColorScheme)
+    console.log(props)
   //What colour scheme the user prefers
   // const preferredColorScheme = useColorScheme();
 
   // Loading the scheme in with props instead - sent via cookie fn below
-    const [colorScheme, setColorScheme] = useState(props.colorScheme)
+  // const [colorScheme, setColorScheme] = useState(props.colorScheme)
+  const [colorScheme, setColorScheme] = useState<any>('dark')
+  
+  // Set color scheme with cookie on first load
+  useEffect(
+    () => {
+      // firstColorScheme = getCookie('mantine-color-scheme')
+      setColorScheme(getCookie('mantine-color-scheme') ? getCookie('mantine-color-scheme') : 'dark')
+      // props.colorScheme = firstColorScheme
+      // checks if the OS dark mode object exists and if it = dark
+    },
+    // Run once
+    [])
+ 
+
     console.log('color scheme top' + colorScheme)
     // const [twColorScheme, setTwColorScheme] = useState('light')
   // set to value OR the colorscheme
@@ -37,7 +62,7 @@ import { stringify } from 'querystring';
 
       const colorSchemeString = JSON.stringify(colorScheme)
 
-      console.log(stringify(colorScheme) + 'test')
+      // console.log(stringify(colorScheme) + 'test')
       // IN PROGRESS: NEED TO USE COOKIES
 // On page load or when changing themes, best to add inline in `head` to avoid FOUC
 // if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -60,7 +85,7 @@ import { stringify } from 'querystring';
   
   return (
     <AuthProvider>
-       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider
           
           withGlobalStyles
@@ -87,12 +112,32 @@ import { stringify } from 'querystring';
   )
 }
 
-// export default MyApp
+
 
 // Theme can be based on 'system'
 // App is going to load in some props
 // MUST BE CTX ('context' did not work)
-MyApp.getInitialProps = ({ ctx }: any) => ({
-  // the props aboce pass in the color scheme
-  colorScheme: getCookie('mantine-color-scheme', ctx) || 'n ',
-})
+
+// MyApp.getInitialProps = ({ ctx }: any) => ({
+//   // the props aboce pass in the color scheme
+//   colorScheme: getCookie('mantine-color-scheme', ctx) || 'n ',
+// })
+
+// export function getStaticProps(ctx: any) {
+//   return {
+//     props: {
+//       colorScheme: getCookie('mantine-color-scheme', ctx) || 'n ',
+//     }
+//   }
+// }
+
+// export const getServerSideProps = ({ req, res }) => {
+//   setCookie('test', 'value', { req, res, maxAge: 60 * 6 * 24 });
+//   getCookie('test', { req, res });
+//   getCookies({ req, res });
+//   deleteCookie('test', { req, res });
+
+//   return { props: {} };
+// };
+
+export default MyApp
