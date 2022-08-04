@@ -56,6 +56,7 @@ export const AppContainer = ({ children }, props) => {
 
   const signOutHandler = async () => {
     await signOut(auth)
+    Router.push("/")
   }
 
   const signInHandler = () => {
