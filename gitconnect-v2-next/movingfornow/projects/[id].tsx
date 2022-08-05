@@ -1,7 +1,7 @@
 import axios from 'axios'
 import useSWR from 'swr'
 // import { getAllprojectIds, getprojectData } from '../../lib/projects'
-import { getAllProjectIds, getProjectData } from '../../../lib/projects'
+import { getAllProjectIds, getProjectData } from '../../lib/projects'
 import { useRouter } from 'next/router'
 
 // const fetcher = (url: string) => axios.get(url).then(res => res.data)

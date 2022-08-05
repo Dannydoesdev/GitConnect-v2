@@ -1,6 +1,6 @@
 import styles from '../../styles/Ninjas.module.css'
 import Link from 'next/link'
-import { getAllProjectIds, getProjectData, getAllProjectsSimple } from '../../../lib/projects';
+import { getAllProjectIds, getProjectData, getAllProjectsSimple } from '../../lib/projects';
 import axios from 'axios'
 import useSWR from 'swr'
 import { useRouter } from 'next/router';
