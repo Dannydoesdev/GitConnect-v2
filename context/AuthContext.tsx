@@ -1,8 +1,11 @@
 import React, { ReactNode, useEffect, useState } from "react"
-import { auth } from "../firebase/clientApp"
+import { auth, db } from "../firebase/clientApp"
 import { Auth, onAuthStateChanged } from "firebase/auth"
 import { AuthData } from "../types"
 import { getCookie, setCookie } from 'cookies-next'
+import { collection, doc, setDoc, getDoc, addDoc, serverTimestamp } from "firebase/firestore"; 
+
+// Add a new document with a generated id.
 
 //Create the context to store user data
 // Note the type goes in angled brackets before the initial state
@@ -25,6 +28,9 @@ type Props = {
 //   userPhotoLink?: string | null
 // }
 
+// get users collection to add this user
+const colRef = collection(db, 'users')
+
 // Creating the provider component
 // Using 'any' type for now
 export const AuthProvider = ({ children }: Props) => {
@@ -39,9 +45,12 @@ export const AuthProvider = ({ children }: Props) => {
     userEmail: "",
     userPhotoLink: "",
   })
+  // const updateTimestamp = { timestamp: serverTimestamp() }
+  // console.log(updateTimestamp)
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user : any) => {
+    
+    onAuthStateChanged(auth, async (user : any) => {
       if (user) {
         const requiredData: any = {
           userProviderId: user.providerData[0].providerId,
@@ -57,6 +66,38 @@ export const AuthProvider = ({ children }: Props) => {
         setCookie('username', requiredData.userName)
         setUserData(requiredData)
         setCurrentUser(user)
+        console.log('test')
+        // console.log(serverTimestamp)
+        
+        // console.log({ ...requiredData, timestamp: serverTimestamp()  })
+
+        // check for user id
+        const docRef = doc(colRef, user.uid);
+        // check if user exists in db
+        const checkUserExists = await getDoc(docRef)
+
+      if (checkUserExists.exists()) {
+        console.log('user already added')
+      } else {
+        console.log('user not added yet... adding')
+        const newUserData = {...requiredData,  createdAt: serverTimestamp() }
+        console.log(newUserData)
+        await setDoc(doc(colRef, user.uid), newUserData)
+        .then(cred => {
+          console.log(`User ${user.displayName} added to firestore with info: , ${cred}`);
+        })
+        // addDoc(colRef, requiredData)
+        //   .then(cred => {
+        //     console.log(`User ${user.displayName} added to firestore with ID: , ${cred.id}`);       
+        // })
+      }
+
+       // add the user to the db (?)
+        // addDoc(colRef, requiredData)
+        //   .then(cred => {
+        //     console.log("Document written with ID: ", cred.id);
+        // })
+       
       } else {
         setCurrentUser(null)
       }
