@@ -12,32 +12,32 @@ import { collection, setDoc, addDoc, where, query, getDoc, getDocs, doc, serverT
 // import { Stack } from 'tabler-icons-react'
 
 // runs BEFORE the component is rendered (as opposed to using useEffect)
-export const getStaticProps = async () => {
+// export const getStaticProps = async () => {
   
-  // const { userData } = useContext(AuthContext)
-//   <AuthRoute>
-    // console.log(userData)
-// </AuthRoute>
-    console.log('test')
-  // const name = await useContext(AuthContext)
-  // console.log(name)
-// const res = await fetch('https://jsonplaceholder.typicode.com/users');
+//   // const { userData } = useContext(AuthContext)
+// //   <AuthRoute>
+//     // console.log(userData)
+// // </AuthRoute>
+//     console.log('test')
+//   // const name = await useContext(AuthContext)
+//   // console.log(name)
+// // const res = await fetch('https://jsonplaceholder.typicode.com/users');
 
-  // console.log(context)
-  // returns a response object - pass it to JSON
-  const res = await fetch('https://jsonplaceholder.typicode.com/users');
-  // Make it into an array of objects
-  const data = await res.json();
+//   // console.log(context)
+//   // returns a response object - pass it to JSON
+//   const res = await fetch('https://jsonplaceholder.typicode.com/users');
+//   // Make it into an array of objects
+//   const data = await res.json();
 
-  // return the value from the function to be used in the browser - it has a props property
+//   // return the value from the function to be used in the browser - it has a props property
 
-  // put things you want to make available in the component
-  // NOTE the curly bracers - returning an object
-  return {
-    // gets attached to the props in the below component
-    props: { companies: data }
-  }
-}
+//   // put things you want to make available in the component
+//   // NOTE the curly bracers - returning an object
+//   return {
+//     // gets attached to the props in the below component
+//     props: { companies: data }
+//   }
+// }
 
 export const ShowRepo = (props: any) => {
   // console.log('showRepo')
@@ -149,10 +149,12 @@ const GetRepos = () => {
       console.log(repoData)
       const q = query(collection(db, 'users'), where('userName', '==', userName));
       const querySnapshot = await getDocs(q);
-      const queryData = querySnapshot.docs.map((detail) => {
+      const queryData = querySnapshot.docs.map((detail: any) => {
         // ...detail.data(),
         // id: detail.id,
-        console.log({...detail.data()})
+        console.log('details')
+        console.log({ ...detail.data() })
+        console.log( detail.id )
       });
 
       console.log(queryData);
