@@ -15,17 +15,17 @@ import { stringify } from 'querystring';
 // export default function MyApp({ Component, pageProps }: AppProps) {
 function MyApp( props: any ) {
 
-    console.log('props')
-  console.log(props)
+  //   console.log('props')
+  // console.log(props)
     const { Component, pageProps } = props;
     
     console.log(getCookie('mantine-color-scheme'))
     // let firstColorScheme
     // // Run on render
    
-  const firstCookie = JSON.stringify(getCookie('mantine-color-scheme'))
+  // const firstCookie = JSON.stringify(getCookie('mantine-color-scheme'))
     // console.log(firstColorScheme)
-    console.log(props)
+    // console.log(props)
   //What colour scheme the user prefers
   // const preferredColorScheme = useColorScheme();
 
@@ -45,7 +45,7 @@ function MyApp( props: any ) {
     [])
  
 
-    console.log('color scheme top' + colorScheme)
+    console.log('color scheme top ' + colorScheme)
     // const [twColorScheme, setTwColorScheme] = useState('light')
   // set to value OR the colorscheme
     const toggleColorScheme = (value: any) => {
@@ -54,13 +54,13 @@ function MyApp( props: any ) {
     setColorScheme(nextColorScheme);
       setCookie('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 })
       
-      console.log(JSON.stringify(colorScheme))
-      console.log('lil test above')
-      console.log(`${getCookie('mantine-color-scheme')} cookie test`)
+      // console.log(JSON.stringify(colorScheme))
+      // console.log('lil test above')
+      // console.log(`${getCookie('mantine-color-scheme')} cookie test`)
 
-      console.log('color scheme' + colorScheme)
+      // console.log('color scheme' + colorScheme)
 
-      const colorSchemeString = JSON.stringify(colorScheme)
+      // const colorSchemeString = JSON.stringify(colorScheme)
 
       // console.log(stringify(colorScheme) + 'test')
       // IN PROGRESS: NEED TO USE COOKIES

@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Link from 'next/link'
 import React, { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import AuthRoute from "../HoC/authRoute"
@@ -6,6 +7,8 @@ import { AuthContext } from "../context/AuthContext"
 import { getCookie } from 'cookies-next'
 import axios from 'axios';
 import { Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
+import { db } from '../firebase/clientApp'
+import { collection, addDoc, getDoc, doc, serverTimestamp } from "firebase/firestore"; 
 // import { Stack } from 'tabler-icons-react'
 
 // runs BEFORE the component is rendered (as opposed to using useEffect)
@@ -37,18 +40,28 @@ export const getStaticProps = async () => {
 }
 
 export const ShowRepo = (props: any) => {
-  console.log('showRepo')
+  // console.log('showRepo')
 
   const repo = props.props;
   const repoName = repo.name;
-  console.log(repoName)
+  // console.log(repoName)
   const isForked = repo.fork;
   const repoUrl = repo.url;
   const repoDesc = repo.description;
   const repoLicense = repo.license ? repo.license.name : '';
 
-  console.log(props)
+  // console.log(props)
+  const handleCheck = (name:string, repoData: object, isChecked: boolean) => {
+    console.log('handleCheck')
+    console.log(name)
+    console.log(isChecked)
+      console.log(repoData)
+    props.newRepo(name, repoData, isChecked)
+  }
 
+  const [checked, setChecked] = useState(false);
+  // return <Switch checked={checked} onChange={(event) => setChecked(event.currentTarget.checked)} />;
+  // console.log(checked)
   return (
     <div>
        <Card shadow="sm" p="lg" radius="md" withBorder>
@@ -74,16 +87,19 @@ export const ShowRepo = (props: any) => {
 
       <Text size="sm" color="dimmed">
           {repoDesc ? repoDesc : 'No description found - you can add a custom description with GitConnect once you add this repo'}
-        </Text>
-        <Text size="xs" color="dimmed">
+      </Text>
+      <Text size="xs" color="dimmed">
         {repoLicense ? repoLicense : 'No license found from this Github Repo'}
-          </Text>
+      </Text>
          
       <Switch
-      label="Add to my portfolio"
-      size="md"
-      radius="lg"
-      color="gray"
+        // checked={checked}
+          // onChange={(event) => setChecked(event.currentTarget.checked)} 
+          onChange={(event) => handleCheck(repoName, repo, event.currentTarget.checked)} 
+        label="Add to my portfolio"
+        size="md"
+        radius="lg"
+        color="gray"
     />
     </Card>
     </div>
@@ -96,15 +112,62 @@ const GetRepos = () => {
   const { userData } = useContext(AuthContext)
 
   const [repoData, setRepoData] = useState([])
-  let userName = userData.userName
+  const [checked, setChecked] = useState(false);
+  const [addRepoData, setAddRepoData] = useState<any>([])
+
+  const newRepo = (repoName: string, repo: any, isChecked: boolean) => {
+    console.log('newRepo')
+    console.log(repoName)
+    console.log(repo)
+    console.log(isChecked)
+    // const newRepoObject = {
+    //   repo : repoData
+    // }
+    setAddRepoData([...addRepoData, repo])
+    console.log(addRepoData)
+  }
+
+  const userId = userData.userId
+  console.log(userData)
+  console.log(userId)
+  const userName = userData.userName
+  console.log(userName)
+  // handle when user hits the 'done' button
+  const handleDoneAdding = () => {
+    // the document of the user in the users collection
+    const docRef = doc(db, "users", userId);
+    // gets the repos collection inside the users document
+    const colRef = collection(docRef, 'repos')
+    // map through selected repos
+    addRepoData.map(async (repo: any) => {
+      // check if new doc already exists (no double repos)
+      const newDocRef = doc(colRef, repo.name)
+      const checkNewDocExists = await getDoc(newDocRef)
+      if (checkNewDocExists.exists()) {
+        console.log('repo already here')
+      } else {
+        console.log('repo not added yet... adding')
+        addDoc(colRef, repo)
+          .then(cred => {
+            console.log("Document written with ID: ", cred.id);
+            // console.log("Document written with ID: ", cred.name);
+        })
+      }
+      console.log(repo.name)
+      console.log(repo)
+
+    })
+  }
+
+ 
   useEffect(() => {
-    console.log(userData.userName)
+    // console.log(userData.userName)
     // userName = userData.userName
     const URL = `https://api.github.com/users/${userName}/repos`;
     axios.get(URL)
     .then((response) => {
       //  console.log(response)
-      console.log(response.data)
+      // console.log(response.data)
       setRepoData(response.data)
       //  setFilmList(response.data.results)
 
@@ -113,7 +176,7 @@ const GetRepos = () => {
 }, [userData])
 
   // const { userData } = useContext(AuthContext)
-  console.log(userData)
+  // console.log(userData)
 
   // console.log(companies)
 
@@ -133,10 +196,25 @@ const GetRepos = () => {
       ]}>
       {repoData.map((repo, index) => {
         return (
-          <ShowRepo key={index} props={repo} />
+          <ShowRepo key={index} newRepo={newRepo} props={repo} />
         )
       })}
         </SimpleGrid>
+      </Group>
+      <Space h="xl" />
+      <Group>
+      <Link href="#" passHref>
+        <Button
+            component="a"
+            size='lg'
+            onClick={handleDoneAdding}
+          className='mx-auto'
+          sx={(theme) => ({
+            // subscribe to color scheme changes
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+          })}
+        >Done</Button>
+        </Link>
         </Group>
     </>
   )
