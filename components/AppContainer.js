@@ -3,7 +3,8 @@ import {
   Footer,
   Group,
   Header,
-  Text
+  Text,
+  Button
 } from '@mantine/core'
 import { ColorModeSwitcher } from "../components/ColorModeSwitcher"
 import { useState, useContext } from 'react'
@@ -110,6 +111,21 @@ export const AppContainer = ({ children }, props) => {
                   <Link href='/getrepos' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check Repos</Text></Link>
               </Group>
               <Group>
+      <Link href="#" passHref>
+        <Button
+            component="a"
+            size='sm'
+            onClick={signOutHandler}
+          className='mx-auto'
+          sx={(theme) => ({
+            // subscribe to color scheme changes
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+          })}
+        >Sign out</Button>
+        </Link>
+        </Group>
+                
+                {/* <Group>
            
                 
           <button
@@ -118,7 +134,7 @@ export const AppContainer = ({ children }, props) => {
         >
           Sign out
         </button>
-                </Group>
+                </Group> */}
               </>
               :
              
