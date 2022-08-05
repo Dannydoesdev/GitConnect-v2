@@ -22,7 +22,7 @@ const Signup = () => {
           <>
             <GithubLogin />
             <GoogleLogin />
-          <EmailSignup />
+          {/* <EmailSignup /> */}
             </>
         </div>
       </div>

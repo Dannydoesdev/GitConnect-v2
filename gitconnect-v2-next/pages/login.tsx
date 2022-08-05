@@ -24,7 +24,7 @@ const Login = () => {
         <div className="flex flex-col gap-y-3">  
           <>
         <GoogleLogin />
-            <EmailLogin />
+            {/* <EmailLogin /> */}
             </>
         </div>
       </div>

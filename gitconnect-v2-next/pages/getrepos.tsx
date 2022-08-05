@@ -8,7 +8,7 @@ import { getCookie } from 'cookies-next'
 import axios from 'axios';
 import { Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
 import { db } from '../firebase/clientApp'
-import { collection, addDoc, getDoc, doc, serverTimestamp } from "firebase/firestore"; 
+import { collection, setDoc, addDoc, where, query, getDoc, getDocs, doc, serverTimestamp } from "firebase/firestore"; 
 // import { Stack } from 'tabler-icons-react'
 
 // runs BEFORE the component is rendered (as opposed to using useEffect)
@@ -123,6 +123,8 @@ const GetRepos = () => {
     // const newRepoObject = {
     //   repo : repoData
     // }
+
+    // add the selected repo to the selected repo state array
     setAddRepoData([...addRepoData, repo])
     console.log(addRepoData)
   }
@@ -134,30 +136,139 @@ const GetRepos = () => {
   console.log(userName)
   // handle when user hits the 'done' button
   const handleDoneAdding = () => {
-    // the document of the user in the users collection
-    const docRef = doc(db, "users", userId);
-    // gets the repos collection inside the users document
-    const colRef = collection(docRef, 'repos')
+    
     // map through selected repos
-    addRepoData.map(async (repo: any) => {
-      // check if new doc already exists (no double repos)
-      const newDocRef = doc(colRef, repo.name)
-      const checkNewDocExists = await getDoc(newDocRef)
-      if (checkNewDocExists.exists()) {
-        console.log('repo already here')
-      } else {
-        console.log('repo not added yet... adding')
-        addDoc(colRef, repo)
-          .then(cred => {
-            console.log("Document written with ID: ", cred.id);
-            // console.log("Document written with ID: ", cred.name);
-        })
-      }
-      console.log(repo.name)
-      console.log(repo)
+    addRepoData.map(async (repoData: any) => {
+      // the document of the user in the users collection
+      // const rootRef = collection(db, 'users')
+      const repoName = repoData.name;
+      const repoId = repoData.id
+      const docRef = doc(db, 'users', userId);
+      console.log(userId)
+      console.log('user id')
+      console.log(repoData)
+      const q = query(collection(db, 'users'), where('userName', '==', userName));
+      const querySnapshot = await getDocs(q);
+      const queryData = querySnapshot.docs.map((detail) => {
+        // ...detail.data(),
+        // id: detail.id,
+        console.log({...detail.data()})
+      });
 
+      console.log(queryData);
+      queryData.map(async (v) => {
+        console.log(v)
+        await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, createdAt: serverTimestamp() }, { merge: true })
+          .then(() => {
+            console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
+          })
+          .catch((e) => { console.log(e); })
+      })
     })
   }
+// await setDoc(doc(newColRef, repoId), newRepoData, { merge: true })
+      // const correctDoc = await getDoc(docRef)
+      // const repoId = repo.id
+    // gets the repos collection inside the users document
+      // if (correctDoc.exists()) {
+        // console.log('user doc found')
+        // const newColRef = collection(docRef, 'repos')
+        // const newDocRef = doc(newColRef, repoId)
+        // const checkNewDocExists = await getDoc(doc(newColRef, repoId))
+        // if (checkNewDocExists.exists()) {
+        //         console.log('repo already here')
+        //       } else {
+        //         console.log('repo not added yet... adding')
+        // }
+      //  const newRepoData = {...repo,  createdAt: serverTimestamp() }
+      //   await setDoc(doc(newColRef, repoId), newRepoData, { merge: true })
+      //   .then(()=> {
+      //       console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
+      //   })
+      //   .catch((e) => {  console.log(e); })
+      // }
+   
+      // const repoName = repo.name;
+      // const repoId = repo.id
+      // console.log(repoId)
+      // lazily adding repoid as doc name - will change later (nvm its fine)
+
+      // const newDocRef = doc(colRef, repoId)
+      // const newRepoData = {...repo,  createdAt: serverTimestamp() }
+      // await setDoc(doc(colRef, repoId), newRepoData, {merge: true})
+      // 
+
+      // const docRef = doc(colRef, repoId);
+      // check if repo exists in db
+      // const checkRepoExists = await getDoc(docRef)
+      // if (checkRepoExists.exists()) {
+      //   console.log('repo already added')
+   
+      // } else {
+      //         console.log('repo not found... adding')
+        //       await setDoc(doc(colRef, repoId), repo)
+        //         .then(()=> {
+        // console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
+        // })
+
+      // }
+
+      
+    //       const checkNewDocExists = await getDoc(newDocRef)
+    //      // get ALL repo docs
+          
+    //       if (checkNewDocExists.exists()) {
+    //         console.log('repo already here')
+    //       } else {
+    //         console.log('repo not added yet... adding')
+    // }
+
+
+  //     console.log(repoName + 'repo name for comparator')
+  //     // const q = query(colRef, where('name', "not-in", [repoName]))
+  //     const q = query(colRef, where('name', "==", repoName))
+  //     const querySnapshot = await getDocs(q)
+  //     //   .then((res) => {
+  //     //   console.log(res)
+  //     // })
+  //     const existingReposArr: any = []
+  //     const querySnapshotAll = await getDocs(colRef);
+  //   querySnapshotAll.forEach((doc) => {
+  // // doc.data() is never undefined for query doc snapshots
+  // console.log(doc.id, " => ", doc.data());
+  //   });
+      
+  //     console.log('test non comparator')
+      
+  //     querySnapshot.forEach((doc) => {
+  //       // doc.data() is never undefined for query doc snapshots
+  //       console.log(doc.id, " is definitely in ", doc.data());
+  //       existingReposArr.push(doc.id)
+  //     });
+      
+  //     console.log(existingReposArr)
+  //     // check if new doc already exists (no double repos)
+  //     existingReposArr.map()
+  //     const newDocRef = doc(colRef, repo.name)
+  //     const checkNewDocExists = await getDoc(newDocRef)
+  //    // get ALL repo docs
+      
+  //     if (checkNewDocExists.exists()) {
+  //       console.log('repo already here')
+  //     } else {
+  //       console.log('repo not added yet... adding')
+
+  //       // addDoc(colRef, repo)
+  //       //   .then(cred => {
+  //       //     console.log("Document written with ID: ", cred.id);
+  //       //     // console.log("Document written with ID: ", cred.name);
+  //       // })
+  //     }
+      // console.log(repo.name)
+      // console.log(repo)
+
+  //   })
+  // }
 
  
   useEffect(() => {

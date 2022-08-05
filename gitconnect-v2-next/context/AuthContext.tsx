@@ -76,12 +76,15 @@ export const AuthProvider = ({ children }: Props) => {
         // check if user exists in db
         const checkUserExists = await getDoc(docRef)
 
+        // if exists - don't add
       if (checkUserExists.exists()) {
         console.log('user already added')
+        // if they don't exist - use the server auth to add
       } else {
         console.log('user not added yet... adding')
         const newUserData = {...requiredData,  createdAt: serverTimestamp() }
         console.log(newUserData)
+        // use the firebase auth provided uid as id for new user
         await setDoc(doc(colRef, user.uid), newUserData)
         .then(cred => {
           console.log(`User ${user.displayName} added to firestore with info: , ${cred}`);
