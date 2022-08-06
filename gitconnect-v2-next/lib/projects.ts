@@ -77,24 +77,3 @@ export async function getProjectData(id:string) {
   // })
 }
 
-
-  // Returns an array that looks like this:
-  // [
-  //   {
-  //     params: {
-  //       id: 'ssg-ssr'
-  //     }
-  //   },
-  //   {
-  //     params: {
-  //       id: 'pre-rendering'
-  //     }
-  //   }
-  // ]
-  // return fileNames.map((fileName) => {
-  //   return {
-  //     params: {
-  //       id: fileName.replace(/\.md$/, ''),
-  //     },
-  //   };
-  // });

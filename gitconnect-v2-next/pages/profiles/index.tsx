@@ -14,7 +14,7 @@ export async function getStaticProps() {
   // const data = await pages
 
   // console.log(data)
-// .then(() => {})
+  // .then(() => {})
   console.log('PAGES')
   console.log(pages)
   // console.log({ ...pages })
@@ -24,7 +24,7 @@ export async function getStaticProps() {
   // console.log(pageData)
 
   return {
-    props: { profiles: pages}     
+    props: { profiles: pages }
   }
 }
 //   const profileData = getProfileData(params.id);
@@ -53,19 +53,19 @@ const Profiles = ({ profiles }: any) => {
       <h1>All Profiles</h1>
       {profiles.map((profile: any) => {
         return (
-      <>
-        <h1>{profile.params.id}</h1>
-        <Link href={'/profiles/' + profile.params.id} key={profile.params.id}>
-          <a>
-            <h3>Go to Profile</h3>
-          </a>
-        </Link>
-      </>
-      )
+          <>
+            <h1>{profile.params.id}</h1>
+            <Link href={'/profiles/' + profile.params.id} key={profile.params.id}>
+              <a>
+                <h3>Go to Profile</h3>
+              </a>
+            </Link>
+          </>
+        )
       })}
     </div>
   )
 }
 
- 
+
 export default Profiles;

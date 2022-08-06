@@ -21,11 +21,11 @@ const Login = () => {
           <GithubLogin />
         </div>
         <h1 className="text-center font-black text-3xl mb-2">Sign in with Email</h1>
-        <div className="flex flex-col gap-y-3">  
+        <div className="flex flex-col gap-y-3">
           <>
-        <GoogleLogin />
+            <GoogleLogin />
             {/* <EmailLogin /> */}
-            </>
+          </>
         </div>
       </div>
     )

@@ -20,7 +20,7 @@ import { db } from '../../../firebase/clientApp';
 
 
 import {
-createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack,
+  createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack,
   ThemeIcon,
   useMantineTheme,
 } from '@mantine/core';
@@ -78,7 +78,7 @@ const Projects = () => {
   const [projectsArr, setProjectsArr] = useState<any>(null)
 
   useEffect(() => {
-    
+
     // console.log(userData.userName)
     // userName = userData.userName
     // const fetcher = (url: string) => axios.get(url).then(res => res.data)
@@ -91,7 +91,7 @@ const Projects = () => {
     const colRef = collection(db, `repos`)
     // doc(db, `users/${userId}/repos/${repoId}`)
     // queries
-      
+
     // const q = query(colRef)
     // const querySnapshot = getDocs(q);
     // // onAuthStateChanged(auth, async (user: any) => {
@@ -119,7 +119,7 @@ const Projects = () => {
 
     // console.log(data)
     // const projects = getAllProjectsSimple();
-   
+
     // console.log(projects)
     // .then((response) => {
     //   //  console.log(response)
@@ -127,75 +127,53 @@ const Projects = () => {
     //   setRepoData(response.data)
     //   //  setFilmList(response.data.results)
 
-    
+
     // }, [userData])
   }, [])
- 
+
   console.log('projectsss')
   console.log(projects)
   // console.log(projects[0].name)
- 
+
   //   console.log('PATHS')
   return (
     <div>
       <h1>All projects</h1>
       <SimpleGrid>
-      {/* <FeaturesGrid /> */}
-      {projects ?
-        
-        projects.map((project: any) => {
-          return (
-            < div key={project.id} >
-              <Link href={`/profiles/projects/${project.id}`} passHref>
-               <Card component='a' shadow="sm" p="xl" radius="md" withBorder>
-      <Card.Section>
-        <Image
-          src={`url(../../../img/${project.id}.jpg`}
-          height={220}
-          alt="Norway"
-        />
-      </Card.Section>
-      <Text size='xl' weight={500}>{project.name}</Text>
-      {/* <Group position="apart" mt="md" mb="xs">
-          
-          {isForked ?
-        <Badge color="grape" variant="light">           
-         Forked repo
-            </Badge> : 
-             <Badge color="green" variant="light">           
-           Not a forked repo
-                </Badge>
-           }
-                </Group> */}
-                      
-      <Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text>
-{/* 
-      <Text size="sm" color="dimmed">
-          {repoDesc ? repoDesc : 'No description found - you can add a custom description with GitConnect once you add this repo'}
-      </Text>
-      <Text size="xs" color="dimmed">
-        {repoLicense ? repoLicense : 'No license found from this Github Repo'}
-      </Text> */}
-         
+        {/* <FeaturesGrid /> */}
+        {projects ?
 
-    </Card></Link>
-            
-            {/* <p>{project}</p> */}
-            {/* <h3>test</h3> */}
-           
-            </div>
-           
-          )
-        })
+          projects.map((project: any) => {
+            return (
+              < div key={project.id} >
+                <Link href={`/profiles/projects/${project.id}`} passHref>
+                  <Card component='a' shadow="sm" p="xl" radius="md" withBorder>
+                    <Card.Section>
+                      <Image
+                        src={`url(../../../img/${project.id}.jpg`}
+                        height={220}
+                        alt="Norway"
+                      />
+                    </Card.Section>
+                    <Text size='xl' weight={500}>{project.name}</Text>
+
+                    <Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text>
+
+                  </Card></Link>
+
+              </div>
+
+            )
+          })
           :
-        <h2>loading</h2>
+          <h2>loading</h2>
         }
-        </SimpleGrid>
+      </SimpleGrid>
     </div>
   )
 }
 
- 
+
 export default Projects;
 
 // {/* {projects.map((project: any) => {
@@ -210,7 +188,6 @@ export default Projects;
 //       </div>
 //       )
 //       })} */}
-
 
 
 

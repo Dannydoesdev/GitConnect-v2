@@ -18,15 +18,6 @@ type Props = {
   title?: string
 }
 
-// importing above
-
-// type AuthData = {
-//   userProviderId?: string
-//   userId?: string
-//   userName?: string | null
-//   userEmail?: string | null
-//   userPhotoLink?: string | null
-// }
 
 // get users collection to add this user
 const colRef = collection(db, 'users')
@@ -45,8 +36,6 @@ export const AuthProvider = ({ children }: Props) => {
     userEmail: "",
     userPhotoLink: "",
   })
-  // const updateTimestamp = { timestamp: serverTimestamp() }
-  // console.log(updateTimestamp)
 
   useEffect(() => {
     
@@ -89,17 +78,9 @@ export const AuthProvider = ({ children }: Props) => {
         .then(cred => {
           console.log(`User ${user.displayName} added to firestore with info: , ${cred}`);
         })
-        // addDoc(colRef, requiredData)
-        //   .then(cred => {
-        //     console.log(`User ${user.displayName} added to firestore with ID: , ${cred.id}`);       
-        // })
+
       }
 
-       // add the user to the db (?)
-        // addDoc(colRef, requiredData)
-        //   .then(cred => {
-        //     console.log("Document written with ID: ", cred.id);
-        // })
        
       } else {
         setCurrentUser(null)

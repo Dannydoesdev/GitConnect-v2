@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import useSWR from 'swr'
 // import { getAllprojectIds, getprojectData } from '../../lib/projects'
 import { getAllProjectIds, getProjectData } from '../../../lib/projects'
@@ -110,7 +110,7 @@ const useStyles = createStyles((theme) => ({
 //   if (!data) return <div>Loading...</div>
 
 
-export function HeroContentLeft(props:any) {
+export function HeroContentLeft(props: any) {
   const { classes } = useStyles();
 
   return (
@@ -126,24 +126,24 @@ export function HeroContentLeft(props:any) {
           Flyre - connecting local talent with local events
         </Text>
         <Link href="https://morning-atoll-11830.herokuapp.com/" passHref>
-        <Button
+          <Button
             component="a"
             size='xl'
             radius='xl'
-          className={classes.control}
-          sx={(theme) => ({
-            // subscribe to color scheme changes
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-          })}
-        >Check it out!</Button>
+            className={classes.control}
+            sx={(theme) => ({
+              // subscribe to color scheme changes
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+            })}
+          >Check it out!</Button>
         </Link>
         {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
           Check it out!
         </Button> */}
       </Container>
     </div>
-      );
-    }
+  );
+}
 
 
 
@@ -164,7 +164,7 @@ export default function Project() {
   const [projectsArr, setProjectsArr] = useState<any>(null)
 
   useEffect(() => {
-    
+
     // console.log(userData.userName)
     // userName = userData.userName
     // const fetcher = (url: string) => axios.get(url).then(res => res.data)
@@ -172,7 +172,7 @@ export default function Project() {
     // const userName = userData.userName
     // const userId = userData.userId
     // console.log(userName)
-  
+
 
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL)
@@ -180,18 +180,18 @@ export default function Project() {
         console.log(response.data)
         setProjects(response.data)
       })
-   
+
   }, [])
- 
+
   console.log('projectsss')
   console.log(projects)
 
   // const fetcher = (url: string) => axios.get(url).then(res => res.data)
   // const { data, error } = useSWR(`/api/projects/all`, fetcher)
-  
-  
+
+
   // layout
-  
+
 
   // console.log('one project')
   // console.log(project)
@@ -204,11 +204,11 @@ export default function Project() {
       {projects ?
         projects.map((project: any) => {
           return (
-          < div key = { project.id } >
+            < div key={project.id} >
               {/* <h2>{project.name}</h2>
       <Link href={`/profiles/projects/${project.id}`} passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text></Link> */}
-            {/* <p>{project}</p> */}
-            {/* <h3>test</h3> */}
+              {/* <p>{project}</p> */}
+              {/* <h3>test</h3> */}
             </div>
           )
         }) :

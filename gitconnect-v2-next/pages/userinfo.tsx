@@ -22,36 +22,17 @@ const UserInfo: NextPage = () => {
     <AuthRoute>
       <div>
         <h1 className="text-8xl text-center dark:text-white font-black">User Info:</h1>
-    
+
         <div className="mt-4 flex flex-col gap-y-2">
-  
-        {Object.entries(userData).map(([key, value]: any, userInfo) => {
-          return (
-            <div key={userInfo} className="flex gap-x-3 items-center justify-center">
-              <h4 className='font-bold dark:text-white'>{key}:</h4>
-              <h6 className='dark:text-white'>{value ? value : 'Not Provided'}</h6>
+
+          {Object.entries(userData).map(([key, value]: any, userInfo) => {
+            return (
+              <div key={userInfo} className="flex gap-x-3 items-center justify-center">
+                <h4 className='font-bold dark:text-white'>{key}:</h4>
+                <h6 className='dark:text-white'>{value ? value : 'Not Provided'}</h6>
               </div>
             )
-        })}
-       
-          {/* <div className="flex gap-x-3 items-center justify-center">
-            <h4>Authentication method:</h4>
-            <h6>{userData.userProviderId}</h6>
-          </div>
-          <div className="flex gap-x-3 items-center justify-center">
-            <h4>userId:</h4>
-            <h6>{userData.userId}</h6>
-          </div>
-          <div className="flex gap-x-3 items-center justify-center">
-            <h4>display name:</h4>
-            <h6>{userData.userName ? userData.userName : "null"}</h6>
-          </div>
-          <div className="flex gap-x-3 items-center justify-center">
-            <h4>email:</h4>
-            <h6>{userData.userEmail}</h6>
-          </div> */}
-
-
+          })}
           <div className="flex gap-x-3 items-center justify-center">
             <h4>Profile picture</h4>
             {userData.userPhotoLink ? (
