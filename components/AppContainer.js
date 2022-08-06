@@ -34,22 +34,7 @@ export const AppContainer = ({ children }, props) => {
   //   setCookies('mantine-color-scheme', nextColorScheme, {maxAge: 60*60*24*30})
   // }
 
-  // sign in sign out handlers
 
-  // <div className = 'flex flex-col justify-center items-center sm:flex-row'>
-  // <button
-  //   className="text-center p-3 border-2 bg-gray-800 text-white rounded-lg mx-10 block mt-10"
-  //   onClick={signInHandler}
-  // >
-  //   Sign in
-  // </button>
-  // <button
-  //   className="text-center p-3 border-2 bg-gray-800 text-white rounded-lg mx-10 block mt-10"
-  //   onClick={registerHandler}
-  // >
-  //   Create account
-  // </button>
-  // </div>
 
   const { userData, currentUser } = useContext(AuthContext)
   // const { currentUser } = useContext(AuthContext)

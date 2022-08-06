@@ -25,8 +25,6 @@ export async function getAllProfileIds() {
 // return the data of the profiles
 
 export async function getProfileData(id:string) {
-    // const fullPath = path.join(postsDirectory, `${id}.md`);
-    // const fileContents = fs.readFileSync(fullPath, 'utf8');
     console.log('id1')
   console.log(id)
     const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
