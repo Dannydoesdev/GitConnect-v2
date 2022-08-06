@@ -57,7 +57,7 @@ export const AppContainer = ({ children }, props) => {
 
   const signOutHandler = async () => {
     await signOut(auth)
-    Router.push("/")
+    // Router.push("/login")
   }
 
   const signInHandler = () => {
@@ -95,7 +95,7 @@ export const AppContainer = ({ children }, props) => {
       header={
         // p = padding size
         <Header height={65} p="xs" mt='xs'>
-          <Group position="apart" align='center' spacing="xl" height='100%'>
+          <Group position="apart" align='center' spacing="" height='100%'>
             <Group>
           {/* <div style={{ display: 'flex', alignItems: 'center', height:"100%" }}> */}
           <Link href='/' passHref><Text component='a' className='dark:text-white' size='xl' weight="bolder">GitConnect;</Text></Link>
@@ -107,16 +107,18 @@ export const AppContainer = ({ children }, props) => {
             {currentUser ?
             <>
                 <Group position='center'>
-                  <Link href='/userinfo' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">User Info</Text></Link>
-                  <Link href='/getrepos' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check Repos</Text></Link>
+                  <Link href='/userinfo' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">User</Text></Link>
+                  <Link href='/getrepos' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Add Repos</Text></Link>
+                  <Link href='/profiles/projects' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Projects</Text></Link>
+                  {/* <Link href='/profiles' passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Find Profiles</Text></Link> */}
               </Group>
               <Group>
       <Link href="#" passHref>
         <Button
             component="a"
-            size='sm'
+            size='xs'
             onClick={signOutHandler}
-          className='mx-auto'
+          // className='mx-auto'
           sx={(theme) => ({
             // subscribe to color scheme changes
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
@@ -138,22 +140,47 @@ export const AppContainer = ({ children }, props) => {
               </>
               :
              
-               <Group>
-               <button
-             className="text-center p-2 border-2 bg-gray-800 px-5 text-white rounded-lg block"
-             onClick={signInHandler}
-           >
-             Sign in
-                   </button>
-                   <button
-               className="text-center p-2 border-2 bg-gray-800 text-white rounded-lg block"
-               onClick={registerHandler}
-             >
-               Create account
-             </button>
+          //      <Group>
+          //      <button
+          //    className="text-center p-2 border-2 bg-gray-800 px-5 text-white rounded-lg block"
+          //    onClick={signInHandler}
+          //  >
+          //    Sign in
+          //          </button>
+          //          <button
+          //      className="text-center p-2 border-2 bg-gray-800 text-white rounded-lg block"
+          //      onClick={registerHandler}
+          //    >
+          //      Create account
+          //    </button>
               
-              </Group> 
-                    
+          //     </Group> 
+                   <Group>
+                   <Link href="#" passHref>
+                     <Button
+                         component="a"
+                         size='xs'
+                         onClick={signInHandler}
+                       // className='mx-auto'
+                       sx={(theme) => ({
+                         // subscribe to color scheme changes
+                         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+                       })}
+                     >Sign in</Button>
+                </Link>
+                <Link href="#" passHref>
+                     <Button
+                         component="a"
+                         size='xs'
+                         onClick={registerHandler}
+                       // className='mx-auto'
+                       sx={(theme) => ({
+                         // subscribe to color scheme changes
+                         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+                       })}
+                     >Create Account</Button>
+                     </Link>
+                     </Group>     
           }
                  
             </Group>

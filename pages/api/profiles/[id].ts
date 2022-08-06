@@ -16,8 +16,8 @@ export default function handler(
     console.log('GET')
 
 
-    const { pid } = req.query
-      res.end(`Profile: ${pid}`)
+    const { id } = req.query
+      res.end(`Profile: ${id}`)
       
       
 
