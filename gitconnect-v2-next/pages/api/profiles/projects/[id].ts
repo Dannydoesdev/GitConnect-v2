@@ -15,11 +15,13 @@ export default async function handler(
     // Process a POST request
   } else {
     console.log('GET')
-    const { pid } = req.query
-    console.log(`Profile: ${pid}`)
+    const { id }: any = req.query
+    const intId = parseInt(id)
+    console.log(intId)
+    console.log(`Project: ${id}`)
     console.log('getting projects')
     const projects: any = []
-    const q = query(collectionGroup(db, 'repos'));
+    const q = query(collectionGroup(db, 'repos'), where('id', '==', intId));
     const querySnapshot = await getDocs(q);
      querySnapshot.docs.forEach((doc: any) => {
       // ...detail.data(),
@@ -37,3 +39,34 @@ export default async function handler(
     // Handle any other HTTP method
   }
 }
+
+// export default async function handler(
+//   req: NextApiRequest,
+//   res: NextApiResponse<any>
+// )  {
+//   if (req.method === 'POST') {
+//     // Process a POST request
+//   } else {
+//     console.log('GET')
+//     // const { pid } = req.query
+//     // res.end(`Profile: ${pid}`)
+//     console.log('getting projects')
+//     const projects: any = []
+//     const q = query(collectionGroup(db, 'repos'));
+//     const querySnapshot = await getDocs(q);
+//      querySnapshot.docs.forEach((doc: any) => {
+//       // ...detail.data(),
+//       // id: detail.id,
+//       // console.log(doc.id, ' => ', doc.data());
+//       // console.log({ ...doc.data() })
+//       // console.log(detail.id)
+//       projects.push({...doc.data()})
+      
+//      })
+//     console.log(projects)
+//     res.send(projects)
+      
+
+//     // Handle any other HTTP method
+//   }
+// }
