@@ -16,6 +16,7 @@ import { collection } from 'firebase/firestore'
 import { db } from '../firebase/clientApp'
 import { makeAnImg } from '../utils/makeAnImg'
 import { HeroLanding } from '../components/LandingHero'
+import UploadFile from '../components/UploadFile'
 
 const Index: NextPage = () => {
 
@@ -86,7 +87,7 @@ const Index: NextPage = () => {
         }
 
       </SimpleGrid>
-
+        {/* < UploadFile /> */}
     </>
   )
 
