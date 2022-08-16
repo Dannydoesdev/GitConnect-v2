@@ -4,7 +4,8 @@
 //   })
 // })
 
-
+import cypress from "cypress"
+// import {describe} from 'cypress'
 describe('Test homepage', () => {
   it('Heading shows up', () => {
     cy.visit('localhost:3000')
