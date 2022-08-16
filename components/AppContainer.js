@@ -166,8 +166,7 @@ export const AppContainer = ({ children }, props) => {
                      >Create Account</Button>
                      </Link>
                      </Group>     
-          }
-                 
+          }                 
             </Group>
         </Header>
       }

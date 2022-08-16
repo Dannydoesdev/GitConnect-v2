@@ -44,7 +44,6 @@ export async function getAllProjectsSimple() {
   })
 }
 
-
 // return the data of the profiles
 
 export async function getProjectData(id:string) {

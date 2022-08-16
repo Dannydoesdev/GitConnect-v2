@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import React, { useContext, useEffect, useState } from "react"
-import { useRouter } from "next/router"
+import Router, { useRouter } from "next/router"
 import AuthRoute from "../HoC/authRoute"
 import { AuthContext } from "../context/AuthContext"
 import { getCookie } from 'cookies-next'
@@ -139,6 +139,7 @@ const GetRepos = () => {
           .catch((e) => { console.log(e); })
       })
     })
+    Router.push('/')
   }
 
 

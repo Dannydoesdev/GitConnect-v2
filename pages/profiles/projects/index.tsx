@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { getAllProjectIds, getProjectData, getAllProjectsSimple } from '../../../lib/projects';
 import axios from 'axios'
 import useSWR from 'swr'
-
 import { useRouter } from 'next/router';
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';

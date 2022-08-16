@@ -147,8 +147,6 @@ export function HeroContentLeft(props: any) {
 
 
 
-
-
 export default function Project() {
   const router = useRouter()
   console.log(router.query)
