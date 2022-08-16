@@ -15,6 +15,7 @@ import axios from 'axios'
 import { collection } from 'firebase/firestore'
 import { db } from '../firebase/clientApp'
 import { makeAnImg } from '../utils/makeAnImg'
+import { HeroLanding } from '../components/LandingHero'
 
 const Index: NextPage = () => {
 
@@ -58,7 +59,8 @@ const Index: NextPage = () => {
 
   return (
     <>
-      <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1>
+      <HeroLanding />
+      {/* <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1> */}
       <Space h='xl' />
 
       {currentUser ? <h3 className="text-2xl dark:text-white text-center font-black">Hi {userData.userName}</h3>
