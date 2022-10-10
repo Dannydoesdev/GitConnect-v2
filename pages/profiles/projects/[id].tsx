@@ -128,6 +128,7 @@ export function HeroContentLeft(props: any) {
         <Link href="https://morning-atoll-11830.herokuapp.com/" passHref>
           <Button
             component="a"
+            target='_blank'
             size='xl'
             radius='xl'
             className={classes.control}

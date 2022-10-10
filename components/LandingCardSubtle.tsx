@@ -80,7 +80,7 @@ export function ImageCard({ image, title, author, views, comments, link }: Image
       radius="md"
       component="a"
       href={link}
-      target="_blank"
+      // target="_blank"
     >
       <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
       <div className={classes.overlay} />

@@ -50,12 +50,12 @@ export const AuthProvider = ({ children }: Props) => {
           userEmail: user.email,
           userPhotoLink: user.photoURL
         }
-        console.log(requiredData)
-        console.log(user)
+        // console.log(requiredData)
+        // console.log(user)
         setCookie('username', requiredData.userName)
         setUserData(requiredData)
         setCurrentUser(user)
-        console.log('test')
+        // console.log('test')
         // console.log(serverTimestamp)
         
         // console.log({ ...requiredData, timestamp: serverTimestamp()  })
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: Props) => {
       } else {
         console.log('user not added yet... adding')
         const newUserData = {...requiredData,  createdAt: serverTimestamp() }
-        console.log(newUserData)
+        // console.log(newUserData)
         // use the firebase auth provided uid as id for new user
         await setDoc(doc(colRef, user.uid), newUserData)
         .then(cred => {
