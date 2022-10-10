@@ -1,139 +1,50 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import { AuthProvider } from '../context/AuthContext'
-import { MantineProvider, Button, AppShell, ColorSchemeProvider, ColorScheme } from '@mantine/core';
-import { getCookie, setCookie } from 'cookies-next'
-import { mantineCache } from '../mantine/cache';
-import { useColorScheme } from '@mantine/hooks'
-import { AppContainer } from '../components/AppContainer'
+import { GetServerSidePropsContext } from 'next';
 import { useState, useEffect } from 'react'
-import App from 'next/app';
-import { stringify } from 'querystring';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { AuthProvider } from '../context/AuthContext'
+import { getCookie, setCookie } from 'cookies-next';
+import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
+import { AppContainer } from '../components/AppContainer'
+import { mantineCache } from '../mantine/cache';
 
-
-
-// export default function MyApp({ Component, pageProps }: AppProps) {
-function MyApp(props: any) {
-
-  //   console.log('props')
-  // console.log(props)
+export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
 
-  console.log(getCookie('mantine-color-scheme'))
-  // let firstColorScheme
-  // // Run on render
-
-  // const firstCookie = JSON.stringify(getCookie('mantine-color-scheme'))
-  // console.log(firstColorScheme)
-  // console.log(props)
-  //What colour scheme the user prefers
-  // const preferredColorScheme = useColorScheme();
-
-  // Loading the scheme in with props instead - sent via cookie fn below
-  // const [colorScheme, setColorScheme] = useState(props.colorScheme)
-  const [colorScheme, setColorScheme] = useState<any>('dark')
-
-  // Set color scheme with cookie on first load
-  useEffect(
-    () => {
-      // firstColorScheme = getCookie('mantine-color-scheme')
-      setColorScheme(getCookie('mantine-color-scheme') ? getCookie('mantine-color-scheme') : 'dark')
-      // props.colorScheme = firstColorScheme
-      // checks if the OS dark mode object exists and if it = dark
-    },
-    // Run once
-    [])
-
-
-  console.log('color scheme top ' + colorScheme)
-  // const [twColorScheme, setTwColorScheme] = useState('light')
-  // set to value OR the colorscheme
-  const toggleColorScheme = (value: any) => {
-    // console.log('value' + value)
+  const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
     setColorScheme(nextColorScheme);
-    setCookie('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 })
-
-    // console.log(`${getCookie('mantine-color-scheme')} cookie test`)
-
-    // const colorSchemeString = JSON.stringify(colorScheme)
-    // console.log(stringify(colorScheme) + 'test')
-
-    // IN PROGRESS: NEED TO USE COOKIES
-    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-    // if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    //   setTwColorScheme('dark')
-    // } else {
-    //   setTwColorScheme('dark')
-    // }
-
-    // Whenever the user explicitly chooses light mode
-    // localStorage.theme = 'light'
-
-    // Whenever the user explicitly chooses dark mode
-    // localStorage.theme = 'dark'
-
-    // Whenever the user explicitly chooses to respect the OS preference
-    // localStorage.removeItem('theme')
-
-
-  }
+    setCookie('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 });
+  };
 
   return (
-    <AuthProvider>
-      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-        <MantineProvider
-
-          withGlobalStyles
-          withNormalizeCSS
-          emotionCache={mantineCache}
-          theme={{
-            /** Put mantine theme override here */
-            colorScheme,
-            components: {
-              // add class styles for tailwind
-              AppShell: {
-                classNames: { root: colorScheme }
-              }
-            }
-          }}
-        >
-          <AppContainer>
-            <Component {...pageProps} />
-          </AppContainer>
-        </MantineProvider>
-      </ColorSchemeProvider>
-    </AuthProvider >
-
-  )
+    <>
+      <Head>
+        <title>GitConnect;</title>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <link rel="icon" href="/img/favicon/gclogo.png" />
+        {/* <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png" /> */}
+        {/* <link rel="manifest" href="/img/favicon/site.webmanifest" /> */}
+      </Head>
+      <AuthProvider>
+        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+          <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+            <NotificationsProvider>
+              <AppContainer>
+                <Component {...pageProps} />
+              </AppContainer>
+            </NotificationsProvider>
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </AuthProvider >
+    </>
+  );
 }
 
-
-
-// Theme can be based on 'system'
-// App is going to load in some props
-// MUST BE CTX ('context' did not work)
-
-// MyApp.getInitialProps = ({ ctx }: any) => ({
-//   // the props aboce pass in the color scheme
-//   colorScheme: getCookie('mantine-color-scheme', ctx) || 'n ',
-// })
-
-// export function getStaticProps(ctx: any) {
-//   return {
-//     props: {
-//       colorScheme: getCookie('mantine-color-scheme', ctx) || 'n ',
-//     }
-//   }
-// }
-
-// export const getServerSideProps = ({ req, res }) => {
-//   setCookie('test', 'value', { req, res, maxAge: 60 * 6 * 24 });
-//   getCookie('test', { req, res });
-//   getCookies({ req, res });
-//   deleteCookie('test', { req, res });
-
-//   return { props: {} };
-// };
-
-export default MyApp
+App.getInitialProps = ({ ctx }: { ctx: GetServerSidePropsContext }) => ({
+  colorScheme: getCookie('mantine-color-scheme', ctx) || 'dark',
+});

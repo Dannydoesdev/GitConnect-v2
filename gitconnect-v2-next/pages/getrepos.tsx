@@ -26,10 +26,10 @@ export const ShowRepo = (props: any) => {
 
   // console.log(props)
   const handleCheck = (name: string, repoData: object, isChecked: boolean) => {
-    console.log('handleCheck')
-    console.log(name)
-    console.log(isChecked)
-    console.log(repoData)
+    // console.log('handleCheck')
+    // console.log(name)
+    // console.log(isChecked)
+    // console.log(repoData)
     props.newRepo(name, repoData, isChecked)
   }
 
@@ -88,24 +88,24 @@ const GetRepos = () => {
   const [addRepoData, setAddRepoData] = useState<any>([])
 
   const newRepo = (repoName: string, repo: any, isChecked: boolean) => {
-    console.log('newRepo')
-    console.log(repoName)
-    console.log(repo)
-    console.log(isChecked)
+    // console.log('newRepo')
+    // console.log(repoName)
+    // console.log(repo)
+    // console.log(isChecked)
     // const newRepoObject = {
     //   repo : repoData
     // }
 
     // add the selected repo to the selected repo state array
     setAddRepoData([...addRepoData, repo])
-    console.log(addRepoData)
+    // console.log(addRepoData)
   }
 
   const userId = userData.userId
-  console.log(userData)
-  console.log(userId)
+  // console.log(userData)
+  // console.log(userId)
   const userName = userData.userName
-  console.log(userName)
+  // console.log(userName)
   // handle when user hits the 'done' button
   const handleDoneAdding = () => {
 
@@ -116,22 +116,22 @@ const GetRepos = () => {
       const repoName = repoData.name;
       const repoId = repoData.id
       const docRef = doc(db, 'users', userId);
-      console.log(userId)
-      console.log('user id')
-      console.log(repoData)
+      // console.log(userId)
+      // console.log('user id')
+      // console.log(repoData)
       const q = query(collection(db, 'users'), where('userName', '==', userName));
       const querySnapshot = await getDocs(q);
       const queryData = querySnapshot.docs.map((detail: any) => {
         // ...detail.data(),
         // id: detail.id,
-        console.log('details')
-        console.log({ ...detail.data() })
-        console.log(detail.id)
+        // console.log('details')
+        // console.log({ ...detail.data() })
+        // console.log(detail.id)
       });
 
-      console.log(queryData);
+      // console.log(queryData);
       queryData.map(async (v) => {
-        console.log(v)
+        // console.log(v)
         await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, createdAt: serverTimestamp() }, { merge: true })
           .then(() => {
             console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
@@ -157,7 +157,7 @@ const GetRepos = () => {
   return (
     <>
       {/* <h1>Hi</h1> */}
-      <Stack spacing="lg">
+      <Stack align='center' mt='md' spacing="lg">
         <Avatar className='mx-auto' radius="xl" size="xl" src={userData.userPhotoLink} />
         <Text size='lg' weight='bolder' className='mx-auto'>{userName}'s repos</Text>
       </Stack>
@@ -193,7 +193,5 @@ const GetRepos = () => {
     </>
   )
 }
-
-
 
 export default GetRepos;

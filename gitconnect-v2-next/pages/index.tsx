@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth"
 import AuthRoute from "../HoC/authRoute"
 import { AuthContext } from "../context/AuthContext"
 import { ColorModeSwitcher } from "../components/ColorModeSwitcher"
-import { Space, SimpleGrid, Stack, Grid, Group } from '@mantine/core'
+import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/core'
 import { ArticleCardImage } from '../components/LandingCardBold'
 import { ImageCard } from '../components/LandingCardSubtle'
 import axios from 'axios'
@@ -20,7 +20,7 @@ import UploadFile from '../components/UploadFile'
 
 const Index: NextPage = () => {
 
-  console.log('index page')
+  // console.log('index page')
 
   const { userData, currentUser } = useContext(AuthContext)
   // const { currentUser } = useContext(AuthContext)
@@ -31,18 +31,18 @@ const Index: NextPage = () => {
   useEffect(() => {
 
     const userName = userData.userName
-    console.log(userName)
+    // console.log(userName)
 
     const URL = `/api/profiles/projects/all`;
     axios.get(URL)
       .then((response) => {
-        console.log(response.data)
+        // console.log(response.data)
         setProjects(response.data)
       })
 
   }, [])
 
-  console.log(projects)
+  // console.log(projects)
 
   const signOutHandler = async () => {
     await signOut(auth)
@@ -56,18 +56,18 @@ const Index: NextPage = () => {
     Router.push("/signup")
   }
 
-  console.log(userData)
+  // console.log(userData)
 
   return (
     <>
       <HeroLanding />
       {/* <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1> */}
-      <Space h='xl' />
+      <Space h='lg' />
 
-      {currentUser ? <h3 className="text-2xl dark:text-white text-center font-black">Hi {userData.userName}</h3>
+      {currentUser ? <Title order={3} align='center'>Hi {userData.userName}</Title>
         :
         ''}
-
+      <Title order={1} weight='bolder' align='center'>GitConnect; Projects</Title>
       <Space h='xl' />
       <SimpleGrid cols={3} spacing="lg" breakpoints={[
         { maxWidth: 980, cols: 3, spacing: 'md' },
