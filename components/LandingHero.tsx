@@ -8,14 +8,32 @@ const useStyles = createStyles((theme) => ({
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
+// padding-bottom: 348px;
+  // padding-bottom: 150px; (with smaller heigh works better)
+// margin-left: 50px;
+  //margin-top: -40px;
+
+  // height: 530px;
+
+// Make the height the size of the vh
+  
+  //height: 100vh;
+ // margin-top: -70px; - need to create a negative margin for the header
+  //     padding-bottom: 221px; - update the padding for the txt
+
+  // old
+  // height: 700,
+  // paddingBottom: theme.spacing.xl * 6,
+  // no marginBottom
 
   container: {
-    height: 700,
+    height: '100vh',
+    marginTop: -70,
+    paddingBottom: 220,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
-    paddingBottom: theme.spacing.xl * 6,
     zIndex: 1,
     position: 'relative',
 
@@ -77,9 +95,13 @@ export function HeroLanding() {
           Create. Share. Collaborate. Inspire.
         </Text>
 
-        <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
+        <Text className={classes.description} size="sm" mt="xl">
+          Note: This site is actively under construction
+        </Text>
+
+        {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
           Get started
-        </Button>
+        </Button> */}
       </Container>
     </div>
   );
