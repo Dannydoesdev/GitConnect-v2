@@ -10,11 +10,6 @@ import { Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Sp
 import { db } from '../firebase/clientApp'
 import { collection, setDoc, addDoc, where, query, getDoc, getDocs, doc, serverTimestamp } from "firebase/firestore";
 
-
-// runs BEFORE the component is rendered (as opposed to using useEffect)
-// export const getStaticProps = async () => {
-
-
 export const ShowRepo = (props: any) => {
 
   const repo = props.props;
@@ -26,10 +21,6 @@ export const ShowRepo = (props: any) => {
 
   // console.log(props)
   const handleCheck = (name: string, repoData: object, isChecked: boolean) => {
-    // console.log('handleCheck')
-    // console.log(name)
-    // console.log(isChecked)
-    // console.log(repoData)
     props.newRepo(name, repoData, isChecked)
   }
 
@@ -40,11 +31,6 @@ export const ShowRepo = (props: any) => {
     <div>
       <Card shadow="sm" p="lg" radius="md" withBorder>
         <Card.Section>
-          {/* <Image
-          src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          height={160}
-          alt="Norway"
-        /> */}
         </Card.Section>
 
         <Group position="apart" mt="md" mb="xs">
@@ -88,14 +74,6 @@ const GetRepos = () => {
   const [addRepoData, setAddRepoData] = useState<any>([])
 
   const newRepo = (repoName: string, repo: any, isChecked: boolean) => {
-    // console.log('newRepo')
-    // console.log(repoName)
-    // console.log(repo)
-    // console.log(isChecked)
-    // const newRepoObject = {
-    //   repo : repoData
-    // }
-
     // add the selected repo to the selected repo state array
     setAddRepoData([...addRepoData, repo])
     // console.log(addRepoData)
@@ -116,17 +94,9 @@ const GetRepos = () => {
       const repoName = repoData.name;
       const repoId = repoData.id
       const docRef = doc(db, 'users', userId);
-      // console.log(userId)
-      // console.log('user id')
-      // console.log(repoData)
       const q = query(collection(db, 'users'), where('userName', '==', userName));
       const querySnapshot = await getDocs(q);
       const queryData = querySnapshot.docs.map((detail: any) => {
-        // ...detail.data(),
-        // id: detail.id,
-        // console.log('details')
-        // console.log({ ...detail.data() })
-        // console.log(detail.id)
       });
 
       // console.log(queryData);
