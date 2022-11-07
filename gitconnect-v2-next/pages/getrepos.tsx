@@ -80,10 +80,7 @@ const GetRepos = () => {
   }
 
   const userId = userData.userId
-  // console.log(userData)
-  // console.log(userId)
   const userName = userData.userName
-  // console.log(userName)
   // handle when user hits the 'done' button
   const handleDoneAdding = () => {
 

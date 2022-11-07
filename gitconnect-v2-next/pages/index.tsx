@@ -91,33 +91,6 @@ const Index: NextPage = () => {
     </>
   )
 
-  if (currentUser) {
-    return (
-      // <AuthRoute>
-      <div className="">
-        <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1>
-        <Space h='xl' />
-        <Space h='xl' />
-
-        <h3 className="text-4xl dark:text-white text-center font-black">Hi {userData.userName}</h3>
-        <Space h='xl' />
-        <Space h='xl' />
-
-      </div >
-
-    )
-  } else {
-    return (
-      <div>
-        <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1>
-        <div className='flex flex-col justify-center items-center sm:flex-row'>
-
-        </div>
-      </div>
-    )
-  }
-
-
 }
 
 export default Index

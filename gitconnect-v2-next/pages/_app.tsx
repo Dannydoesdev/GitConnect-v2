@@ -25,10 +25,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         <title>GitConnect;</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="icon" href="/img/favicon/gclogo.png" />
-        {/* <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png" /> */}
-        {/* <link rel="manifest" href="/img/favicon/site.webmanifest" /> */}
       </Head>
       <AuthProvider>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
