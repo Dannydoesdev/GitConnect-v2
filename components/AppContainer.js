@@ -1,4 +1,4 @@
-import { AppShell, Footer, Group, Header, Text, Button } from "@mantine/core";
+import { AppShell, Footer, Group, Header, Text, Button, createStyles } from "@mantine/core";
 import { ColorModeSwitcher } from "../components/ColorModeSwitcher";
 import { useState, useContext } from "react";
 import Link from "next/link";
@@ -8,8 +8,28 @@ import { useRouter } from "next/router";
 import { auth } from "../firebase/clientApp";
 import { signOut } from "firebase/auth";
 
+const useStyles = createStyles((theme) => ({
+  card: {
+    height: 440,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  navBrand: {
+    color: theme.colorScheme === 'dark' ? 'white' : 'black',
+    fontSize: "xl",
+    fontWeight: "bolder",
+    lineHeight: 0
+  }
+}));
+
+
 export const AppContainer = ({ children }, props) => {
   const { userData, currentUser } = useContext(AuthContext);
+  const { classes, theme } = useStyles();
   // const { currentUser } = useContext(AuthContext)
   const Router = useRouter();
 
@@ -35,29 +55,11 @@ export const AppContainer = ({ children }, props) => {
           height: "100vg",
           paddingLeft: "0px",
         },
+
       }}
       // boolean fixed = fixed on every single page
       fixed={true}
       //can pass a component in now
-
-
-
-      // KILLING THE FOOTER FOR NOW
-      
-      // footer={
-      //   <Footer height={60} p="md">
-      //     {/* Setup flex with Group - note spacing and sizing is set based on word sizes (xl etc) */}
-      //     <Group position="apart" spacing="xl">
-      //       {/* Can also use regular styling (like fontWeight) */}
-      //       <Text size="sm:">
-      //         <span style={{ fontWeight: "bolder" }}> Copyright </span>{" "}
-      //         GitConnect; 2022
-      //       </Text>
-      //     </Group>
-      //   </Footer>
-      // }
-
-
 
       // pass in the header and use divs with CSS styling instead of 'Group'
       header={
@@ -68,10 +70,11 @@ export const AppContainer = ({ children }, props) => {
               {/* <div style={{ display: 'flex', alignItems: 'center', height:"100%" }}> */}
               <Link href="/" passHref>
                 <Text
-                  component="a"
-                  className="dark:text-white"
+                  component="a"                 
+                  // color={theme.colorScheme === 'dark' ? 'dark' : 'gray'}
                   size="xl"
                   weight="bolder"
+                  className={classes.navBrand}
                 >
                   GitConnect;
                 </Text>
@@ -108,6 +111,7 @@ export const AppContainer = ({ children }, props) => {
                     <Text
                       component="a"
                       className="dark:text-white"
+                      // color= {theme.white}
                       size="md"
                       weight="bolder"
                     >
@@ -183,3 +187,19 @@ export const AppContainer = ({ children }, props) => {
     </AppShell>
   );
 };
+
+
+  // Removing the footer for now
+  
+  // footer={
+  //   <Footer height={60} p="md">
+  //     {/* Setup flex with Group - note spacing and sizing is set based on word sizes (xl etc) */}
+  //     <Group position="apart" spacing="xl">
+  //       {/* Can also use regular styling (like fontWeight) */}
+  //       <Text size="sm:">
+  //         <span style={{ fontWeight: "bolder" }}> Copyright </span>{" "}
+  //         GitConnect; 2022
+  //       </Text>
+  //     </Group>
+  //   </Footer>
+  // }
