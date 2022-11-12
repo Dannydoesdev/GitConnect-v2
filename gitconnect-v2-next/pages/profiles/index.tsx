@@ -16,7 +16,7 @@ export async function getStaticProps() {
   // console.log(data)
   // .then(() => {})
   console.log('PAGES')
-  console.log(pages)
+  // console.log(pages)
   // console.log({ ...pages })
   // const pageData = await pages.forEach((page: any) => {
   //   getProfileData(page)
@@ -47,7 +47,7 @@ export async function getStaticProps() {
 const Profiles = ({ profiles }: any) => {
   // console.log(ninjas)
   console.log('profiles')
-  console.log(profiles)
+  // console.log(profiles)
   return (
     <div>
       <h1>All Profiles</h1>

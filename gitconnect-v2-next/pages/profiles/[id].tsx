@@ -8,8 +8,8 @@ const fetcher = (url: string) => axios.get(url).then(res => res.data)
 export const getStaticPaths = async () => {
 
   const paths = await getAllProfileIds();
-  console.log('PATHS')
-  console.log(paths)
+  console.log('getting static paths')
+  // console.log(paths)
   return {
     paths,
     fallback: false,
@@ -18,8 +18,8 @@ export const getStaticPaths = async () => {
 
 export async function getStaticProps({ params }: any) {
   const profileData: any = await getProfileData(params.id);
-  console.log('PROFILE DATA')
-  console.log(profileData)
+  console.log('getting profile data')
+  // console.log(profileData)
   // jsonify(profileData)
   // const dataToSend = {
   //   username: profileData.userName,
@@ -38,7 +38,8 @@ export async function getStaticProps({ params }: any) {
 //   if (!data) return <div>Loading...</div>
 
 export default function Profile({ profile }: any) {
-  console.log(profile)
+  console.log('getting single profile data')
+  // console.log(profile)
   const profileData = profile[0].docData
 
   return (

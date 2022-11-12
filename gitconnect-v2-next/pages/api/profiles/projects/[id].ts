@@ -17,7 +17,7 @@ export default async function handler(
     console.log('GET')
     const { id }: any = req.query
     const intId = parseInt(id)
-    console.log(intId)
+    // console.log(intId)
     console.log(`Project: ${id}`)
     console.log('getting projects')
     const projects: any = []
@@ -32,7 +32,7 @@ export default async function handler(
       projects.push({...doc.data()})
       
      })
-    console.log(projects)
+    // console.log(projects)
     res.send(projects)
       
 

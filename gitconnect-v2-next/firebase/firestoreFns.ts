@@ -33,7 +33,7 @@ getDocs(colRef)
       books.push({ ...doc.data(), id: doc.id })
     })
     // console.log(snapshot.docs)
-    console.log(books)
+    // console.log(books)
   })
   .catch(err => {
     console.log(err.message)

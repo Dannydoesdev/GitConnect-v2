@@ -13,7 +13,7 @@ export default function handler(
   if (req.method === 'POST') {
     // Process a POST request
   } else {
-    console.log('GET')
+    console.log('GET - profiles')
 
 
     const { id } = req.query
