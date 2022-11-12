@@ -30,7 +30,7 @@ export default async function handler(
       projects.push({...doc.data()})
       
      })
-    console.log(projects)
+    // console.log(projects)
     res.send(projects)
       
 
