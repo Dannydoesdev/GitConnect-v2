@@ -1,67 +1,18 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import React, { useContext, useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { auth } from "../firebase/clientApp"
-import { signOut } from "firebase/auth"
-import AuthRoute from "../HoC/authRoute"
+import React, { useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
-import { ColorModeSwitcher } from "../components/ColorModeSwitcher"
-import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/core'
-import { ArticleCardImage } from '../components/LandingCardBold'
-import { ImageCard } from '../components/LandingCardSubtle'
-import axios from 'axios'
-import { collection } from 'firebase/firestore'
-import { db } from '../firebase/clientApp'
-import { makeAnImg } from '../utils/makeAnImg'
-import { HeroLanding } from '../components/LandingHero'
+import { Space, Title } from '@mantine/core'
+import { HeroLanding } from '../components/LandingHeroHome/LandingHero'
 import UploadFile from '../components/UploadFile'
+import HomePageProjectGrid from '../components/HomePageProjects/HomePageProjectGrid'
 
 const Index: NextPage = () => {
 
-  // console.log('index page')
-
   const { userData, currentUser } = useContext(AuthContext)
-  // const { currentUser } = useContext(AuthContext)
-  const Router = useRouter()
-
-  const [projects, setProjects] = useState<any>(null)
-
-  useEffect(() => {
-
-    const userName = userData.userName
-    // console.log(userName)
-
-    const URL = `/api/profiles/projects/all`;
-    axios.get(URL)
-      .then((response) => {
-        // console.log(response.data)
-        setProjects(response.data)
-      })
-
-  }, [])
-
-  // console.log(projects)
-
-  const signOutHandler = async () => {
-    await signOut(auth)
-  }
-
-  const signInHandler = () => {
-    Router.push("/login")
-  }
-
-  const registerHandler = () => {
-    Router.push("/signup")
-  }
-
-  // console.log(userData)
 
   return (
     <>
       <HeroLanding />
-      {/* <h1 className="text-8xl dark:text-white text-center font-black">GitConnect;</h1> */}
       <Space h='lg' />
 
       {currentUser ? <Title order={3} align='center'>Hi {userData.userName}</Title>
@@ -69,28 +20,12 @@ const Index: NextPage = () => {
         ''}
       <Title order={1} weight='bolder' align='center'>GitConnect; Projects</Title>
       <Space h='xl' />
-      <SimpleGrid cols={3} spacing="lg" breakpoints={[
-        { maxWidth: 980, cols: 3, spacing: 'md' },
-        { maxWidth: 755, cols: 2, spacing: 'sm' },
-        { maxWidth: 600, cols: 1, spacing: 'sm' },
-      ]}>
 
-        {projects ?
-          projects.map((project: any) => {
-            return (
-              < div key={project.id} >
-                <ImageCard image={`../../../img/${project.id}.jpg` ? `../../../img/${project.id}.jpg` : (makeAnImg(600, 350))} title={project.name} author={project.owner.login} views={1} comments={2} link={`/profiles/projects/${project.id}`} />
-              </div>
-            )
-          })  :
-          <h2>Loading projects</h2>
-        }
+      <HomePageProjectGrid />
 
-      </SimpleGrid>
         {/* < UploadFile /> */}
     </>
   )
-
 }
 
 export default Index

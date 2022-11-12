@@ -1,10 +1,10 @@
 import React, { useCallback, useContext } from "react"
 import { useRouter } from "next/router"
 import { AuthContext } from "../context/AuthContext"
-import GithubLogin from "../components/GithubLogin"
+import GithubLogin from "../components/LoginPages/GithubLogin"
 // import EmailLogin from "../components/EmailSignup.tsx.notworking"
-import EmailSignup from "../components/EmailSignup"
-import GoogleLogin from "../components/GoogleLogin"
+import EmailSignup from "../components/SignupPages/EmailSignup"
+import GoogleLogin from "../components/LoginPages/GoogleLogin"
 
 const Signup = () => {
   const { currentUser } = useContext(AuthContext)

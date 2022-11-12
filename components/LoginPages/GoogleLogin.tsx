@@ -2,7 +2,7 @@ import React, { useCallback } from "react"
 import { useRouter } from "next/router"
 
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { auth } from "../firebase/clientApp"
+import { auth } from "../../firebase/clientApp"
 
 const GoogleLogin = () => {
   const Router = useRouter()

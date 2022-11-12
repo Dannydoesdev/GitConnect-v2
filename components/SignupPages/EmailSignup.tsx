@@ -1,41 +1,44 @@
 import React, { useCallback } from "react"
 import { useRouter } from "next/router"
-import { auth } from "../firebase/clientApp"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "../../firebase/clientApp"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+
 import Link from "next/link"
 
-const EmailLogin = () => {
+const EmailSignup = () => {
   const Router = useRouter()
 
-  const loginHandler = useCallback(
+  const signupHandler = useCallback(
     async (event: any) => {
+      console.log("signupHandler called")
       event.preventDefault()
       const { email, password } = event.target.elements
       try {
-        await signInWithEmailAndPassword(auth, email.value, password.value)
+        console.log(email.value, password.value)
+        await createUserWithEmailAndPassword(auth, email.value, password.value)
         Router.push("/")
       } catch (error) {
-        console.log("error")
         alert(error)
       }
     },
     [Router]
   )
+
   return (
-    <div className="">
+    <div>
       <form
-        onSubmit={loginHandler}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        onSubmit={signupHandler}
+        className="bg-white dark:bg-inherit dark:border-width-thin dark:border shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
             htmlFor="email"
           >
             Email
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-white leading-tight focus:outline-none focus:shadow-outline"
             name="email"
             id="email"
             type="email"
@@ -44,7 +47,7 @@ const EmailLogin = () => {
         </div>
         <div className="mb-6">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
             htmlFor="password"
           >
             Password
@@ -62,11 +65,11 @@ const EmailLogin = () => {
             className="transition-all duration-500 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
-            Sign In
+            Sign Up
           </button>
-          <Link href="/signup">
+          <Link href="/login">
             <a className="transition-all duration-500 cursor-pointer inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
-              Sign up?
+              Login ?
             </a>
           </Link>
         </div>
@@ -75,4 +78,4 @@ const EmailLogin = () => {
   )
 }
 
-export default EmailLogin
+export default EmailSignup
