@@ -23,6 +23,30 @@ const useStyles = createStyles((theme) => ({
     fontSize: "xl",
     fontWeight: "bolder",
     lineHeight: 0
+  },
+  header: {
+    height: 70,
+    padding: 20,
+
+    [theme.fn.smallerThan('sm')]: {
+      paddingRight: 5,
+      paddingLeft: 5,
+      height: "70px",
+      maxHeight: 70
+    },
+    [theme.fn.smallerThan('380')]: {
+      paddingRight: 0,
+      paddingLeft: 0,
+      height: "70px",
+      maxHeight: 70
+    },
+  },
+  navGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
+    flexWrap: 'no-wrap'
+    // <Group position="apart" align="center" height="100%">
   }
 }));
 
@@ -54,6 +78,7 @@ export const AppContainer = ({ children }, props) => {
           width: "100vw",
           height: "100vg",
           paddingLeft: "0px",
+          paddingRight: "0px"
         },
 
       }}
@@ -64,7 +89,8 @@ export const AppContainer = ({ children }, props) => {
       // pass in the header and use divs with CSS styling instead of 'Group'
       header={
         // p = padding size
-        <Header height={70} p={20}>
+        // <Header height={70} padding={20}>
+        <Header className={classes.header}>
           <Group position="apart" align="center" height="100%">
             <Group>
               {/* <div style={{ display: 'flex', alignItems: 'center', height:"100%" }}> */}
@@ -174,7 +200,7 @@ export const AppContainer = ({ children }, props) => {
                           : theme.colors.blue[6],
                     })}
                   >
-                    Create Account
+                    Register
                   </Button>
                 </Link>
               </Group>
