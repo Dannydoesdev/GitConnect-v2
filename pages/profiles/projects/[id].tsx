@@ -50,7 +50,8 @@ export default function Project() {
   
     return (
         <>
-          <ProjectPageDynamicHero props = {projects} />
+        <ProjectPageDynamicHero props={projects} />
+        <ProjectPageDynamicContent props = {projects} />
       </>
     )
   } else {

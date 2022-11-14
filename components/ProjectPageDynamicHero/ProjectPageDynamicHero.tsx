@@ -22,7 +22,7 @@ export function ProjectPageDynamicHero(props: any) {
       <Container className={classes.container}>
         <Title className={classes.title}>{project.name}</Title>
         <Text className={classes.description} size="xl" mt="xl">
-          {project.name}
+          {/* {project.name} */}
         </Text>
         <Link href={project.html_url} passHref>
           <Button
