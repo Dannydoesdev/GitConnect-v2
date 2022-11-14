@@ -12,7 +12,7 @@ export default createStyles((theme) => ({
 
   container: {
     height: '100vh',
-    marginTop: -70,
+    marginTop: 70,
     paddingBottom: 220,
     display: 'flex',
     flexDirection: 'column',
