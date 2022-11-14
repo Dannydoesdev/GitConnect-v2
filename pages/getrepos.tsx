@@ -143,7 +143,7 @@ const GetRepos = () => {
         </SimpleGrid>
       </Group>
       <Space h="xl" />
-      <Group>
+      <Group position='center'>
         <Link href="#" passHref>
           <Button
             component="a"

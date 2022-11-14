@@ -24,11 +24,6 @@ export default async function handler(
     const q = query(collectionGroup(db, 'repos'), where('id', '==', intId));
     const querySnapshot = await getDocs(q);
      querySnapshot.docs.forEach((doc: any) => {
-      // ...detail.data(),
-      // id: detail.id,
-      // console.log(doc.id, ' => ', doc.data());
-      // console.log({ ...doc.data() })
-      // console.log(detail.id)
       projects.push({...doc.data()})
       
      })

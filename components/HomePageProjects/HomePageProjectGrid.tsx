@@ -4,8 +4,6 @@ import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/cor
 import axios from 'axios'
 import { makeAnImg } from '../../utils/makeAnImg'
 
-
-
 const HomePageProjectGrid = () => {
   // const { classes, theme } = useStyles();
 
@@ -19,7 +17,7 @@ const HomePageProjectGrid = () => {
     const URL = `/api/profiles/projects/all`;
     axios.get(URL)
       .then((response) => {
-        // console.log(response.data)
+        console.log(response.data)
         setProjects(response.data)
       })
 
