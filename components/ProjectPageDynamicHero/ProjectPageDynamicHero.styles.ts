@@ -22,6 +22,7 @@ export default createStyles((theme) => ({
       position: 'relative',
   
       [theme.fn.smallerThan('sm')]: {
+        marginLeft: 40,
         height: 500,
         paddingBottom: theme.spacing.xl * 3,
       },
