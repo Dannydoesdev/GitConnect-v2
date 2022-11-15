@@ -56,10 +56,18 @@ export default createStyles((theme) => ({
     },
   
     control: {
-      marginTop: theme.spacing.xl * 1.5,
+      marginTop: theme.spacing.xl * 1,
+      fontSize: 16,
+      width: 150,
+      height: 50,
+      borderRadius: 10,
   
       [theme.fn.smallerThan('sm')]: {
-        width: '100%',
+        marginTop: theme.spacing.xl * 0.5,
+        fontSize: 12,
+        width: 100,
+        height: 40,
+        borderRadius: 10,
       },
     },
   }));

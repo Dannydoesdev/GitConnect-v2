@@ -41,4 +41,16 @@ export default createStyles((theme) => ({
       marginTop: theme.spacing.sm,
     },
   },
+  iframe: {
+
+    // display: 'block',
+    width: 1200,
+    margin: '50px 0px 5px 0px',
+    height: 1000,
+    borderRadius: 10,
+    [theme.fn.smallerThan('sm')]: {
+      height: 600,
+      width: '100%',
+    },
+  },
 }));

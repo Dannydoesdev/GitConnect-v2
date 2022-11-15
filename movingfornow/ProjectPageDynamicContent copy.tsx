@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
-import { ProjectPageDynamicHero } from '../ProjectPageDynamicHero/ProjectPageDynamicHero';
+import { ProjectPageDynamicHero } from '../components/ProjectPageDynamicHero/ProjectPageDynamicHero';
 
 
 export default function ProjectPageDynamicContentOld(props: any) {
