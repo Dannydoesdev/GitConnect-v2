@@ -24,6 +24,20 @@ export function ProjectPageDynamicHero(props: any) {
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}
         </Text>
+        <Group>
+        <Link href={project.live_url} passHref>
+          <Button
+            component="a"
+            target='_blank'
+            size='xl'
+            radius='xl'
+            className={classes.control}
+            sx={(theme) => ({
+              // subscribe to color scheme changes
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+            })}
+          >Live site</Button>
+          </Link>
         <Link href={project.html_url} passHref>
           <Button
             component="a"
@@ -35,8 +49,10 @@ export function ProjectPageDynamicHero(props: any) {
               // subscribe to color scheme changes
               backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
             })}
-          >Check it out!</Button>
-        </Link>
+          >On GitHub</Button>
+          </Link>
+          
+          </Group>
         {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
           Check it out!
         </Button> */}

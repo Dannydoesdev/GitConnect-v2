@@ -18,6 +18,10 @@ export function HeroLanding() {
           Create. Share. Collaborate. Inspire.
         </Text>
 
+        <Text className={classes.description} size="md" mt="xl">
+          Import from Github. Create a portfolio. Share your projects. Inspire and be inspired.
+        </Text>
+
         <Text className={classes.description} size="sm" mt="xl">
           Note: This site is actively under construction
         </Text>

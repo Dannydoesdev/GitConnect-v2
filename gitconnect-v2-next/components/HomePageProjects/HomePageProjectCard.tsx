@@ -30,7 +30,7 @@ export function ImageCard({ image, title, author, views, comments, link }: Image
               {author}
             </Text>
 
-            <Group spacing="lg">
+            {/* <Group spacing="lg">
               <Center>
                 <IconEye size={16} stroke={1.5} color={theme.colors.dark[2]} />
                 <Text size="sm" className={classes.bodyText}>
@@ -43,7 +43,7 @@ export function ImageCard({ image, title, author, views, comments, link }: Image
                   {comments}
                 </Text>
               </Center>
-            </Group>
+            </Group> */}
           </Group>
         </div>
       </div>
