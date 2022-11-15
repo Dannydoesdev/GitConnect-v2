@@ -13,6 +13,7 @@ import {
   Card,
   SimpleGrid,
   Stack,
+  Space,
 } from '@mantine/core';
 import { IconGauge, IconUser, IconCookie } from '@tabler/icons';
 import useStyles from './ProjectPageDynamicContent.styles'
@@ -78,6 +79,15 @@ const projectData = [
       <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
         {features}
       </SimpleGrid>
+      <Space h = {80} />
+      <Title order={2} className={classes.title} align="center" mt="sm">
+      Try it out
+      </Title>
+      <Group>
+   
+        <iframe className={classes.iframe} src={project.live_url}></iframe>
+    
+      </Group>
     </Container>
   );
 

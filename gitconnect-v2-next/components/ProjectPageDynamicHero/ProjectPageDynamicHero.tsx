@@ -29,8 +29,8 @@ export function ProjectPageDynamicHero(props: any) {
           <Button
             component="a"
             target='_blank'
-            size='xl'
-            radius='xl'
+            // size='xl'
+            // radius='xl'
             className={classes.control}
             sx={(theme) => ({
               // subscribe to color scheme changes
@@ -42,8 +42,8 @@ export function ProjectPageDynamicHero(props: any) {
           <Button
             component="a"
             target='_blank'
-            size='xl'
-            radius='xl'
+            // size='xl'
+            // radius='xl'
             className={classes.control}
             sx={(theme) => ({
               // subscribe to color scheme changes
