@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import GithubLogin from "../components//LoginPages/GithubLogin"
 import EmailLogin from "../components/LoginPages/EmailLogin"
 import GoogleLogin from "../components//LoginPages/GoogleLogin"
+import { LoginPage } from "../components/LoginPages/NewLogin"
 
 const Login = () => {
   console.log('hi')
@@ -15,8 +16,9 @@ const Login = () => {
     return <></>
   } else {
     return (
-
-      <GithubLogin />
+      
+      <LoginPage />
+      // <GithubLogin />
 
       // <div className="grid place-content-center px-10 py-10 shadow-lg w-max mx-auto mt-6">
       //   <h1 className="text-center font-black text-3xl mb-2">Sign in with Github</h1>

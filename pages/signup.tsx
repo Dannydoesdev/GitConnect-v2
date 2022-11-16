@@ -5,6 +5,7 @@ import GithubLogin from "../components/LoginPages/GithubLogin"
 // import EmailLogin from "../components/EmailSignup.tsx.notworking"
 import EmailSignup from "../components/SignupPages/EmailSignup"
 import GoogleLogin from "../components/LoginPages/GoogleLogin"
+import { SignupPage } from "../components/SignupPages/NewSignup"
 
 const Signup = () => {
   const { currentUser } = useContext(AuthContext)
@@ -16,7 +17,8 @@ const Signup = () => {
     return <></>
   } else {
     return (
-      <GithubLogin />
+      // <GithubLogin />
+      <SignupPage />
 
       // <div className="grid place-content-center px-10 py-10 shadow-lg w-max mx-auto mt-6">
       //   <h1 className="text-center font-black text-3xl mb-2">Sign Up using</h1>
