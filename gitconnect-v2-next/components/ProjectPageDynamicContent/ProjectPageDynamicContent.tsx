@@ -15,7 +15,7 @@ import {
   Stack,
   Space,
 } from '@mantine/core';
-import { IconGauge, IconUser, IconCookie } from '@tabler/icons';
+import { IconGauge, IconUser, IconCookie, IconFall, IconReportAnalytics, IconListNumbers } from '@tabler/icons';
 import useStyles from './ProjectPageDynamicContent.styles'
 
 
@@ -30,19 +30,19 @@ const projectData = [
     title: 'Process',
     description:
       project.process,
-    icon: IconGauge,
+    icon: IconListNumbers,
   },
   {
     title: 'Challenges',
     description:
       project.challenges,
-    icon: IconUser,
+    icon: IconFall,
   },
   {
     title: 'Outcomes',
     description:
       project.outcomes,
-    icon: IconCookie,
+    icon: IconReportAnalytics,
   },
 ];
 
@@ -81,7 +81,7 @@ const projectData = [
       </SimpleGrid>
       <Space h = {80} />
       <Title order={2} className={classes.title} align="center" mt="sm">
-      Try it out
+      Check out the live site:
       </Title>
       <Group>
    
@@ -91,28 +91,17 @@ const projectData = [
     </Container>
   );
 
-
-
-  // return (
-  //   <>
-  //     {/* <h1>Project Page</h1> */}
-  //     {projects ?
-  //       projects.map((project: any) => {
-  //         return (
-  //           < div key={project.id} >
-  //             <h2>{project.name}</h2>
-  //             <Link href={`/profiles/projects/${project.id}`} passHref>
-  //               <Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text>
-  //             </Link>
-  //             {/* <p>{project}</p> */}
-  //             {/* <h3>test</h3> */}
-  //           </div>
-  //         )
-  //       }) :
-  //       <h2>loading</h2>
-  //     }
-  //   </>
-  // )
 }
-//  {/* <h1>{projectData.userName}</h1>
-//       <p>{projectData.userEmail}</p>  */}
+
+  // Tabler icon alternatives:
+
+// IconCheckupList
+// list-numbers
+// list-check
+// zoom-question
+// question-mark
+// chart-infographic
+// chart-dots
+// chart-bar
+// chart-arrows-vertical
+// report-analytics
