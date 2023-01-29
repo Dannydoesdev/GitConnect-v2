@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from 'next';
 import { useState, useEffect } from 'react'
-import { AppProps } from 'next/app';
+import NextApp, { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
 import { AuthProvider } from '../context/AuthContext'
 import { getCookie, setCookie } from 'cookies-next';
@@ -35,11 +35,9 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             }}
             withGlobalStyles
             withNormalizeCSS>
-            {/* <NotificationsProvider> */}
               <AppContainer>
                 <Component {...pageProps} />
               </AppContainer>
-            {/* </NotificationsProvider> */}
           </MantineProvider>
         </ColorSchemeProvider>
       </AuthProvider >
@@ -47,6 +45,14 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   );
 }
 
-App.getInitialProps = ({ ctx }: { ctx: GetServerSidePropsContext }) => ({
-  colorScheme: getCookie('mantine-color-scheme', ctx) || 'dark',
-});
+// App.getInitialProps = ({ ctx }: { ctx: GetServerSidePropsContext }) => ({
+//   colorScheme: getCookie('mantine-color-scheme', ctx) || 'dark',
+// });
+
+App.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await NextApp.getInitialProps(appContext);
+  return {
+    ...appProps,
+    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
+  };
+};

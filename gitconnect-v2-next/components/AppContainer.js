@@ -148,18 +148,15 @@ export const AppContainer = ({ children }, props) => {
             
                 <Group>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
-                  <Link href="/profiles" passHref>
+                  <Link href="/profiles">
                   <Avatar
-                    // component={Link}
-                    component='a'
-                    // href="/profiles"
                     radius="xl"
                     size="md"
                     src={userData.userPhotoLink}
                     />
-                    </Link>
+                  </Link>
                   
-                  <Link href="#" passHref>
+                  {/* <Link href="#" passHref>
                     <Button
                       component="a"
                       size="xs"
@@ -175,7 +172,7 @@ export const AppContainer = ({ children }, props) => {
                     >
                       Sign out
                     </Button>
-                  </Link>
+                  </Link> */}
                 </Group>
 
               </>

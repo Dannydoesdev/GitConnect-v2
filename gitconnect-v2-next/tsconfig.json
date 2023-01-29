@@ -28,7 +28,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "components/AppContainer.js",
     ".next/types/**/*.ts"
   ],
   "exclude": [
