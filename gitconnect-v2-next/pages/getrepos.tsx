@@ -121,44 +121,42 @@ const GetRepos = () => {
   }, [userData])
 
 
-  return (
-    <>
-      {/* <h1>Hi</h1> */}
-      <Stack align='center' mt='md' spacing="lg">
-        <Avatar className='mx-auto' radius="xl" size="xl" src={userData.userPhotoLink} />
-        <Text size='lg' weight='bolder' className='mx-auto'>{userName}'s repos</Text>
-      </Stack>
-      <Space h="xl" />
-      <Group mx="md">
-        <SimpleGrid cols={4} spacing="xl" breakpoints={[
-          { maxWidth: 980, cols: 3, spacing: 'md' },
-          { maxWidth: 755, cols: 2, spacing: 'sm' },
-          { maxWidth: 600, cols: 1, spacing: 'sm' },
-        ]}>
-          {repoData.map((repo, index) => {
-            return (
-              <ShowRepo key={index} newRepo={newRepo} props={repo} />
-            )
+  return <>
+    {/* <h1>Hi</h1> */}
+    <Stack align='center' mt='md' spacing="lg">
+      <Avatar className='mx-auto' radius="xl" size="xl" src={userData.userPhotoLink} />
+      <Text size='lg' weight='bolder' className='mx-auto'>{userName}'s repos</Text>
+    </Stack>
+    <Space h="xl" />
+    <Group mx="md">
+      <SimpleGrid cols={4} spacing="xl" breakpoints={[
+        { maxWidth: 980, cols: 3, spacing: 'md' },
+        { maxWidth: 755, cols: 2, spacing: 'sm' },
+        { maxWidth: 600, cols: 1, spacing: 'sm' },
+      ]}>
+        {repoData.map((repo, index) => {
+          return (
+            <ShowRepo key={index} newRepo={newRepo} props={repo} />
+          )
+        })}
+      </SimpleGrid>
+    </Group>
+    <Space h="xl" />
+    <Group position='center'>
+      <Link href="#" passHref legacyBehavior>
+        <Button
+          component="a"
+          size='lg'
+          onClick={handleDoneAdding}
+          className='mx-auto'
+          sx={(theme) => ({
+            // subscribe to color scheme changes
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
           })}
-        </SimpleGrid>
-      </Group>
-      <Space h="xl" />
-      <Group position='center'>
-        <Link href="#" passHref>
-          <Button
-            component="a"
-            size='lg'
-            onClick={handleDoneAdding}
-            className='mx-auto'
-            sx={(theme) => ({
-              // subscribe to color scheme changes
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-            })}
-          >Done</Button>
-        </Link>
-      </Group>
-    </>
-  )
+        >Done</Button>
+      </Link>
+    </Group>
+  </>;
 }
 
 export default GetRepos;

@@ -1,12 +1,21 @@
-import { AppShell, Footer, Group, Header, Text, Button, createStyles, Avatar } from "@mantine/core";
-import { ColorModeSwitcher } from "../components/ColorModeSwitcher";
-import { useState, useContext } from "react";
-import Link from "next/link";
-import Router from "next/router";
-import { AuthContext } from "../context/AuthContext";
-import { useRouter } from "next/router";
-import { auth } from "../firebase/clientApp";
-import { signOut } from "firebase/auth";
+import {
+  AppShell,
+  Footer,
+  Group,
+  Header,
+  Text,
+  Button,
+  createStyles,
+  Avatar,
+} from '@mantine/core';
+import { ColorModeSwitcher } from '../components/ColorModeSwitcher';
+import { useState, useContext } from 'react';
+import Link from 'next/link';
+import Router from 'next/router';
+import { AuthContext } from '../context/AuthContext';
+import { useRouter } from 'next/router';
+import { auth } from '../firebase/clientApp';
+import { signOut } from 'firebase/auth';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -20,9 +29,9 @@ const useStyles = createStyles((theme) => ({
   },
   navBrand: {
     color: theme.colorScheme === 'dark' ? 'white' : 'black',
-    fontSize: "xl",
-    fontWeight: "bolder",
-    lineHeight: 0
+    fontSize: 'xl',
+    fontWeight: 'bolder',
+    lineHeight: 0,
   },
   header: {
     height: 70,
@@ -31,25 +40,24 @@ const useStyles = createStyles((theme) => ({
     [theme.fn.smallerThan('sm')]: {
       paddingRight: 5,
       paddingLeft: 5,
-      height: "70px",
-      maxHeight: 70
+      height: '70px',
+      maxHeight: 70,
     },
     [theme.fn.smallerThan('380')]: {
       paddingRight: 0,
       paddingLeft: 0,
-      height: "70px",
-      maxHeight: 70
+      height: '70px',
+      maxHeight: 70,
     },
   },
   navGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     height: '100%',
-    flexWrap: 'no-wrap'
+    flexWrap: 'no-wrap',
     // <Group position="apart" align="center" height="100%">
-  }
+  },
 }));
-
 
 export const AppContainer = ({ children }, props) => {
   const { userData, currentUser } = useContext(AuthContext);
@@ -63,11 +71,11 @@ export const AppContainer = ({ children }, props) => {
   };
 
   const signInHandler = () => {
-    Router.push("/login");
+    Router.push('/login');
   };
 
   const registerHandler = () => {
-    Router.push("/signup");
+    Router.push('/signup');
   };
 
   return (
@@ -75,12 +83,11 @@ export const AppContainer = ({ children }, props) => {
       styles={{
         main: {
           // background: "#FFFFFF",
-          width: "100vw",
-          height: "100vg",
-          paddingLeft: "0px",
-          paddingRight: "0px"
+          width: '100vw',
+          height: '100vg',
+          paddingLeft: '0px',
+          paddingRight: '0px',
         },
-
       }}
       // boolean fixed = fixed on every single page
       fixed={true}
@@ -91,15 +98,15 @@ export const AppContainer = ({ children }, props) => {
         // p = padding size
         // <Header height={70} padding={20}>
         <Header className={classes.header}>
-          <Group position="apart" align="center" height="100%">
+          <Group position='apart' align='center' height='100%'>
             <Group>
               {/* <div style={{ display: 'flex', alignItems: 'center', height:"100%" }}> */}
-              <Link href="/" passHref>
+              <Link href='/' passHref legacyBehavior>
                 <Text
-                  component="a"                 
+                  component='a'
                   // color={theme.colorScheme === 'dark' ? 'dark' : 'gray'}
-                  size="xl"
-                  weight="bolder"
+                  size='xl'
+                  weight='bolder'
                   className={classes.navBrand}
                 >
                   GitConnect;
@@ -112,51 +119,52 @@ export const AppContainer = ({ children }, props) => {
 
             {currentUser ? (
               <>
-                <Group position="center">
-                  <Link href="/userinfo" passHref>
+                <Group position='center'>
+                  <Link href='/userinfo' passHref legacyBehavior>
                     <Text
-                      component="a"
-                      className="dark:text-white"
-                      size="md"
-                      weight="bolder"
+                      component='a'
+                      className='dark:text-white'
+                      size='md'
+                      weight='bolder'
                     >
                       User
                     </Text>
                   </Link>
-                  <Link href="/getrepos" passHref>
+                  <Link href='/getrepos' passHref legacyBehavior>
                     <Text
-                      component="a"
-                      className="dark:text-white"
-                      size="md"
-                      weight="bolder"
+                      component='a'
+                      className='dark:text-white'
+                      size='md'
+                      weight='bolder'
                     >
                       Add Repos
                     </Text>
                   </Link>
-                  <Link href="/profiles/projects" passHref>
+                  <Link href='/profiles/projects' passHref legacyBehavior>
                     <Text
-                      component="a"
-                      className="dark:text-white"
+                      component='a'
+                      className='dark:text-white'
                       // color= {theme.white}
-                      size="md"
-                      weight="bolder"
+                      size='md'
+                      weight='bolder'
                     >
                       Projects
                     </Text>
                   </Link>
                 </Group>
-            
+
                 <Group>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
-                  <Link href="/profiles">
-                  <Avatar
-                    radius="xl"
-                    size="md"
-                    src={userData.userPhotoLink}
+                  <Link href='/profiles' passHref legacyBehavior>
+                    <Avatar
+                      component='a'
+                      radius='xl'
+                      size='md'
+                      src={userData.userPhotoLink}
                     />
                   </Link>
-                  
-                  {/* <Link href="#" passHref>
+
+                  <Link href="#" passHref legacyBehavior>
                     <Button
                       component="a"
                       size="xs"
@@ -172,23 +180,21 @@ export const AppContainer = ({ children }, props) => {
                     >
                       Sign out
                     </Button>
-                  </Link> */}
+                  </Link>
                 </Group>
-
               </>
             ) : (
- 
               <Group>
-                <Link href="#" passHref>
+                <Link href='#' passHref legacyBehavior>
                   <Button
-                    component="a"
-                    size="xs"
+                    component='a'
+                    size='xs'
                     onClick={signInHandler}
                     // className='mx-auto'
                     sx={(theme) => ({
                       // subscribe to color scheme changes
                       backgroundColor:
-                        theme.colorScheme === "dark"
+                        theme.colorScheme === 'dark'
                           ? theme.colors.dark[5]
                           : theme.colors.blue[6],
                     })}
@@ -196,16 +202,16 @@ export const AppContainer = ({ children }, props) => {
                     Sign in
                   </Button>
                 </Link>
-                <Link href="#" passHref>
+                <Link href='#' passHref legacyBehavior>
                   <Button
-                    component="a"
-                    size="xs"
+                    component='a'
+                    size='xs'
                     onClick={registerHandler}
                     // className='mx-auto'
                     sx={(theme) => ({
                       // subscribe to color scheme changes
                       backgroundColor:
-                        theme.colorScheme === "dark"
+                        theme.colorScheme === 'dark'
                           ? theme.colors.dark[5]
                           : theme.colors.blue[6],
                     })}
@@ -224,18 +230,17 @@ export const AppContainer = ({ children }, props) => {
   );
 };
 
+// Removing the footer for now
 
-  // Removing the footer for now
-  
-  // footer={
-  //   <Footer height={60} p="md">
-  //     {/* Setup flex with Group - note spacing and sizing is set based on word sizes (xl etc) */}
-  //     <Group position="apart" spacing="xl">
-  //       {/* Can also use regular styling (like fontWeight) */}
-  //       <Text size="sm:">
-  //         <span style={{ fontWeight: "bolder" }}> Copyright </span>{" "}
-  //         GitConnect; 2022
-  //       </Text>
-  //     </Group>
-  //   </Footer>
-  // }
+// footer={
+//   <Footer height={60} p="md">
+//     {/* Setup flex with Group - note spacing and sizing is set based on word sizes (xl etc) */}
+//     <Group position="apart" spacing="xl">
+//       {/* Can also use regular styling (like fontWeight) */}
+//       <Text size="sm:">
+//         <span style={{ fontWeight: "bolder" }}> Copyright </span>{" "}
+//         GitConnect; 2022
+//       </Text>
+//     </Group>
+//   </Footer>
+// }

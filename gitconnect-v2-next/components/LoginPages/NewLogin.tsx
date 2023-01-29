@@ -92,7 +92,7 @@ export function LoginPage() {
         </Text>
 
         <Group grow mx='xl' mb="md" mt="xl">
-          <Link href="#" passHref>
+          <Link href="#" passHref legacyBehavior>
             <Button
               // compact={true}
               component="a"
@@ -116,7 +116,7 @@ export function LoginPage() {
         <Button fullWidth mt="xl" size="md">
           Login
         </Button> */}
-        <Link href="/signup" passHref>
+        <Link href="/signup" passHref legacyBehavior>
           <Text align="center" mt="md">
             Don&apos;t have an account?{' '}
             <Anchor<'a'> href="/signup" weight={700}>

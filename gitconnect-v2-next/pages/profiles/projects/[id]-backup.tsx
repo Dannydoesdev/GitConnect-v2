@@ -65,7 +65,7 @@ export function HeroContentLeft(props: any) {
         <Text className={classes.description} size="xl" mt="xl">
           Flyre - connecting local talent with local events
         </Text>
-        <Link href="https://morning-atoll-11830.herokuapp.com/" passHref>
+        <Link href="https://morning-atoll-11830.herokuapp.com/" passHref legacyBehavior>
           <Button
             component="a"
             target='_blank'
@@ -206,16 +206,16 @@ export default function Project() {
           return (
             < div key={project.id} >
               <h2>{project.name}</h2>
-      <Link href={`/profiles/projects/${project.id}`} passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text></Link>
+      <Link href={`/profiles/projects/${project.id}`} passHref legacyBehavior><Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text></Link>
               {/* <p>{project}</p> */}
               {/* <h3>test</h3> */}
             </div>
-          )
+          );
         }) :
         <h2>loading</h2>
       }
     </div>
-  )
+  );
 }
 //  {/* <h1>{projectData.userName}</h1>
 //       <p>{projectData.userEmail}</p>  */}

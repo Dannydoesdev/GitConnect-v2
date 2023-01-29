@@ -67,15 +67,17 @@ const EmailSignup = () => {
           >
             Sign Up
           </button>
-          <Link href="/login">
-            <a className="transition-all duration-500 cursor-pointer inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+          <Link
+            href="/login"
+            className="transition-all duration-500 cursor-pointer inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+            
               Login ?
-            </a>
+            
           </Link>
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 export default EmailSignup

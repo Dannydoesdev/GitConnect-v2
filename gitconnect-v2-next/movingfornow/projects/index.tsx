@@ -53,18 +53,18 @@ const Projects = ({ projects }: any) => {
       <h1>All projects</h1>
       {projects.map((project: any) => {
         return (
-      <div key={project.params.id} >
-        <h1>{project.params.id}</h1>
-        <Link href={'/projects/' + project.params.id} >
-          <a>
-            <h3>Go to Project</h3>
-          </a>
-        </Link>
-      </div>
-      )
+          <div key={project.params.id} >
+            <h1>{project.params.id}</h1>
+            <Link href={'/projects/' + project.params.id} >
+
+              <h3>Go to Project</h3>
+
+            </Link>
+          </div>
+        );
       })}
     </div>
-  )
+  );
 }
 
  
