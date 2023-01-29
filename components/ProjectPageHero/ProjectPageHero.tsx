@@ -21,7 +21,7 @@ export function HeroContentLeft(props: any) {
         <Text className={classes.description} size="xl" mt="xl">
           Flyre - connecting local talent with local events
         </Text>
-        <Link href="https://morning-atoll-11830.herokuapp.com/" passHref>
+        <Link href="https://morning-atoll-11830.herokuapp.com/" passHref legacyBehavior>
           <Button
             component="a"
             target='_blank'

@@ -145,7 +145,7 @@ const Projects = () => {
           projects.map((project: any) => {
             return (
               < div key={project.id} >
-                <Link href={`/profiles/projects/${project.id}`} passHref>
+                <Link href={`/profiles/projects/${project.id}`} passHref legacyBehavior>
                   <Card component='a' shadow="sm" p="xl" radius="md" withBorder>
                     <Card.Section>
                       <Image
@@ -161,15 +161,14 @@ const Projects = () => {
                   </Card></Link>
 
               </div>
-
-            )
+            );
           })
           :
           <h2>loading</h2>
         }
       </SimpleGrid>
     </div>
-  )
+  );
 }
 
 

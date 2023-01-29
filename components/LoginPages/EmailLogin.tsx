@@ -64,15 +64,17 @@ const EmailLogin = () => {
           >
             Sign In
           </button>
-          <Link href="/signup">
-            <a className="transition-all duration-500 cursor-pointer inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+          <Link
+            href="/signup"
+            className="transition-all duration-500 cursor-pointer inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+            
               Sign up?
-            </a>
+            
           </Link>
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 export default EmailLogin

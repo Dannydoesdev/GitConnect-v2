@@ -39,14 +39,13 @@ const GithubLogin = () => {
 
    
   return (
-
     <Paper radius="md" p="xl" withBorder>
       <Text size="lg" weight={400} align='center'>
         Welcome to GitConnect;  connect with Github for the best experience (read-only access)
       </Text>
       
       <Group grow mx='xl' mb="md" mt="md">
-      <Link href="#" passHref>
+      <Link href="#" passHref legacyBehavior>
           <Button
             // compact={true}
             component="a"
@@ -78,8 +77,7 @@ const GithubLogin = () => {
           </Anchor>
         </Group> */}
     </Paper>
-
-  )
+  );
 }
 
 export default GithubLogin
