@@ -23,12 +23,12 @@ const firebaseConfig = {
 
 let firebaseApp
 
-// init app
-if (!getApps().length) {
+// init app - removed if clause to prevent error
+// if (!getApps().length) {
   firebaseApp = initializeApp(firebaseConfig)
   console.log('firebase initialised')
   // const analytics = getAnalytics(firebaseApp);
-}
+// }
 
 export const app = firebaseApp
 export const auth = getAuth(app)
