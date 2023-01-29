@@ -17,14 +17,19 @@
     "resolveJsonModule": true,
     "jsx": "preserve",
     "incremental": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "components/AppContainer.js",
-    "components/EmailSignup.tsx.notworking"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
