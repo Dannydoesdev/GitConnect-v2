@@ -1,4 +1,4 @@
-import { AppShell, Footer, Group, Header, Text, Button, createStyles } from "@mantine/core";
+import { AppShell, Footer, Group, Header, Text, Button, createStyles, Avatar } from "@mantine/core";
 import { ColorModeSwitcher } from "../components/ColorModeSwitcher";
 import { useState, useContext } from "react";
 import Link from "next/link";
@@ -145,7 +145,17 @@ export const AppContainer = ({ children }, props) => {
                     </Text>
                   </Link>
                 </Group>
+            
                 <Group>
+                  {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
+                  <Avatar
+                    component={Link}
+                    href="/profiles"
+                    radius="xl"
+                    size="md"
+                    src={userData.userPhotoLink}
+                  />
+                  
                   <Link href="#" passHref>
                     <Button
                       component="a"
