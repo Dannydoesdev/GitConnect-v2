@@ -12,52 +12,52 @@ export function ProjectPageDynamicHero(props: any) {
   const project  = props.props[0] 
   return (
     // <div className={classes.hero}>
-      <Group className={classes.hero} sx={{backgroundImage: `url(/img/${project.id}.jpg)`}}>
-      <Overlay
-        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-        opacity={1}
-        zIndex={0}
-        />
-        
-      <Container className={classes.container}>
-        <Title className={classes.title}>{project.name}</Title>
-        <Text className={classes.description} size="xl" mt="xl">
-          {/* {project.name} */}
-        </Text>
-        <Group>
-        <Link href={project.live_url} passHref>
-          <Button
-            component="a"
-            target='_blank'
-            // size='xl'
-            // radius='xl'
-            className={classes.control}
-            sx={(theme) => ({
-              // subscribe to color scheme changes
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-            })}
-          >Live site</Button>
-          </Link>
-        <Link href={project.html_url} passHref>
-          <Button
-            component="a"
-            target='_blank'
-            // size='xl'
-            // radius='xl'
-            className={classes.control}
-            sx={(theme) => ({
-              // subscribe to color scheme changes
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-            })}
-          >On GitHub</Button>
-          </Link>
-          
-          </Group>
-        {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
-          Check it out!
-        </Button> */}
-        </Container>
-        </Group>
     // {/* </div> */}
+    <Group className={classes.hero} sx={{backgroundImage: `url(/img/${project.id}.jpg)`}}>
+    <Overlay
+      gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
+      opacity={1}
+      zIndex={0}
+      />
+      
+    <Container className={classes.container}>
+      <Title className={classes.title}>{project.name}</Title>
+      <Text className={classes.description} size="xl" mt="xl">
+        {/* {project.name} */}
+      </Text>
+      <Group>
+      <Link href={project.live_url} passHref legacyBehavior>
+        <Button
+          component="a"
+          target='_blank'
+          // size='xl'
+          // radius='xl'
+          className={classes.control}
+          sx={(theme) => ({
+            // subscribe to color scheme changes
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+          })}
+        >Live site</Button>
+        </Link>
+      <Link href={project.html_url} passHref legacyBehavior>
+        <Button
+          component="a"
+          target='_blank'
+          // size='xl'
+          // radius='xl'
+          className={classes.control}
+          sx={(theme) => ({
+            // subscribe to color scheme changes
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+          })}
+        >On GitHub</Button>
+        </Link>
+        
+        </Group>
+      {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
+        Check it out!
+      </Button> */}
+      </Container>
+      </Group>
   );
 }

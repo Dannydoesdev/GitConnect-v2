@@ -52,19 +52,17 @@ const Profiles = ({ profiles }: any) => {
     <div>
       <h1>All Profiles</h1>
       {profiles.map((profile: any) => {
-        return (
-          <>
-            <h1>{profile.params.id}</h1>
-            <Link href={'/profiles/' + profile.params.id} key={profile.params.id}>
-              <a>
-                <h3>Go to Profile</h3>
-              </a>
-            </Link>
-          </>
-        )
+        return <>
+          <h1>{profile.params.id}</h1>
+          <Link href={'/profiles/' + profile.params.id} key={profile.params.id}>
+
+            <h3>Go to Profile</h3>
+
+          </Link>
+        </>;
       })}
     </div>
-  )
+  );
 }
 
 

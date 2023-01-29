@@ -92,7 +92,7 @@ export function SignupPage() {
         </Text>
 
         <Group grow mx='xl' mb="md" mt="xl">
-          <Link href="#" passHref>
+          <Link href="#" passHref legacyBehavior>
             <Button
               // compact={true}
               component="a"
@@ -117,7 +117,7 @@ export function SignupPage() {
           Login
         </Button> */}
 
-        <Link href="/login" passHref>
+        <Link href="/login" passHref legacyBehavior>
           <Text align="center" mt="md">
             Already have an account?{' '}
             <Anchor<'a'> href="/login" weight={700}>
