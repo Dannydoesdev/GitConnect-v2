@@ -4,7 +4,7 @@ import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/cor
 import axios from 'axios'
 import { makeAnImg } from '../../../utils/makeAnImg'
 
-const ProfilePageProjectGrid = ({projects}:any) => {
+const ProfilePageProjectGrid = ({ projects }: any) => {
   // const { classes, theme } = useStyles();
 
   // const [projects, setProjects] = useState<any>(null)
@@ -39,7 +39,15 @@ const ProfilePageProjectGrid = ({projects}:any) => {
         projects.map((project: any) => {
           return (
             <div key={project.docData.id} >
-              <ProfilePageProjectCard image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))} title={project.docData.name} author={project.docData.owner.login} views={1} comments={2} link={`/profiles/projects/${project.docData.id}`} />
+              <ProfilePageProjectCard
+                image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))}
+                title={project.docData.name}
+                avatar={project.docData.owner.avatar_url}
+                author={project.docData.owner.login}
+                views={1}
+                comments={2}
+                profileUrl={`/profiles/${project.docData.userId}`}
+                link={`/profiles/projects/${project.docData.id}`} />
             </div>
           )
         }) :
@@ -47,8 +55,8 @@ const ProfilePageProjectGrid = ({projects}:any) => {
       }
 
     </SimpleGrid >
-        
+
   )
 }
-  
+
 export default ProfilePageProjectGrid
