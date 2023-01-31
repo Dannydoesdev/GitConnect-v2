@@ -22,8 +22,8 @@ export function HeroLanding() {
           Create. Share. Collaborate. Inspire.
         </Text>
 
-        
-          {/* <>
+
+        {/* <>
         <Text className={classes.description} size="sm" italic={true} mt="xl">
           Import from Github. Create a portfolio.
         </Text>
@@ -32,27 +32,41 @@ export function HeroLanding() {
           Share your projects. Inspire and be inspired.
         </Text>
         </> */}
-        
+
 
         {currentUser ?
           <>
-          
-          <Link href="/getrepos" passHref legacyBehavior>
-            <Button
-              component="a"
-              size="lg"
-              radius="md"
-              mt={60}
-              className={classes.control}
-            >
-             Add a project
-            </Button>
-          </Link>
-          <Text className={classes.description} italic={true} size="xs" mt="xl">
-            Note: This site is actively under construction
-          </Text>
 
-            </>
+            <Link href="/getrepos" passHref legacyBehavior>
+              <Button
+                component="a"
+                size="lg"
+                radius="md"
+                mt={60}
+                className={classes.control}
+              >
+                Add a project
+              </Button>
+            </Link>
+            <Text className={classes.description} italic={true} size="xs" mt="xl">
+              Note: This site is actively under construction
+            </Text>
+            <Link
+              href="https://git--connect.herokuapp.com/"
+              passHref
+              legacyBehavior>
+              <Text
+                component='a'
+                target='_blank'
+                className={classes.description} underline={true}
+                italic={true}
+                size="xs"
+                mt="sm">
+                Visit GitConnect; V1
+              </Text>
+            </Link>
+
+          </>
           :
           <>
             <Link href="/signup" passHref legacyBehavior>
@@ -69,6 +83,20 @@ export function HeroLanding() {
             <Text className={classes.description} italic={true} size="xs" mt="xl">
               Note: This site is actively under construction
             </Text>
+            <Link
+              href="https://git--connect.herokuapp.com/"
+              passHref
+              legacyBehavior>
+              <Text
+                component='a'
+                target='_blank'
+                className={classes.description} underline={true}
+                italic={true}
+                size="xs"
+                mt="sm">
+                Visit GitConnect; V1
+              </Text>
+            </Link>
           </>
 
         }
