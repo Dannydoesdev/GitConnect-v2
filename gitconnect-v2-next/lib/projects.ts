@@ -44,6 +44,62 @@ export async function getAllProjectsSimple() {
   })
 }
 
+
+export async function getAllProjectDataFromProfile(id:string) {
+  // const fullPath = path.join(postsDirectory, `${id}.md`);
+  // const fileContents = fs.readFileSync(fullPath, 'utf8');
+  console.log('id1')
+// console.log(id)
+  const projectQuery = query(collectionGroup(db, 'repos'), where('userId', '==', id));
+const querySnapshot = await getDocs(projectQuery);
+
+return querySnapshot.docs.map((detail: any) => {
+ 
+  // console.log('id')
+  // console.log(id)
+  // console.log('details')
+  const docData = { ...detail.data() }
+  // remove timestamp - causing errors
+  // delete docData.createdAt;
+  // console.log(docData)
+  // Combine the data with the id
+  return {
+    id,
+    docData,
+  };
+ 
+
+})
+  
+  
+  
+  
+
+// console.log(querySnapshot.docs)
+//   querySnapshot.forEach((doc) => {
+//     console.log(doc.id, ' => ', doc.data());
+// });
+// return querySnapshot.docs.map((detail: any) => {
+
+//   console.log('id')
+//   console.log(id)
+//   console.log('details')
+//   const docData = { ...detail.data() }
+//   // remove timestamp - causing errors
+//   delete docData.createdAt;
+//   console.log(docData)
+//   // Combine the data with the id
+//   return {
+//     id,
+//     docData,
+//   };
+ 
+
+// })
+}
+
+
+
 // return the data of the profiles
 
 export async function getProjectData(id:string) {
@@ -51,8 +107,11 @@ export async function getProjectData(id:string) {
     // const fileContents = fs.readFileSync(fullPath, 'utf8');
     console.log('id1')
   // console.log(id)
-    const profileQuery = query(collectionGroup(db, 'repos'), where('id', '==', id));
-  const querySnapshot = await getDocs(profileQuery);
+    const projectQuery = query(collectionGroup(db, 'repos'), where('id', '==', id));
+  const querySnapshot = await getDocs(projectQuery);
+
+  console.log(querySnapshot.docs)
+
   // console.log(querySnapshot.docs)
 //   querySnapshot.forEach((doc) => {
 //     console.log(doc.id, ' => ', doc.data());

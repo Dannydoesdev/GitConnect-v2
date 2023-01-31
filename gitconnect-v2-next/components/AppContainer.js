@@ -155,7 +155,7 @@ export const AppContainer = ({ children }, props) => {
 
                 <Group>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
-                  <Link href='/profiles' passHref legacyBehavior>
+                  <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior>
                     <Avatar
                       component='a'
                       radius='xl'

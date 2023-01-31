@@ -37,7 +37,7 @@ export async function getProfileData(id:string) {
     // console.log('details')
     const docData = { ...detail.data() }
     // remove timestamp - causing errors
-    delete docData.createdAt;
+    // delete docData.createdAt;
     // console.log(docData)
     // Combine the data with the id
     return {
