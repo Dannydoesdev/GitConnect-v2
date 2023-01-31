@@ -99,7 +99,9 @@ const GetRepos = () => {
       // console.log(queryData);
       queryData.map(async (v) => {
         // console.log(v)
-        await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, createdAt: serverTimestamp() }, { merge: true })
+        //Removing the createdAt timestamp - was breaking the code
+        //createdAt: serverTimestamp()
+        await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, userId: userId  }, { merge: true })
           .then(() => {
             console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
           })
