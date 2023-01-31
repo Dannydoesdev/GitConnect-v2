@@ -10,7 +10,7 @@ import { AuthContext } from "../context/AuthContext"
 
 const UserInfo: NextPage = () => {
 
-  console.log('userInfo page')
+  // console.log('userInfo page')
 
   const { userData } = useContext(AuthContext)
   // console.log(userData)

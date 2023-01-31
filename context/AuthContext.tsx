@@ -67,10 +67,10 @@ export const AuthProvider = ({ children }: Props) => {
 
         // if exists - don't add
       if (checkUserExists.exists()) {
-        console.log('user already added')
+        // console.log('user already added')
         // if they don't exist - use the server auth to add
       } else {
-        console.log('user not added yet... adding')
+        // console.log('user not added yet... adding')
         //Removing the createdAt timestamp - was breaking the code
         //createdAt: serverTimestamp()
         const newUserData = {...requiredData }

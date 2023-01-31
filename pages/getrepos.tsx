@@ -125,7 +125,7 @@ const GetRepos = () => {
 
   return <>
     {/* <h1>Hi</h1> */}
-    <Stack align='center' mt='md' spacing="lg">
+    <Stack align='center' mt={90} spacing="lg">
       <Avatar className='mx-auto' radius="xl" size="xl" src={userData.userPhotoLink} />
       <Text size='lg' weight='bolder' className='mx-auto'>{userName}'s repos</Text>
     </Stack>

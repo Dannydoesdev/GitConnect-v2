@@ -14,10 +14,10 @@ export default async function handler(
   if (req.method === 'POST') {
     // Process a POST request
   } else {
-    console.log('GET')
+    // console.log('GET')
     // const { pid } = req.query
     // res.end(`Profile: ${pid}`)
-    console.log('getting projects')
+    // console.log('getting projects')
     const projects: any = []
     const q = query(collectionGroup(db, 'repos'));
     const querySnapshot = await getDocs(q);

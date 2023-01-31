@@ -8,7 +8,7 @@ const fetcher = (url: string) => axios.get(url).then(res => res.data)
 export const getStaticPaths = async () => {
 
   const paths = await getAllProjectIds();
-  console.log('PATHS')
+  // console.log('PATHS')
   // console.log(paths)
   return {
     paths,
@@ -17,10 +17,10 @@ export const getStaticPaths = async () => {
 }
 
 export async function getStaticProps({ params }: any) {
-  console.log(params)
+  // console.log(params)
   const projectData: any = await getProjectData(params.id);
-  console.log('project DATA')
-  console.log(projectData)
+  // console.log('project DATA')
+  // console.log(projectData)
   // jsonify(projectData)
   // const dataToSend = {
   //   username: projectData.userName,

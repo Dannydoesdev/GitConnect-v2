@@ -17,10 +17,10 @@ import { ProjectPageDynamicHero } from '../../../../components/ProjectPageDynami
 
 export default function Project() {
   const router = useRouter()
-  console.log(router.query)
+  // console.log(router.query)
   const { id } = router.query
-  console.log(id)
-  console.log('projects in profiles')
+  // console.log(id)
+  // console.log('projects in profiles')
 
   const [projects, setProjects] = useState<any>(null)
   const [projectsArr, setProjectsArr] = useState<any>(null)
@@ -31,7 +31,7 @@ export default function Project() {
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL)
       .then((response) => {
-        console.log(response.data)
+        // console.log(response.data)
         setProjects(response.data)
       })
 
