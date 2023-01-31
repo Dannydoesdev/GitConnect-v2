@@ -30,14 +30,12 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
 
           <Group position="apart" spacing="xs" mt='sm'>
             <Center>
-              {/* <Avatar src={avatar} size={24} radius="xl" mr="xs" /> */}
               <Link href={profileUrl} passHref legacyBehavior>
                 <Avatar
                   component='a'
                   radius='xl'
                   size={24}
                   mr="xs"
-
                   src={avatar}
                 />
               </Link>
@@ -45,25 +43,6 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
                 {author}
               </Text>
             </Center>
-            {/* <Avatar src={avatar} size={24} radius="xl" mr="xs" />
-            <Text size="sm" className={classes.author}>
-              {author}
-            </Text> */}
-
-            {/* <Group spacing="lg">
-              <Center>
-                <IconEye size={16} stroke={1.5} color={theme.colors.dark[2]} />
-                <Text size="sm" className={classes.bodyText}>
-                  {views}
-                </Text>
-              </Center>
-              <Center>
-                <IconMessageCircle size={16} stroke={1.5} color={theme.colors.dark[2]} />
-                <Text size="sm" className={classes.bodyText}>
-                  {comments}
-                </Text>
-              </Center>
-            </Group> */}
           </Group>
         </div>
       </div>
