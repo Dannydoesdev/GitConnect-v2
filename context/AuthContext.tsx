@@ -71,7 +71,9 @@ export const AuthProvider = ({ children }: Props) => {
         // if they don't exist - use the server auth to add
       } else {
         console.log('user not added yet... adding')
-        const newUserData = {...requiredData,  createdAt: serverTimestamp() }
+        //Removing the createdAt timestamp - was breaking the code
+        //createdAt: serverTimestamp()
+        const newUserData = {...requiredData }
         // console.log(newUserData)
         // use the firebase auth provided uid as id for new user
         await setDoc(doc(colRef, user.uid), newUserData)
