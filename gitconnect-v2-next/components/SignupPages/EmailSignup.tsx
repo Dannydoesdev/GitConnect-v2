@@ -10,11 +10,11 @@ const EmailSignup = () => {
 
   const signupHandler = useCallback(
     async (event: any) => {
-      console.log("signupHandler called")
+      // console.log("signupHandler called")
       event.preventDefault()
       const { email, password } = event.target.elements
       try {
-        console.log(email.value, password.value)
+        // console.log(email.value, password.value)
         await createUserWithEmailAndPassword(auth, email.value, password.value)
         Router.push("/")
       } catch (error) {

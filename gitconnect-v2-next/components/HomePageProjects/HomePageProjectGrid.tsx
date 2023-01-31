@@ -17,7 +17,7 @@ const HomePageProjectGrid = () => {
     const URL = `/api/profiles/projects/all`;
     axios.get(URL)
       .then((response) => {
-        console.log(response.data)
+        // console.log(response.data)
         setProjects(response.data)
       })
 

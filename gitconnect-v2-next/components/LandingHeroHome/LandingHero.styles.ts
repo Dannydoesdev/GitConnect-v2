@@ -11,9 +11,9 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    height: '100vh',
+    height: '60vh',
     marginTop: 70,
-    paddingBottom: 220,
+    paddingBottom: 70,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
@@ -54,11 +54,23 @@ export default createStyles((theme) => ({
     },
   },
 
-  control: {
-    marginTop: theme.spacing.xl * 1.5,
+  userWelcome: {
+    color: theme.white,
+    maxWidth: 600,
 
     [theme.fn.smallerThan('sm')]: {
-      width: '100%',
+      // maxWidth: '100%',
+      fontSize: theme.fontSizes.lg,
+    },
+  },
+
+  control: {
+    marginTop: theme.spacing.xl * 1.5,
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+    width: '30%',
+
+    [theme.fn.smallerThan('sm')]: {
+      width: '70%',
     },
   },
 

@@ -14,10 +14,10 @@ const Index: NextPage = () => {
     <>
       <HeroLanding />
       <Space h='lg' />
-
+{/* 
       {currentUser ? <Title order={3} align='center'>Hi {userData.userName}</Title>
         :
-        ''}
+        ''} */}
       <Title order={1} weight='bolder' align='center'>GitConnect; Projects</Title>
       <Space h='xl' />
 

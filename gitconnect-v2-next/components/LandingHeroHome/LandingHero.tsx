@@ -1,10 +1,14 @@
 import { createStyles, Overlay, Container, Title, Button, Text } from '@mantine/core';
+import Link from 'next/link';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import useStyles from './LandingHero.styles';
 
 
 export function HeroLanding() {
   const { classes } = useStyles();
 
+  const { userData, currentUser } = useContext(AuthContext)
   return (
     <div className={classes.hero}>
       <Overlay
@@ -14,21 +18,60 @@ export function HeroLanding() {
       />
       <Container className={classes.container}>
         <Title className={classes.title}>GitConnect;</Title>
-        <Text className={classes.description} size="xl" mt="xl">
+        <Text className={classes.description} size="xl" mt='xs'>
           Create. Share. Collaborate. Inspire.
         </Text>
 
-        <Text className={classes.description} size="md" mt="xl">
-          Import from Github. Create a portfolio. Share your projects. Inspire and be inspired.
+        
+          {/* <>
+        <Text className={classes.description} size="sm" italic={true} mt="xl">
+          Import from Github. Create a portfolio.
         </Text>
 
-        <Text className={classes.description} size="sm" mt="xl">
-          Note: This site is actively under construction
+        <Text className={classes.description} size="sm" italic={true} mt='xs'>
+          Share your projects. Inspire and be inspired.
         </Text>
+        </> */}
+        
 
-        {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
-          Get started
-        </Button> */}
+        {currentUser ?
+          <>
+          
+          <Link href="/getrepos" passHref legacyBehavior>
+            <Button
+              component="a"
+              size="lg"
+              radius="md"
+              mt={60}
+              className={classes.control}
+            >
+             Add a project
+            </Button>
+          </Link>
+          <Text className={classes.description} italic={true} size="xs" mt="xl">
+            Note: This site is actively under construction
+          </Text>
+
+            </>
+          :
+          <>
+            <Link href="/signup" passHref legacyBehavior>
+              <Button
+                component="a"
+                size="lg"
+                radius="md"
+                mt={40}
+                className={classes.control}
+              >
+                Get started
+              </Button>
+            </Link>
+            <Text className={classes.description} italic={true} size="xs" mt="xl">
+              Note: This site is actively under construction
+            </Text>
+          </>
+
+        }
       </Container>
     </div>
   );

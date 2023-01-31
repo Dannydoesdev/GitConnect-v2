@@ -10,13 +10,14 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
   const { classes, theme } = useStyles();
 
   return (
+    <Link href={link} passHref legacyBehavior>
     <Card
       p="lg"
       shadow="lg"
       className={classes.card}
       radius="md"
       component="a"
-      href={link}
+      // href={link}
     // target="_blank"
     >
       <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
@@ -46,7 +47,8 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
           </Group>
         </div>
       </div>
-    </Card>
+      </Card>
+      </Link>
   );
 }
 

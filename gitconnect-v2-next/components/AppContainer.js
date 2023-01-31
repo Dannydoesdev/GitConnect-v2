@@ -119,7 +119,10 @@ export const AppContainer = ({ children }, props) => {
 
             {currentUser ? (
               <>
-                <Group position='center'>
+                
+                {/* Removing these nav items for now */}
+                
+                {/* <Group position='center'>
                   <Link href='/userinfo' passHref legacyBehavior>
                     <Text
                       component='a'
@@ -151,7 +154,7 @@ export const AppContainer = ({ children }, props) => {
                       Projects
                     </Text>
                   </Link>
-                </Group>
+                </Group> */}
 
                 <Group>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}

@@ -7,7 +7,7 @@ import useStyles from './ProjectPageHero.styles';
 
 export function HeroContentLeft(props: any) {
   const { classes } = useStyles();
-  console.log('Project page')
+  // console.log('Project page')
 
   return (
     <div className={classes.hero}>
