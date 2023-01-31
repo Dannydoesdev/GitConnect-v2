@@ -1,9 +1,10 @@
 import { IconEye, IconMessageCircle } from '@tabler/icons';
-import { Card, Text, Group, Center, createStyles } from '@mantine/core';
+import { Card, Text, Group, Center, createStyles, Avatar } from '@mantine/core';
 import useStyles from './HomePageProjectCard.styles';
+import Link from 'next/link';
 
 
-export function ImageCard({ image, title, author, views, comments, link }: ImageCardProps) {
+export function ImageCard({ image, profileUrl, title, author, avatar, views, comments, link }: ImageCardProps) {
   const { classes, theme } = useStyles();
 
   return (
@@ -25,25 +26,27 @@ export function ImageCard({ image, title, author, views, comments, link }: Image
             {title}
           </Text>
 
-          <Group position="apart" spacing="xs">
-            <Text size="sm" className={classes.author}>
-              {author}
-            </Text>
-
-            {/* <Group spacing="lg">
-              <Center>
-                <IconEye size={16} stroke={1.5} color={theme.colors.dark[2]} />
-                <Text size="sm" className={classes.bodyText}>
-                  {views}
+          <Group position="apart" spacing="xs" mt='sm'>
+            <Center>
+              <Link href={profileUrl} passHref legacyBehavior>
+                <Avatar
+                  component='a'
+                  radius='xl'
+                  size={24}
+                  mr="xs"
+                  src={avatar}
+                />
+              </Link>
+              <Link href={profileUrl} passHref legacyBehavior>
+                <Text
+                  component='a'
+                  size="sm"
+                  inline
+                  className={classes.author}>
+                {author}
                 </Text>
-              </Center>
-              <Center>
-                <IconMessageCircle size={16} stroke={1.5} color={theme.colors.dark[2]} />
-                <Text size="sm" className={classes.bodyText}>
-                  {comments}
-                </Text>
-              </Center>
-            </Group> */}
+              </Link>
+            </Center>
           </Group>
         </div>
       </div>
@@ -54,8 +57,10 @@ export function ImageCard({ image, title, author, views, comments, link }: Image
 interface ImageCardProps {
   link: string;
   image: string;
+  profileUrl: string;
   title: string;
   author: string;
+  avatar: string;
   views: number;
   comments: number;
 }

@@ -23,7 +23,7 @@ export async function getStaticProps({ params }: any) {
   const profileData: any = await getProfileData(params.id);
   const projectData: any = await getAllProjectDataFromProfile(params.id);
   // console.log(params.id)
-  console.log('getting profile data')
+  // console.log('getting profile data')
   // console.log(profileData)
   // jsonify(profileData)
   // const dataToSend = {
@@ -31,7 +31,7 @@ export async function getStaticProps({ params }: any) {
   //   userId: profileData.userId
 
   // }
-  console.log(projectData)
+  // console.log(projectData)
 
   return {
     props: {
@@ -45,11 +45,11 @@ export async function getStaticProps({ params }: any) {
 //   if (!data) return <div>Loading...</div>
 
 export default function Profile({ profile, projects }: any) {
-  console.log('getting single profile data')
+  // console.log('getting single profile data')
   // console.log(profile)
   const profileData = profile[0].docData
-  console.log('projects in Profile page component')
-  console.log(projects)
+  // console.log('projects in Profile page component')
+  // console.log(projects)
   return (
     <div>
       <h1>Profile Page</h1>

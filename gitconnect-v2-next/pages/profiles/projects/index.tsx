@@ -84,7 +84,7 @@ const Projects = () => {
     // const { data, error } = useSWR(`/api/projects/all`, fetcher)
     const userName = userData.userName
     const userId = userData.userId
-    console.log(userName)
+    // console.log(userName)
     // collection ref
     // const colRef = collectionGroup(db, 'repos')
     const colRef = collection(db, `repos`)

@@ -3,7 +3,7 @@ import { Sun, Moon } from "tabler-icons-react";
 
 export function ColorModeSwitcher() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  console.log(colorScheme)
+  // console.log(colorScheme)
   return (
     <Group position="center">
       <ActionIcon

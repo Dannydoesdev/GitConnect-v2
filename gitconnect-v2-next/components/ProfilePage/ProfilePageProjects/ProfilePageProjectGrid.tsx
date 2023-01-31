@@ -23,8 +23,8 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
 
   // }, [])
 
-  console.log('project grid projects')
-  console.log(projects)
+  // console.log('project grid projects')
+  // console.log(projects)
 
 
   return (

@@ -7,8 +7,8 @@ import useStyles from './ProjectPageDynamicHero.styles';
 
 export function ProjectPageDynamicHero(props: any) {
   const { classes } = useStyles();
-  console.log('Dynamic project hero')
-  console.log(props)
+  // console.log('Dynamic project hero')
+  // console.log(props)
   const project  = props.props[0] 
   return (
     // <div className={classes.hero}>
