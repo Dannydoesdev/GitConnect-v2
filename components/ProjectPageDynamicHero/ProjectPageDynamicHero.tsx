@@ -26,7 +26,7 @@ export function ProjectPageDynamicHero(props: any) {
         {/* {project.name} */}
       </Text>
       <Group>
-      <Link href={project.live_url} passHref legacyBehavior>
+      <Link href={project.live_url ? project.live_url : ''} passHref legacyBehavior>
         <Button
           component="a"
           target='_blank'
