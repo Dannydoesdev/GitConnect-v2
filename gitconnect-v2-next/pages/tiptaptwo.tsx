@@ -7,7 +7,7 @@ import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
-import { RTE } from "../components/RichTextEditor/RichTextEditor"
+import { RTE } from "../components/RichTextEditor/RichTextEditorOld"
 import Turndown from "turndown";
 
 const turndownService = new Turndown();
