@@ -47,7 +47,7 @@ export default function Project() {
   }, [])
 
   if (projects) {
-  
+    
     return (
         <>
         <ProjectPageDynamicHero props={projects} />
