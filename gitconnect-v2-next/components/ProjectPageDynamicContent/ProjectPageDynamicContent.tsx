@@ -25,27 +25,54 @@ export default function ProjectPageDynamicContent(props: any) {
   const { classes, theme } = useStyles();
   const project  = props.props[0] 
 
-const projectData = [
-  {
-    title: 'Process',
-    description:
-      project.process,
-    icon: IconListNumbers,
-  },
-  {
-    title: 'Challenges',
-    description:
-      project.challenges,
-    icon: IconFall,
-  },
-  {
-    title: 'Outcomes',
-    description:
-      project.outcomes,
-    icon: IconReportAnalytics,
-  },
-];
+  // Temporary workaround for non-static projects
 
+  let projectData: any = []
+  if (project.process && project.challenges && project.outcomes) {
+    projectData = [
+      {
+        title: 'Process',
+        description:
+          project.process,
+        icon: IconListNumbers,
+      },
+      {
+        title: 'Challenges',
+        description:
+          project.challenges,
+        icon: IconFall,
+      },
+      {
+        title: 'Outcomes',
+        description:
+          project.outcomes,
+        icon: IconReportAnalytics,
+      },
+    ];
+  }
+    // Temporary workaround for non-static projects
+  else {
+    projectData = [
+      {
+        title: 'Process',
+        description:
+        'Process not added yet',
+        icon: IconListNumbers,
+      },
+      {
+        title: 'Challenges',
+        description:
+        'Challenges not added yet',
+        icon: IconFall,
+      },
+      {
+        title: 'Outcomes',
+        description:
+         'Outcomes not added yet',
+        icon: IconReportAnalytics,
+      },
+    ];
+   }
 
   const features = projectData.map((project: any) => (
     <Card key={project.title} shadow="md" radius="md" className={classes.card} p="xl">
@@ -79,15 +106,20 @@ const projectData = [
       <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
         {features}
       </SimpleGrid>
-      <Space h = {80} />
+      <Space h={80} />
+      
+      {project.live_url &&
+        <>
       <Title order={2} className={classes.title} align="center" mt="sm">
       Check out the live site:
       </Title>
       <Group>
    
-        <iframe className={classes.iframe} src={project.live_url}></iframe>
+     <iframe className={classes.iframe} src={project.live_url}></iframe> 
     
-      </Group>
+        </Group>
+        </>
+      }
     </Container>
   );
 
