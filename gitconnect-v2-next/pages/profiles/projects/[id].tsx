@@ -1,21 +1,38 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-import useSWR from 'swr'
+import axios from 'axios';
+import { useState, useEffect, useContext } from 'react';
+import useSWR from 'swr';
 // import { getAllprojectIds, getprojectData } from '../../lib/projects'
-import { getAllProjectIds, getProjectData } from '../../../lib/projects'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
+import { getAllProjectIds, getProjectData } from '../../../lib/projects';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import {
+  createStyles,
+  Overlay,
+  Container,
+  Title,
+  Avatar,
+  Switch,
+  Card,
+  Image,
+  Text,
+  SimpleGrid,
+  Badge,
+  Button,
+  Group,
+  Space,
+  Center,
+  Stack,
+} from '@mantine/core';
 
-import ProjectPageDynamicContent from '../../../components/ProjectPageDynamicContent/ProjectPageDynamicContent'
-import { ProjectPageDynamicHero } from '../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero'
-
-
+import ProjectPageDynamicContent from '../../../components/ProjectPageDynamicContent/ProjectPageDynamicContent';
+import { ProjectPageDynamicHero } from '../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero';
+import { AuthContext } from '../../../context/AuthContext';
 
 export default function Project() {
-  const router = useRouter()
+  const { userData } = useContext(AuthContext);
+  const router = useRouter();
   // console.log(router.query)
-  const { id } = router.query
+  const { id } = router.query;
   // console.log(id)
   // const { userData } = useContext(AuthContext)
   // console.log('projects in profiles')
@@ -23,11 +40,10 @@ export default function Project() {
   // const router = useRouter()
   // console.log(router.query)
 
-  const [projects, setProjects] = useState<any>(null)
-  const [projectsArr, setProjectsArr] = useState<any>(null)
+  const [projects, setProjects] = useState<any>(null);
+  const [projectsArr, setProjectsArr] = useState<any>(null);
 
   useEffect(() => {
-
     // console.log(userData.userName)
     // userName = userData.userName
     // const fetcher = (url: string) => axios.get(url).then(res => res.data)
@@ -36,61 +52,88 @@ export default function Project() {
     // const userId = userData.userId
     // console.log(userName)
 
-
     const URL = `/api/profiles/projects/${id}`;
-    axios.get(URL)
-      .then((response) => {
-        // console.log(response.data)
-        setProjects(response.data)
-      })
-
-  }, [])
+    axios.get(URL).then((response) => {
+      // console.log(response.data)
+      setProjects(response.data);
+    });
+  }, []);
 
   if (projects) {
-  
-    return (
-        <>
-        <ProjectPageDynamicHero props={projects} />
-        <ProjectPageDynamicContent props = {projects} />
-      </>
-    )
-  } else {
+    console.log(projects[0].userId === userData.userId)
 
+    return (
+      <>
+        <ProjectPageDynamicHero props={projects} />
+        {projects[0].userId === userData.userId &&
+          <Center>
+            <Link href={`/profiles/projects/edit/${projects[0].id}`} passHref legacyBehavior>
+              <Button
+                component='a'
+                variant='filled'
+                size='lg'
+                radius='md'
+                mt={40}
+                className='mx-auto'
+                styles={(theme) => ({
+                  root: {
+                    border:
+                      theme.colorScheme === 'dark'
+                        ? 'white solid 1px'
+                        : 'darkblue solid 3px',
+                    backgroundColor:
+                      theme.colorScheme === 'dark'
+                        ? theme.colors.dark[3]
+                        : theme.colors.blue[8],
+                    width: '40%',
+                    [theme.fn.smallerThan('sm')]: {
+                      width: '70%',
+                    },
+                    '&:hover': {
+                      backgroundColor:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.dark[4]
+                          : theme.colors.blue[9],
+                    },
+                  },
+                })}
+              >
+                Edit your project
+              </Button>
+            </Link>
+          </Center>
+        }
+        <ProjectPageDynamicContent props={projects} />
+      </>
+    );
+  } else {
   }
   return (
-        <>
-          <h2> loading </h2>
-        </>
-  )
+    <>
+      <h2> loading </h2>
+    </>
+  );
 }
 //  {/* <h1>{projectData.userName}</h1>
 //       <p>{projectData.userEmail}</p>  */}
 
-      // {/* <ProjectPageDynamicContent /> */}
+// {/* <ProjectPageDynamicContent /> */}
 
-
-     
-      // {/* <HeroContentLeft props={projects} /> */}
-      // {/* <h1>Project Page</h1> */}
-      // {/* {projects ?
-      //   projects.map((project: any) => {
-      //     return (
-      //       < div key={project.id} >
-      //         <h2>{project.name}</h2>
-      // <Link href={`/profiles/projects/${project.id}`} passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text></Link> */}
-      //         {/* <p>{project}</p> */}
-      //         {/* <h3>test</h3> */}
-      //       {/* </div>
-      //     )
-      //   }) :
-      //   <h2>loading</h2>
-      // } */}
-
-
-
-
-
-
+// {/* <HeroContentLeft props={projects} /> */}
+// {/* <h1>Project Page</h1> */}
+// {/* {projects ?
+//   projects.map((project: any) => {
+//     return (
+//       < div key={project.id} >
+//         <h2>{project.name}</h2>
+// <Link href={`/profiles/projects/${project.id}`} passHref><Text component='a' className='dark:text-white' size='md' weight="bolder">Check it out!</Text></Link> */}
+//         {/* <p>{project}</p> */}
+//         {/* <h3>test</h3> */}
+//       {/* </div>
+//     )
+//   }) :
+//   <h2>loading</h2>
+// } */}
 
 // import * from '../../../img/'
 // const fetcher = (url: string) => axios.get(url).then(res => res.data)
@@ -131,9 +174,7 @@ export default function Project() {
 // console.log(router.query)
 // const { id } = router.query
 
-
 //   if (!data) return <div>Loading...</div>
-
 
 // export function HeroContentLeft(props: any) {
 //   const { classes } = useStyles();
@@ -173,7 +214,6 @@ export default function Project() {
 // }
 
 // const useStyles = createStyles((theme) => ({
-
 
 //   hero: {
 //     position: 'relative',
