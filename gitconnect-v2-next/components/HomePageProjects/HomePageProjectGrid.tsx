@@ -22,7 +22,42 @@ const HomePageProjectGrid = () => {
       })
 
   }, [])
+  
 
+
+  // COME BACK TO THIS - check if file exists && if not ue placeholder
+  // OR require img / auto generate on document create
+
+  // const [imgPath, setImgPath] = useState<string>('')
+  // useEffect(() => {
+  // const img = new Image();
+  // img.src = imgPath;
+  //   img.onload = () => {
+  //   setImgPath(imgPath)
+  //   console.log('image loaded');
+  // };
+  //   img.onerror = () => {
+  //     setImgPath(makeAnImg(600, 350))
+  //     console.log('image not loaded');
+  //   };
+  // }, [])
+
+  let placeholderImg = makeAnImg(600, 350)
+
+  // This got silly - aborting for now - better ways to do it
+  
+  // console.log(placeholderImg)
+  // const [imgExists, setImgExists] = useState<boolean>(true)
+
+  // const imgTest = (path: string) => {
+  //   // const img = new Image();
+  //   const getFile = new File([] , path)
+  //   // getFile.size > 0 ? setImgExists(true) : setImgExists(false)
+  //   // setImgExists(img.height !== 0)
+  //   // return img.height !== 0;
+  //   console.log(getFile.size)
+  //   return getFile.size > 0
+  // }
 
   return (
 
@@ -34,10 +69,14 @@ const HomePageProjectGrid = () => {
 
       {projects ?
         projects.map((project: any) => {
+                
+          // Check if ../../../img/${project.id}.jpg exists and if not, use placeholderImg
+          // const checkImg = imgTest(`../../../img/${project.id}.jpg`)
+         
           return (
             <div key={project.id} >
               <ImageCard
-                image={`../../../img/${project.id}.jpg` ? `../../../img/${project.id}.jpg` : (makeAnImg(600, 350))}
+                image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
                 title={project.name}
                 author={project.owner.login}
                 views={1}
