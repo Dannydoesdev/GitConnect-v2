@@ -14,7 +14,6 @@ import ProjectPageDynamicContent from '../../../../components/ProjectPageDynamic
 import { ProjectPageDynamicHero } from '../../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero'
 
 
-
 export default function Project() {
   const router = useRouter()
   // console.log(router.query)

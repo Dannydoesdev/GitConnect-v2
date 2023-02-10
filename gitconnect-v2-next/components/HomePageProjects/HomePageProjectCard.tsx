@@ -17,7 +17,11 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
       href={link}
       // target="_blank"
     >
-      <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
+      {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
+
+      {/* Temporary workaround for static projects to work */}
+      <div className={classes.image} style={{ backgroundImage: `url(${image})` ? `url(${image})` : image }} />
+      
       <div className={classes.overlay} />
 
       <div className={classes.content}>
