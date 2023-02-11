@@ -9,14 +9,73 @@ import { getAllProjectIds, getProjectData } from '../../../../lib/projects'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
-
+// import { GetServerSideProps } from 'next'
 import ProjectPageDynamicContent from '../../../../components/ProjectPageDynamicContent/ProjectPageDynamicContent'
 import { ProjectPageDynamicHero } from '../../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero'
 
 import RichTextEditor from '../../../../components/RichTextEditor/RichTextEditor'
 import { AuthContext } from '../../../../context/AuthContext'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../../../../firebase/clientApp'
 
 // NOTE URL like http://localhost:3000/profiles/projects/edit/572895196
+
+
+// export async function getServerSideProps() {
+//   console.log('hi')
+//   // const { userData } = useContext(AuthContext)
+//   // const router = useRouter()
+//   // const { id } = router.query
+//   // console.log(id)
+//   // const res = await fetch(`https://www.swapi.tech/api/films/`)
+//   // const data = await res.json()
+
+//   let initialFirebaseData;
+
+//   let repoId = '';
+//   const docRef = doc(db, `users/${userData.userId}/repos/${repoId}/projectData/mainContent`)
+//   console.log('testStaticProps')
+//   console.log(userData.userId)
+//   // console.log(repoId)
+//   const docSnap = await getDoc(docRef);
+//   if (docSnap.exists()) {
+
+//     const mainContent = docSnap.data()
+//     const htmlOutput = mainContent.htmlOutput
+//     // console.log("Current document data:", docSnap.data());
+//     console.log("Current html data:", mainContent.htmlOutput);
+//     console.log(htmlOutput.length)
+
+//     if (htmlOutput.length > 0) {
+//       console.log('updating content')
+//       initialFirebaseData = htmlOutput;
+//       // setFirebaseData(htmlOutput)
+//       // setinitialContent(htmlOutput)
+//       // content = firebaseData;
+//       // console.log(content)
+//     } else { initialFirebaseData = templateContent; }
+//           // setFirebaseData()
+    
+//     // const newDocSnap = await getDoc(docRef);
+//     // console.log("New document data:", newDocSnap.data());
+//   } else {
+
+//     initialFirebaseData = templateContent;
+//     // setinitialContent(templateContent)
+
+//     // doc.data() will be undefined in this case
+//     console.log("No such document!");
+
+//   }
+//   // console.log(initialContent)
+//   return {
+//     props: {
+//       initialData: initialFirebaseData
+//       // films: data.result
+//     },
+//     revalidate: 100,
+//   };
+// }
 
 export default function EditProject() {
   const { userData } = useContext(AuthContext)
@@ -59,7 +118,7 @@ export default function EditProject() {
             mt="sm">
             {projectData.name}
           </Title>
-          <RichTextEditor />
+          <RichTextEditor repoId={projectData.id} />
           {/* <ProjectPageDynamicContent props = {projects} /> */}
         </>
       )
