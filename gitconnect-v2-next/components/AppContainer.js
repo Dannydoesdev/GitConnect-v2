@@ -8,7 +8,7 @@ import {
   createStyles,
   Avatar,
 } from '@mantine/core';
-import { ColorModeSwitcher } from '../components/ColorModeSwitcher';
+import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { useState, useContext } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';

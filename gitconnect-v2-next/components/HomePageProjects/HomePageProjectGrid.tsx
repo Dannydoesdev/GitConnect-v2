@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { ImageCard } from '../HomePageProjects/HomePageProjectCard'
+import { ImageCard } from './HomePageProjectCard'
 import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/core'
 import axios from 'axios'
 import { makeAnImg } from '../../utils/makeAnImg'

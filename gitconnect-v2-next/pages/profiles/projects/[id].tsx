@@ -14,6 +14,7 @@ import { AuthContext } from '../../../context/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/clientApp';
 import DOMPurify from 'dompurify';
+import RichTextEditorDisplay from '../../../components/RichTextEditorDisplay/RichTextEditorDisplay';
 
 
 
@@ -52,9 +53,11 @@ export default function Project() {
       if (docSnap.exists()) {
         const mainContent = docSnap.data()
         const htmlOutput = mainContent.htmlOutput
-        console.log(htmlOutput)
+        // console.log(htmlOutput)
         if (htmlOutput.length > 0) {
-          const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
+          // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
+          const sanitizedHTML = DOMPurify.sanitize(htmlOutput, { ADD_ATTR: ['target'] });
+
           setFirebaseData(sanitizedHTML);
         }
       }
@@ -111,12 +114,12 @@ export default function Project() {
           </Center>
         }
         <ProjectPageDynamicContent props={projects} />
-
-        <Container>
+        <RichTextEditorDisplay content={firebaseData} />
+       
+        {/* <Container>
         <div dangerouslySetInnerHTML={{ __html: firebaseData }} />
-            {/* // {firebaseData} */}
      
-        </Container>
+        </Container> */}
       </>
     );
   } else {
