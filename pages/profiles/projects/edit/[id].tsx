@@ -1,15 +1,11 @@
 import axios from 'axios'
 import { useState, useEffect, useContext } from 'react'
-import useSWR from 'swr'
-import { getAllProjectIds, getProjectData } from '../../../../lib/projects'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
-// import { GetServerSideProps } from 'next'
+import { Container, Title, Group, Space, Center, Stack } from '@mantine/core';
 import ProjectPageDynamicContent from '../../../../components/ProjectPageDynamicContent/ProjectPageDynamicContent'
 import { ProjectPageDynamicHero } from '../../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero'
 import TipTapEditor from '../../../../components/RichTextEditor/RichTextEditor'
-import TipTapEditorTest from '../../../../components/RichTextEditor/RichTextEditorTest'
 import { AuthContext } from '../../../../context/AuthContext'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../../../../firebase/clientApp'
