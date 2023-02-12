@@ -36,34 +36,38 @@ export default function Project() {
   }, []);
 
 
-  const userId = userData.userId;
-  const repoId = id;
+  // const userId = userData.userId;
+
 
   // Load any existing data from Firestore & put in state
   // Will need to update page content with the data returned
 
   useEffect(() => {
+    if (projects) {
+      const userId = projects[0].userId;
+      const repoId = id;
 
-    const getFirebaseData = async () => {
+      const getFirebaseData = async () => {
 
-      const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
-      const docSnap = await getDoc(docRef);
+        const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
+        const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        const mainContent = docSnap.data()
-        const htmlOutput = mainContent.htmlOutput
-        // console.log(htmlOutput)
-        if (htmlOutput.length > 0) {
-          // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
-          const sanitizedHTML = DOMPurify.sanitize(htmlOutput, { ADD_ATTR: ['target'] });
+        if (docSnap.exists()) {
+          const mainContent = docSnap.data()
+          const htmlOutput = mainContent.htmlOutput
+          // console.log(htmlOutput)
+          if (htmlOutput.length > 0) {
+            // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
+            const sanitizedHTML = DOMPurify.sanitize(htmlOutput, { ADD_ATTR: ['target'] });
 
-          setFirebaseData(sanitizedHTML);
+            setFirebaseData(sanitizedHTML);
+          }
         }
-      }
 
-    };
-    getFirebaseData();
-  }, []);
+      };
+      getFirebaseData();
+    }
+  }, [projects]);
 
   // Check if projects are returned && if logged in user is owner - show edit button
 
@@ -115,8 +119,9 @@ export default function Project() {
 
         {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
         <ProjectPageDynamicContent props={projects} />
-        <RichTextEditorDisplay content={firebaseData} />
-       
+        {firebaseData &&
+          <RichTextEditorDisplay content={firebaseData} />
+        }
       </>
     );
   } else {
