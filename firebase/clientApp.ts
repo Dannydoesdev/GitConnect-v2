@@ -26,7 +26,7 @@ let firebaseApp
 // init app - removed if clause to prevent error
 // if (!getApps().length) {
   firebaseApp = initializeApp(firebaseConfig)
-  console.log('firebase initialised')
+  // console.log('firebase initialised')
   // const analytics = getAnalytics(firebaseApp);
 // }
 

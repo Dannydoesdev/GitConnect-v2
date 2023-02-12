@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }: Props) => {
         // use the firebase auth provided uid as id for new user
         await setDoc(doc(colRef, user.uid), newUserData)
         .then(cred => {
-          console.log(`User ${user.displayName} added to firestore with info: , ${cred}`);
+          // console.log(`User ${user.displayName} added to firestore with info: , ${cred}`);
         })
 
       }
