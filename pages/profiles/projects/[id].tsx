@@ -13,6 +13,7 @@ import { ProjectPageDynamicHero } from '../../../components/ProjectPageDynamicHe
 import { AuthContext } from '../../../context/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/clientApp';
+import DOMPurify from 'dompurify';
 
 
 
@@ -53,7 +54,8 @@ export default function Project() {
         const htmlOutput = mainContent.htmlOutput
         console.log(htmlOutput)
         if (htmlOutput.length > 0) {
-          setFirebaseData(htmlOutput);
+          const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
+          setFirebaseData(sanitizedHTML);
         }
       }
 
@@ -111,8 +113,8 @@ export default function Project() {
         <ProjectPageDynamicContent props={projects} />
 
         <Container>
-        
-            {firebaseData}
+        <div dangerouslySetInnerHTML={{ __html: firebaseData }} />
+            {/* // {firebaseData} */}
      
         </Container>
       </>
