@@ -11,6 +11,7 @@ import { Button, Center } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase/clientApp';
 import { AuthContext } from '../../context/AuthContext';
+import DOMPurify from 'dompurify';
 
 type TipTapProps = {
   repoId?: string
@@ -21,7 +22,7 @@ const templateContent =
   '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>';
 
 
-function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
+function TipTapEditor({ repoId }: TipTapProps) {
   const { userData } = useContext(AuthContext)
 
   const [editorContent, setEditorContent] = useState("");
@@ -68,7 +69,11 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
     extensions: [
       StarterKit,
       Underline,
-      Link,
+      Link.configure({
+        HTMLAttributes: {
+          target: '_blank',
+        },
+      }),
       Superscript,
       SubScript,
       Highlight,
@@ -104,21 +109,37 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
   const userName = userData.userName
 
 
-
   // Updates whatever was in the 'htmlOutput' in Firestore with what is currently in the editor upon saving
   // Note - to check if this creates a document even when the path doesn't exist yet
 
   async function sendContentToFirebase() {
 
+    // Sanitize with DomPurify before upload
+          // need to add 'target = _blank' back in
+    const sanitizedHTML = DOMPurify.sanitize(editorContent, { ADD_ATTR: ['target'] });
+    
     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
     const docSnap = await getDoc(docRef);
 
+
+    
+      // DOMPurify.sanitize('your content', { ADD_ATTR: ['target'] });
+    
+      // DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+      //   // set all elements owning target to target=_blank
+      //   if ('target' in node) {
+      //     node.setAttribute('target', '_blank');
+      //     node.setAttribute('rel', 'noopener');
+      //   }
+      // });
+    
+    
     if (docSnap.exists()) {
       // console.log("Current document data:", docSnap.data());
       // console.log('adding the following content to the document:')
       // console.log(editorContent)
 
-      await setDoc(docRef, { htmlOutput: editorContent }, { merge: true });
+      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
       // const newDocSnap = await getDoc(docRef);
       // console.log("New document data:", newDocSnap.data());
     } else {
@@ -149,6 +170,31 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
 
   return (
     <>
+        <Center>
+        <Button
+          component="a"
+          size="lg"
+          radius="md"
+          mt={40}
+          className='mx-auto'
+          onClick={handleDoneAdding}
+          styles={(theme) => ({
+            root: {
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+              width: '40%',
+              [theme.fn.smallerThan('sm')]: {
+                width: '70%',
+              },
+              '&:hover': {
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
+              },
+            },
+          })}
+        >
+          {editor.isEditable ? 'Save Changes' : 'Edit Project'}
+        </Button>
+      </Center>
+      
       <RichTextEditor
         mt={70}
         editor={editor}
@@ -204,30 +250,7 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
         <RichTextEditor.Content />
       </RichTextEditor>
 
-      <Center>
-        <Button
-          component="a"
-          size="lg"
-          radius="md"
-          mt={40}
-          className='mx-auto'
-          onClick={handleDoneAdding}
-          styles={(theme) => ({
-            root: {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-              width: '40%',
-              [theme.fn.smallerThan('sm')]: {
-                width: '70%',
-              },
-              '&:hover': {
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
-              },
-            },
-          })}
-        >
-          {editor.isEditable ? 'Save Changes' : 'Edit Project'}
-        </Button>
-      </Center>
+    
     </>
   );
 }
