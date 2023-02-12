@@ -17,11 +17,12 @@ type TipTapProps = {
   initialFirebaseData?: string
 }
 
+
 const templateContent =
   '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>';
 
 
-function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
+function TipTapEditorTest({ repoId, initialFirebaseData }: TipTapProps) {
   const { userData } = useContext(AuthContext)
 
   const [editorContent, setEditorContent] = useState("");
@@ -56,8 +57,8 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
   }, []);
 
 
-  // Set the existing data as the editor content if found
-
+   // Set the existing data as the editor content if found
+  
   useEffect(() => {
     editor?.commands.setContent(initialContent);
   }, [initialContent]);
@@ -78,6 +79,7 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
     onUpdate({ editor }) {
 
       // Update state every time the editor content changes
+
       setEditorContent(editor.getHTML());
     },
   });
@@ -87,8 +89,9 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
   // When clicking 'edit' this button will change the editor to 'editable'
   // When updates are finished - clicking 'save' will send the html content to Firestore
   // Checks whether the user was actually editing before sending
-
+  
   function handleDoneAdding() {
+    console.log(editable);
     if (!editor) {
       return undefined
     }
@@ -117,7 +120,6 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
       // console.log("Current document data:", docSnap.data());
       // console.log('adding the following content to the document:')
       // console.log(editorContent)
-
       await setDoc(docRef, { htmlOutput: editorContent }, { merge: true });
       // const newDocSnap = await getDoc(docRef);
       // console.log("New document data:", newDocSnap.data());
@@ -232,4 +234,4 @@ function TipTapEditor({ repoId, initialFirebaseData }: TipTapProps) {
   );
 }
 
-export default TipTapEditor
+export default TipTapEditorTest

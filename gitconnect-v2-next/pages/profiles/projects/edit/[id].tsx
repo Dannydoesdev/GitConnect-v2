@@ -1,41 +1,29 @@
-// Will create the edit page for projects as a dynamic route /edit/id
-
-// Copying in view-only version for boilerplate
-
 import axios from 'axios'
 import { useState, useEffect, useContext } from 'react'
-import useSWR from 'swr'
-import { getAllProjectIds, getProjectData } from '../../../../lib/projects'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
-
+import { Container, Title, Group, Space, Center, Stack } from '@mantine/core';
 import ProjectPageDynamicContent from '../../../../components/ProjectPageDynamicContent/ProjectPageDynamicContent'
 import { ProjectPageDynamicHero } from '../../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero'
-
-import RichTextEditor from '../../../../components/RichTextEditor/RichTextEditor'
+import TipTapEditor from '../../../../components/RichTextEditor/RichTextEditor'
 import { AuthContext } from '../../../../context/AuthContext'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../../../../firebase/clientApp'
 
-// NOTE URL like http://localhost:3000/profiles/projects/edit/572895196
 
 export default function EditProject() {
   const { userData } = useContext(AuthContext)
   const router = useRouter()
-  // console.log(router.query)
   const { id } = router.query
-  // console.log(id)
-  // console.log('projects in profiles')
 
   const [project, setProject] = useState<any>(null)
-  const [projectsArr, setProjectsArr] = useState<any>(null)
 
   useEffect(() => {
-
 
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL)
       .then((response) => {
-        console.log(response.data)
+        // console.log(response.data)
         setProject(response.data)
       })
 
@@ -59,14 +47,14 @@ export default function EditProject() {
             mt="sm">
             {projectData.name}
           </Title>
-          <RichTextEditor />
+          <TipTapEditor repoId={projectData.id} />
+          {/* <TipTapEditorTest repoId={projectData.id} /> */}
           {/* <ProjectPageDynamicContent props = {projects} /> */}
         </>
       )
     } else {
 
       // In case of signed in user not being project owner
-
       return (
         <>
           <Group w='100%' mt={200}>
@@ -82,7 +70,6 @@ export default function EditProject() {
     }
   } else {
     // In case of data still loading
-
     return (
       <>
         <h2> loading </h2>
