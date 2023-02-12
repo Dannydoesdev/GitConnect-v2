@@ -112,7 +112,8 @@ export default function ProjectPageDynamicContent(props: any) {
         <>
       <Title order={2} className={classes.title} align="center" mt="sm">
       Check out the live site:
-      </Title>
+        </Title>
+        {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
       <Group>
    
      <iframe className={classes.iframe} src={project.live_url}></iframe> 
@@ -124,16 +125,3 @@ export default function ProjectPageDynamicContent(props: any) {
   );
 
 }
-
-  // Tabler icon alternatives:
-
-// IconCheckupList
-// list-numbers
-// list-check
-// zoom-question
-// question-mark
-// chart-infographic
-// chart-dots
-// chart-bar
-// chart-arrows-vertical
-// report-analytics

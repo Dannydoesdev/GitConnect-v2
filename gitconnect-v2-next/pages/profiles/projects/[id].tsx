@@ -17,7 +17,6 @@ import DOMPurify from 'dompurify';
 import RichTextEditorDisplay from '../../../components/RichTextEditorDisplay/RichTextEditorDisplay';
 
 
-
 export default function Project() {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
@@ -113,13 +112,11 @@ export default function Project() {
             </Link>
           </Center>
         }
+
+        {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
         <ProjectPageDynamicContent props={projects} />
         <RichTextEditorDisplay content={firebaseData} />
        
-        {/* <Container>
-        <div dangerouslySetInnerHTML={{ __html: firebaseData }} />
-     
-        </Container> */}
       </>
     );
   } else {
