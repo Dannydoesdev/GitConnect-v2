@@ -35,8 +35,8 @@ export default function EditProject() {
 
     if (projectData.userId === userData.userId) {
 
-      console.log(projectData.userId)
-      console.log(userData.userId)
+      // console.log(projectData.userId)
+      // console.log(userData.userId)
       return (
         <>
           <ProjectPageDynamicHero props={project} />
