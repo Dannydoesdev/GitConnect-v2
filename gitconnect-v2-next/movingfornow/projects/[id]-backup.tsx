@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
 // import { getAllprojectIds, getprojectData } from '../../lib/projects'
-import { getAllProjectIds, getProjectData } from '../../../lib/projects'
+import { getAllProjectIds, getProjectData } from '../../lib/projects'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
