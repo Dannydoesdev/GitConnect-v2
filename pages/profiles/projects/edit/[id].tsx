@@ -14,6 +14,7 @@ import ProjectPageDynamicContent from '../../../../components/ProjectPageDynamic
 import { ProjectPageDynamicHero } from '../../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero'
 
 import RichTextEditor from '../../../../components/RichTextEditor/RichTextEditor'
+import TipTapEditorTest from '../../../../components/RichTextEditor/RichTextEditorTest'
 import { AuthContext } from '../../../../context/AuthContext'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../../../../firebase/clientApp'
@@ -118,7 +119,8 @@ export default function EditProject() {
             mt="sm">
             {projectData.name}
           </Title>
-          <RichTextEditor repoId={projectData.id} />
+          {/* <RichTextEditor repoId={projectData.id} /> */}
+          <TipTapEditorTest repoId={projectData.id} />
           {/* <ProjectPageDynamicContent props = {projects} /> */}
         </>
       )
