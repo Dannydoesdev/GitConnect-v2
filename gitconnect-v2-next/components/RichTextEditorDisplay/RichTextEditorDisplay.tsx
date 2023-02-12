@@ -17,6 +17,7 @@ function RichTextEditorDisplay({ content }: TipTapDisplayProps) {
 
   return (
     <Container
+      id='second-section'
       py="xl"
       className={classes.container}
     >
