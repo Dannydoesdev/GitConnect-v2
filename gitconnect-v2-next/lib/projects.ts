@@ -3,10 +3,7 @@ import { collection, collectionGroup, setDoc, addDoc, where, query, getDoc, getD
 // import { db } from '../firebase/clientApp'
 
 
-
 export async function getAllProjectIds() {
-  // const fileNames = fs.readdirSync(postsDirectory);
-  console.log('getting projects')
   const profiles = []
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
@@ -25,8 +22,7 @@ export async function getAllProjectIds() {
 }
 
 export async function getAllProjectsSimple() {
-  // const fileNames = fs.readdirSync(postsDirectory);
-  console.log('getting projects')
+
   const projects: any = []
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
@@ -37,8 +33,7 @@ export async function getAllProjectsSimple() {
     // console.log({ ...doc.data() })
     // console.log(detail.id)
     projects.push({...doc.data()})
-      
-        
+       
       return(projects)
     
   })
@@ -46,10 +41,7 @@ export async function getAllProjectsSimple() {
 
 
 export async function getAllProjectDataFromProfile(id:string) {
-  // const fullPath = path.join(postsDirectory, `${id}.md`);
-  // const fileContents = fs.readFileSync(fullPath, 'utf8');
-  console.log('id1')
-// console.log(id)
+
   const projectQuery = query(collectionGroup(db, 'repos'), where('userId', '==', id));
 const querySnapshot = await getDocs(projectQuery);
 
@@ -99,14 +91,10 @@ return querySnapshot.docs.map((detail: any) => {
 }
 
 
-
 // return the data of the profiles
 
 export async function getProjectData(id:string) {
-    // const fullPath = path.join(postsDirectory, `${id}.md`);
-    // const fileContents = fs.readFileSync(fullPath, 'utf8');
-    console.log('id1')
-  // console.log(id)
+
     const projectQuery = query(collectionGroup(db, 'repos'), where('id', '==', id));
   const querySnapshot = await getDocs(projectQuery);
 
