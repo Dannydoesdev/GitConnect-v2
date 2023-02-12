@@ -108,7 +108,6 @@ function TipTapEditor({ repoId }: TipTapProps) {
   const userId = userData.userId
   const userName = userData.userName
 
-
   // Updates whatever was in the 'htmlOutput' in Firestore with what is currently in the editor upon saving
   // Note - to check if this creates a document even when the path doesn't exist yet
 
@@ -121,27 +120,9 @@ function TipTapEditor({ repoId }: TipTapProps) {
     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
     const docSnap = await getDoc(docRef);
 
-
-    
-      // DOMPurify.sanitize('your content', { ADD_ATTR: ['target'] });
-    
-      // DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-      //   // set all elements owning target to target=_blank
-      //   if ('target' in node) {
-      //     node.setAttribute('target', '_blank');
-      //     node.setAttribute('rel', 'noopener');
-      //   }
-      // });
-    
-    
     if (docSnap.exists()) {
-      // console.log("Current document data:", docSnap.data());
-      // console.log('adding the following content to the document:')
-      // console.log(editorContent)
 
       await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-      // const newDocSnap = await getDoc(docRef);
-      // console.log("New document data:", newDocSnap.data());
     } else {
       console.log("No such document!");
     }
