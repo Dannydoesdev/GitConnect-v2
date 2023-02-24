@@ -5,7 +5,7 @@
 
 ## Live site
 
-### [Find the live site by clicking here](http://git-connect-v2.vercel.app/)
+### [Find the live site by clicking here](https://www.gitconnect.dev/)
 
 ### Note that 'v2' is actively under construction - and I am aiming to move into 'beta' within Q1 2023
 ---
