@@ -7,7 +7,7 @@
 
 ### [Find the live site by clicking here](http://git-connect-v2.vercel.app/)
 
-### Note that 'v2' is still under construction, 'v1' (linked below) is recommended for usage at this time
+### Note that 'v2' is actively under construction - and I am aiming to move into 'beta' within Q1 2023
 ---
 ## Contact
 
