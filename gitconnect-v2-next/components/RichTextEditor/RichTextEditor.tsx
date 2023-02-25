@@ -7,9 +7,12 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
+import Image from '@tiptap/extension-image';
 import { Button, Center } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase/clientApp';
+import { storage } from '../../firebase/clientApp'
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { AuthContext } from '../../context/AuthContext';
 import DOMPurify from 'dompurify';
 
@@ -19,11 +22,13 @@ type TipTapProps = {
 }
 
 const templateContent =
-  '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>';
+  '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul><img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />';
 
 
 function TipTapEditor({ repoId }: TipTapProps) {
   const { userData } = useContext(AuthContext)
+  const userId = userData.userId
+  const userName = userData.userName
 
   const [editorContent, setEditorContent] = useState("");
   const [editable, setEditable] = useState(false)
@@ -32,6 +37,8 @@ function TipTapEditor({ repoId }: TipTapProps) {
   const [initialContent, setinitialContent] = useState(templateContent)
   const [content, setContent] = useState(templateContent);
 
+  const [imgUrl, setImgUrl] = useState('');
+  const [progresspercent, setProgresspercent] = useState(0);
 
   // Load any existing data from Firestore & put in state
 
@@ -68,6 +75,15 @@ function TipTapEditor({ repoId }: TipTapProps) {
     editable,
     extensions: [
       StarterKit,
+      Image.configure({
+        inline: true,
+        // TODO: suggest moving the sizing to CSS properties based on class
+        HTMLAttributes: {
+          class: 'tiptapimage',
+          height: 'auto',
+          width: '100%',
+        },
+      }),
       Underline,
       Link.configure({
         HTMLAttributes: {
@@ -79,6 +95,61 @@ function TipTapEditor({ repoId }: TipTapProps) {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    // See https://www.codemzy.com/blog/tiptap-drag-drop-image - for below logic explanatino
+    editorProps: {
+      handleDrop: function (view, event, slice, moved) {
+        // test if dropping external files
+        if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+
+          let file = event.dataTransfer.files[0]; // the dropped file
+          let filesize: any = ((file.size / 1024) / 1024).toFixed(4); // get the filesize in MB
+
+          // Check for accepted file types
+          if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
+
+            //  valid image so upload to server
+            
+            // TODO: extract function outside handeDrop
+            const uploadImage = (file: any) => {
+
+              if (!file) return;
+              // console.log(file)
+              const storageRef = ref(storage, `users/${userId}/repos/${repoId}/tiptap/${file.name}`);
+              const uploadTask = uploadBytesResumable(storageRef, file);
+
+              uploadTask.on("state_changed",
+                (snapshot) => {
+                  const progress =
+                    Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                  setProgresspercent(progress);
+                },
+                (error) => {
+                  alert(error);
+                },
+                () => {
+                  getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setImgUrl(downloadURL)
+                    // place the now uploaded image in the editor where it was dropped
+                    const { schema } = view.state;
+                    const coordinates: any = view.posAtCoords({ left: event.clientX, top: event.clientY });
+                    const node = schema.nodes.image.create({ src: downloadURL }); // creates the image element
+                    const transaction = view.state.tr.insert(coordinates.pos, node); // places it in the correct position
+                    return view.dispatch(transaction);
+                  });
+                }
+              );
+            }
+
+            uploadImage(file)
+       
+          } else {
+            window.alert("Images need to be in jpg, png, gif or webp format and less than 10mb in size.");
+          }  
+          return true; // handled
+        }
+        return false; // not handled use default behaviour
+      }
+    },
     content,
     onUpdate({ editor }) {
 
@@ -105,8 +176,8 @@ function TipTapEditor({ repoId }: TipTapProps) {
     setEditable(!editable)
   }
 
-  const userId = userData.userId
-  const userName = userData.userName
+  // const userId = userData.userId
+  // const userName = userData.userName
 
   // Updates whatever was in the 'htmlOutput' in Firestore with what is currently in the editor upon saving
   // Note - to check if this creates a document even when the path doesn't exist yet
@@ -114,9 +185,9 @@ function TipTapEditor({ repoId }: TipTapProps) {
   async function sendContentToFirebase() {
 
     // Sanitize with DomPurify before upload
-          // need to add 'target = _blank' back in
+    // need to add 'target = _blank' back in
     const sanitizedHTML = DOMPurify.sanitize(editorContent, { ADD_ATTR: ['target'] });
-    
+
     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
     const docSnap = await getDoc(docRef);
 
@@ -151,7 +222,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
 
   return (
     <>
-        <Center>
+      <Center>
         <Button
           component="a"
           size="lg"
@@ -175,7 +246,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
           {editor.isEditable ? 'Save Changes' : 'Edit Project'}
         </Button>
       </Center>
-      
+
       <RichTextEditor
         mt={70}
         editor={editor}
@@ -231,9 +302,15 @@ function TipTapEditor({ repoId }: TipTapProps) {
         <RichTextEditor.Content />
       </RichTextEditor>
 
-    
+      {
+        !imgUrl && progresspercent > 0 &&
+        <div className='outerbar'>
+          <div className='innerbar' style={{ width: `${progresspercent}%` }}>{progresspercent}%</div>
+        </div>
+      }
     </>
   );
 }
 
 export default TipTapEditor
+
