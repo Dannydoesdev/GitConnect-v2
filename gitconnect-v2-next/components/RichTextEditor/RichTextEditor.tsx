@@ -11,6 +11,8 @@ import Image from '@tiptap/extension-image';
 import { Button, Center } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase/clientApp';
+import { storage } from '../../firebase/clientApp'
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { AuthContext } from '../../context/AuthContext';
 import DOMPurify from 'dompurify';
 
@@ -29,6 +31,8 @@ const templateContent =
 
 function TipTapEditor({ repoId }: TipTapProps) {
   const { userData } = useContext(AuthContext)
+  const userId = userData.userId
+  const userName = userData.userName
 
   const [editorContent, setEditorContent] = useState("");
   const [editable, setEditable] = useState(false)
@@ -37,6 +41,36 @@ function TipTapEditor({ repoId }: TipTapProps) {
   const [initialContent, setinitialContent] = useState(templateContent)
   const [content, setContent] = useState(templateContent);
 
+  const [imgUrl, setImgUrl] = useState('');
+  const [progresspercent, setProgresspercent] = useState(0);
+
+  const uploadImage = (file: any) => {
+    // e.preventDefault()
+    // const file = e.target[0]?.files[0]
+    if (!file) return;
+    console.log(file)
+    const storageRef = ref(storage, `files/${userId}/${repoId}/tiptap/${file.name}`);
+    console.log(storageRef)
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on("state_changed",
+      (snapshot) => {
+        const progress =
+          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        setProgresspercent(progress);
+      },
+      (error) => {
+        alert(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImgUrl(downloadURL)
+          console.log(downloadURL)
+        });
+      }
+    );
+
+  }
 
   // function uploadImage(file: any) {
   //   const data = new FormData();
@@ -98,15 +132,51 @@ function TipTapEditor({ repoId }: TipTapProps) {
           console.log(event.dataTransfer.files)
           let file = event.dataTransfer.files[0]; // the dropped file
           let filesize: any = ((file.size / 1024) / 1024).toFixed(4); // get the filesize in MB
-          console.log(filesize)
-          // if ((file.type === "image/jpeg" || file.type === "image/png") && filesize < 10) { // check valid image type under 10MB
+          // console.log(filesize)
+          if ((file.type === "image/jpeg" || file.type === "image/png") && filesize < 10) {
+            
+            // img.onload = function () {
+            // if (this.width > 5000 || this.height > 5000) {
+              // window.alert("Your images need to be less than 5000 pixels in height and width."); // display alert
+              // } else {
+            //  valid image so upload to server
+              // uploadImage will be your function to upload the image to the server or s3 bucket somewhere
+              uploadImage(file)
+              // .then(function (response) { 
+              //    response is the image url for where it has been saved
+              // pre-load the image before responding so loading indicators can stay
+              // and swaps out smoothly when image is ready
+              // let image = new Image();
+              // image.src = response;
+              // image.onload = function() {
+              // place the now uploaded image in the editor where it was dropped
+                
+              //     const { schema } = view.state;
+              //     const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+              //     const node = schema.nodes.image.create({ src: response }); // creates the image element
+              //     const transaction = view.state.tr.insert(coordinates.pos, node); // places it in the correct position
+              // return view.dispatch(transaction);
+                
+              //   }
+              // }).catch(function(error) {
+              //   if (error) {
+              //     window.alert("There was a problem uploading your image, please try again.");
+              //   }
+            // }
+            //   }
+            // })
+            // }
+
+          } else {
+            window.alert("Images need to be in jpg or png format and less than 10mb in size.");
+          }  // check valid image type under 10MB
           // check the dimensions
-          let _URL = window.URL || window.webkitURL;
-          const objectURL = window.URL.createObjectURL(file);
+          // let _URL = window.URL || window.webkitURL;
+          // const objectURL = window.URL.createObjectURL(file);
           // let URL = createObjectUrl(file)
-          let imgSrc = _URL.createObjectURL(file);
-          console.log('MDN method' + objectURL)
-          console.log('article method' + imgSrc)
+          // let imgSrc = _URL.createObjectURL(file);
+          // console.log('MDN method' + objectURL)
+          // console.log('article method' + imgSrc)
           // console.log('simple' + URL)
           // let img: any = new Image(); /* global Image */
           // img.src = _URL.createObjectURL(file);
@@ -125,6 +195,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
           // });
           // }
           // };
+        
           return true; // handled
         // } else {
           // window.alert("Images need to be in jpg or png format and less than 10mb in size.");
@@ -213,8 +284,8 @@ function TipTapEditor({ repoId }: TipTapProps) {
     setEditable(!editable)
   }
 
-  const userId = userData.userId
-  const userName = userData.userName
+  // const userId = userData.userId
+  // const userName = userData.userName
 
   // Updates whatever was in the 'htmlOutput' in Firestore with what is currently in the editor upon saving
   // Note - to check if this creates a document even when the path doesn't exist yet
