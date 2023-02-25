@@ -114,7 +114,14 @@ function TipTapEditor({ repoId }: TipTapProps) {
     editable,
     extensions: [
       StarterKit,
-      Image,
+      Image.configure({
+        inline: true,
+        HTMLAttributes: {
+          class: 'tiptapimage',
+          height: 'auto',
+          width: '100%',
+        },
+      }),
       Underline,
       Link.configure({
         HTMLAttributes: {
@@ -135,7 +142,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
           let filesize: any = ((file.size / 1024) / 1024).toFixed(4); // get the filesize in MB
           // console.log(filesize)
           if ((file.type === "image/jpeg" || file.type === "image/png") && filesize < 10) {
-            
+
             // img.onload = function () {
             // if (this.width > 5000 || this.height > 5000) {
               // window.alert("Your images need to be less than 5000 pixels in height and width."); // display alert
