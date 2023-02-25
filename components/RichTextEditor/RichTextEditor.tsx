@@ -49,7 +49,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
     // const file = e.target[0]?.files[0]
     if (!file) return;
     console.log(file)
-    const storageRef = ref(storage, `files/${userId}/${repoId}/tiptap/${file.name}`);
+    const storageRef = ref(storage, `users/${userId}/repos/${repoId}/tiptap/${file.name}`);
     console.log(storageRef)
     const uploadTask = uploadBytesResumable(storageRef, file);
 
