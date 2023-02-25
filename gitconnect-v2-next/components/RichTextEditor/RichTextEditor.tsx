@@ -7,6 +7,7 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
+import Image from '@tiptap/extension-image';
 import { Button, Center } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase/clientApp';
@@ -18,8 +19,12 @@ type TipTapProps = {
   initialFirebaseData?: string
 }
 
+// function createObjectUrl(file: File) {
+//   throw new Error('Function not implemented.');
+// }
+
 const templateContent =
-  '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>';
+  '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul><img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />';
 
 
 function TipTapEditor({ repoId }: TipTapProps) {
@@ -32,6 +37,12 @@ function TipTapEditor({ repoId }: TipTapProps) {
   const [initialContent, setinitialContent] = useState(templateContent)
   const [content, setContent] = useState(templateContent);
 
+
+  // function uploadImage(file: any) {
+  //   const data = new FormData();
+  //   data.append('file', file);
+  //   return axios.post('/documents/image/upload', data);
+  // };
 
   // Load any existing data from Firestore & put in state
 
@@ -68,6 +79,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
     editable,
     extensions: [
       StarterKit,
+      Image,
       Underline,
       Link.configure({
         HTMLAttributes: {
@@ -79,6 +91,50 @@ function TipTapEditor({ repoId }: TipTapProps) {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    // See https://www.codemzy.com/blog/tiptap-drag-drop-image - for below logic explanatino
+    editorProps: {
+      handleDrop: function (view, event, slice, moved) {
+        if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) { // if dropping external files
+          console.log(event.dataTransfer.files)
+          let file = event.dataTransfer.files[0]; // the dropped file
+          let filesize: any = ((file.size / 1024) / 1024).toFixed(4); // get the filesize in MB
+          console.log(filesize)
+          // if ((file.type === "image/jpeg" || file.type === "image/png") && filesize < 10) { // check valid image type under 10MB
+          // check the dimensions
+          let _URL = window.URL || window.webkitURL;
+          const objectURL = window.URL.createObjectURL(file);
+          // let URL = createObjectUrl(file)
+          let imgSrc = _URL.createObjectURL(file);
+          console.log('MDN method' + objectURL)
+          console.log('article method' + imgSrc)
+          // console.log('simple' + URL)
+          // let img: any = new Image(); /* global Image */
+          // img.src = _URL.createObjectURL(file);
+          // img.onload = function () {
+          // if (this.width > 5000 || this.height > 5000) {
+          // window.alert("Your images need to be less than 5000 pixels in height and width."); // display alert
+          // } else {
+          // valid image so upload to server
+          // uploadImage will be your function to upload the image to the server or s3 bucket somewhere
+          // uploadImage(file).then(function(response) { // response is the image url for where it has been saved
+          // do something with the response
+          // }).catch(function(error) {
+          // if (error) {
+          // window.alert("There was a problem uploading your image, please try again.");
+          // }
+          // });
+          // }
+          // };
+          return true; // handled
+        // } else {
+          // window.alert("Images need to be in jpg or png format and less than 10mb in size.");
+          // }
+          // return true; // handled
+          }
+          return false; // not handled use default behaviour
+        // }
+      }  
+    },
     content,
     onUpdate({ editor }) {
 
@@ -86,6 +142,58 @@ function TipTapEditor({ repoId }: TipTapProps) {
       setEditorContent(editor.getHTML());
     },
   });
+
+
+ // full code:
+//  editorProps: {
+//   handleDrop: function(view, event, slice, moved) {
+//     if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) { // if dropping external files
+//       let file = event.dataTransfer.files[0]; // the dropped file
+//       let filesize = ((file.size/1024)/1024).toFixed(4); // get the filesize in MB
+//       if ((file.type === "image/jpeg" || file.type === "image/png") && filesize < 10) { // check valid image type under 10MB
+//         // check the dimensions
+//         let _URL = window.URL || window.webkitURL;
+//         let img = new Image(); /* global Image */
+//         img.src = _URL.createObjectURL(file);
+//         img.onload = function () {
+//           if (this.width > 5000 || this.height > 5000) {
+//             window.alert("Your images need to be less than 5000 pixels in height and width."); // display alert
+//           } else {
+//             // valid image so upload to server
+//             // uploadImage will be your function to upload the image to the server or s3 bucket somewhere
+//             uploadImage(file).then(function(response) { // response is the image url for where it has been saved
+//               // pre-load the image before responding so loading indicators can stay
+//               // and swaps out smoothly when image is ready
+//               let image = new Image();
+//               image.src = response;
+//               image.onload = function() {
+//                 // place the now uploaded image in the editor where it was dropped
+//                 const { schema } = view.state;
+//                 const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+//                 const node = schema.nodes.image.create({ src: response }); // creates the image element
+//                 const transaction = view.state.tr.insert(coordinates.pos, node); // places it in the correct position
+//                 return view.dispatch(transaction);
+//               }
+//             }).catch(function(error) {
+//               if (error) {
+//                 window.alert("There was a problem uploading your image, please try again.");
+//               }
+//             });
+//           }
+//         };
+//       } else {
+//         window.alert("Images need to be in jpg or png format and less than 10mb in size.");
+//       }
+//       return true; // handled
+//     }
+//     return false; // not handled use default behaviour
+//   }
+// },
+// content: `
+//   <p>Hello World!</p>
+//   <img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />
+// `,
+// });
 
 
   // One button currently for 'edit' and 'save'
@@ -237,3 +345,5 @@ function TipTapEditor({ repoId }: TipTapProps) {
 }
 
 export default TipTapEditor
+
+
