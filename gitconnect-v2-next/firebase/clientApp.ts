@@ -10,6 +10,7 @@ import {
   onSnapshot
 } from 'firebase/firestore'
 import { getStorage, ref } from "firebase/storage";
+import { getAnalytics, isSupported, logEvent} from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -27,7 +28,7 @@ let firebaseApp
 // if (!getApps().length) {
   firebaseApp = initializeApp(firebaseConfig)
   // console.log('firebase initialised')
-  // const analytics = getAnalytics(firebaseApp);
+  // 
 // }
 
 export const app = firebaseApp
@@ -40,4 +41,19 @@ export const db = getFirestore(firebaseApp)
 
 export const storage = getStorage(app)
 
-export const storageRef = ref(storage);
+export const storageRef = ref(storage)
+
+// See https://stackoverflow.com/q/66812479
+
+let analytics;
+if (typeof window != undefined) {
+  // app = initializeApp(firebaseConfig);
+  analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
+  // db = getFirestore(app)
+}
+
+
+// export const analytics = getAnalytics(app)
+export { analytics };
+
+// logEvent(analytics, 'notification_received');

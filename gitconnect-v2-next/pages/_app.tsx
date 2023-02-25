@@ -1,7 +1,7 @@
-import { GetServerSidePropsContext } from 'next';
 import { useState, useEffect } from 'react'
 import NextApp, { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
+import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider } from '../context/AuthContext'
 import { getCookie, setCookie } from 'cookies-next';
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
@@ -35,9 +35,10 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             }}
             withGlobalStyles
             withNormalizeCSS>
-              <AppContainer>
-                <Component {...pageProps} />
-              </AppContainer>
+            <AppContainer>
+              <Component {...pageProps} />
+              <Analytics />
+            </AppContainer>
           </MantineProvider>
         </ColorSchemeProvider>
       </AuthProvider >
