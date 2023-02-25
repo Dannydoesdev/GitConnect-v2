@@ -36,10 +36,10 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             }}
             withGlobalStyles
             withNormalizeCSS>
-              <AppContainer>
+            <AppContainer>
               <Component {...pageProps} />
               <Analytics />
-              </AppContainer>
+            </AppContainer>
           </MantineProvider>
         </ColorSchemeProvider>
       </AuthProvider >
