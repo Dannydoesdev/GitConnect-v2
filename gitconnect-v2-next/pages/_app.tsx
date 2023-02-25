@@ -1,4 +1,3 @@
-import { GetServerSidePropsContext } from 'next';
 import { useState, useEffect } from 'react'
 import NextApp, { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
