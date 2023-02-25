@@ -44,33 +44,34 @@ function TipTapEditor({ repoId }: TipTapProps) {
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
 
-  const uploadImage = (file: any) => {
-    // e.preventDefault()
-    // const file = e.target[0]?.files[0]
-    if (!file) return;
-    console.log(file)
-    const storageRef = ref(storage, `users/${userId}/repos/${repoId}/tiptap/${file.name}`);
-    console.log(storageRef)
-    const uploadTask = uploadBytesResumable(storageRef, file);
+  // const uploadImage = (file: any) => {
+  //   // e.preventDefault()
+  //   // const file = e.target[0]?.files[0]
+  //   if (!file) return;
+  //   console.log(file)
+  //   const storageRef = ref(storage, `users/${userId}/repos/${repoId}/tiptap/${file.name}`);
+  //   console.log(storageRef)
+  //   const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on("state_changed",
-      (snapshot) => {
-        const progress =
-          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        setProgresspercent(progress);
-      },
-      (error) => {
-        alert(error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setImgUrl(downloadURL)
-          console.log(downloadURL)
-        });
-      }
-    );
+  //   uploadTask.on("state_changed",
+  //     (snapshot) => {
+  //       const progress =
+  //         Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+  //       setProgresspercent(progress);
+  //     },
+  //     (error) => {
+  //       alert(error);
+  //     },
+  //     () => {
+  //       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+  //         setImgUrl(downloadURL)
+  //         return downloadURL
+  //         console.log(downloadURL)
+  //       });
+  //     }
+  //   );
 
-  }
+  // }
 
   // function uploadImage(file: any) {
   //   const data = new FormData();
@@ -141,7 +142,51 @@ function TipTapEditor({ repoId }: TipTapProps) {
               // } else {
             //  valid image so upload to server
               // uploadImage will be your function to upload the image to the server or s3 bucket somewhere
-              uploadImage(file)
+            
+              const uploadImage = (file: any) => {
+                // e.preventDefault()
+                // const file = e.target[0]?.files[0]
+                if (!file) return;
+                console.log(file)
+                const storageRef = ref(storage, `users/${userId}/repos/${repoId}/tiptap/${file.name}`);
+                console.log(storageRef)
+                const uploadTask = uploadBytesResumable(storageRef, file);
+            
+                uploadTask.on("state_changed",
+                  (snapshot) => {
+                    const progress =
+                      Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    setProgresspercent(progress);
+                  },
+                  (error) => {
+                    alert(error);
+                  },
+                  () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                      setImgUrl(downloadURL)
+                      const { schema } = view.state;
+                      console.log(schema)
+                      const coordinates: any = view.posAtCoords({ left: event.clientX, top: event.clientY });
+                      console.log(coordinates)
+                      const node = schema.nodes.image.create({ src: downloadURL }); // creates the image element
+                      console.log(node)
+                      const transaction = view.state.tr.insert(coordinates.pos, node); // places it in the correct position
+                      console.log(transaction)
+                      return view.dispatch(transaction);
+                    });
+                  }
+                );
+            
+              }
+            
+            
+            uploadImage(file)
+            // async function setImageInTipTap(params: any) {
+              // const imageReturn = uploadImage(file)
+              // console.log(imageReturn)
+           
+                // }
+                 
               // .then(function (response) { 
               //    response is the image url for where it has been saved
               // pre-load the image before responding so loading indicators can stay
@@ -410,11 +455,15 @@ function TipTapEditor({ repoId }: TipTapProps) {
         <RichTextEditor.Content />
       </RichTextEditor>
 
-    
+      {
+        !imgUrl && progresspercent > 0 &&
+        <div className='outerbar'>
+          <div className='innerbar' style={{ width: `${progresspercent}%` }}>{progresspercent}%</div>
+        </div>
+      }
     </>
   );
 }
 
 export default TipTapEditor
-
 
