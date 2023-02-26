@@ -52,8 +52,10 @@ export const AuthProvider = ({ children }: Props) => {
         }
         // console.log(requiredData)
         // console.log(user)
-        setCookie('username', requiredData.userName)
+        // setCookie('username', requiredData.userName)
         setUserData(requiredData)
+        // console.log(requiredData)
+        // console.log({...requiredData})
         setCurrentUser(user)
         // console.log('test')
         // console.log(serverTimestamp)
@@ -70,6 +72,7 @@ export const AuthProvider = ({ children }: Props) => {
         // console.log('user already added')
         // if they don't exist - use the server auth to add
       } else {
+        // console.log(userData)
         // console.log('user not added yet... adding')
         //Removing the createdAt timestamp - was breaking the code
         //createdAt: serverTimestamp()
@@ -77,8 +80,16 @@ export const AuthProvider = ({ children }: Props) => {
         // console.log(newUserData)
         // use the firebase auth provided uid as id for new user
         await setDoc(doc(colRef, user.uid), newUserData)
-        .then(cred => {
+          .then(async cred => {
+            const duplicateUserData = {...requiredData }
+            // console.log(duplicateUserData)
+            // console.log({ ...userData })
+          // console.log('cred' + cred)
           // console.log(`User ${user.displayName} added to firestore with info: , ${cred}`);
+            // const duplicatePublicData = { ...userData }
+          await setDoc(doc(db, `users/${user.uid}/profileData/publicData`), duplicateUserData)
+
+            // console.log(`data successfully duplicated to users/${user.uid}/profileData/publicData = ${duplicateUserData}`)
         })
 
       }
