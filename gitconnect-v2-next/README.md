@@ -1,2 +1,1 @@
-# Next.js + Tailwind CSS + Firebase setup
-
+### Next.js root folder
