@@ -196,6 +196,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
       await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
     } else {
       console.log("No such document!");
+      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
     }
 
   }
@@ -243,7 +244,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
             },
           })}
         >
-          {editor.isEditable ? 'Save Changes' : 'Edit Project'}
+          {editor.isEditable ? 'Save Changes in Text Editor' : 'Unlock Text Editor'}
         </Button>
       </Center>
 
