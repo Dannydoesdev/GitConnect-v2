@@ -7,6 +7,8 @@ import useStyles from './LandingHero.styles';
 
 export function HeroLanding() {
   const { classes } = useStyles();
+  // console.log('landing hero hit')
+
 
   const { userData, currentUser } = useContext(AuthContext)
   return (
