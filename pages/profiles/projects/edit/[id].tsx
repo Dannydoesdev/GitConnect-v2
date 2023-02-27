@@ -9,6 +9,7 @@ import TipTapEditor from '../../../../components/RichTextEditor/RichTextEditor'
 import { AuthContext } from '../../../../context/AuthContext'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../../../../firebase/clientApp'
+import ToggleHiddenStatus from '../../../../components/EditProjectActions/ToggleHiddenStatus';
 
 
 export default function EditProject() {
@@ -47,6 +48,7 @@ export default function EditProject() {
             mt="sm">
             {projectData.name}
           </Title>
+          <ToggleHiddenStatus repoId={projectData.id} />
           <TipTapEditor repoId={projectData.id} />
           {/* <TipTapEditorTest repoId={projectData.id} /> */}
           {/* <ProjectPageDynamicContent props = {projects} /> */}

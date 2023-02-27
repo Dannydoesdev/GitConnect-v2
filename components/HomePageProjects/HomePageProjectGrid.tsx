@@ -13,7 +13,7 @@ const HomePageProjectGrid = () => {
 
     // const userName = userData.userName
     // console.log(userName)
-
+// TODO send to new api with users id to pull users own hidden projects on homepage
     const URL = `/api/profiles/projects/all`;
     axios.get(URL)
       .then((response) => {
