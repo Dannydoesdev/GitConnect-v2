@@ -141,15 +141,19 @@ const GetRepos = () => {
       // Set all returned repo data from GH API in the users firestore data
 
       queryData.map(async (v) => {
-
-        await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, userId: userId }, { merge: true })
+        // add fields for user ID and hidden status (starts 'true')
+        await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, userId: userId, hidden: true }, { merge: true })
           .then(() => {
             console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
           })
-          .catch((e) => { console.log(e); })
+          .catch((e) => {
+            console.log(e);
+          }).then(() => {
+            Router.push(`/profiles/${userId}`)
+          })
       })
     })
-    Router.push('/')
+
   }
 
   // Initial call for API information on users repos - store inside the state for display
