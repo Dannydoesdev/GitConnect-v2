@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: Props) => {
   if (loading) {
     return <>Loading...</>
   }
-  console.log('authcontext finished')
+  // console.log('authcontext finished')
   // Passing the currentUser and userData to the context components
   return (
     <AuthContext.Provider

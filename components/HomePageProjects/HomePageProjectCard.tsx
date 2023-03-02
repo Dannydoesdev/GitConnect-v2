@@ -9,13 +9,13 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
   const { classes, theme } = useStyles();
   const Router = useRouter()
 
-  const handleAvatarClick = () => {
+  // const handleAvatarClick = () => {
 
-    console.log('pushing to' + profileUrl)
+  //   console.log('pushing to' + profileUrl)
 
-    // Navigate to the user's profile page
-    Router.push(`${profileUrl}`)
-  };
+  //   // Navigate to the user's profile page
+  //   Router.push(`${profileUrl}`)
+  // };
 
   return (
     <>
@@ -41,15 +41,12 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
             <Text size="lg" pb='md' className={classes.title} weight={500}>
               {title}
             </Text>
-
           </div>
         </div>
-
       </Card>
       <Group
         position="apart" spacing="xs" mt='sm'
       >
-
         <Center>
 
           {/* Note - positioning hack to resolve nested link issues (temporary) */}
@@ -77,7 +74,7 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
               inline
               className={classes.author}
             >
-              {author}
+              {author} 0-am
             </Text>
           </Link>
         </Center>
