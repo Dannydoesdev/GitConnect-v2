@@ -7,8 +7,9 @@ import UploadFile from '../components/UploadFile'
 import HomePageProjectGrid from '../components/HomePageProjects/HomePageProjectGrid'
 
 const Index: NextPage = () => {
-
+  // console.log('index hit')
   const { userData, currentUser } = useContext(AuthContext)
+
 
   return (
     <>

@@ -109,7 +109,7 @@ const Projects = () => {
     const URL = `/api/profiles/projects/all`;
     axios.get(URL)
       .then((response) => {
-        console.log(response.data)
+        // console.log(response.data)
         setProjects(response.data)
       })
     //   //  console.log(response)
@@ -130,8 +130,8 @@ const Projects = () => {
     // }, [userData])
   }, [])
 
-  console.log('projectsss')
-  console.log(projects)
+  // console.log('projectsss')
+  // console.log(projects)
   // console.log(projects[0].name)
 
   //   console.log('PATHS')
