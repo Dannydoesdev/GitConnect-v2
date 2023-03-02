@@ -4,7 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { storage } from '../../firebase/clientApp'
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { Group, Text, useMantineTheme, Image, SimpleGrid, Button } from '@mantine/core';
+import { Group, Text, useMantineTheme, Image, SimpleGrid, Button, Center, Container } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
 import { Dropzone, DropzoneProps, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 
@@ -23,11 +23,14 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
 
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
-
+  const [imgCheck, setImgCheck] = useState(false)
   const [files, setFiles] = useState<FileWithPath[]>([]);
 
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
+    // console.log(imageUrl)
+    // setImgUrl(imageUrl)
+    // setImgCheck(true)
     return (
       <Image
         key={index}
@@ -37,11 +40,17 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
     );
   });
 
+  const handleFileDrop = (file: FileWithPath[]) => {
+    console.log('accepted file', file)
+    setFiles(file);
+    setImgCheck(true)
+  }
+
   function sendImageToFirebase(file: any) {
     console.log(file)
     const storageRef = ref(storage, `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
-  
+
     uploadTask.on("state_changed",
       (snapshot) => {
         const progress =
@@ -63,14 +72,28 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
 
   return (
     <div>
+       {/* <Group mx={10}> */}
       <Dropzone
+        // padding='xl'
         // loading
-        // onDrop={(files) => console.log('accepted files', files)}
-        onDrop={setFiles}
+        onDrop={(file) => handleFileDrop(file)}
+        // onDrop={setFiles}
         onReject={(files) => console.log('rejected files', files)}
         maxSize={3 * 1024 ** 2}
         maxFiles={1}
         accept={IMAGE_MIME_TYPE}
+        
+        sx={(theme) => ({
+          minHeight: 120,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginRight: '20px',
+          marginLeft: '20px',
+          marginTop: '20px',
+          backgroundColor: '#afafaf1a',
+         
+        })}
         {...props}
       >
         <Group position="center" spacing="xl" style={{ minHeight: 220, pointerEvents: 'none' }}>
@@ -102,24 +125,35 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
           </div>
         </Group>
       </Dropzone>
+      {/* </Group> */}
+      <Center
 
-      <SimpleGrid
-        cols={4}
+      >
+        <Container
+        size={200}
+        >
+        {previews}
+        </Container>
+
+        </Center>
+      {/* <SimpleGrid
+        cols={3}
         breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
         mt={previews.length > 0 ? 'xl' : 0}
       >
         {previews}
-      </SimpleGrid>
-
-      <Button
+      </SimpleGrid> */}
+      <Center>
+        <Button
           component="a"
           size="lg"
           radius="md"
           mt={40}
-        className='mx-auto'
-        onClick={() => console.log(files[0])}
 
-          // onClick={() => sendImageToFirebase(files[0])}
+          className='mx-auto'
+          // onClick={() => console.log(files[0])}
+
+          onClick={() => sendImageToFirebase(files[0])}
           styles={(theme) => ({
             root: {
               backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
@@ -133,161 +167,12 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
             },
           })}
         >
-          {files ? 'Waiting for image' : 'Save this image'}
+          {!imgCheck ? 'Waiting for image' : 'Save this image' }
         </Button>
+      </Center>
     </div>
   );
 }
 
-//  valid image so upload to server
-
-// TODO: extract function outside handeDrop
-// const uploadImage = (file: any) => {
-
-//   if (!file) return;
-//   // console.log(file)
-//   const storageRef = ref(storage, `users/${userId}/repos/${repoId}/tiptap/${file.name}`);
-//   const uploadTask = uploadBytesResumable(storageRef, file);
-
-//   uploadTask.on("state_changed",
-//     (snapshot) => {
-//       const progress =
-//         Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-//       setProgresspercent(progress);
-//     },
-//     (error) => {
-//       alert(error);
-//     },
-//     () => {
-//       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-//         setImgUrl(downloadURL)
-//         // place the now uploaded image in the editor where it was dropped
-//         const { schema } = view.state;
-//         const coordinates: any = view.posAtCoords({ left: event.clientX, top: event.clientY });
-//         const node = schema.nodes.image.create({ src: downloadURL }); // creates the image element
-//         const transaction = view.state.tr.insert(coordinates.pos, node); // places it in the correct position
-//         return view.dispatch(transaction);
-//       });
-//     }
-//   );
-// }
-
-// uploadImage(file)
-
-// } else {
-// window.alert("Images need to be in jpg, png, gif or webp format and less than 10mb in size.");
-// }
-// return true; // handled
-// }
-// return false; // not handled use default behaviour
-// }
-
-
-
-// ------------------
-
-// function UploadProjectCoverImage({ repoId }: RepoProps) {
-//   const { userData } = useContext(AuthContext)
-//   const userId = userData.userId
-//   const userName = userData.userName
-
-
-//   const [initialState, setInitialState] = useState(false);
-//   const [progresspercent, setProgresspercent] = useState(0);
-//   const [imgUrl, setImgUrl] = useState('');
-
-
-//   function sendImageToFirebase(file: any) {
-
-//       // test if dropping external files
-//       if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
-
-//         let file = event.dataTransfer.files[0]; // the dropped file
-//         let filesize: any = ((file.size / 1024) / 1024).toFixed(4); // get the filesize in MB
-
-//         // Check for accepted file types
-//         if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
-
-
-
-
-//   useEffect(() => {
-
-//     const getFirebaseData = async () => {
-
-//       const docRef = doc(db, `users/${userId}/repos/${repoId}`)
-//       const docSnap = await getDoc(docRef);
-
-//       if (docSnap.exists()) {
-//         const repoData = docSnap.data()
-//         const hiddenStatus = repoData.hidden
-
-//         setInitialState(hiddenStatus);
-
-//       }
-
-//     };
-//     getFirebaseData();
-//   }, []);
-
-
-//   async function handleToggleState() {
-
-//     const docRef = doc(db, `users/${userId}/repos/${repoId}`)
-//     const docSnap = await getDoc(docRef);
-
-
-//     if (docSnap.exists()) {
-//       const repoData = docSnap.data()
-//       const hiddenStatus = repoData.hidden
-
-//       if (hiddenStatus === true) {
-//         setInitialState(false)
-//         await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { hidden: false }, { merge: true })
-//           .then(() => {
-//             // console.log(`Repo ${repoId} hidden status set to false`);
-//           })
-//           .catch((e) => { console.log(e); })
-//       } else {
-//         setInitialState(true)
-//         await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { hidden: true }, { merge: true })
-//           .then(() => {
-//             // console.log(`Repo ${repoId} hidden status set to true`);
-//           })
-//           .catch((e) => { console.log(e); })
-//       }
-//     }
-
-//   }
-
-//   return (
-//     <>
-//       <Center>
-//         <Button
-//           component="a"
-//           size="lg"
-//           radius="md"
-//           mt={40}
-//           className='mx-auto'
-//           onClick={handleToggleState}
-//           styles={(theme) => ({
-//             root: {
-//               backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-//               width: '40%',
-//               [theme.fn.smallerThan('sm')]: {
-//                 width: '70%',
-//               },
-//               '&:hover': {
-//                 backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
-//               },
-//             },
-//           })}
-//         >
-//           {initialState ? 'Show project' : 'Hide project'}
-//         </Button>
-//       </Center>
-//     </>
-//   )
-// }
 
 export default UploadProjectCoverImage;
