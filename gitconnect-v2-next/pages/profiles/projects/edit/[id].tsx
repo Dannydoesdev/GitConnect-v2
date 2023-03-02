@@ -10,6 +10,7 @@ import { AuthContext } from '../../../../context/AuthContext'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../../../../firebase/clientApp'
 import ToggleHiddenStatus from '../../../../components/EditProjectActions/ToggleHiddenStatus';
+import UploadProjectCoverImage from '../../../../components/EditProjectActions/UploadProjectCoverImage';
 
 
 export default function EditProject() {
@@ -49,6 +50,7 @@ export default function EditProject() {
             {projectData.name}
           </Title>
           <ToggleHiddenStatus repoId={projectData.id} />
+          <UploadProjectCoverImage repoId={projectData.id} />
           <TipTapEditor repoId={projectData.id} />
           {/* <TipTapEditorTest repoId={projectData.id} /> */}
           {/* <ProjectPageDynamicContent props = {projects} /> */}
