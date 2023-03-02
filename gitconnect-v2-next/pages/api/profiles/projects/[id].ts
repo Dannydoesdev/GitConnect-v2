@@ -14,12 +14,12 @@ export default async function handler(
   if (req.method === 'POST') {
     // Process a POST request
   } else {
-    console.log('GET')
+    // console.log('GET')
     const { id }: any = req.query
     const intId = parseInt(id)
     // console.log(intId)
-    console.log(`Project: ${id}`)
-    console.log('getting projects')
+    // console.log(`Project: ${id}`)
+    // console.log('getting projects')
     const projects: any = []
     const q = query(collectionGroup(db, 'repos'), where('id', '==', intId));
     const querySnapshot = await getDocs(q);
