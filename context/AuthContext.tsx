@@ -11,7 +11,7 @@ import { collection, doc, setDoc, getDoc, addDoc, serverTimestamp } from "fireba
 // Note the type goes in angled brackets before the initial state
 export const AuthContext = React.createContext<any>(null)
 
-console.log('authcontext hit')
+// console.log('authcontext hit')
 // '?' indicates that the type is optional
 // Means - type = type | undefined
 type Props = {
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: Props) => {
           userPhotoLink: user.photoURL
         }
         // console.log(requiredData)
-        console.log(user)
+        // console.log(user)
         // setCookie('username', requiredData.userName)
         setUserData(requiredData)
         // console.log(requiredData)
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: Props) => {
         // console.log(serverTimestamp)
         
         // console.log({ ...requiredData, timestamp: serverTimestamp()  })
-        console.log(user.uid)
+        // console.log(user.uid)
         // check for user id
         const docRef = doc(colRef, user.uid);
         // check if user exists in db

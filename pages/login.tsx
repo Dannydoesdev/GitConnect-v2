@@ -7,7 +7,7 @@ import GoogleLogin from "../components//LoginPages/GoogleLogin"
 import { LoginPage } from "../components/LoginPages/NewLogin"
 
 const Login = () => {
-  console.log('hi')
+  // console.log('hi')
   const { currentUser } = useContext(AuthContext)
   const Router = useRouter()
 

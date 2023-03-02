@@ -53,14 +53,14 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
         setInitialState(false)
         await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { hidden: false }, { merge: true })
           .then(() => {
-            console.log(`Repo ${repoId} hidden status set to false`);
+            // console.log(`Repo ${repoId} hidden status set to false`);
           })
           .catch((e) => { console.log(e); })
       } else {
         setInitialState(true)
         await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { hidden: true }, { merge: true })
           .then(() => {
-            console.log(`Repo ${repoId} hidden status set to true`);
+            // console.log(`Repo ${repoId} hidden status set to true`);
           })
           .catch((e) => { console.log(e); })
       }

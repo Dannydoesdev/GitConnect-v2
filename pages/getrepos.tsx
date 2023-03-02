@@ -177,13 +177,13 @@ const GetRepos = () => {
       const existingRepoArr: string[] = []
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id);
+        // console.log(doc.id);
         existingRepoArr.push(doc.id)
         // setExistingFirebaseData([...existingFirebaseData, doc.id])
 
       });
       setExistingFirebaseData(existingRepoArr)
-      console.log(existingFirebaseData)
+      // console.log(existingFirebaseData)
     };
     getFirebaseData();
   }, []);
