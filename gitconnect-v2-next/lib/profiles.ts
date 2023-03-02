@@ -34,8 +34,51 @@ export async function getProfileData(id:string) {
       docData,
     };
    
-  
   })
 }
 
 
+export async function getProfileDataPublic(id: string) {
+  
+  ///users/bO4o8u9IskNbFk2wXZmjtJhAYkR2/profileData/ publicData
+
+  const docRef = doc(db, `users/${id}/profileData/publicData`)
+  const docSnap = await getDoc(docRef);
+  // const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
+// const querySnapshot = await getDocs(profileQuery);
+// console.log(querySnapshot.docs)
+  
+  if (docSnap.exists()) {
+    const docData = docSnap.data()
+
+    return {
+      id,
+      docData,
+    };
+    // const htmlOutput = mainContent.htmlOutput
+  } else {
+    console.log('No such document!');
+  }
+// return querySnapshot.docs.map((detail: any) => {
+
+  // const docData = { ...detail.data() }
+
+}
+
+
+// const getFirebaseData = async () => {
+
+//   const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
+//   const docSnap = await getDoc(docRef);
+
+//   if (docSnap.exists()) {
+//     const mainContent = docSnap.data()
+//     const htmlOutput = mainContent.htmlOutput
+
+//     if (htmlOutput.length > 0) {
+//       setinitialContent(htmlOutput);
+
+//     }
+//   }
+
+// };
