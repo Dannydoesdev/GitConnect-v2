@@ -189,15 +189,17 @@ function TipTapEditor({ repoId }: TipTapProps) {
     const sanitizedHTML = DOMPurify.sanitize(editorContent, { ADD_ATTR: ['target'] });
 
     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
-    const docSnap = await getDoc(docRef);
+    
+    await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+    // const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
+    // if (docSnap.exists()) {
 
-      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-    } else {
-      console.log("No such document!");
-      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-    }
+      
+    // } else {
+      // console.log("No such document!");
+    //   await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+    // }
 
   }
 

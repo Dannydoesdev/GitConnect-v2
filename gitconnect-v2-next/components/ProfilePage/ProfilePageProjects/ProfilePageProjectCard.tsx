@@ -10,45 +10,60 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
   const { classes, theme } = useStyles();
 
   return (
-    <Link href={link} passHref legacyBehavior>
-    <Card
-      p="lg"
-      shadow="lg"
-      className={classes.card}
-      radius="md"
-      component="a"
-      // href={link}
-    // target="_blank"
-    >
-      <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
-      <div className={classes.overlay} />
+    <>
+    {/* // <Link href={link} passHref legacyBehavior> */}
+      <Card
+         p="xl"
+         mb='lg'
+        // p="lg"
+        shadow="lg"
+        className={classes.card}
+        radius="md"
+        component="a"
+      href={link}
+      // target="_blank"
+      >
+        <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
+        <div className={classes.overlay} />
 
-      <div className={classes.content}>
-        <div>
-          <Text size="lg" className={classes.title} weight={500}>
-            {title}
-          </Text>
+        <div className={classes.content}>
+          <div>
+            <Text size="lg" pb='md' className={classes.title} weight={500}>
+              {title}
+            </Text>
 
-          <Group position="apart" spacing="xs" mt='sm'>
-            <Center>
-              <Link href={profileUrl} passHref legacyBehavior>
-                <Avatar
-                  component='a'
-                  radius='xl'
-                  size={24}
-                  mr="xs"
-                  src={avatar}
-                />
-              </Link>
-              <Text size="sm" inline className={classes.author}>
-                {author}
-              </Text>
-            </Center>
-          </Group>
+            <Group position="apart" spacing="xs" mt='sm'>
+
+              <Center>
+                <Link href={profileUrl} passHref legacyBehavior>
+                  <Avatar
+                    component='a'
+                    radius='xl'
+                    size={24}
+                    mr="xs"
+                    src={avatar}
+                    styles={() => ({
+                      root: {
+                        position: 'relative',
+                        top: '-16px',
+                        left: '0px',
+                      },
+                    })}
+                  />
+
+                </Link>
+                <Link href={profileUrl} passHref legacyBehavior>
+                  <Text size="sm" inline className={classes.author}>
+                    {author}
+                  </Text>
+                </Link>
+              </Center>
+            </Group>
+          </div>
         </div>
-      </div>
       </Card>
-      </Link>
+    {/* // </Link> */}
+    </>
   );
 }
 
