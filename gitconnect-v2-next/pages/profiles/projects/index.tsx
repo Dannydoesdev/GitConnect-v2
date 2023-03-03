@@ -119,7 +119,7 @@ const Projects = () => {
     // console.log(data)
     // const projects = getAllProjectsSimple();
 
-    // console.log(projects)
+    console.log(projects)
     // .then((response) => {
     //   //  console.log(response)
     //   // console.log(response.data)
