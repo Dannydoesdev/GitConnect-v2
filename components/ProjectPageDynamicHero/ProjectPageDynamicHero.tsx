@@ -9,11 +9,16 @@ export function ProjectPageDynamicHero(props: any) {
   const { classes } = useStyles();
   // console.log('Dynamic project hero')
   // console.log(props)
+  function makeAnImg(width: number, height: number) {
+    let randNum = Math.floor(Math.random() * 1000)
+    return `https://picsum.photos/${width}/${height}?random=${randNum}`
+  }
+
   const project  = props.props[0] 
   return (
     // <div className={classes.hero}>
     // {/* </div> */}
-    <Group className={classes.hero} sx={{backgroundImage: `url(/img/${project.id}.jpg)`}}>
+    <Group className={classes.hero} sx={{backgroundImage: project.coverImage ? `url(${project.coverImage})` : `url(${makeAnImg(3200,1200)})`}}>
     <Overlay
       gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
       opacity={1}
