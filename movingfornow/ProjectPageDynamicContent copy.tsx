@@ -8,11 +8,11 @@ import { ProjectPageDynamicHero } from '../components/ProjectPageDynamicHero/Pro
 
 export default function ProjectPageDynamicContentOld(props: any) {
   const router = useRouter()
-  console.log(router.query)
+  // console.log(router.query)
   const { id } = router.query
-  console.log(id)
+  // console.log(id)
   // const { userData } = useContext(AuthContext)
-  console.log('projects in profiles')
+  // console.log('projects in profiles')
 
   const projects = props.props[0]
 

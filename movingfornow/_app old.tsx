@@ -19,7 +19,7 @@ function MyApp(props: any) {
   // console.log(props)
   const { Component, pageProps } = props;
 
-  console.log(getCookie('mantine-color-scheme'))
+  // console.log(getCookie('mantine-color-scheme'))
   // let firstColorScheme
   // // Run on render
 
