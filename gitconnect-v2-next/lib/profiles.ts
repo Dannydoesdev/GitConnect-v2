@@ -57,7 +57,7 @@ export async function getProfileDataPublic(id: string) {
     };
     // const htmlOutput = mainContent.htmlOutput
   } else {
-    console.log('No such document!');
+    // console.log('No such document!');
   }
 // return querySnapshot.docs.map((detail: any) => {
 

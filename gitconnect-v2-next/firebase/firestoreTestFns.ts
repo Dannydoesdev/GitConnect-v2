@@ -12,7 +12,7 @@ import {
 // init firestore
 // const db = getFirestore(app);
 const fbdb = db
-console.log('firestore file loaded')
+// console.log('firestore file loaded')
 // collection ref
 // Get the collection and store
 // pass the db in as an argument, as well as the collection name
@@ -24,7 +24,7 @@ getDocs(colRef)
   .then((snapshot) => {
     // get all docs in the snapshot
     // returns array of object representing the documents (incl methods etc)
- console.log('hi')
+//  console.log('hi')
     let books:object[] = []
     // use the data method to get the actual data
     snapshot.docs.forEach((doc) => {

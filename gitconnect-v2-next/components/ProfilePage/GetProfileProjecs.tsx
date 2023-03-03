@@ -39,8 +39,8 @@ export async function getStaticProps({ params }: any) {
 //   if (!data) return <div>Loading...</div>
 
 export default function Project({ project }: any) {
-  console.log('one project')
-  console.log(project)
+  // console.log('one project') 
+  // console.log(project)
   // const projectData = project[0].docData
 
   return (

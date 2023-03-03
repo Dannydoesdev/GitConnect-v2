@@ -98,7 +98,7 @@ export async function getProjectData(id:string) {
     const projectQuery = query(collectionGroup(db, 'repos'), where('id', '==', id));
   const querySnapshot = await getDocs(projectQuery);
 
-  console.log(querySnapshot.docs)
+  // console.log(querySnapshot.docs)
 
   // console.log(querySnapshot.docs)
 //   querySnapshot.forEach((doc) => {

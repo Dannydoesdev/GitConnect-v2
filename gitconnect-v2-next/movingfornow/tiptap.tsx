@@ -19,7 +19,7 @@ function Demo() {
 
   useEffect(() => { 
     // setTiptapContent(content)
-    console.log(editorContent);
+    // console.log(editorContent);
   }, [editorContent]);
 
   const editor = useEditor({
