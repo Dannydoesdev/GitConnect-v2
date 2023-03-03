@@ -3,6 +3,10 @@ import { ProfilePageProjectCard } from './ProfilePageProjectCard'
 import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/core'
 import axios from 'axios'
 import { makeAnImg } from '../../../utils/makeAnImg'
+import { AuthContext } from '../../../context/AuthContext';
+import { storage } from '../../../firebase/clientApp'
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { db } from '../../../firebase/clientApp';
 
 const ProfilePageProjectGrid = ({ projects }: any) => {
   // const { classes, theme } = useStyles();
@@ -25,6 +29,15 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
 
   // console.log('project grid projects')
   // console.log(projects)
+// TODO - Make this an API call or seperate hook
+  
+  const { userData } = useContext(AuthContext)
+  const userId = userData.userId
+  const userName = userData.userName
+    
+  const [firebaseImgs, setFirebaseImgs] = useState('')
+  
+// console.log(projects)
 
 
   return (
@@ -40,7 +53,8 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
           return (
             <div key={project.docData.id} >
               <ProfilePageProjectCard
-                image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))}
+                image={project.docData.coverImage}
+                // image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))}
                 title={project.docData.name}
                 avatar={project.docData.owner.avatar_url}
                 author={project.docData.owner.login}

@@ -32,7 +32,8 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
         {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
 
         {/* Temporary workaround for static projects to work */}
-        <div className={classes.image} style={{ backgroundImage: `url(${image})` ? `url(${image})` : image }} />
+        <div className={classes.image} style={{ backgroundImage: `url(${image})`}} />
+        {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` ? `url(${image})` : image }} /> */}
 
         <div className={classes.overlay} />
 
@@ -74,7 +75,7 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
               inline
               className={classes.author}
             >
-              {author} 0-am
+              {author}
             </Text>
           </Link>
         </Center>

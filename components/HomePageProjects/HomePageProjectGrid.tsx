@@ -8,6 +8,8 @@ const HomePageProjectGrid = () => {
   // const { classes, theme } = useStyles();
 
   const [projects, setProjects] = useState<any>(null)
+  const [firebaseImgs, setFirebaseImgs] = useState('')
+
 
   useEffect(() => {
 
@@ -23,6 +25,8 @@ const HomePageProjectGrid = () => {
 
   }, [])
   
+
+
 
 
   // COME BACK TO THIS - check if file exists && if not ue placeholder
@@ -42,7 +46,7 @@ const HomePageProjectGrid = () => {
   //   };
   // }, [])
 
-  let placeholderImg = makeAnImg(600, 350)
+  // let placeholderImg = makeAnImg(600, 350)
 
   // This got silly - aborting for now - better ways to do it
   
@@ -76,7 +80,8 @@ const HomePageProjectGrid = () => {
           return (
             <div key={project.id} >
               <ImageCard
-                image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
+                 image={project.coverImage}
+                // image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
                 title={project.name}
                 author={project.owner.login}
                 views={1}

@@ -46,8 +46,9 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
     setImgCheck(true)
   }
 
-  function sendImageToFirebase(file: any) {
+  async function sendImageToFirebase(file: any) {
     console.log(file)
+  
     const storageRef = ref(storage, `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -61,10 +62,22 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
         alert(error);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then(async (downloadURL) => {
+            const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`)
+            const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`)
+
+            await setDoc(docRef, { coverImage: downloadURL }, { merge: true })
+            await setDoc(parentStorageRef, { coverImage: downloadURL }, { merge: true })
+                         
           setImgUrl(downloadURL)
           console.log(`URL to stored img: ${downloadURL}}`)
-        });
+          })
+            // .then(async (downloadURL) => {
+              // const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`)
+        
+
+        // });
       }
     );
   }
