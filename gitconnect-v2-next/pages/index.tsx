@@ -8,7 +8,7 @@ import HomePageProjectGrid from '../components/HomePageProjects/HomePageProjectG
 
 const Index: NextPage = () => {
   // console.log('index hit')
-  const { userData, currentUser } = useContext(AuthContext)
+  // const { userData, currentUser } = useContext(AuthContext)
 
 
   return (

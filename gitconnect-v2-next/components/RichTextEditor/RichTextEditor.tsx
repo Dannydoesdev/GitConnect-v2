@@ -168,7 +168,7 @@ function TipTapEditor({ repoId }: TipTapProps) {
     if (!editor) {
       return undefined
     }
-    if (editable === true) {
+    if (editable === true && editorContent !== templateContent) {
 
       sendContentToFirebase()
     }

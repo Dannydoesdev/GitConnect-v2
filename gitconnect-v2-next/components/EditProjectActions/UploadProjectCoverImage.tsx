@@ -7,6 +7,7 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { Group, Text, useMantineTheme, Image, SimpleGrid, Button, Center, Container } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
 import { Dropzone, DropzoneProps, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Router, useRouter } from "next/router"
 
 type RepoProps = {
   repoId?: string
@@ -18,6 +19,7 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
   const { userData } = useContext(AuthContext)
   const userId = userData.userId
   const userName = userData.userName
+  const router = useRouter()
 
   const theme = useMantineTheme();
 
@@ -46,8 +48,9 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
     setImgCheck(true)
   }
 
-  function sendImageToFirebase(file: any) {
+  async function sendImageToFirebase(file: any) {
     console.log(file)
+  
     const storageRef = ref(storage, `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -61,10 +64,28 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
         alert(error);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then(async (downloadURL) => {
+            const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`)
+            const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`)
+
+            await setDoc(docRef, { coverImage: downloadURL }, { merge: true })
+            await setDoc(parentStorageRef, { coverImage: downloadURL }, { merge: true })
+                         
           setImgUrl(downloadURL)
           console.log(`URL to stored img: ${downloadURL}}`)
-        });
+          }).then(() => {
+
+            // TODO - less hacky way of refreshing to allow 'showing project'
+            // TODO - Extract to parent components
+            router.reload()
+
+          })
+            // .then(async (downloadURL) => {
+              // const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`)
+        
+
+        // });
       }
     );
   }

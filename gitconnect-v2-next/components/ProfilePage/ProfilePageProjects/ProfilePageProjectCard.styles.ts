@@ -56,8 +56,8 @@ export default createStyles((theme, _params, getRef) => {
     author: {
       color: theme.colors.dark[2],
       position: 'relative',
-      top: '-16px',
-      left: '0px',
+      top: '-55px',
+      left: '25px',
     },
   };
 });
