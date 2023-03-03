@@ -51,7 +51,7 @@ import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, T
 
 export function HeroContentLeft(props: any) {
   const { classes } = useStyles();
-  console.log('Project page')
+  // console.log('Project page')
 
   return (
     <div className={classes.hero}>
@@ -151,11 +151,11 @@ const useStyles = createStyles((theme) => ({
 
 export default function Project() {
   const router = useRouter()
-  console.log(router.query)
+  // console.log(router.query)
   const { id } = router.query
-  console.log(id)
+  // console.log(id)
   // const { userData } = useContext(AuthContext)
-  console.log('projects in profiles')
+  // console.log('projects in profiles')
   // console.log(projects)
   // const router = useRouter()
   // console.log(router.query)
@@ -177,14 +177,14 @@ export default function Project() {
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL)
       .then((response) => {
-        console.log(response.data)
+        // console.log(response.data)
         setProjects(response.data)
       })
 
   }, [])
 
-  console.log('projectsss')
-  console.log(projects)
+  // console.log('projectsss')
+  // console.log(projects)
 
   // const fetcher = (url: string) => axios.get(url).then(res => res.data)
   // const { data, error } = useSWR(`/api/projects/all`, fetcher)

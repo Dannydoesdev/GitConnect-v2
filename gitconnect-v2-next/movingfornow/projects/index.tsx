@@ -15,7 +15,7 @@ export async function getStaticProps() {
 
   // console.log(data)
 // .then(() => {})
-  console.log('PAGES')
+  // console.log('PAGES')
   // console.log(pages)
   // console.log({ ...pages })
   // const pageData = await pages.forEach((page: any) => {
@@ -46,8 +46,8 @@ export async function getStaticProps() {
 
 const Projects = ({ projects }: any) => {
   // console.log(ninjas)
-  console.log('projects')
-  console.log(projects)
+  // console.log('projects')
+  // console.log(projects)
   return (
     <div>
       <h1>All projects</h1>
