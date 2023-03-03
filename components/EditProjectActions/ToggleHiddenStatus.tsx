@@ -18,6 +18,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
 
 
   const [initialState, setInitialState] = useState(false);
+  const [canShow, setCanShow] = useState(false)
 
   useEffect(() => {
 
@@ -28,10 +29,20 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
 
       if (docSnap.exists()) {
         const repoData = docSnap.data()
+
         const hiddenStatus = repoData.hidden
+        const hasImage = repoData.coverImage
 
         setInitialState(hiddenStatus);
-        
+
+        if (!hasImage) {
+          console.log('No image found')
+          // alert("Sorry, you need to upload a cover image to unhide your project")
+        } else {
+
+
+          setCanShow(true);
+        }
       }
 
     };
@@ -45,7 +56,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
     const docSnap = await getDoc(docRef);
   
     
-    if (docSnap.exists()) {
+    if (docSnap.exists() && canShow == true) {
       const repoData = docSnap.data()
       const hiddenStatus = repoData.hidden
 
@@ -64,6 +75,8 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
           })
           .catch((e) => { console.log(e); })
       }
+    } else {
+      alert("Sorry, you need to upload a cover image to unhide your project")
     }
   
   }
