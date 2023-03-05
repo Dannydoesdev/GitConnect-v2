@@ -117,7 +117,7 @@ export default function ProjectPageDynamicContent(props: any) {
       <Group>
           {/* referrerPolicy="origin-when-cross-origin" llow-storage-access-by-user-activation   allow-scripts*/}
           
-          // TODO - enforce stricter sandboxing (without breaking iFrame content)
+          {/* TODO - enforce stricter sandboxing (without breaking iFrame content) */}
      <iframe sandbox="allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock" className={classes.iframe} src={project.live_url}></iframe> 
     
         </Group>
