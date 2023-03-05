@@ -286,11 +286,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             onClick={handleImportReadme}
             variant='outline'
             styles={(theme) => ({
-              inner: {
-              // flex: 'wrap'
-            },
               root: {
-                // flex: 'wrap',
               backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[6],
               width: '50%',
               [theme.fn.smallerThan('sm')]: {
