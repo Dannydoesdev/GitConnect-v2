@@ -15,17 +15,19 @@ import { storage } from '../../firebase/clientApp'
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { AuthContext } from '../../context/AuthContext';
 import DOMPurify from 'dompurify';
+import axios from 'axios';
 
 type TipTapProps = {
   repoId?: string
   initialFirebaseData?: string
+  repoName?: string
 }
 
 const templateContent =
   '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul><img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />';
 
 
-function TipTapEditor({ repoId }: TipTapProps) {
+function TipTapEditor({ repoId, repoName }: TipTapProps) {
   const { userData } = useContext(AuthContext)
   const userId = userData.userId
   const userName = userData.userName
@@ -39,6 +41,8 @@ function TipTapEditor({ repoId }: TipTapProps) {
 
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
+  const [readme, setReadme] = useState('')
+
 
   // Load any existing data from Firestore & put in state
 
@@ -223,6 +227,24 @@ function TipTapEditor({ repoId }: TipTapProps) {
     return null
   }
 
+  function handleImportReadme() {
+    const readmeUrl = `/api/profiles/projects/edit/readme`;
+    axios.get(readmeUrl, {
+      params: {
+        owner: userData.userName,
+        repo: repoName,
+      }
+    })
+      .then((response) => {
+        const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
+        console.log(sanitizedHTML)
+        setReadme(sanitizedHTML)
+        setContent(sanitizedHTML)
+        editor?.commands.setContent(sanitizedHTML);
+      })
+  }
+  
+
   return (
     <>
       <Center>
@@ -234,6 +256,9 @@ function TipTapEditor({ repoId }: TipTapProps) {
           className='mx-auto'
           onClick={handleDoneAdding}
           styles={(theme) => ({
+            inner: {
+              flex: 'wrap',
+            },
             root: {
               backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
               width: '40%',
@@ -249,6 +274,39 @@ function TipTapEditor({ repoId }: TipTapProps) {
           {editor.isEditable ? 'Save Changes in Text Editor' : 'Unlock Text Editor'}
         </Button>
       </Center>
+
+      {editor.isEditable && 
+        <Center>
+        <Button
+          component="a"
+          size="md"
+          radius="md"
+          mt={30}
+          className='mx-auto'
+            onClick={handleImportReadme}
+            variant='outline'
+            styles={(theme) => ({
+              inner: {
+              // flex: 'wrap'
+            },
+              root: {
+                // flex: 'wrap',
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[6],
+              width: '50%',
+              [theme.fn.smallerThan('sm')]: {
+                width: '70%',
+              },
+              '&:hover': {
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
+              },
+            },
+          })}
+          >
+            Import readme from Github - Will replace all editor content
+          {/* {editor.isEditable ? 'Save Changes in Text Editor' : 'Unlock Text Editor'} */}
+        </Button>
+      </Center>
+      }
 
       <RichTextEditor
         mt={70}
