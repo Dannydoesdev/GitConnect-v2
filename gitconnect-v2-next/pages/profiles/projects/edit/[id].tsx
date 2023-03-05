@@ -19,8 +19,11 @@ export default function EditProject() {
   const { id } = router.query
 
   const [project, setProject] = useState<any>(null)
+  const [readme, setReadme] = useState('')
 
   useEffect(() => {
+
+    // TODO - implement Vercel SWR on front end
 
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL)
@@ -28,8 +31,31 @@ export default function EditProject() {
         // console.log(response.data)
         setProject(response.data)
       })
-
+    
+    
+    
   }, [])
+
+  useEffect(() => {
+    
+    if (id && project) {
+      // const stringId: string = id.toString()
+      
+
+      const readmeUrl = `/api/profiles/projects/edit/readme`;
+      axios.get(readmeUrl, {
+        params: {
+          owner: userData.userName,
+          repo: project[0].name,
+        }
+      })
+        .then((response) => {
+          console.log(response.data)
+          setReadme(response.data)
+        })
+    }
+
+  }, [project])
 
   if (project) {
 
