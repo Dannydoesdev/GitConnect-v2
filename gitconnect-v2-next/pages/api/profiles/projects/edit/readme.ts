@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Octokit } from "@octokit/rest";
 import { Endpoints } from "@octokit/types";
+import DOMPurify from 'dompurify';
 
 type RequestData = {
   repo: string,
@@ -35,9 +36,9 @@ export default async function handler(
     
       // TODO: fix type issues with strict type here
 
-      let readme: GetReadmeResponse;
+      // let readme: GetReadmeResponse;
 
-      // let readme: any;
+      let readme: any;
 
       // NOTE - removing mediaType will return all url links to the different types, could be useful to store these seperately for later
   
@@ -49,14 +50,31 @@ export default async function handler(
           mediaType: {
             format: "html", // change this to your desired format
           },
-        });
-        // Send back file content as HTML
-         
+        })
+          // .then((response) => {
+            console.log('\n\n\nfull readme response\n\n\n')
+          console.log(readme)
+        
+          const readmeData = readme.data;
+          console.log(`\n\n\nreadme.data\n\n\n`)
+          console.log(readmeData)
 
+        
+          // const sanitizedHTML = DOMPurify.sanitize(readmeData);
+          // console.log('\n\n\nsanitized\n\n\n')
+  
+          // console.log(sanitizedHTML)
+        
         // console.log(readme)
         res.setHeader("Content-Type", "text/html");
         // console.log(readme.data.content)
-        res.status(200).send(readme.data);
+
+        res.status(200).send(readmeData);
+
+        // })
+        // Send back file content as HTML
+     
+
 
       } catch (error) {
         res.status(404).json({ message: "File not found" });

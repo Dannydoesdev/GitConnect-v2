@@ -36,26 +36,26 @@ export default function EditProject() {
     
   }, [])
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    if (id && project) {
-      // const stringId: string = id.toString()
+  //   if (id && project) {
+  //     // const stringId: string = id.toString()
       
 
-      const readmeUrl = `/api/profiles/projects/edit/readme`;
-      axios.get(readmeUrl, {
-        params: {
-          owner: userData.userName,
-          repo: project[0].name,
-        }
-      })
-        .then((response) => {
-          console.log(response.data)
-          setReadme(response.data)
-        })
-    }
+  //     const readmeUrl = `/api/profiles/projects/edit/readme`;
+  //     axios.get(readmeUrl, {
+  //       params: {
+  //         owner: userData.userName,
+  //         repo: project[0].name,
+  //       }
+  //     })
+  //       .then((response) => {
+  //         console.log(response)
+  //         setReadme(response.data)
+  //       })
+  //   }
 
-  }, [project])
+  // }, [project])
 
   if (project) {
 
@@ -77,7 +77,7 @@ export default function EditProject() {
           </Title>
           <ToggleHiddenStatus repoId={projectData.id} />
           <UploadProjectCoverImage repoId={projectData.id} />
-          <TipTapEditor repoId={projectData.id} />
+          <TipTapEditor repoId={projectData.id} repoName={projectData.name} />
           {/* <TipTapEditorTest repoId={projectData.id} /> */}
           {/* <ProjectPageDynamicContent props = {projects} /> */}
         </>
