@@ -12,7 +12,7 @@ export const getStaticPaths = async () => {
   // console.log(paths)
   return {
     paths,
-    fallback: false,
+    fallback: true,
   };
 }
 
@@ -32,6 +32,7 @@ export async function getStaticProps({ params }: any) {
     props: {
       project: projectData,
     },
+    revalidate: 10,
   };
 }
 // const { data, error } = useSWR(`/api/projects/{}`, fetcher)

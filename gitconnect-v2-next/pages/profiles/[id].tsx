@@ -14,7 +14,7 @@ export const getStaticPaths = async () => {
   // console.log('getting static paths')
   return {
     paths,
-    fallback: false,
+    fallback: true,
   };
 }
 
@@ -28,6 +28,7 @@ export async function getStaticProps({ params }: any) {
       profile: profileData,
       projects: projectData,
     },
+    revalidate: 10,
   };
 }
 // const { data, error } = useSWR(`/api/profiles/{}`, fetcher)

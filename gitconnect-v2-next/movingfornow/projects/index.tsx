@@ -24,8 +24,10 @@ export async function getStaticProps() {
   // console.log(pageData)
 
   return {
-    props: { projects: pages}     
+    props: { projects: pages },
+    revalidate: 10,
   }
+  
 }
 //   const profileData = getProfileData(params.id);
 //   return {
