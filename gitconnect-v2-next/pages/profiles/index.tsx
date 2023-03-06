@@ -20,7 +20,10 @@ export async function getStaticProps() {
   // console.log(pageData)
 
   return {
-    props: { profiles: pages }
+    props: {
+      profiles: pages
+    },
+    revalidate: 10,
   }
 }
 
