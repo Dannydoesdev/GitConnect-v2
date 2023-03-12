@@ -8,6 +8,9 @@ import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import Image from '@tiptap/extension-image';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { lowlight } from 'lowlight';
+import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
 import { Button, Center } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase/clientApp';
@@ -26,6 +29,8 @@ type TipTapProps = {
 const templateContent =
   '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul><img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />';
 
+  // register languages that your are planning to use
+lowlight.registerLanguage('ts', tsLanguageSyntax);
 
 function TipTapEditor({ repoId, repoName }: TipTapProps) {
   const { userData } = useContext(AuthContext)
@@ -74,11 +79,14 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
     editor?.commands.setContent(initialContent);
   }, [initialContent]);
 
-
+  
   const editor = useEditor({
     editable,
     extensions: [
       StarterKit,
+      CodeBlockLowlight.configure({
+        lowlight,
+      }),
       Image.configure({
         inline: true,
         // TODO: suggest moving the sizing to CSS properties based on class

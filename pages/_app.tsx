@@ -8,6 +8,7 @@ import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core
 // import { NotificationsProvider } from '@mantine/notifications';
 import { AppContainer } from '../components/AppContainer'
 import { mantineCache } from '../mantine/cache';
+// import { NotificationsProvider } from '@mantine/notifications';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
@@ -35,10 +36,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             }}
             withGlobalStyles
             withNormalizeCSS>
+              {/* <NotificationsProvider > */}
             <AppContainer>
               <Component {...pageProps} />
               <Analytics />
-            </AppContainer>
+              </AppContainer>
+              {/* </NotificationsProvider> */}
           </MantineProvider>
         </ColorSchemeProvider>
       </AuthProvider >
