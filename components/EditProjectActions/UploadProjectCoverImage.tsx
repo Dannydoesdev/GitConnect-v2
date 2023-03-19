@@ -5,7 +5,7 @@ import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase
 import { storage } from '../../firebase/clientApp'
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { Group, Text, useMantineTheme, Image, SimpleGrid, Button, Center, Container } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
+import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
 import { Dropzone, DropzoneProps, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { Router, useRouter } from "next/router"
 

@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 import { GithubAuthProvider, signInWithPopup } from "firebase/auth"
 import { auth } from "../../firebase/clientApp"
 import Link from 'next/link'
-import { IconBrandGithub } from "@tabler/icons";
+import { IconBrandGithub } from "@tabler/icons-react";
 
 import {
   Paper,

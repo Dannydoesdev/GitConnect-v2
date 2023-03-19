@@ -17,14 +17,16 @@ export default createStyles((theme) => ({
       flexDirection: 'column',
       justifyContent: 'flex-end',
       alignItems: 'flex-start',
-      paddingBottom: theme.spacing.xl * 6,
+      // paddingBottom: theme.spacing.xl * 6,
+      paddingBottom: `calc(${theme.spacing.xl} * 6)`,
       zIndex: 1,
       position: 'relative',
   
       [theme.fn.smallerThan('sm')]: {
         marginLeft: 40,
         height: 500,
-        paddingBottom: theme.spacing.xl * 3,
+        // paddingBottom: theme.spacing.xl * 3,
+        paddingBottom: `calc(${theme.spacing.xl} * 3)`,
       },
     },
   
@@ -56,14 +58,16 @@ export default createStyles((theme) => ({
     },
   
     control: {
-      marginTop: theme.spacing.xl * 1,
+      // marginTop: theme.spacing.xl * 1,
+      marginTop: `calc(${theme.spacing.xl} * 1)`,
       fontSize: 16,
       width: 150,
       height: 50,
       borderRadius: 10,
   
       [theme.fn.smallerThan('sm')]: {
-        marginTop: theme.spacing.xl * 0.5,
+        // marginTop: theme.spacing.xl * 0.5,
+        marginTop: `calc(${theme.spacing.xl} * 0.5)`,
         fontSize: 12,
         width: 100,
         height: 40,
