@@ -27,7 +27,7 @@ type TipTapProps = {
 }
 
 const templateContent =
-  '<h2 style="text-align: center;">Welcome to GitConnect; rich text editor</h2><p style="text-align: center;">You can edit this box and use the toolbar above to style - <em>currently, your changes will not save on refresh</em></p><hr><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul><img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />';
+  '<h2 style="text-align: center;">Welcome to GitConnect; text editor</h2><h3 style="text-align: center;">click the "Unlock Editor" button to add content, click it again when finished to save</h3><h3 style="text-align: center;">After clicking "Unlock Editor" you can choose to import the repo readme from Github</h3><hr /><p style="text-align: center;">You can type in this box regularly or use markdown, and use the toolbar above to style</p><p style="text-align: center;">You can also drag and drop images into this editor, or move images already added by clicking and dragging them</p><hr />';
 
   // register languages that your are planning to use
 lowlight.registerLanguage('ts', tsLanguageSyntax);
@@ -248,6 +248,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
         console.log(sanitizedHTML)
         setReadme(sanitizedHTML)
         setContent(sanitizedHTML)
+        setEditorContent(sanitizedHTML)
         editor?.commands.setContent(sanitizedHTML);
       })
   }
@@ -269,7 +270,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             },
             root: {
               backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-              width: '40%',
+              width: '20%',
               [theme.fn.smallerThan('sm')]: {
                 width: '70%',
               },
@@ -279,7 +280,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             },
           })}
         >
-          {editor.isEditable ? 'Save Changes in Text Editor' : 'Unlock Text Editor'}
+          {editor.isEditable ? 'Save Editor Changes' : 'Unlock Editor'}
         </Button>
       </Center>
 
@@ -295,8 +296,8 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             variant='outline'
             styles={(theme) => ({
               root: {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[6],
-              width: '50%',
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[0],
+              width: '40%',
               [theme.fn.smallerThan('sm')]: {
                 width: '70%',
               },

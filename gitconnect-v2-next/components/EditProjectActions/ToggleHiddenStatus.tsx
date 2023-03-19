@@ -104,7 +104,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
             },
           })}
         >
-          {initialState ? 'Show project' : 'Hide project'}
+          {initialState ? 'Publish project' : 'Unpublish project'}
         </Button>
       </Center>
     </>
