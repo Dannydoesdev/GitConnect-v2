@@ -12,7 +12,7 @@ import {
   Anchor
 } from '@mantine/core';
 import { useToggle, upperFirst } from '@mantine/hooks';
-import { IconBrandGithub } from "@tabler/icons";
+import { IconBrandGithub } from "@tabler/icons-react";
 
 // Layout base template inspiration taken from Mantine UI library
 

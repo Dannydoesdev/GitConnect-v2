@@ -15,7 +15,7 @@ import {
   Stack,
   Space,
 } from '@mantine/core';
-import { IconGauge, IconUser, IconCookie, IconFall, IconReportAnalytics, IconListNumbers } from '@tabler/icons';
+import { IconGauge, IconUser, IconCookie, IconFall, IconReportAnalytics, IconListNumbers } from '@tabler/icons-react';
 import useStyles from './ProjectPageDynamicContent.styles'
 
 

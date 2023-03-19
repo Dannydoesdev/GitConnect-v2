@@ -1,4 +1,4 @@
-import { createStyles } from '@mantine/core';
+import { createStyles, rem } from '@mantine/core';
 
 export default createStyles((theme) => ({
 
@@ -12,7 +12,7 @@ export default createStyles((theme) => ({
 
   container: {
     height: '60vh',
-    marginTop: 70,
+    marginTop: 50,
     paddingBottom: 70,
     display: 'flex',
     flexDirection: 'column',
@@ -23,7 +23,8 @@ export default createStyles((theme) => ({
 
     [theme.fn.smallerThan('sm')]: {
       height: 500,
-      paddingBottom: theme.spacing.xl * 3,
+      // paddingBottom: theme.spacing.xl * 3,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
   },
 
@@ -65,7 +66,8 @@ export default createStyles((theme) => ({
   },
 
   control: {
-    marginTop: theme.spacing.xl * 1.5,
+    // marginTop: theme.spacing.xl * 1.5,
+    marginTop: `calc(${theme.spacing.xl} * 1.5)`,
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
     width: '30%',
 
