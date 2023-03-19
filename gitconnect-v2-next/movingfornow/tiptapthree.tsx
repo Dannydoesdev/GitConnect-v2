@@ -1,13 +1,15 @@
-import TipTapEditor from '../components/RichTextEditor/RichTextEditor'
+export {}
+
+// import TipTapEditor from '../components/RichTextEditor/RichTextEditor'
 
 
-function ProjectEditPage() {
+// function ProjectEditPage() {
 
 
-  return (
-    <TipTapEditor />
-  )
+//   return (
+//     <TipTapEditor />
+//   )
 
-}
+// }
 
-export default ProjectEditPage
+// export default ProjectEditPage
