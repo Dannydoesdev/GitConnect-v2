@@ -89,6 +89,7 @@ export default function ProjectPageDynamicContent(props: any) {
 
   return (
     <Container size="lg" py="xl">
+
       <Group position="center">
         {/* <Badge variant="filled" size="lg">
           {project.name}
@@ -103,11 +104,15 @@ export default function ProjectPageDynamicContent(props: any) {
       {project.description}
       </Text>
 
+      {project.process && project.challenges && project.outcomes &&
+        <>
       <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
         {features}
       </SimpleGrid>
       <Space h={80} />
-      
+      </>
+      }
+
       {project.live_url &&
         <>
       <Title order={2} className={classes.title} align="center" mt="sm">

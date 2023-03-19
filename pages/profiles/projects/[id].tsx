@@ -120,7 +120,7 @@ export default function Project() {
         {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
 
         {/* HIDING TOP HEADINGS */}
-        {/* <ProjectPageDynamicContent props={projects} /> */}
+        <ProjectPageDynamicContent props={projects} />
         
         {firebaseData &&
           <RichTextEditorDisplay content={firebaseData} />
