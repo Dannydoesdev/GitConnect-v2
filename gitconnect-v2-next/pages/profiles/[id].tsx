@@ -42,8 +42,9 @@ export default function Profile({ profile, projects }: any) {
 
   return (
     <div>
-      <h1>Profile Page</h1>
+      {/* <h1>Profile Page</h1> */}
       {/* <h1>{profileData.userName}'s Projects</h1> */}
+      <Space h={70} />
       <Title order={1} weight='bolder' align='center'>{profileData.userName}'s Projects</Title>
       <Space h='xl' />
       <ProfilePageProjectGrid projects={projects} />

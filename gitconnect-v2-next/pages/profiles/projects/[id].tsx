@@ -118,10 +118,14 @@ export default function Project() {
         }
 
         {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
-        <ProjectPageDynamicContent props={projects} />
+
+        {/* HIDING TOP HEADINGS */}
+        {/* <ProjectPageDynamicContent props={projects} /> */}
+        
         {firebaseData &&
           <RichTextEditorDisplay content={firebaseData} />
         }
+
       </>
     );
   } else {

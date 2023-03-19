@@ -1,34 +1,36 @@
-import styles from '../../styles/Ninjas.module.css'
-import Link from 'next/link'
-import { getAllProjectIds, getProjectData } from '../../lib/projects';
-import axios from 'axios'
-import useSWR from 'swr'
+export {}
 
-export async function getStaticProps() {
-  // const fetcher = (url: string) => axios.get(url).then(res => res.data)
-  // const { data, error } = useSWR(getAllProfileIds(), fetcher)
+// import styles from '../../styles/Ninjas.module.css'
+// import Link from 'next/link'
+// import { getAllProjectIds, getProjectData } from '../../lib/projects';
+// import axios from 'axios'
+// import useSWR from 'swr'
 
-  // console.log(data)
+// export async function getStaticProps() {
+//   // const fetcher = (url: string) => axios.get(url).then(res => res.data)
+//   // const { data, error } = useSWR(getAllProfileIds(), fetcher)
 
-  const pages: any = await getAllProjectIds();
-  // const data = await pages
+//   // console.log(data)
 
-  // console.log(data)
-// .then(() => {})
-  // console.log('PAGES')
-  // console.log(pages)
-  // console.log({ ...pages })
-  // const pageData = await pages.forEach((page: any) => {
-  //   getProfileData(page)
-  // })
-  // console.log(pageData)
+//   const pages: any = await getAllProjectIds();
+//   // const data = await pages
 
-  return {
-    props: { projects: pages },
-    revalidate: 10,
-  }
+//   // console.log(data)
+// // .then(() => {})
+//   // console.log('PAGES')
+//   // console.log(pages)
+//   // console.log({ ...pages })
+//   // const pageData = await pages.forEach((page: any) => {
+//   //   getProfileData(page)
+//   // })
+//   // console.log(pageData)
+
+//   return {
+//     props: { projects: pages },
+//     revalidate: 10,
+//   }
   
-}
+// }
 //   const profileData = getProfileData(params.id);
 //   return {
 //     props: {
@@ -46,28 +48,28 @@ export async function getStaticProps() {
 //   }
 // }
 
-const Projects = ({ projects }: any) => {
-  // console.log(ninjas)
-  // console.log('projects')
-  // console.log(projects)
-  return (
-    <div>
-      <h1>All projects</h1>
-      {projects.map((project: any) => {
-        return (
-          <div key={project.params.id} >
-            <h1>{project.params.id}</h1>
-            <Link href={'/projects/' + project.params.id} >
+// const Projects = ({ projects }: any) => {
+//   // console.log(ninjas)
+//   // console.log('projects')
+//   // console.log(projects)
+//   return (
+//     <div>
+//       <h1>All projects</h1>
+//       {projects.map((project: any) => {
+//         return (
+//           <div key={project.params.id} >
+//             <h1>{project.params.id}</h1>
+//             <Link href={'/projects/' + project.params.id} >
 
-              <h3>Go to Project</h3>
+//               <h3>Go to Project</h3>
 
-            </Link>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+//             </Link>
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// }
 
  
-export default Projects;
+// export default Projects;

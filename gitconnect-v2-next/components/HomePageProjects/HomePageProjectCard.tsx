@@ -1,4 +1,4 @@
-import { IconEye, IconMessageCircle } from '@tabler/icons';
+import { IconEye, IconMessageCircle } from '@tabler/icons-react';
 import { Card, Text, Group, Center, createStyles, Avatar } from '@mantine/core';
 import useStyles from './HomePageProjectCard.styles';
 import Link from 'next/link';
