@@ -92,7 +92,7 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
 
 
   return (
-    <div>
+    <>
        {/* <Group mx={10}> */}
       <Dropzone
         // padding='xl'
@@ -105,13 +105,18 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
         accept={IMAGE_MIME_TYPE}
         
         sx={(theme) => ({
+          maxWidth: 700,
+          maxHeight: 180,
+          textAlign: 'center',
+          margin: 'auto',
           minHeight: 120,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          marginRight: '20px',
-          marginLeft: '20px',
-          marginTop: '20px',
+          marginTop: 30,
+          // marginRight: '20px',
+          // marginLeft: '20px',
+          // marginTop: '20px',
           backgroundColor: '#afafaf1a',
          
         })}
@@ -138,11 +143,11 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
 
           <div>
             <Text size="xl" inline>
-              Drag images here or click to select files
+              To change the project cover photo - drag an image here or click to browse
             </Text>
-            <Text size="sm" color="dimmed" inline mt={7}>
+            {/* <Text size="sm" color="dimmed" inline mt={7}>
               Attach the image you want for your cover photo, file should not exceed 5mb
-            </Text>
+            </Text> */}
           </div>
         </Group>
       </Dropzone>
@@ -165,33 +170,66 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
         {previews}
       </SimpleGrid> */}
       <Center>
-        <Button
-          component="a"
-          size="lg"
-          radius="md"
-          mt={40}
 
-          className='mx-auto'
-          // onClick={() => console.log(files[0])}
+        {!imgCheck ?
 
-          onClick={() => sendImageToFirebase(files[0])}
-          styles={(theme) => ({
-            root: {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-              width: '40%',
-              [theme.fn.smallerThan('sm')]: {
-                width: '70%',
+          <Button
+            disabled
+            component="a"
+            size="lg"
+            radius="md"
+            mt={40}
+
+            className='mx-auto'
+            // onClick={() => console.log(files[0])}
+
+            onClick={() => sendImageToFirebase(files[0])}
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.red[5] : theme.colors.blue[6],
+                width: '20%',
+                [theme.fn.smallerThan('sm')]: {
+                  width: '70%',
+                },
+                '&:hover': {
+                  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
+                },
               },
-              '&:hover': {
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
+            })}
+          >
+            Save new cover image
+          </Button>
+          
+          :
+          <Button
+            component="a"
+            size="lg"
+            radius="md"
+            mt={40}
+
+            className='mx-auto'
+            // onClick={() => console.log(files[0])}
+
+            onClick={() => sendImageToFirebase(files[0])}
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[1],
+                width: '40%',
+                [theme.fn.smallerThan('sm')]: {
+                  width: '70%',
+                },
+                '&:hover': {
+                  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
+                },
               },
-            },
-          })}
-        >
-          {!imgCheck ? 'Waiting for image' : 'Save this image' }
-        </Button>
+            })}
+          >
+            Save new cover image
+          </Button>
+          
+        }
       </Center>
-    </div>
+    </>
   );
 }
 
