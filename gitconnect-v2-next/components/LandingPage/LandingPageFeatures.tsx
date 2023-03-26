@@ -10,6 +10,7 @@ import {
   rem,
 } from '@mantine/core';
 import { IconWand, IconAffiliate, IconBraces, IconWritingSign } from '@tabler/icons-react';
+import Link from 'next/link';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -91,16 +92,18 @@ export function LandingPageFeatures() {
             Join GitConnect and start sharing your projects in 2 clicks. Get recognition, and provide feedback to your peers. Bring your projects out of the dark and inspire others!
             {/* Don't let your projects remain hidden, make them shine and inspire others! */}
           </Text>
-
-          <Button
-            variant="gradient"
-            gradient={{ deg: 133, from: 'blue', to: 'cyan' }}
-            size="lg"
-            radius="md"
-            mt="xl"
-          >
-            Get started
-          </Button>
+          <Link href="/signup" passHref legacyBehavior>
+            <Button
+              component='a'
+              variant="gradient"
+              gradient={{ deg: 133, from: 'blue', to: 'cyan' }}
+              size="lg"
+              radius="md"
+              mt="xl"
+            >
+              Get started
+            </Button>
+          </Link>
         </Col>
         <Col span={12} md={7}>
           <SimpleGrid cols={2} spacing={30} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
