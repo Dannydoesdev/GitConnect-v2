@@ -51,6 +51,8 @@ const useStyles = createStyles((theme) => ({
 
   image: {
     flex: 1,
+    width: '400px',
+    height: '440px',
 
     [theme.fn.smallerThan('md')]: {
       display: 'none',
@@ -111,7 +113,8 @@ export function LandingPageHero() {
             </Group>
           </div>
           {/* <Image src={image.src} className={classes.image} /> */}
-          <Image src='/img/landinghero-md.jpeg' className={classes.image} />
+          {/* <Image src='/img/landinghero-md.jpeg' className={classes.image} /> */}
+          <Image src='/img/landing/24.png' className={classes.image} />
         </div>
       </Container>
     </div>
