@@ -52,12 +52,12 @@ export default async function handler(
           },
         })
           // .then((response) => {
-            console.log('\n\n\nfull readme response\n\n\n')
-          console.log(readme)
+          //   console.log('\n\n\nfull readme response\n\n\n')
+          // console.log(readme)
         
           const readmeData = readme.data;
-          console.log(`\n\n\nreadme.data\n\n\n`)
-          console.log(readmeData)
+          // console.log(`\n\n\nreadme.data\n\n\n`)
+          // console.log(readmeData)
 
         
           // const sanitizedHTML = DOMPurify.sanitize(readmeData);
