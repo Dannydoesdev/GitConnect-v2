@@ -9,7 +9,7 @@ import {
   Col,
   rem,
 } from '@mantine/core';
-import { IconReceiptOff, IconFlame, IconCircleDotted, IconFileCode } from '@tabler/icons-react';
+import { IconReceiptOff, IconFlame, IconCircleDotted, IconFileCode, IconWand, IconAffiliate, IconBraces, IconWritingSign } from '@tabler/icons-react';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -28,27 +28,32 @@ const useStyles = createStyles((theme) => ({
 
 const features = [
   {
-    icon: IconReceiptOff,
-    title: 'Easy Signup and Project Import',
-    description: 'Sign up and import projects from Github with ease',
+    // icon: IconReceiptOff, iconBrandGithub, fileImport, tableImport, databaseImport
+    icon: IconWand,
+    title: 'Instant Project Import',
+    description: 'Sign up via OAuth and import projects from Github instantly. We handle the rest.'
   },
   {
-    icon: IconFileCode,
+    // tools, edit, writingSign, writing
+    icon: IconWritingSign,
     title: 'Custom project pages',
     description: 'Use our rich text editor to craft your projects story, add images to make your projects pop'
     // - Templates for project presentation coming soon',
   },
   {
-    icon: IconCircleDotted,
+    // affilate, gitCompare, externalLink, share, link, unlink, layersLinked
+    icon: IconAffiliate,
     title: 'Connect and Collaborate',
     description:
-      'Discover projects from developers at all skill levels. Meet potential collaborators and even co-founders.',
+      'Discover developers at all skill levels. Meet future collaborators, colleagues or co-founders.',
   },
   {
-    icon: IconFlame,
-    title: 'For Developers, By Developers',
+    // braces, brackets, gitCompare, relationOneToOne
+    icon: IconBraces,
+    title: 'For Devs, By Devs',
     description:
-      'GitConnect is built for developers first. Be a part of a new,supportive community of developers. Request features or even contribute to the project.',
+      'GitConnect is built for developers first. Be part of a new, supportive community of developers.',
+    //  Request features or even contribute to the project.
   },
 ];
 
@@ -79,10 +84,12 @@ export function LandingPageFeatures() {
       <Grid gutter={80}>
         <Col span={12} md={5}>
           <Title className={classes.title} order={2}>
-            Showcase Your Projects, Get Inspired, and Connect with Fellow Developers
+            {/* Showcase Your Projects, Get Inspired, and Connect with Other Developers */}
+            Build a portfolio of your work and contribute to the community
           </Title>
           <Text c="dimmed">
-            Join GitConnect with just two clicks using your Github account and start sharing your projects, getting recognition, and providing feedback to your peers. Don't let your amazing projects remain hidden, let them shine and inspire others!
+            Join GitConnect and start sharing your projects in 2 clicks. Get recognition, and provide feedback to your peers. Bring your projects out of the dark and inspire others!
+            {/* Don't let your projects remain hidden, make them shine and inspire others! */}
           </Text>
 
           <Button
