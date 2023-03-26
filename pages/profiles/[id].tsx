@@ -28,7 +28,7 @@ export async function getStaticProps({ params }: any) {
       profile: profileData,
       projects: projectData,
     },
-    revalidate: 10,
+    // revalidate: 10,
   };
 }
 // const { data, error } = useSWR(`/api/profiles/{}`, fetcher)
