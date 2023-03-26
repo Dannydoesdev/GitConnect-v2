@@ -9,7 +9,7 @@ import {
   Col,
   rem,
 } from '@mantine/core';
-import { IconReceiptOff, IconFlame, IconCircleDotted, IconFileCode, IconWand, IconAffiliate, IconBraces, IconWritingSign } from '@tabler/icons-react';
+import { IconWand, IconAffiliate, IconBraces, IconWritingSign } from '@tabler/icons-react';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
