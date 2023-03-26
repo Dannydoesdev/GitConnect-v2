@@ -11,7 +11,8 @@ import {
   rem,
 } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
-import image from './image.svg';
+import Link from 'next/link';
+// import { useRouter } from 'next/router';
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -69,13 +70,26 @@ const useStyles = createStyles((theme) => ({
 
 export function LandingPageHero() {
   const { classes } = useStyles();
+
+  // Migrated to standard href link
+
+  // const Router = useRouter();
+
+  // const registerHandler = () => {
+  //   Router.push('/signup');
+  // };
+
+  // const homeHandler = () => {
+  //   Router.push('/')
+  // };
+
   return (
     <div>
       <Container>
         <div className={classes.inner}>
           <div className={classes.content}>
             <Title className={classes.title}>
-            <span className={classes.highlight}>GitConnect;</span><br />Create. Share.<br /> Collaborate. Inspire.
+              <span className={classes.highlight}>GitConnect;</span><br />Create. Share.<br /> Collaborate. Inspire.
             </Title>
             <Text color="dimmed" mt="md">
               Welcome to GitConnect, a community-driven platform where developers of all levels can showcase their work, discover inspiring projects, and connect with like-minded engineers.
@@ -104,12 +118,27 @@ export function LandingPageHero() {
             </List>
 
             <Group mt={30}>
-              <Button radius="xl" size="md" className={classes.control}>
-                Get started
-              </Button>
-              <Button variant="default" radius="xl" size="md" className={classes.control}>
-                View Projects
-              </Button>
+              <Link href="/signup" passHref legacyBehavior>
+                <Button
+                  component='a'
+                  radius="xl"
+                  size="md"
+                  className={classes.control}
+                >
+                  Get started
+                </Button>
+              </Link>
+              <Link href='/' passHref legacyBehavior>
+                <Button
+                  component='a'
+                  variant="default"
+                  radius="xl"
+                  size="md"
+                  className={classes.control}
+                >
+                  View Projects
+                </Button>
+              </Link>
             </Group>
           </div>
           {/* <Image src={image.src} className={classes.image} /> */}
