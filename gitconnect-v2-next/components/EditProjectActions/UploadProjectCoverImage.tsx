@@ -152,9 +152,7 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
         </Group>
       </Dropzone>
       {/* </Group> */}
-      <Center
-
-      >
+      <Center>
         <Container
         size={200}
         >
@@ -213,7 +211,7 @@ export function UploadProjectCoverImage({ repoId }: RepoProps, props: Partial<Dr
             onClick={() => sendImageToFirebase(files[0])}
             styles={(theme) => ({
               root: {
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[1],
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
                 width: '40%',
                 [theme.fn.smallerThan('sm')]: {
                   width: '70%',
