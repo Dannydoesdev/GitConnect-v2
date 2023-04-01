@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
-import { db } from '../../firebase/clientApp';
-import { AuthContext } from '../../context/AuthContext';
+import { db } from '../../../firebase/clientApp';
+import { AuthContext } from '../../../context/AuthContext';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
-import { storage } from '../../firebase/clientApp'
+import { storage } from '../../../firebase/clientApp'
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { Group, Text, useMantineTheme, Image, SimpleGrid, Button, Center, Container } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';

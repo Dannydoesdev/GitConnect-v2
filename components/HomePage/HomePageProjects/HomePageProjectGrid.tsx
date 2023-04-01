@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { ImageCard } from './HomePageProjectCard'
 import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/core'
 import axios from 'axios'
-import { makeAnImg } from '../../utils/makeAnImg'
+import { makeAnImg } from '../../../utils/makeAnImg'
 
 const HomePageProjectGrid = () => {
   // const { classes, theme } = useStyles();

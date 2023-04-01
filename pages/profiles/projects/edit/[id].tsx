@@ -3,14 +3,14 @@ import { useState, useEffect, useContext } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Container, Title, Group, Space, Center, Stack } from '@mantine/core';
-import ProjectPageDynamicContent from '../../../../components/ProjectPageDynamicContent/ProjectPageDynamicContent'
-import { ProjectPageDynamicHero } from '../../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero'
-import TipTapEditor from '../../../../components/RichTextEditor/RichTextEditor'
+import ProjectPageDynamicContent from '../../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent'
+import { ProjectPageDynamicHero } from '../../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero'
+import TipTapEditor from '../../../../components/ProjectEditPage/RichTextEditor/RichTextEditor'
 import { AuthContext } from '../../../../context/AuthContext'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../../../../firebase/clientApp'
-import ToggleHiddenStatus from '../../../../components/EditProjectActions/ToggleHiddenStatus';
-import UploadProjectCoverImage from '../../../../components/EditProjectActions/UploadProjectCoverImage';
+import ToggleHiddenStatus from '../../../../components/ProjectEditPage/EditProjectActions/ToggleHiddenStatus';
+import UploadProjectCoverImage from '../../../../components/ProjectEditPage/EditProjectActions/UploadProjectCoverImage';
 
 
 export default function EditProject() {
