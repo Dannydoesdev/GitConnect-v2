@@ -8,13 +8,13 @@ import {
   Container,
   Stack,
 } from '@mantine/core';
-import ProjectPageDynamicContent from '../../../components/ProjectPageDynamicContent/ProjectPageDynamicContent';
-import { ProjectPageDynamicHero } from '../../../components/ProjectPageDynamicHero/ProjectPageDynamicHero';
+import ProjectPageDynamicContent from '../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
+import { ProjectPageDynamicHero } from '../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import { AuthContext } from '../../../context/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/clientApp';
 import DOMPurify from 'dompurify';
-import RichTextEditorDisplay from '../../../components/RichTextEditorDisplay/RichTextEditorDisplay';
+import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 
 
 export default function Project() {

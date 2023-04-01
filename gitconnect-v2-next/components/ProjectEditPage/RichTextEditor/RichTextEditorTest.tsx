@@ -9,8 +9,8 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import { Button, Center } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
-import { db } from '../../firebase/clientApp';
-import { AuthContext } from '../../context/AuthContext';
+import { db } from '../../../firebase/clientApp';
+import { AuthContext } from '../../../context/AuthContext';
 
 type TipTapProps = {
   repoId?: string

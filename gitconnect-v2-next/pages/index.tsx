@@ -2,9 +2,9 @@ import type { NextPage } from 'next'
 import React, { useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
 import { Space, Title } from '@mantine/core'
-import { HeroLanding } from '../components/HomePageHero/HomePageHero'
+import { HeroLanding } from '../components/HomePage/HomePageHero/HomePageHero'
 import UploadFile from '../components/UploadFile'
-import HomePageProjectGrid from '../components/HomePageProjects/HomePageProjectGrid'
+import HomePageProjectGrid from '../components/HomePage/HomePageProjects/HomePageProjectGrid'
 
 const Index: NextPage = () => {
   // console.log('index hit')
