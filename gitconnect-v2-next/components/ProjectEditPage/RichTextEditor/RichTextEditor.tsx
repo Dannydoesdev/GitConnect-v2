@@ -13,10 +13,10 @@ import { lowlight } from 'lowlight';
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
 import { Button, Center } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
-import { db } from '../../firebase/clientApp';
-import { storage } from '../../firebase/clientApp'
+import { db } from '../../../firebase/clientApp';
+import { storage } from '../../../firebase/clientApp'
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext';
 import DOMPurify from 'dompurify';
 import axios from 'axios';
 

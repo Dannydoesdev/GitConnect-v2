@@ -17,7 +17,6 @@ export default createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    alignItems: 'flex-start',
     zIndex: 1,
     position: 'relative',
 
