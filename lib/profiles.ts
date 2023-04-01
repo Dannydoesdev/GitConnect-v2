@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { db } from '../firebase/clientApp'
 import { collection, setDoc, addDoc, where, query, getDoc, getDocs, doc, serverTimestamp } from "firebase/firestore"; 
 
@@ -37,6 +38,55 @@ export async function getProfileData(id:string) {
   })
 }
 
+export async function getProfileDataGithub(id: string, userName: string) {
+  
+  ///users/bO4o8u9IskNbFk2wXZmjtJhAYkR2/profileData/ publicData
+
+  const docRef = doc(db, `users/${id}/profileData/githubData`)
+  const docSnap = await getDoc(docRef);
+  // const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
+// const querySnapshot = await getDocs(profileQuery);
+// console.log(querySnapshot.docs)
+  
+  if (docSnap.exists()) {
+    const docData = docSnap.data()
+
+    console.log(docData)
+    return {
+      id,
+      docData,
+    };
+  } else {
+
+    // IF profile data from github is not saved in firestore - perform an API call to github and save
+    // TODO: call this when creating a user (or logging in to ensure it's always updated)
+
+    console.log('No github profile data found!');
+    console.log('Adding Github Data')
+    const profileDataUrl = `/api/profiles/${id}`;
+    await axios.get(profileDataUrl, {
+      params: {
+        username: userName,
+      }
+    })
+      .then(async (response) => {
+        console.log(`API response`)
+        console.log(response.data)
+        const githubPublicProfileData = response.data
+        await setDoc(docRef, { ...githubPublicProfileData }, { merge: true })
+          .then(() => {
+            console.log(`Data added to user ID ${id} with data:`) 
+            console.log(githubPublicProfileData);
+            return {
+              id,
+              githubPublicProfileData,
+            };
+          })
+      });
+    
+  };
+
+}
 
 export async function getProfileDataPublic(id: string) {
   
@@ -65,20 +115,3 @@ export async function getProfileDataPublic(id: string) {
 
 }
 
-
-// const getFirebaseData = async () => {
-
-//   const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
-//   const docSnap = await getDoc(docRef);
-
-//   if (docSnap.exists()) {
-//     const mainContent = docSnap.data()
-//     const htmlOutput = mainContent.htmlOutput
-
-//     if (htmlOutput.length > 0) {
-//       setinitialContent(htmlOutput);
-
-//     }
-//   }
-
-// };
