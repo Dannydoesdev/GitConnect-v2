@@ -49,8 +49,8 @@ export default function Profile({ profile, projects }: any) {
   const router = useRouter();
   const { id } = router.query;
 
-  console.log(userData.userId)
-  console.log(id)
+  // console.log(userData.userId)
+  // console.log(id)
 
 
   const [githubProfileData, setGitHubProfileData] = useState()
@@ -58,7 +58,7 @@ export default function Profile({ profile, projects }: any) {
 
   const profileData = profile.docData
 
-  console.log(`Is logged in users profile: ${isLoggedInUsersProfile}`)
+  // console.log(`Is logged in users profile: ${isLoggedInUsersProfile}`)
 
   useEffect(() => {
 
@@ -99,10 +99,10 @@ export default function Profile({ profile, projects }: any) {
   
     <Container fluid mx='md' my="md">
       <Space h={70} />
-      <Grid>
+      <Grid grow>
 
         {/* User info vertical full height span */}
-        <Grid.Col sm={12} md={4} lg={2}>
+        <Grid.Col sm={12} md={3} lg={2}>
           {
             githubProfileData &&
             <ProfilePageUserPanel
@@ -113,7 +113,7 @@ export default function Profile({ profile, projects }: any) {
         </Grid.Col>
 
         {/* Remaining width for cover image and projects */}
-        <Grid.Col md={8} lg={10}>
+        <Grid.Col md={9} lg={10}>
           {/* // span={10} */}
           <Grid gutter="md">
 

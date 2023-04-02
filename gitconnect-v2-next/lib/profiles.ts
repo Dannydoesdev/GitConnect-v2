@@ -60,7 +60,7 @@ export async function getProfileDataGithub(id: string, userName: string) {
   if (docSnap.exists()) {
     const docData = docSnap.data();
 
-    console.log(docData);
+    // console.log(docData);
     return {
       id,
       docData,
@@ -69,8 +69,8 @@ export async function getProfileDataGithub(id: string, userName: string) {
     // IF profile data from github is not saved in firestore - perform an API call to github and save
     // TODO: call this when creating a user (or logging in to ensure it's always updated)
 
-    console.log('No github profile data found!');
-    console.log('Adding Github Data');
+    // console.log('No github profile data found!');
+    // console.log('Adding Github Data');
     const profileDataUrl = `/api/profiles/${id}`;
     await axios
       .get(profileDataUrl, {
@@ -87,8 +87,8 @@ export async function getProfileDataGithub(id: string, userName: string) {
           { ...githubPublicProfileData },
           { merge: true }
         ).then(() => {
-          console.log(`Data added to user ID ${id} with data:`);
-          console.log(githubPublicProfileData);
+          // console.log(`Data added to user ID ${id} with data:`);
+          // console.log(githubPublicProfileData);
           return {
             id,
             githubPublicProfileData,
@@ -96,6 +96,26 @@ export async function getProfileDataGithub(id: string, userName: string) {
         });
       });
   }
+}
+
+
+// TODO: secure the data paramater with validation of types and data
+
+export async function updateProfileDataGithub(id: string, data: any) {
+
+  const docRef = doc(db, `users/${id}/profileData/githubData`);
+  const docSnap = await getDoc(docRef);
+
+  await setDoc(
+    docRef,
+    { ...data },
+    { merge: true }
+  ).then(() => {
+    
+    // console.log(`successfully added the following to database:`)
+    // console.log(data)
+  })
+
 }
 
 export async function getProfileDataPublic(id: string) {
