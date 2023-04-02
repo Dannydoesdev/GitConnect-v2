@@ -1,10 +1,19 @@
 import axios from 'axios';
-import { db } from '../firebase/clientApp'
-import { collection, setDoc, addDoc, where, query, getDoc, getDocs, doc, serverTimestamp } from "firebase/firestore"; 
+import { db } from '../firebase/clientApp';
+import {
+  collection,
+  setDoc,
+  addDoc,
+  where,
+  query,
+  getDoc,
+  getDocs,
+  doc,
+  serverTimestamp,
+} from 'firebase/firestore';
 
 export async function getAllProfileIds() {
-
-  const profiles = []
+  const profiles = [];
   const q = query(collection(db, 'users'));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((detail: any) => {
@@ -14,104 +23,93 @@ export async function getAllProfileIds() {
     // console.log(detail.id)
     return {
       params: {
-        id: detail.id
-      }
-    }
-  })
+        id: detail.id,
+      },
+    };
+  });
 }
 
 // return the data of the profiles
 
-export async function getProfileData(id:string) {
-    const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
+export async function getProfileData(id: string) {
+  const profileQuery = query(
+    collection(db, 'users'),
+    where('userId', '==', id)
+  );
   const querySnapshot = await getDocs(profileQuery);
   // console.log(querySnapshot.docs)
   return querySnapshot.docs.map((detail: any) => {
- 
-    const docData = { ...detail.data() }
+    const docData = { ...detail.data() };
 
     return {
       id,
       docData,
     };
-   
-  })
+  });
 }
 
 export async function getProfileDataGithub(id: string, userName: string) {
-  
   ///users/bO4o8u9IskNbFk2wXZmjtJhAYkR2/profileData/ publicData
 
-  const docRef = doc(db, `users/${id}/profileData/githubData`)
+  const docRef = doc(db, `users/${id}/profileData/githubData`);
   const docSnap = await getDoc(docRef);
   // const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
-// const querySnapshot = await getDocs(profileQuery);
-// console.log(querySnapshot.docs)
-  
-  if (docSnap.exists()) {
-    const docData = docSnap.data()
+  // const querySnapshot = await getDocs(profileQuery);
+  // console.log(querySnapshot.docs)
 
-    console.log(docData)
+  if (docSnap.exists()) {
+    const docData = docSnap.data();
+
+    console.log(docData);
     return {
       id,
       docData,
     };
   } else {
-
     // IF profile data from github is not saved in firestore - perform an API call to github and save
     // TODO: call this when creating a user (or logging in to ensure it's always updated)
 
     console.log('No github profile data found!');
-    console.log('Adding Github Data')
+    console.log('Adding Github Data');
     const profileDataUrl = `/api/profiles/${id}`;
-    await axios.get(profileDataUrl, {
-      params: {
-        username: userName,
-      }
-    })
+    await axios
+      .get(profileDataUrl, {
+        params: {
+          username: userName,
+        },
+      })
       .then(async (response) => {
-        console.log(`API response`)
-        console.log(response.data)
-        const githubPublicProfileData = response.data
-        await setDoc(docRef, { ...githubPublicProfileData }, { merge: true })
-          .then(() => {
-            console.log(`Data added to user ID ${id} with data:`) 
-            console.log(githubPublicProfileData);
-            return {
-              id,
-              githubPublicProfileData,
-            };
-          })
+        // console.log(`API response`);
+        // console.log(response.data);
+        const githubPublicProfileData = response.data;
+        await setDoc(
+          docRef,
+          { ...githubPublicProfileData },
+          { merge: true }
+        ).then(() => {
+          console.log(`Data added to user ID ${id} with data:`);
+          console.log(githubPublicProfileData);
+          return {
+            id,
+            githubPublicProfileData,
+          };
+        });
       });
-    
-  };
-
+  }
 }
 
 export async function getProfileDataPublic(id: string) {
-  
-  ///users/bO4o8u9IskNbFk2wXZmjtJhAYkR2/profileData/ publicData
-
-  const docRef = doc(db, `users/${id}/profileData/publicData`)
+  const docRef = doc(db, `users/${id}/profileData/publicData`);
   const docSnap = await getDoc(docRef);
-  // const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
-// const querySnapshot = await getDocs(profileQuery);
-// console.log(querySnapshot.docs)
-  
+
   if (docSnap.exists()) {
-    const docData = docSnap.data()
+    const docData = docSnap.data();
 
     return {
       id,
       docData,
     };
-    // const htmlOutput = mainContent.htmlOutput
   } else {
     // console.log('No such document!');
   }
-// return querySnapshot.docs.map((detail: any) => {
-
-  // const docData = { ...detail.data() }
-
 }
-

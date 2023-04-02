@@ -2,14 +2,22 @@ import { Container, Grid, SimpleGrid, Skeleton, useMantineTheme, rem } from '@ma
 
 const PRIMARY_COL_HEIGHT = rem(300);
 
-type ProfileProps = {
-  bio: string,
-  projects: any,
-  coverImage: string,
-}
+// type ProfileProps = {
+//   bio: string,
+//   projects: any,
+//   coverImage: string,
+// }
 
 // accept bio info, cover image and projects - then transfer them into respective places
-export function ProfilePageLayoutGrid({ bio, projects, coverImage }: ProfileProps) {
+// export function ProfilePageLayoutGrid({ bio, projects, coverImage }: ProfileProps) {
+export function ProfilePageLayoutGrid({ props }: any) {
+    
+  console.log(props)
+
+  // destructure profile data into variabls
+  const { bio, html_url, location, avatar_url, name, login, public_repos } = props;
+
+  console.log(bio)
 
   const theme = useMantineTheme();
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - ${theme.spacing.md} / 2)`;
