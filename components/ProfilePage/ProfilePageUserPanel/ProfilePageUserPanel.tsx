@@ -1,6 +1,8 @@
 
 import { Avatar, Text, Button, Paper, Divider } from '@mantine/core';
 import Link from 'next/link';
+import { AuthContext } from '../../../context/AuthContext';
+import { useContext } from 'react';
 
 // interface ProfilePageUserPanelProps {
 //   avatar: string;
@@ -13,7 +15,12 @@ import Link from 'next/link';
 
 // }
 
-export function ProfilePageUserPanel({ props }: any) {
+export function ProfilePageUserPanel({ props, currentUser }: any) {
+
+  const { userData } = useContext(AuthContext)
+  const userId = userData.userId
+
+  console.log(`Current user in panel: ${currentUser}`)
 
   console.log(props)
 
@@ -47,13 +54,22 @@ export function ProfilePageUserPanel({ props }: any) {
             variant="default"
             fullWidth
             mt="md">
-            On Github
+            GitHub Page
           </Button>
         </Link>
         {/* <Divider my="sm" /> */}
 
       </Paper>
-
+      {
+        currentUser &&
+        <Button
+          variant="filled"
+          fullWidth
+          mt="md"
+        >
+          Edit Profile
+        </Button>
+      }
       <Paper
         radius="md"
         // withBorder
