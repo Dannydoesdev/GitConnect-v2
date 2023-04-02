@@ -46,9 +46,9 @@ function makeAnImg(width: number, height: number) {
 
   return (
 
-    <SimpleGrid cols={3} spacing="lg" breakpoints={[
-      { maxWidth: 980, cols: 3, spacing: 'md' },
-      { maxWidth: 755, cols: 2, spacing: 'sm' },
+    <SimpleGrid cols={4} spacing="md" breakpoints={[
+      { maxWidth: 2000, cols: 3, spacing: 'sm' },
+      { maxWidth: 1200, cols: 2, spacing: 'sm' },
       { maxWidth: 600, cols: 1, spacing: 'sm' },
     ]}>
 
