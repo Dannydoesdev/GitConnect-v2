@@ -2,23 +2,27 @@
 import { Avatar, Text, Button, Paper, Divider } from '@mantine/core';
 import Link from 'next/link';
 import { AuthContext } from '../../../context/AuthContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
-// interface ProfilePageUserPanelProps {
-//   avatar: string;
-//   name: string;
-//   email: string;
-//   job: string;
-// }
+interface ProfilePageUserPanelProps {
+  props: {
+    bio?: string,
+    html_url: string,
+    avatar_url?: string,
+    name: string,
+    email: string,
+    location?: string,
+    login: string,
+    public_repos?: number,
+  }
+  currentUser?: boolean,
+}
 
-// export function UserInfoAction({ avatar, name, email, job }: UserInfoActionProps) {
-
-// }
-
-export function ProfilePageUserPanel({ props, currentUser }: any) {
+export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPanelProps) {
 
   const { userData } = useContext(AuthContext)
   const userId = userData.userId
+  const [editMode, setEditMode] = useState(false)
 
   console.log(`Current user in panel: ${currentUser}`)
 
@@ -72,7 +76,7 @@ export function ProfilePageUserPanel({ props, currentUser }: any) {
       }
       <Paper
         radius="md"
-        // withBorder
+        withBorder
         p="lg"
         sx={(theme) => ({
           backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
