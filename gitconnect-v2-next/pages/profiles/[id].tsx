@@ -57,7 +57,7 @@ export default function Profile({ profile, projects }: any) {
   const [isLoggedInUsersProfile, setIsLoggedInUsersProfile] = useState(false)
 
   const profileData = profile.docData
- 
+
   console.log(`Is logged in users profile: ${isLoggedInUsersProfile}`)
 
   useEffect(() => {
@@ -96,17 +96,13 @@ export default function Profile({ profile, projects }: any) {
   }
 
   return (
-    // <div>
-    //     {/* <Space h={70} /> */}
-    // {/* <Title order={1} weight='bolder' align='center'>{profileData.userName}'s Projects</Title> */}
-    // {/* <Space h='xl' /> */}
-    // <Container
-    <Container fluid mx='xl' my="md">
+  
+    <Container fluid mx='md' my="md">
       <Space h={70} />
       <Grid>
 
         {/* User info vertical full height span */}
-        <Grid.Col span={2}>
+        <Grid.Col sm={12} md={4} lg={2}>
           {
             githubProfileData &&
             <ProfilePageUserPanel
@@ -117,7 +113,8 @@ export default function Profile({ profile, projects }: any) {
         </Grid.Col>
 
         {/* Remaining width for cover image and projects */}
-        <Grid.Col span={10}>
+        <Grid.Col md={8} lg={10}>
+          {/* // span={10} */}
           <Grid gutter="md">
 
             {/* TODO: Cover Image full grid span */}
