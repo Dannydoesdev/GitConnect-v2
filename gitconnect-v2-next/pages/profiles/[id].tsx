@@ -13,6 +13,7 @@ import { ProfilePageLayoutGrid } from '../../components/ProfilePage/ProfilePageL
 import { userInfo } from 'os'
 import AuthRoute from '../../HoC/authRoute'
 import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel'
+import { useRouter } from 'next/router'
 
 
 
@@ -44,30 +45,33 @@ export async function getStaticProps({ params }: any) {
 
 export default function Profile({ profile, projects }: any) {
 
-  // const { userData } = useContext(AuthContext)
+  const { userData } = useContext(AuthContext)
+  const router = useRouter();
+  const { id } = router.query;
 
-  // console.log('getting single profile data')
-  // console.log(profile)
+  console.log(userData.userId)
+  console.log(id)
+
 
   const [githubProfileData, setGitHubProfileData] = useState()
+  const [isLoggedInUsersProfile, setIsLoggedInUsersProfile] = useState(false)
 
   const profileData = profile.docData
-  // let githubProfileData
-  console.log(profileData)
+ 
+  console.log(`Is logged in users profile: ${isLoggedInUsersProfile}`)
 
-  console.log(profile)
   useEffect(() => {
 
-    // Old method (only call the API endpoint) - new method runs firestore query first
-    // handleRetrieveProfileData()
-
+    if (userData.userId === id) {
+      setIsLoggedInUsersProfile(true)
+    }
     // Check if profile data available in Firestore - if not will add to DB
     // TODO: Extract to a server function or run when adding a profile
     // Note - ID = firestore ID, username = Github username
     handleRetrieveProfileData()
 
 
-  }, [])
+  }, [userData.userId])
 
   // Old method (only call the API endpoint) - new method runs firestore query first
   // TODO: delete or move to lib for reference
@@ -107,9 +111,9 @@ export default function Profile({ profile, projects }: any) {
             githubProfileData &&
             <ProfilePageUserPanel
               props={githubProfileData}
+              currentUser={isLoggedInUsersProfile}
             />
           }
-          {/* <Skeleton height='100%' radius="md" animate={false} /> */}
         </Grid.Col>
 
         {/* Remaining width for cover image and projects */}
@@ -128,7 +132,9 @@ export default function Profile({ profile, projects }: any) {
 
 
             <Grid.Col>
-              <ProfilePageProjectGrid projects={projects} />
+              <ProfilePageProjectGrid
+                projects={projects}
+              />
 
             </Grid.Col>
           </Grid>
@@ -138,50 +144,3 @@ export default function Profile({ profile, projects }: any) {
   )
 }
 
-// TODO: Delete below after referencing for profile page output
-
-// const UserInfo: NextPage = () => {
-
-//   // console.log('userInfo page')
-
-//   const { userData } = useContext(AuthContext)
-//   // console.log(userData)
-//   const signOutHandler = async () => {
-//     await signOut(auth)
-//   }
-
-//   return (
-//     <AuthRoute>
-//       <div>
-//         <h1 className="text-8xl text-center dark:text-white font-black">User Info:</h1>
-
-//         <div className="mt-4 flex flex-col gap-y-2">
-
-//           {Object.entries(userData).map(([key, value]: any, userInfo) => {
-//             return (
-//               <div key={userInfo} className="flex gap-x-3 items-center justify-center">
-//                 <h4 className='font-bold dark:text-white'>{key}:</h4>
-//                 <h6 className='dark:text-white'>{value ? value : 'Not Provided'}</h6>
-//               </div>
-//             )
-//           })}
-//           <div className="flex gap-x-3 items-center justify-center">
-//             <h4>Profile picture</h4>
-//             {userData.userPhotoLink ? (
-//               <img
-//                 className="rounded-full object-contain w-32 h-32"
-//                 src={userData.userPhotoLink}
-//                 alt={userData.userName}
-//               />
-//             ) : (
-//               "null"
-//             )}
-//           </div>
-//         </div>
-//       </div>
-//     </AuthRoute>
-//   )
-
-// }
-
-// export default UserInfo
