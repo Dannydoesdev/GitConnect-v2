@@ -3,12 +3,15 @@ import useSWR from 'swr'
 import { getAllProfileIds, getProfileData, getProfileDataPublic } from '../../lib/profiles'
 import { getAllProjectDataFromProfile, getProjectData } from '../../lib/projects'
 import ProfilePageProjectGrid from '../../components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid'
-import { Title, Space } from '@mantine/core'
+import { Title, Space, Container, Grid, Skeleton, rem } from '@mantine/core'
 import { AuthContext } from "../../context/AuthContext"
 // import AuthRoute from "../../HoC/authRoute"
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Image from 'next/image'
 import { getProfileDataGithub } from '../../lib/profiles'
+import { ProfilePageLayoutGrid } from '../../components/ProfilePage/ProfilePageLayout/ProfilePageLayout'
+import { userInfo } from 'os'
+import AuthRoute from '../../HoC/authRoute'
 
 
 
@@ -44,7 +47,11 @@ export default function Profile({ profile, projects }: any) {
 
   // console.log('getting single profile data')
   // console.log(profile)
+
+  const [githubProfileData, setGitHubProfileData] = useState()
+
   const profileData = profile.docData
+  // let githubProfileData
   console.log(profileData)
 
   console.log(profile)
@@ -56,38 +63,70 @@ export default function Profile({ profile, projects }: any) {
     // Check if profile data available in Firestore - if not will add to DB
     // TODO: Extract to a server function or run when adding a profile
     // Note - ID = firestore ID, username = Github username
+    handleRetrieveProfileData()
 
-    getProfileDataGithub(profile.id, profileData.userName)
 
   }, [])
 
   // Old method (only call the API endpoint) - new method runs firestore query first
- // TODO: delete or move to lib for reference
+  // TODO: delete or move to lib for reference
   async function handleRetrieveProfileData() {
-    const profileDataUrl = `/api/profiles/${profile.id}`;
-    await axios.get(profileDataUrl, {
-      params: {
-        username: profileData.userName,
-      }
-    })
-      .then((response) => {
-        console.log(`front end response:`)
-        console.log(response.data)
 
-        const githubPublicProfileData = response.data
-      })
+    const getGithubProfileData: any = await getProfileDataGithub(profile.id, profileData.userName)
+
+    setGitHubProfileData(getGithubProfileData.docData)
+
+    // const profileDataUrl = `/api/profiles/${profile.id}`;
+    // await axios.get(profileDataUrl, {
+    //   params: {
+    //     username: profileData.userName,
+    //   }
+    // })
+    //   .then((response) => {
+    //     console.log(`front end response:`)
+    //     console.log(response.data)
+
+    //     const githubPublicProfileData = response.data
+    //   })
   }
 
   return (
-    <div>
-      {/* <h1>Profile Page</h1> */}
-      {/* <h1>{profileData.userName}'s Projects</h1> */}
+    // <div>
+    // {/* <h1>Profile Page</h1> */}
+    // {/* <h1>{profileData.userName}'s Projects</h1> */}
+    // <Container
+    <Container fluid mx='xl' my="md">
       <Space h={70} />
-      <Title order={1} weight='bolder' align='center'>{profileData.userName}'s Projects</Title>
-      <Space h='xl' />
-      <ProfilePageProjectGrid projects={projects} />
+      <Grid>
 
-    </div>
+        {/* User info vertical full height span */}
+        <Grid.Col span={2}>
+          <Skeleton height='100%' radius="md" animate={false} />
+        </Grid.Col>
+        {/* Remaining width for cover image and projects */}
+        <Grid.Col span={10}>
+          <Grid gutter="md">
+
+            {/* Cover Image full grid span */}
+            <Grid.Col>
+              <Skeleton height={rem(150)} radius="md" animate={false} />
+            </Grid.Col>
+            {/* TODO: Feature project full grid span - selected by user and parsed from DB */}
+            {/* <Grid.Col>
+              <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} />
+            </Grid.Col> */}
+
+            {/* <Space h={70} /> */}
+            {/* <Title order={1} weight='bolder' align='center'>{profileData.userName}'s Projects</Title> */}
+            {/* <Space h='xl' /> */}
+            <Grid.Col>
+              <ProfilePageProjectGrid projects={projects} />
+              {/* {githubProfileData && <ProfilePageLayoutGrid props={githubProfileData} />} */}
+            </Grid.Col>
+          </Grid>
+        </Grid.Col>
+      </Grid>
+    </Container>
   )
 }
 
