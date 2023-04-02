@@ -87,7 +87,7 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
           {updatedName ? updatedName : name}
         </Text>
         <Text ta="center" c="dimmed" fz="sm">
-          {login} • {updatedLocation ? updatedLocation : location}
+          {login}{location && ' • '} {updatedLocation ? updatedLocation : location}
         </Text>
 
         <Link href={html_url} passHref legacyBehavior>

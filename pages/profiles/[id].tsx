@@ -71,7 +71,7 @@ export default function Profile({ profile, projects }: any) {
     handleRetrieveProfileData()
 
 
-  }, [userData.userId])
+  }, [userData.userId, id])
 
   // Old method (only call the API endpoint) - new method runs firestore query first
   // TODO: delete or move to lib for reference
