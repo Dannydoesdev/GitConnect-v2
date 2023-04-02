@@ -12,6 +12,7 @@ import { getProfileDataGithub } from '../../lib/profiles'
 import { ProfilePageLayoutGrid } from '../../components/ProfilePage/ProfilePageLayout/ProfilePageLayout'
 import { userInfo } from 'os'
 import AuthRoute from '../../HoC/authRoute'
+import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel'
 
 
 
@@ -92,8 +93,9 @@ export default function Profile({ profile, projects }: any) {
 
   return (
     // <div>
-    // {/* <h1>Profile Page</h1> */}
-    // {/* <h1>{profileData.userName}'s Projects</h1> */}
+    //     {/* <Space h={70} /> */}
+    // {/* <Title order={1} weight='bolder' align='center'>{profileData.userName}'s Projects</Title> */}
+    // {/* <Space h='xl' /> */}
     // <Container
     <Container fluid mx='xl' my="md">
       <Space h={70} />
@@ -101,27 +103,33 @@ export default function Profile({ profile, projects }: any) {
 
         {/* User info vertical full height span */}
         <Grid.Col span={2}>
-          <Skeleton height='100%' radius="md" animate={false} />
+          {
+            githubProfileData &&
+            <ProfilePageUserPanel
+              props={githubProfileData}
+            />
+          }
+          {/* <Skeleton height='100%' radius="md" animate={false} /> */}
         </Grid.Col>
+
         {/* Remaining width for cover image and projects */}
         <Grid.Col span={10}>
           <Grid gutter="md">
 
-            {/* Cover Image full grid span */}
-            <Grid.Col>
+            {/* TODO: Cover Image full grid span */}
+            {/* <Grid.Col>
               <Skeleton height={rem(150)} radius="md" animate={false} />
-            </Grid.Col>
+            </Grid.Col> */}
+
             {/* TODO: Feature project full grid span - selected by user and parsed from DB */}
             {/* <Grid.Col>
               <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} />
             </Grid.Col> */}
 
-            {/* <Space h={70} /> */}
-            {/* <Title order={1} weight='bolder' align='center'>{profileData.userName}'s Projects</Title> */}
-            {/* <Space h='xl' /> */}
+
             <Grid.Col>
               <ProfilePageProjectGrid projects={projects} />
-              {/* {githubProfileData && <ProfilePageLayoutGrid props={githubProfileData} />} */}
+
             </Grid.Col>
           </Grid>
         </Grid.Col>
