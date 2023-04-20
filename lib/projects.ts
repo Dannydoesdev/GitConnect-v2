@@ -35,8 +35,29 @@ export async function getAllProjectsSimple() {
     projects.push({...doc.data()})
        
       return(projects)
-    
   })
+}
+
+
+export async function getAllPublicProjects() {
+
+  const projects: any = []
+  const q = query(collectionGroup(db, 'repos'), where('hidden', '==', false));
+  const querySnapshot = await getDocs(q);
+  
+  // console.log(querySnapshot)
+  // console.log('query snapshot done')
+   querySnapshot.docs.forEach((doc: any) => {
+    // ...detail.data(),
+    // id: detail.id,
+    // console.log(doc.id, ' => ', doc.data());
+    // console.log({ ...doc.data() })
+    // console.log(detail.id)
+    projects.push({...doc.data()})
+       
+      
+  })
+  return(projects)
 }
 
 
