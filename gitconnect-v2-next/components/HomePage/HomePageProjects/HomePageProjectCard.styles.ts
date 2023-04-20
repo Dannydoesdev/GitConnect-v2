@@ -7,7 +7,9 @@ export default createStyles((theme, _params, getRef) => {
     card: {
       position: 'relative',
       height: 280,
+      paddingBottom: '20px',
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    
 
       [`&:hover .${image}`]: {
         transform: 'scale(1.03)',
@@ -43,9 +45,14 @@ export default createStyles((theme, _params, getRef) => {
       zIndex: 1,
     },
 
+    group: {
+      zIndex: 2,
+      position: 'relative',
+    },
+
     title: {
       color: theme.white,
-      marginBottom: 5,
+      marginBottom: 15,
     },
 
     bodyText: {
@@ -56,8 +63,11 @@ export default createStyles((theme, _params, getRef) => {
     author: {
       color: theme.colors.dark[2],
       position: 'relative',
-      top: '-55px',
+      zIndex: 2,
+      top: '-60px',
       left: '25px',
+      padding: '4px 12px',
+      display: 'block',
     },
   };
 });
