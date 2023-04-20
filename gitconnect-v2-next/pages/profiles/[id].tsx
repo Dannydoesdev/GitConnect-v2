@@ -9,12 +9,10 @@ import { AuthContext } from "../../context/AuthContext"
 import React, { useContext, useEffect, useState } from "react"
 import Image from 'next/image'
 import { getProfileDataGithub } from '../../lib/profiles'
-import { ProfilePageLayoutGrid } from '../../components/ProfilePage/ProfilePageLayout/ProfilePageLayout'
 import { userInfo } from 'os'
 import AuthRoute from '../../HoC/authRoute'
 import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel'
 import { useRouter } from 'next/router'
-
 
 
 // const fetcher = (url: string) => axios.get(url).then(res => res.data)

@@ -1,5 +1,5 @@
 import { Space } from "@mantine/core";
-import { ProfilePageLayoutGrid } from "../components/ProfilePage/ProfilePageLayout/ProfilePageLayout";
+import { ProfilePageLayoutGrid } from "../components/ProfilePage/Unused_ProfilePageLayout/ProfilePageLayout";
 
 function ProfilePageGrid() {
 
