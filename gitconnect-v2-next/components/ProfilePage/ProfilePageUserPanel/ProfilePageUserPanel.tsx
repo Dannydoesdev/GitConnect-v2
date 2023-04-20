@@ -114,71 +114,74 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
           Edit Profile
         </Button>
       }
-      <Paper
-        radius="md"
-        withBorder
-        p="lg"
-        sx={(theme) => ({
-          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-        })}
-      >
+        {/* Check if any bio exists */}
+      { bio &&
+        <Paper
+          radius="md"
+          withBorder
+          p="lg"
+          sx={(theme) => ({
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+          })}
+        >
 
-        {editMode && currentUser ?
-          // If current user editing profile - show forms to update content in place of static content
-          <>
-            {/* <form onSubmit={form.onSubmit((values) => console.log(values))}> */}
-            <TextInput
-              label="Name"
-              placeholder="Name"
-              {...form.getInputProps('name')}
-            />
-            <TextInput
-              label="Location"
-              placeholder="Location"
-              {...form.getInputProps('location')}
-            />
-            <Textarea
-              // placeholder={bio}
-              label="Bio"
-              placeholder="Bio"
-              autosize
-              minRows={2}
-              maxRows={7}
-              {...form.getInputProps('bio')}
+          {editMode && currentUser ?
+            // If current user editing profile - show forms to update content in place of static content
+            <>
+              {/* <form onSubmit={form.onSubmit((values) => console.log(values))}> */}
+              <TextInput
+                label="Name"
+                placeholder="Name"
+                {...form.getInputProps('name')}
+              />
+              <TextInput
+                label="Location"
+                placeholder="Location"
+                {...form.getInputProps('location')}
+              />
+              <Textarea
+                // placeholder={bio}
+                label="Bio"
+                placeholder="Bio"
+                autosize
+                minRows={2}
+                maxRows={7}
+                {...form.getInputProps('bio')}
 
-            // value={editBio}
-            // onChange={(event) => setEditBio(event.currentTarget.value)}
-            />
-            <Button
-              variant="filled"
-              fullWidth
-              mt="md"
-              onClick={handleSaveChanges}
-            >
-              Save Changes
-            </Button>
-            <Button
-              type='submit'
-              variant="outline"
-              fullWidth
-              mt="sm"
-              onClick={handleEditMode}
-            >
-              Cancel Changes
-            </Button>
-            {/* </form>  */}
-          </>
+              // value={editBio}
+              // onChange={(event) => setEditBio(event.currentTarget.value)}
+              />
+              <Button
+                variant="filled"
+                fullWidth
+                mt="md"
+                onClick={handleSaveChanges}
+              >
+                Save Changes
+              </Button>
+              <Button
+                type='submit'
+                variant="outline"
+                fullWidth
+                mt="sm"
+                onClick={handleEditMode}
+              >
+                Cancel Changes
+              </Button>
+              {/* </form>  */}
+            </>
 
-          :
+            :
 
-          // When not in edit mode - show static content
-          <Text ta="center" fz="lg" weight={500} mt="md">
-            {updatedBio ? updatedBio : bio}
-          </Text>
+            // When not in edit mode - show static content
+            <Text ta="center" fz="lg" weight={500} mt="md">
+              {updatedBio ? updatedBio : bio}
+            </Text>
 
-        }
-
-      </Paper>
+          }
+        </Paper>
+        // End bio exists check
+      }
     </>
   );
 
