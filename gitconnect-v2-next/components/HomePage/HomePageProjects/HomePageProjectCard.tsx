@@ -21,6 +21,7 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
     <>
       <Card
         p="xl"
+        mt={-30}
         mb='lg'
         shadow="lg"
         className={classes.card}
@@ -46,7 +47,10 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
         </div>
       </Card>
       <Group
-        position="apart" spacing="xs" mt='sm'
+        position="apart"
+        // spacing="xs"
+        // mt='sm'
+        className={classes.group}
       >
         <Center>
 
@@ -56,13 +60,15 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
             <Avatar
               component='a'
               radius='xl'
-              size={24}
-              mr="xs"
+              size={29}
+              // mr="xs"
               src={avatar}
               styles={() => ({
                 root: {
+                  // zIndex: '2',
+                  // padding: '4px 2px',
                   position: 'relative',
-                  top: '-55px',
+                  top: '-60px',
                   left: '25px',
                 },
               })}
@@ -71,8 +77,8 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
           <Link href={profileUrl} passHref legacyBehavior>
             <Text
               component='a'
-              size="sm"
-              inline
+              size="md"
+              // inline
               className={classes.author}
             >
               {author}
