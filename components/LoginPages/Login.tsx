@@ -4,6 +4,9 @@ import { GithubAuthProvider, signInWithPopup } from "firebase/auth"
 import { auth } from "../../firebase/clientApp"
 import Link from 'next/link'
 import { IconBrandGithub } from "@tabler/icons-react";
+import useStyles from './Login.styles';
+// import Mixpanel from "mixpanel"
+import mixpanel from 'mixpanel-browser';
 
 import {
   Paper,
@@ -18,51 +21,13 @@ import {
   Group,
 } from '@mantine/core';
 
-const useStyles = createStyles((theme) => ({
-  wrapper: {
-    marginTop: 70,
-    minHeight: 900,
-    backgroundSize: theme.colorScheme === 'dark' ? '30%' : '33%',
-    backgroundImage: theme.colorScheme === 'dark' ?
-      'url(/img/gitconnect-invert.jpg)' :
-      'url(/img/gitconnect.jpg)'
-  },
-
-  form: {
-    borderRight: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-      }`,
-    minHeight: 900,
-    maxWidth: 450,
-    paddingTop: 80,
-
-    [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-      maxWidth: '100%',
-    },
-  },
-
-  title: {
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-  },
-
-  text: {
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-  },
-
-  logo: {
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    width: 120,
-    display: 'block',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-}));
 
 export function LoginPage() {
   const { classes } = useStyles();
 
   const Router = useRouter()
+  mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
+
 
   // Don't re-render the Github provider until the router changes (eg user is pushed home)
   const loginHandler = useCallback(async () => {
@@ -71,7 +36,24 @@ export function LoginPage() {
     try {
       // Attempt popup OAuth
       await signInWithPopup(auth, provider)
+        .then((result) => {
+          // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+          const credential: any = GithubAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
 
+          // The signed-in user info.
+          const user = result.user;
+
+          const userId = user.uid;
+          console.log(userId)
+
+          mixpanel.identify(userId)
+
+          mixpanel.track('Logged In', {
+            'Login Type': 'GitHub',
+          });
+
+        })
       // push to home after auth
       Router.push("/")
     } catch (error) {
