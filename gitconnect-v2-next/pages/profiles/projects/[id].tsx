@@ -19,7 +19,6 @@ import { incrementViewCount } from '../../../lib/views';
 
 
 export default function Project() {
-  console.log('Project component mounted')
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const { id } = router.query;
@@ -29,8 +28,7 @@ export default function Project() {
 
 
   useEffect(() => {
-    console.log('useEffect called - ID below')
-    console.log(id)
+  
 
     if (!id) {
       return;
@@ -47,7 +45,6 @@ export default function Project() {
       if (response.data && response.data.length > 0) {
         const userId = response.data[0].userId;
         const repoId = id;
-        console.log('axios POST called')
         axios.post('/api/projects/incrementView', {
           userId: userId,
           repoId: repoId
@@ -57,7 +54,7 @@ export default function Project() {
   }, [id]);
 
 
-
+  // TODO: Test if seperate useEffects are more efficient on page load - then cleanup 
   // useEffect(() => {
 
   //   const URL = `/api/profiles/projects/${id}`;
