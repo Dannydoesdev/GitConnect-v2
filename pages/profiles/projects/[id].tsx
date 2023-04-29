@@ -15,6 +15,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/clientApp';
 import DOMPurify from 'dompurify';
 import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
+import { incrementViewCount } from '../../../lib/views';
 
 
 export default function Project() {
@@ -36,8 +37,16 @@ export default function Project() {
   }, []);
 
 
-  // const userId = userData.userId;
+  // Add a 'view' when the component has mounted - id dependancy to make sure it has been defined before calling 
 
+  useEffect(() => {
+
+    if (id) {
+      axios.post('/api/projects/incrementView', { projectId: id });
+    }
+
+    // incrementViewCount(id as string);
+  }, [id])
 
   // Load any existing data from Firestore & put in state
   // Will need to update page content with the data returned
