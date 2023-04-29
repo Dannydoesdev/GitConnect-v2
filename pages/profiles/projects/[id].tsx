@@ -19,6 +19,7 @@ import { incrementViewCount } from '../../../lib/views';
 
 
 export default function Project() {
+  console.log('Project component mounted')
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const { id } = router.query;
@@ -28,25 +29,61 @@ export default function Project() {
 
 
   useEffect(() => {
+    console.log('useEffect called - ID below')
+    console.log(id)
 
+    if (!id) {
+      return;
+    }
+  
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL).then((response) => {
-
       setProjects(response.data);
+  
+      // Now that we have the projects data, increment the view count
+      // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
+      // Should be refactored to only run for unique users (currently increments on every refresh)
+
+      if (response.data && response.data.length > 0) {
+        const userId = response.data[0].userId;
+        const repoId = id;
+        console.log('axios POST called')
+        axios.post('/api/projects/incrementView', {
+          userId: userId,
+          repoId: repoId
+        });
+      }
     });
-  }, []);
+  }, [id]);
 
 
-  // Add a 'view' when the component has mounted - id dependancy to make sure it has been defined before calling 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (id) {
-      axios.post('/api/projects/incrementView', { projectId: id });
-    }
+  //   const URL = `/api/profiles/projects/${id}`;
+  //   axios.get(URL).then((response) => {
 
-    // incrementViewCount(id as string);
-  }, [id])
+  //     setProjects(response.data);
+  //   });
+  // }, []);
+
+
+
+  // useEffect(() => {
+
+  //   if (id && projects) {
+  //     const userId = projects[0].userId;
+  //     const repoId = id;
+
+  //     axios.post('/api/projects/incrementView', {
+  //       userId: userId,
+  //       repoId: repoId
+  //     });
+
+  //   }
+
+  //   // incrementViewCount(id as string);
+  // }, [id, projects])
 
   // Load any existing data from Firestore & put in state
   // Will need to update page content with the data returned
@@ -130,7 +167,7 @@ export default function Project() {
 
         {/* HIDING TOP HEADINGS */}
         <ProjectPageDynamicContent props={projects} />
-        
+
         {firebaseData &&
           <RichTextEditorDisplay content={firebaseData} />
         }

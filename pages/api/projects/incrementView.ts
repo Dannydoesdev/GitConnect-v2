@@ -9,16 +9,18 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const projectId = req.body.projectId;
-    const projectRef = adminDb.collection('repos').doc(projectId);
   
+    const userId = req.body.userId;
+    const repoId = req.body.repoId;
+    const projectRef = adminDb.collection('users').doc(userId).collection('repos').doc(repoId);
+
     await projectRef.update({
       views: FieldValue.increment(1)
     });
 
   
     // OLD way ( client side code ):
-    
+
     // const projectRef = doc(adminDb, 'repos', projectId);
 
     // await updateDoc(projectRef, {
