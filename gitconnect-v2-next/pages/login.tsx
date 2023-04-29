@@ -4,9 +4,11 @@ import { useRouter } from "next/router"
 import GithubLogin from "../components//LoginPages/GithubLogin"
 import EmailLogin from "../components/LoginPages/EmailLogin"
 import GoogleLogin from "../components//LoginPages/GoogleLogin"
-import { LoginPage } from "../components/LoginPages/NewLogin"
+import { LoginPage } from "../components/LoginPages/Login"
+// import Mixpanel from "mixpanel"
 
 const Login = () => {
+  // const mixpanel = Mixpanel.init('13152890549909d8a9fe73e4daf06e43');
   // console.log('hi')
   const { currentUser } = useContext(AuthContext)
   const Router = useRouter()
