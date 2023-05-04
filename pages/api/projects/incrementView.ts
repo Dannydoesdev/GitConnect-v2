@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { adminDb } from '../../../firebase/adminApp';
+// import { initializeAdminApp, adminDb } from '../../../firebase/adminApp';
+import { getAdminDb } from '../../../firebase/adminApp';
 // import { db } from '../../../firebase/clientApp';
 // import { doc, updateDoc, increment } from 'firebase/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
@@ -9,16 +10,20 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-  
+    const adminDb = getAdminDb();
+
     const userId = req.body.userId;
     const repoId = req.body.repoId;
-    const projectRef = adminDb.collection('users').doc(userId).collection('repos').doc(repoId);
+    const projectRef = adminDb
+      .collection('users')
+      .doc(userId)
+      .collection('repos')
+      .doc(repoId);
 
     await projectRef.update({
-      views: FieldValue.increment(1)
+      views: FieldValue.increment(1),
     });
 
-  
     // OLD way ( client side code ):
 
     // const projectRef = doc(adminDb, 'repos', projectId);
