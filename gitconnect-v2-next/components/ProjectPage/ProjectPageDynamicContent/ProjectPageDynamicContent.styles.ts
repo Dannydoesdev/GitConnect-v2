@@ -41,8 +41,13 @@ export default createStyles((theme) => ({
       marginTop: theme.spacing.sm,
     },
   },
-  iframe: {
 
+  bodyText: {
+    color: theme.colors.dark[2],
+    marginLeft: 7,
+  },
+
+  iframe: {
     // display: 'block',
     width: 1200,
     margin: '50px 0px 5px 0px',
