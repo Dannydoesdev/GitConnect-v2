@@ -11,9 +11,11 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    height: '60vh',
+    height: '56vh',
     marginTop: 50,
     paddingBottom: 70,
+    maxWidth: '80rem',
+    marginBottom: -30,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',

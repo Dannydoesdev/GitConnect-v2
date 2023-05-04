@@ -85,7 +85,7 @@ export function HeroLanding() {
             <Text className={classes.description} italic={true} size="xs" mt="xl">
               Note: This site is actively under construction
             </Text>
-            <Link
+            {/* <Link
               href="https://git--connect.herokuapp.com/"
               passHref
               legacyBehavior>
@@ -97,8 +97,8 @@ export function HeroLanding() {
                 size="xs"
                 mt="sm">
                 Visit GitConnect; V1
-              </Text>
-            </Link>
+              </Text> */}
+            {/* </Link> */}
           </>
 
         }

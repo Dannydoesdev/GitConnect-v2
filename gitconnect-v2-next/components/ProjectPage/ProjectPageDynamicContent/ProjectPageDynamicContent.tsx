@@ -14,8 +14,9 @@ import {
   SimpleGrid,
   Stack,
   Space,
+  Center,
 } from '@mantine/core';
-import { IconGauge, IconUser, IconCookie, IconFall, IconReportAnalytics, IconListNumbers } from '@tabler/icons-react';
+import { IconGauge, IconUser, IconCookie, IconFall, IconReportAnalytics, IconListNumbers, IconEye, IconStar } from '@tabler/icons-react';
 import useStyles from './ProjectPageDynamicContent.styles'
 
 
@@ -23,7 +24,7 @@ export default function ProjectPageDynamicContent(props: any) {
 
 
   const { classes, theme } = useStyles();
-  const project  = props.props[0] 
+  const project = props.props[0]
 
   // Temporary workaround for non-static projects
 
@@ -50,29 +51,29 @@ export default function ProjectPageDynamicContent(props: any) {
       },
     ];
   }
-    // Temporary workaround for non-static projects
+  // Temporary workaround for non-static projects
   else {
     projectData = [
       {
         title: 'Process',
         description:
-        'Process not added yet',
+          'Process not added yet',
         icon: IconListNumbers,
       },
       {
         title: 'Challenges',
         description:
-        'Challenges not added yet',
+          'Challenges not added yet',
         icon: IconFall,
       },
       {
         title: 'Outcomes',
         description:
-         'Outcomes not added yet',
+          'Outcomes not added yet',
         icon: IconReportAnalytics,
       },
     ];
-   }
+  }
 
   const features = projectData.map((project: any) => (
     <Card key={project.title} shadow="md" radius="md" className={classes.card} p="xl">
@@ -88,7 +89,7 @@ export default function ProjectPageDynamicContent(props: any) {
 
 
   return (
-    <Container size="lg" py="xl">
+    <Container size="lg" mt='lg' py="xs">
 
       <Group position="center">
         {/* <Badge variant="filled" size="lg">
@@ -97,35 +98,53 @@ export default function ProjectPageDynamicContent(props: any) {
       </Group>
 
       <Title order={2} className={classes.title} align="center" mt="sm">
-      {project.name}
+        {project.name}
       </Title>
 
       <Text color="dimmed" className={classes.description} align="center" mt="md">
-      {project.description}
+        {project.description}
       </Text>
+
+      <Group mt='lg' position='center' spacing="lg">
+        <Center>
+          <IconEye size="1.3rem" stroke={1.5} color={theme.colors.dark[2]} />
+          <Text size="sm" weight={450} className={classes.bodyText}>
+            {/* {project.views} */}
+            {project.views ? project.views : 0}
+
+          </Text>
+        </Center>
+        <Center>
+          <IconStar size="1.2rem" stroke={1.7} color={theme.colors.dark[2]} />
+          <Text size="sm" weight={450} className={classes.bodyText}>
+            {project.stars ? (project.stars).length : 0}
+          </Text>
+        </Center>
+      </Group>
+
 
       {project.process && project.challenges && project.outcomes &&
         <>
-      <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
-        {features}
-      </SimpleGrid>
-      <Space h={80} />
-      </>
+          <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
+            {features}
+          </SimpleGrid>
+          <Space h={80} />
+        </>
       }
 
       {project.live_url &&
         <>
-      <Title order={2} className={classes.title} align="center" mt="sm">
-      Check out the live site:
-        </Title>
-        {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
-      <Group>
-          {/* referrerPolicy="origin-when-cross-origin" llow-storage-access-by-user-activation   allow-scripts*/}
-          
-          {/* TODO - enforce stricter sandboxing (without breaking iFrame content) */}
-     <iframe sandbox="allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock" className={classes.iframe} src={project.live_url}></iframe> 
-    
-        </Group>
+          <Title order={2} className={classes.title} align="center" mt="sm">
+            Check out the live site:
+          </Title>
+          {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
+          <Group>
+            {/* referrerPolicy="origin-when-cross-origin" llow-storage-access-by-user-activation   allow-scripts*/}
+
+            {/* TODO - enforce stricter sandboxing (without breaking iFrame content) */}
+            <iframe sandbox="allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock" className={classes.iframe} src={project.live_url}></iframe>
+
+          </Group>
         </>
       }
     </Container>

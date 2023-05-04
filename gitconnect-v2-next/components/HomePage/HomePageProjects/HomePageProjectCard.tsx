@@ -1,11 +1,11 @@
-import { IconEye, IconMessageCircle } from '@tabler/icons-react';
+import { IconEye, IconMessageCircle, IconStar } from '@tabler/icons-react';
 import { Card, Text, Group, Center, createStyles, Avatar } from '@mantine/core';
 import useStyles from './HomePageProjectCard.styles';
 import Link from 'next/link';
 import { useRouter } from "next/router"
 
 
-export function ImageCard({ image, profileUrl, title, author, avatar, views, comments, link }: ImageCardProps) {
+export function ImageCard({ image, profileUrl, title, author, avatar, views, stars, link }: ImageCardProps) {
   const { classes, theme } = useStyles();
   const Router = useRouter()
 
@@ -21,8 +21,8 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
     <>
       <Card
         p="xl"
-        mt={-30}
-        mb='lg'
+        mt={8}
+        mb='sm'
         shadow="lg"
         className={classes.card}
         radius="md"
@@ -33,14 +33,18 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
         {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
 
         {/* Temporary workaround for static projects to work */}
-        <div className={classes.image} style={{ backgroundImage: `url(${image})`}} />
+        <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
         {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` ? `url(${image})` : image }} /> */}
 
         <div className={classes.overlay} />
 
         <div className={classes.content}>
           <div>
-            <Text size="lg" pb='md' className={classes.title} weight={500}>
+            <Text
+              size="xl"
+              // pb='md'
+              className={classes.title}
+              weight={600}>
               {title}
             </Text>
           </div>
@@ -48,6 +52,9 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
       </Card>
       <Group
         position="apart"
+        pl={20}
+        pr={20}
+        noWrap={true}
         // spacing="xs"
         // mt='sm'
         className={classes.group}
@@ -63,28 +70,44 @@ export function ImageCard({ image, profileUrl, title, author, avatar, views, com
               size={29}
               // mr="xs"
               src={avatar}
-              styles={() => ({
-                root: {
-                  // zIndex: '2',
-                  // padding: '4px 2px',
-                  position: 'relative',
-                  top: '-60px',
-                  left: '25px',
-                },
-              })}
+            // styles={() => ({
+            //   root: {
+            //     // zIndex: '2',
+            //     // padding: '4px 2px',
+            //     position: 'relative',
+            //     top: '-60px',
+            //     left: '25px',
+            //   },
+            // })}
             />
           </Link>
           <Link href={profileUrl} passHref legacyBehavior>
             <Text
               component='a'
               size="md"
+              weight={500}
               // inline
               className={classes.author}
             >
               {author}
             </Text>
           </Link>
+
         </Center>
+        <Group spacing="lg">
+          <Center>
+            <IconEye size="1.6rem" stroke={1.5} color={theme.colors.dark[2]} />
+            <Text size="md" weight={450} className={classes.bodyText}>
+              {views}
+            </Text>
+          </Center>
+          <Center>
+            <IconStar size="1.4rem" stroke={1.7} color={theme.colors.dark[2]} />
+            <Text size="md" weight={450} className={classes.bodyText}>
+              {stars}
+            </Text>
+          </Center>
+        </Group>
       </Group>
     </>
   );
@@ -97,6 +120,7 @@ interface ImageCardProps {
   title: string;
   author: string;
   avatar: string;
+  stars: number;
   views: number;
-  comments: number;
+  // comments: number;
 }
