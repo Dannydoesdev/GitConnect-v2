@@ -16,6 +16,7 @@ import { db } from '../../../firebase/clientApp';
 import DOMPurify from 'dompurify';
 import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 import { incrementViewCount } from '../../../lib/views';
+import { starProject, unstarProject } from '../../../lib/stars';
 
 
 export default function Project() {
@@ -25,34 +26,62 @@ export default function Project() {
 
   const [projects, setProjects] = useState<any>(null);
   const [firebaseData, setFirebaseData] = useState('');
+  const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
+  const [repoOwner, setRepoOwner] = useState<string>('')
 
+  // console.log('userData:')
+  // console.log(userData)
 
   useEffect(() => {
-  
 
     if (!id) {
       return;
     }
-  
+
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL).then((response) => {
       setProjects(response.data);
-  
+
+      // Check user is authenticated
+      if (response.data && response.data.length > 0 && userData) {
+        // Check whether user has starred this project already
+        setUserHasStarred(response.data[0].stars ? response.data[0].stars.includes(userData.userId) : false);
+      };
+
       // Now that we have the projects data, increment the view count
       // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
       // Should be refactored to only run for unique users (currently increments on every refresh)
 
       if (response.data && response.data.length > 0) {
+
         const userId = response.data[0].userId;
         const repoId = id;
+
+        setRepoOwner(userId)
+
         axios.post('/api/projects/incrementView', {
           userId: userId,
           repoId: repoId
         });
       }
     });
-  }, [id]);
+  }, [id, userData]);
 
+  const handleStarClick = async () => {
+    if (!userData || !projects || projects.length === 0) return;
+
+    const userId = userData.userId;
+    const ownerId = repoOwner;
+    const repoId = projects[0].id;
+
+    if (userHasStarred) {
+      await unstarProject(userId, ownerId, repoId);
+      setUserHasStarred(false);
+    } else {
+      await starProject(userId, ownerId, repoId);
+      setUserHasStarred(true);
+    }
+  };
 
   // TODO: Test if seperate useEffects are more efficient on page load - then cleanup 
   // useEffect(() => {
@@ -121,6 +150,7 @@ export default function Project() {
     return (
       <>
         <ProjectPageDynamicHero props={projects} />
+
         {projects[0].userId === userData.userId &&
           <Center>
             <Link href={`/profiles/projects/edit/${projects[0].id}`} passHref legacyBehavior>
@@ -157,6 +187,33 @@ export default function Project() {
                 Edit your project
               </Button>
             </Link>
+
+
+
+          </Center>
+        }
+        {userData.userId &&
+          //  If user is logged in - show star buttons
+          <Center>
+            <Button
+              component='a'
+              onClick={handleStarClick}
+              variant='filled'
+              size='lg'
+              radius='md'
+              mt={40}
+              className='mx-auto'
+              sx={(theme) => ({
+                // subscribe to color scheme changes
+                backgroundColor:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[5]
+                    : theme.colors.blue[6],
+              })}
+
+            >
+              {userHasStarred ? 'Unstar' : 'Star'} Project
+            </Button>
           </Center>
         }
 

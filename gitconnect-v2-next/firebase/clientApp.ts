@@ -1,16 +1,8 @@
-import { initializeApp, getApps } from "firebase/app"
-import { getAuth } from "firebase/auth"
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-  onSnapshot
-} from 'firebase/firestore'
-import { getStorage, ref } from "firebase/storage";
-import { getAnalytics, isSupported, logEvent} from "firebase/analytics";
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage, ref } from 'firebase/storage';
+import { getAnalytics, isSupported, logEvent } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,40 +13,33 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+};
+
+let firebaseApp;
+
+if (!getApps().length) {
+  firebaseApp = initializeApp(firebaseConfig);
+} else {
+  firebaseApp = getApp();
 }
 
-let firebaseApp
-
-// init app - removed if clause to prevent error
-// if (!getApps().length) {
-  firebaseApp = initializeApp(firebaseConfig)
-  // console.log('firebase initialised')
-  // 
-// }
-
-export const app = firebaseApp
-export const auth = getAuth(app)
-// export const db = getFirestore(app)
-
+export const app = firebaseApp;
+export const auth = getAuth(app);
 
 // init firestore
-export const db = getFirestore(firebaseApp)
+export const db = getFirestore(firebaseApp);
 
-export const storage = getStorage(app)
+export const storage = getStorage(app);
 
-export const storageRef = ref(storage)
+export const storageRef = ref(storage);
 
 // See https://stackoverflow.com/q/66812479
 
 let analytics;
 if (typeof window != undefined) {
-  // app = initializeApp(firebaseConfig);
-  analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
-  // db = getFirestore(app)
+  analytics = isSupported().then((yes) => (yes ? getAnalytics(app) : null));
 }
 
-
-// export const analytics = getAnalytics(app)
 export { analytics };
 
 // logEvent(analytics, 'notification_received');
