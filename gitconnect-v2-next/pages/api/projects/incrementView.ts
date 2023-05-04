@@ -25,6 +25,7 @@ export default async function handler(
     });
 
     // OLD way ( client side code ):
+    // TODO: Assess whether to move back to client side with updated firstore security rules (similar to stars) or leave on server - cleanup uneccessary code.
 
     // const projectRef = doc(adminDb, 'repos', projectId);
 
