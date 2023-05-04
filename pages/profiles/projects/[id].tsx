@@ -29,8 +29,8 @@ export default function Project() {
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
   const [repoOwner, setRepoOwner] = useState<string>('')
 
-  console.log('userData:')
-  console.log(userData)
+  // console.log('userData:')
+  // console.log(userData)
 
   useEffect(() => {
 
@@ -193,7 +193,7 @@ export default function Project() {
           </Center>
         }
         {userData.userId &&
-          //  {/* NOTE - need to check if user is logged in and only show then */}
+          //  If user is logged in - show star buttons
           <Center>
             <Button
               component='a'
