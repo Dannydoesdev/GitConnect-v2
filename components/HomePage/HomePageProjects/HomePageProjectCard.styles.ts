@@ -8,8 +8,10 @@ export default createStyles((theme, _params, getRef) => {
       position: 'relative',
       height: 280,
       paddingBottom: '20px',
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-    
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
 
       [`&:hover .${image}`]: {
         transform: 'scale(1.03)',
@@ -33,7 +35,8 @@ export default createStyles((theme, _params, getRef) => {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundImage: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)',
+      backgroundImage:
+        'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)',
     },
 
     content: {
@@ -52,7 +55,7 @@ export default createStyles((theme, _params, getRef) => {
 
     title: {
       color: theme.white,
-      marginBottom: 15,
+      marginBottom: 10,
     },
 
     bodyText: {
@@ -61,12 +64,14 @@ export default createStyles((theme, _params, getRef) => {
     },
 
     author: {
-      color: theme.colors.dark[2],
+      color: theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[9],
+      // weight: 700,
+      // color: theme.colors.dark[2],
       position: 'relative',
       zIndex: 2,
-      top: '-60px',
-      left: '25px',
-      padding: '4px 12px',
+      // top: '-60px',
+      // left: '25px',
+      padding: '0px 12px',
       display: 'block',
     },
   };
