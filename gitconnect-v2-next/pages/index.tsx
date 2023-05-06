@@ -5,49 +5,40 @@ import { Space, Title } from '@mantine/core'
 import { HeroLanding } from '../components/HomePage/HomePageHero/HomePageHero'
 import UploadFile from '../components/UploadFile'
 import HomePageProjectGrid from '../components/HomePage/HomePageProjects/HomePageProjectGrid'
-import axios from 'axios'
-import { getAllPublicProjects } from '../lib/projects'
+import { getAllPublicProjectsAndSort } from '../lib/sortProjects'
 
 export const getStaticProps: GetStaticProps = async () => {
   // const URL = `/api/profiles/projects/all`;
   // const response = await axios.get(URL);
   // const projects = response.data;
 
-  const projects = await getAllPublicProjects();
+  const sortedProjects = await getAllPublicProjectsAndSort();
+  // const projects = await getAllPublicProjects();
   // console.log(projects)
 
   return {
     props: {
-      projects,
+      // projects,
+      sortedProjects
     },
-    revalidate: 60, 
+    revalidate: 30,
   };
 };
 
 
-const Index: NextPage = ({ projects }: any) => {
-  // console.log('index hit')
+const Index: NextPage = ({ sortedProjects }: any) => {
+
   // const { userData, currentUser } = useContext(AuthContext)
-
-  // console.log('index projects:')
-  // console.log(projects)
-
   return (
     <>
       <HeroLanding />
       <Space h='xl' />
       <Space h='xl' />
 
-{/* 
-      {currentUser ? <Title order={3} align='center'>Hi {userData.userName}</Title>
-        :
-        ''} */}
-      {/* <Title order={1} weight='bolder' align='center'>GitConnect; Projects</Title> */}
-      {/* <Space h='xl' /> */}
+      {/* <HomePageProjectGrid projects={projects} /> */}
+      <HomePageProjectGrid projects={sortedProjects} />
 
-      <HomePageProjectGrid projects={projects} />
-
-        {/* < UploadFile /> */}
+      {/* < UploadFile /> */}
     </>
   )
 }
