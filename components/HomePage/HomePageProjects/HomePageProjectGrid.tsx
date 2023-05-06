@@ -31,7 +31,7 @@ const HomePageProjectGrid = ({ projects }: any) => {
   return (
 
     <SimpleGrid cols={4} spacing="xl" breakpoints={[
-      { maxWidth: 1439, cols: 3, spacing: 'md' },
+      { maxWidth: 1500, cols: 3, spacing: 'md' },
       { maxWidth: 1079, cols: 2, spacing: 'sm' },
       { maxWidth: 600, cols: 1, spacing: 'sm' },
     ]}>
@@ -46,8 +46,10 @@ const HomePageProjectGrid = ({ projects }: any) => {
                 // image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
                 title={project.name}
                 author={project.owner.login}
-                views={project.views ? project.views : 0}
-                stars={project.stars ? (project.stars).length : 0}
+                views={project.views}
+                stars={project.stars}
+                // views={project.views ? project.views : 0}
+                // stars={project.stars ? (project.stars).length : 0}
                 avatar={project.owner.avatar_url}
                 profileUrl={`/profiles/${project.userId}`}
                 link={`/profiles/projects/${project.id}`} />

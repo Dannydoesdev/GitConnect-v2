@@ -24,7 +24,8 @@ export default function ProjectPageDynamicContent(props: any) {
 
 
   const { classes, theme } = useStyles();
-  const project = props.props[0]
+  const project = props.props[0];
+  const stars = props.stars;
 
   // Temporary workaround for non-static projects
 
@@ -117,7 +118,8 @@ export default function ProjectPageDynamicContent(props: any) {
         <Center>
           <IconStar size="1.2rem" stroke={1.7} color={theme.colors.dark[2]} />
           <Text size="sm" weight={450} className={classes.bodyText}>
-            {project.stars ? (project.stars).length : 0}
+            {/* {project.stars ? (project.stars).length : 0} */}
+            {stars}
           </Text>
         </Center>
       </Group>
