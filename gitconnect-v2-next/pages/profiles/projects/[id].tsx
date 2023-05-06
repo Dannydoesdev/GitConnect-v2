@@ -28,6 +28,7 @@ export default function Project() {
   const [firebaseData, setFirebaseData] = useState('');
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
   const [repoOwner, setRepoOwner] = useState<string>('')
+  const [starCount, setStarCount] = useState(0)
 
   // console.log('userData:')
   // console.log(userData)
@@ -44,8 +45,13 @@ export default function Project() {
 
       // Check user is authenticated
       if (response.data && response.data.length > 0 && userData) {
+
         // Check whether user has starred this project already
         setUserHasStarred(response.data[0].stars ? response.data[0].stars.includes(userData.userId) : false);
+
+        // Set star count to allow live dynamic update of count
+        setStarCount(response.data[0].stars ? (response.data[0].stars).length : 0);
+
       };
 
       // Now that we have the projects data, increment the view count
@@ -77,9 +83,11 @@ export default function Project() {
     if (userHasStarred) {
       await unstarProject(userId, ownerId, repoId);
       setUserHasStarred(false);
+      setStarCount(starCount - 1)
     } else {
       await starProject(userId, ownerId, repoId);
       setUserHasStarred(true);
+      setStarCount(starCount + 1)
     }
   };
 
@@ -116,6 +124,7 @@ export default function Project() {
 
   useEffect(() => {
     if (projects) {
+      console.log(starCount)
       const userId = projects[0].userId;
       const repoId = id;
 
@@ -220,7 +229,7 @@ export default function Project() {
         {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
 
         {/* HIDING TOP HEADINGS */}
-        <ProjectPageDynamicContent props={projects} />
+        <ProjectPageDynamicContent props={projects} stars={starCount} />
 
         {firebaseData &&
           <RichTextEditorDisplay content={firebaseData} />

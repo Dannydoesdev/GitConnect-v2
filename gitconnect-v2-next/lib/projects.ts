@@ -60,6 +60,29 @@ export async function getAllPublicProjects() {
   return(projects)
 }
 
+// ChatGPT Implementation:
+
+export async function fetchProjects() {
+  const userDocs = await getDocs(collection(db, 'users'));
+  let projects: { id: string; userId: string; }[] = [];
+
+  for (const userDoc of userDocs.docs) {
+    const userId = userDoc.id;
+    const repoDocs = await getDocs(collection(db, `users/${userId}/repos`));
+
+    repoDocs.docs.forEach(repoDoc => {
+      const project = {
+        id: repoDoc.id,
+        userId: userId,
+        ...repoDoc.data(),
+      };
+      projects.push(project);
+    });
+  }
+
+  return projects;
+}
+
 
 export async function getAllProjectDataFromProfile(id:string) {
 
