@@ -121,8 +121,8 @@ const GetRepos = () => {
   const userName = userData.userName
 
   // handle when user hits the 'done' button
-  const handleDoneAdding = () => {
-
+  const handleDoneAdding = (e: any) => {
+    e.preventDefault();
     // map through selected repos array and pull out key identifiers
     // Get the firestore docs of the user based on username
 
@@ -146,10 +146,12 @@ const GetRepos = () => {
           .then(() => {
             console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
           })
-          .catch((e) => {
-            console.log(e);
-          }).then(() => {
-            Router.push(`/profiles/${userId}`)
+          .then(() => {
+            setTimeout(() => {
+              Router.push(`/profiles/${userId}`)
+            }, 1200);
+          }).catch((err) => {
+            console.log(err);
           })
       })
     })
@@ -214,7 +216,7 @@ const GetRepos = () => {
           <Button
             component="a"
             size='lg'
-            onClick={handleDoneAdding}
+            onClick={(e) => { handleDoneAdding(e) }}
             className='mx-auto'
             sx={(theme) => ({
               // subscribe to color scheme changes

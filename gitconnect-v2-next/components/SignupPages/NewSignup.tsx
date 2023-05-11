@@ -65,15 +65,20 @@ export function SignupPage() {
   const Router = useRouter()
 
   // Don't re-render the Github provider until the router changes (eg user is pushed home)
-  const loginHandler = useCallback(async () => {
+  // const loginHandler = useCallback(async () => {
+    const loginHandler = useCallback(async (e:any) => {
+      e.preventDefault();
     const provider = new GithubAuthProvider()
 
     try {
       // Attempt popup OAuth
       await signInWithPopup(auth, provider)
+        .then(() => {
 
-      // push to home after auth
-      Router.push("/")
+          // push to home after auth
+          Router.push("/");
+        })
+
     } catch (error) {
       console.log(error)
       // alert(error)
@@ -97,7 +102,7 @@ export function SignupPage() {
               // compact={true}
               component="a"
               size='lg'
-              onClick={loginHandler}
+              onClick={(e) => { loginHandler(e) }}
               leftIcon={<IconBrandGithub size={18} />}
               fullWidth={true}
             //  sx={(theme) => ({
@@ -120,10 +125,8 @@ export function SignupPage() {
         <Link href="/login" passHref legacyBehavior>
           <Text align="center" mt="md">
             Already have an account?{' '}
-            <Anchor<'a'> href="/login" weight={700}>
-              <Text component="a">
-                Login
-              </Text>
+            <Anchor weight={700}>
+              Login
             </Anchor>
           </Text>
         </Link>
@@ -131,5 +134,3 @@ export function SignupPage() {
     </div>
   );
 }
-
-//   <Anchor<'a'> href="/login" weight={700} onClick={(event) => event.preventDefault()}>

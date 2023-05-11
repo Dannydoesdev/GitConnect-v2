@@ -1,6 +1,7 @@
 import axios from 'axios'
 import useSWR from 'swr'
-import { getAllProfileIds, getProfileData, getProfileDataPublic } from '../../lib/profiles'
+import { getAllProfileIds, getGithubDataFromFirebase, getGithubDataFromFirebaseIdOnly, getProfileData, getProfileDataPublic, setGitHubProfileDataInFirebase } from '../../lib/profiles'
+import { getGithubProfileData } from '../../lib/github'
 import { getAllProjectDataFromProfile, getProjectData } from '../../lib/projects'
 import ProfilePageProjectGrid from '../../components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid'
 import { Title, Space, Container, Grid, Skeleton, rem } from '@mantine/core'
@@ -17,84 +18,163 @@ import { useRouter } from 'next/router'
 
 // const fetcher = (url: string) => axios.get(url).then(res => res.data)
 
-export const getStaticPaths = async () => {
 
-  const paths = await getAllProfileIds();
-  // console.log('getting static paths')
+export async function getStaticProps({ params }: any) {
+  // const { userData } = useContext(AuthContext)
+  // console.log('userData:')
+  // console.log(userData)
+  // const profileData: any = await getProfileData(params.id);
+  // console.log('getStaticProps hit')
+  // const profileData: any = await getProfileDataPublic(params.id);
+  // console.log('GSS - profileData')
+  // console.log(profileData)
+
+  const projectData: any = await getAllProjectDataFromProfile(params.id);
+  // console.log('GSS - projectData')
+  // console.log(projectData)
+
+  // Note this will also set profile Data if not already added to firebase
+  // FIXME: make better
+  // const username = profileData?.docData?.userName;
+  // const githubProfileData = await getGithubProfileData(username);
+
+  // TODO: use github profile name as slug and query based on router.query
+
+  // const githubProfileData: any = await getGithubDataFromFirebase(profileData.docData.userId, profileData.docData.userName)
+
+  let dataFromGithub
+
+  const githubProfileData: any = await getGithubDataFromFirebaseIdOnly(params.id)
+  console.log('GSS - githubprofiledata')
+  console.log(githubProfileData)
+
+  if (!githubProfileData.docData) {
+    console.log('no github profile data found, fetching from github')
+    const profileData: any = await getProfileDataPublic(params.id);
+    const githubPublicProfileData = await getGithubProfileData(profileData.docData.userName)
+    console.log('githubPublicProfileData')
+    
+    dataFromGithub = {
+      ...githubProfileData
+    }
+   
+  }
+
+  return {
+    props: {
+      // profile: profileData,
+      projects: projectData,
+      profilePanel: githubProfileData.docData,
+      backupData: dataFromGithub ? dataFromGithub : null,
+    },
+    revalidate: 1,
+  };
+}
+
+export async function getStaticPaths() {
+
+  const profileIds = await getAllProfileIds();
+  // console.log('[id].tsx response:')
+  // console.log(profileIds)
+
+  const paths = profileIds.map((id: any) => ({
+    params: { id: id.id }
+  }))
+
+  // console.log('[id].tsx paths:')
+  // console.log(paths)
+  // // console.log('getting static paths')
   return {
     paths,
     fallback: true,
   };
 }
 
-export async function getStaticProps({ params }: any) {
-  // const profileData: any = await getProfileData(params.id);
-  const profileData: any = await getProfileDataPublic(params.id);
-  const projectData: any = await getAllProjectDataFromProfile(params.id);
+// export async function getStaticPaths() {
 
-  return {
-    props: {
-      profile: profileData,
-      projects: projectData,
-    },
-    revalidate: 1,
-  };
-}
+//   const paths = await getAllProfileIds();
+//   // console.log('getting static paths')
+//   return {
+//     paths,
+//     fallback: 'blocking',
+//   };
+// }
 
-export default function Profile({ profile, projects }: any) {
+// export default function Profile({ profile, projects, profilePanel }: any) {
+export default function Profile({ projects, profilePanel, backupData }: any) {
 
   const { userData } = useContext(AuthContext)
   const router = useRouter();
   const { id } = router.query;
 
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
   // console.log(userData.userId)
   // console.log(id)
 
+  // console.log('profile')
+  // console.log(profile)
+  // console.log('projects')
+  // console.log(projects)
+  // console.log('left profile panel data')
+  // console.log(profilePanel)
+
+  // console.log(profilePanel.exists)
 
   const [githubProfileData, setGitHubProfileData] = useState()
   const [isLoggedInUsersProfile, setIsLoggedInUsersProfile] = useState(false)
 
-  const profileData = profile.docData
+  // const profileData = profile.docData;
 
   // console.log(`Is logged in users profile: ${isLoggedInUsersProfile}`)
 
   useEffect(() => {
 
-    if (userData.userId === id) {
+    if (id && userData.userId === id) {
       setIsLoggedInUsersProfile(true)
+
+      // console.log('sending user data to firebase')
+      // setGitHubProfileDataInFirebase(id.toString(), profileData.userName, profilePanel)
+
+      // TODO: If issues with async nature try:
+      // handleSendGitHubDataToFirebase()
+
     }
+    console.log('backup data:')
+    console.log(backupData)
     // Check if profile data available in Firestore - if not will add to DB
     // TODO: Extract to a server function or run when adding a profile
     // Note - ID = firestore ID, username = Github username
-    handleRetrieveProfileData()
+    // handleRetrieveProfileData()
+    setGitHubProfileData(profilePanel ? profilePanel : backupData)
 
 
   }, [userData.userId, id])
 
   // Old method (only call the API endpoint) - new method runs firestore query first
   // TODO: delete or move to lib for reference
-  async function handleRetrieveProfileData() {
 
-    const getGithubProfileData: any = await getProfileDataGithub(profile.id, profileData.userName)
+  //  Get default and custom profile data for the side user panel
 
-    setGitHubProfileData(getGithubProfileData.docData)
+  // async function handleSendGitHubDataToFirebase() {
+  //   const githubProfileData: any = await setGitHubProfileDataInFirebase(profile.id.toString(), profileData.userName, profilePanel)
 
-    // const profileDataUrl = `/api/profiles/${profile.id}`;
-    // await axios.get(profileDataUrl, {
-    //   params: {
-    //     username: profileData.userName,
-    //   }
-    // })
-    //   .then((response) => {
-    //     console.log(`front end response:`)
-    //     console.log(response.data)
+  //   setGitHubProfileData(githubProfileData)
+  // }
 
-    //     const githubPublicProfileData = response.data
-    //   })
-  }
+  // async function handleRetrieveProfileData() {
+
+  //   console.log('handleRetrieveProfileData hit')
+  //   const githubProfileData: any = await getProfileDataGithub(profile.id, profileData.userName)
+
+  //   setGitHubProfileData(githubProfileData)
+
+  // }
 
   return (
-  
+
     <Container fluid mx='md' my="md">
       <Space h={70} />
       <Grid grow>
