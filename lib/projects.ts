@@ -86,7 +86,7 @@ export async function fetchProjects() {
 
 export async function getAllProjectDataFromProfile(id:string) {
 
-  const projectQuery = query(collectionGroup(db, 'repos'), where('userId', '==', id));
+const projectQuery = query(collectionGroup(db, 'repos'), where('userId', '==', id));
 const querySnapshot = await getDocs(projectQuery);
 
 return querySnapshot.docs.map((detail: any) => {
@@ -100,7 +100,7 @@ return querySnapshot.docs.map((detail: any) => {
   // console.log(docData)
   // Combine the data with the id
   return {
-    id,
+    // id,
     docData,
   };
  

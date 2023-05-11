@@ -65,16 +65,22 @@ export const AppContainer = ({ children }, props) => {
   // const { currentUser } = useContext(AuthContext)
   const Router = useRouter();
 
-  const signOutHandler = async () => {
-    await signOut(auth);
+  const signOutHandler = async (e) => {
+    e.preventDefault();
+    await signOut(auth).then(() => {
+      Router.push('/')
+    })
     // Router.push("/login")
+
   };
 
-  const signInHandler = () => {
+  const signInHandler = (e) => {
+    e.preventDefault();
     Router.push('/login');
   };
 
-  const registerHandler = () => {
+  const registerHandler = (e) => {
+    e.preventDefault();
     Router.push('/signup');
   };
 
@@ -171,7 +177,7 @@ export const AppContainer = ({ children }, props) => {
                     <Button
                       component="a"
                       size="xs"
-                      onClick={signOutHandler}
+                      onClick={(e) => signOutHandler(e)}
                       // className='mx-auto'
                       sx={(theme) => ({
                         // subscribe to color scheme changes
@@ -192,7 +198,8 @@ export const AppContainer = ({ children }, props) => {
                   <Button
                     component='a'
                     size='xs'
-                    onClick={signInHandler}
+                    onClick={(e) => signInHandler(e)}
+                    // onClick={signInHandler}
                     // className='mx-auto'
                     sx={(theme) => ({
                       // subscribe to color scheme changes
@@ -208,8 +215,9 @@ export const AppContainer = ({ children }, props) => {
                 <Link href='#' passHref legacyBehavior>
                   <Button
                     component='a'
-                    size='xs'
-                    onClick={registerHandler}
+                      size='xs'
+                      onClick={(e) => registerHandler(e)}
+                    // onClick={registerHandler}
                     // className='mx-auto'
                     sx={(theme) => ({
                       // subscribe to color scheme changes

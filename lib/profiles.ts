@@ -11,23 +11,43 @@ import {
   doc,
   serverTimestamp,
 } from 'firebase/firestore';
+import { getGithubProfileData } from './github';
 
 export async function getAllProfileIds() {
-  const profiles = [];
+  // const profiles = [];
   const q = query(collection(db, 'users'));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((detail: any) => {
-    // ...detail.data(),
-    // id: detail.id,
-    // console.log({ ...detail.data() })
-    // console.log(detail.id)
+
+  const profileIds: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    // console.log(data);
     return {
-      params: {
-        id: detail.id,
-      },
+      // ...data,
+      id: data.userId,
     };
   });
+
+  // console.log('profiles.ts ids:');
+  // console.log(profileIds);
+
+  return profileIds;
 }
+
+// export async function getAllProfileIds() {
+
+// const q = query(collection(db, 'users'));
+// const querySnapshot = await getDocs(q);
+// return querySnapshot.docs.map((detail: any) => {
+// ...detail.data(),
+// id: detail.id,
+// console.log({ ...detail.data() })
+// console.log(detail.id)
+//   return {
+//     params: {
+//       id: detail.id,
+//     },
+//   };
+// });
 
 // return the data of the profiles
 
@@ -48,74 +68,259 @@ export async function getProfileData(id: string) {
   });
 }
 
+// GETTING DATA - DOES NOT SET
+
+export async function getGithubDataFromFirebase(
+  firebaseId: string,
+  gitHubUserName: string
+) {
+  // console.log(
+  // `Getting Github Data for user ID ${firebaseId} with username ${gitHubUserName}`
+  // );
+
+  const docRef = doc(db, `users/${firebaseId}/profileData/githubData`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    // console.log('Github profile data retrieved')
+
+    const docData = docSnap.data();
+    return {
+      id: firebaseId,
+      docData,
+    };
+  }
+}
+
+export async function getGithubDataFromFirebaseIdOnly(
+  firebaseId: string,
+  gitHubUserName?: string
+) {
+  if (!gitHubUserName) {
+    const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      // console.log()
+
+      gitHubUserName = docSnap.data().userName;
+      // console.log(gitHubUserName)
+      // const id = docSnap.data().id
+      // const docRef = doc(db, `users/${id}/profileData/githubData`);
+      // const docSnap = await getDoc(docRef);
+    } else {
+      console.log('Profile data not found!');
+    }
+  }
+
+  // console.log(
+  //   `Getting Github Data for user ID ${firebaseId} with username ${gitHubUserName}`
+  // );
+
+  const docRef = doc(db, `users/${firebaseId}/profileData/githubData`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    // console.log('Github profile data retrieved')
+
+    const docData = docSnap.data();
+    return {
+      id: firebaseId,
+      docData,
+    };
+  }
+}
+
+// NOTE - checks if data in firebase, if not, gets from github and sets in firebase
+// Not in use anymore
+
 export async function getProfileDataGithub(id: string, userName: string) {
-  ///users/bO4o8u9IskNbFk2wXZmjtJhAYkR2/profileData/ publicData
+  // console.log(
+  //   `Getting Github Data for user ID ${id} with username ${userName}`
+  // );
 
   const docRef = doc(db, `users/${id}/profileData/githubData`);
   const docSnap = await getDoc(docRef);
-  // const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
-  // const querySnapshot = await getDocs(profileQuery);
-  // console.log(querySnapshot.docs)
 
   if (docSnap.exists()) {
     const docData = docSnap.data();
-
-    // console.log(docData);
     return {
+      exists: true,
       id,
       docData,
     };
   } else {
-    // IF profile data from github is not saved in firestore - perform an API call to github and save
-    // TODO: call this when creating a user (or logging in to ensure it's always updated)
+    // console.log('No github profile data found!');
+    // console.log('Adding Github Data');
 
     // console.log('No github profile data found!');
     // console.log('Adding Github Data');
-    const profileDataUrl = `/api/profiles/${id}`;
-    await axios
-      .get(profileDataUrl, {
-        params: {
-          username: userName,
-        },
+    const githubPublicProfileData = await getGithubProfileData(userName);
+    await setDoc(docRef, { ...githubPublicProfileData }, { merge: true })
+      .then(() => {
+        // console.log(`Data added to user ID ${id} with data:`);
+        // console.log({ ...githubPublicProfileData });
+
+        return {
+          githubProfileData: { ...githubPublicProfileData },
+        };
       })
-      .then(async (response) => {
-        // console.log(`API response`);
-        // console.log(response.data);
-        const githubPublicProfileData = response.data;
-        await setDoc(
-          docRef,
-          { ...githubPublicProfileData },
-          { merge: true }
-        ).then(() => {
-          // console.log(`Data added to user ID ${id} with data:`);
-          // console.log(githubPublicProfileData);
-          return {
-            id,
-            githubPublicProfileData,
-          };
-        });
+      .catch((error) => {
+        console.log('Error adding document: ', error);
       });
   }
 }
 
+// Gets and sets github data in firebase - data must be sent to function seperately from github.ts util
+
+export async function setGitHubProfileDataInFirebase(
+  firebaseId: string,
+  gitHubUserName: string,
+  gitHubData: any
+) {
+  // console.log(
+  //   `Setting Github Data for user ID ${firebaseId} with username ${gitHubUserName}`
+  // );
+  // console.log(`Github Data: ${gitHubData}`);
+
+  const docRef = doc(db, `users/${firebaseId}/profileData/githubData`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    console.log('Github profile data already exists!');
+
+    const docData = docSnap.data();
+    return {
+      id: firebaseId,
+      docData,
+    };
+  } else {
+    // console.log('No github profile data found!');
+    // console.log('Adding Github Data');
+    // const githubPublicProfileData = await getGithubProfileData(gitHubUserName);
+    await setDoc(docRef, { ...gitHubData }, { merge: true })
+      .then(() => {
+        // console.log(`Data added to user ID ${firebaseId} with data:`);
+        // console.log({ ...gitHubData });
+
+        return {
+          githubProfileData: { ...gitHubData },
+        };
+      })
+      .catch((error) => {
+        console.log('Error adding document: ', error);
+      });
+  }
+}
+
+//     const githubPublicProfileData = await getGithubProfileData(userName);
+//     try {
+//       await setDoc(docRef, { ...githubPublicProfileData }, { merge: true });
+//       console.log(
+//         `Data added to user ID ${id} with data:`,
+//         githubPublicProfileData
+//       );
+//     } catch (error) {
+//       console.error('Error adding document:', error);
+//     }
+//   }
+// }
+// await setDoc(docRef, { ...githubPublicProfileData }, { merge: true })
+//   .then(() => {
+//     console.log(`Data added to user ID ${id} with data:`);
+//     console.log(githubPublicProfileData);
+//     return {
+
+//     const profileDataUrl = `/api/profiles/${id}`;
+//     console.log(`Calling API: ${profileDataUrl}`);
+
+//     try {
+//       const response = await axios.get(profileDataUrl, {
+//         params: {
+//           username: userName,
+//         },
+//       });
+//       console.log(`API response`);
+//       console.log(response.data);
+//       const githubPublicProfileData = response.data;
+//       await setDoc(docRef, { ...githubPublicProfileData }, { merge: true });
+//       console.log(`Data added to user ID ${id} with data:`);
+//       console.log(githubPublicProfileData);
+//       return {
+//         id,
+//         githubPublicProfileData,
+//       };
+//     } catch (error) {
+//       console.error('Error adding document: ', error);
+//     }
+//   }
+// }
+
+// NOTE: This is a get OR set function - if data hasn't been added all when 'getting' - the default data from github will be set
+
+// export async function getProfileDataGithub(id: string, userName: string) {
+//   ///users/bO4o8u9IskNbFk2wXZmjtJhAYkR2/profileData/ publicData
+
+//   console.log(`Getting Github Data for user ID ${id} with username ${userName}`)
+
+//   const docRef = doc(db, `users/${id}/profileData/githubData`);
+//   const docSnap = await getDoc(docRef);
+//   // const profileQuery = query(collection(db, 'users'), where('userId', '==', id));
+//   // const querySnapshot = await getDocs(profileQuery);
+//   // console.log(querySnapshot.docs)
+
+//   if (docSnap.exists()) {
+//     const docData = docSnap.data();
+
+//     // console.log(docData);
+//     return {
+//       id,
+//       docData,
+//     };
+//   } else {
+//     // IF profile data from github is not saved in firestore - perform an API call to github and save
+//     // TODO: call this when creating a user (or logging in to ensure it's always updated)
+
+//     console.log('No github profile data found!');
+//     console.log('Adding Github Data');
+//     const profileDataUrl = `/api/profiles/${id}`;
+//     console.log(`Calling API: ${profileDataUrl}`)
+//     axios
+//       .get(profileDataUrl, {
+//         params: {
+//           username: userName,
+//         },
+//       })
+//       .then(async (response) => {
+//         console.log(`API response`);
+//         console.log(response.data);
+//         const githubPublicProfileData = response.data;
+//         await setDoc(docRef, { ...githubPublicProfileData }, { merge: true })
+//           .then(() => {
+//             console.log(`Data added to user ID ${id} with data:`);
+//             console.log(githubPublicProfileData);
+//             return {
+//               id,
+//               githubPublicProfileData,
+//             };
+//           })
+
+//       }).catch((error) => {
+//         console.error('Error adding document: ', error);
+//       });
+//   }
+// }
 
 // TODO: secure the data paramater with validation of types and data
 
 export async function updateProfileDataGithub(id: string, data: any) {
-
   const docRef = doc(db, `users/${id}/profileData/githubData`);
   const docSnap = await getDoc(docRef);
 
-  await setDoc(
-    docRef,
-    { ...data },
-    { merge: true }
-  ).then(() => {
-    
+  await setDoc(docRef, { ...data }, { merge: true }).then(() => {
     // console.log(`successfully added the following to database:`)
     // console.log(data)
-  })
-
+  });
 }
 
 export async function getProfileDataPublic(id: string) {
@@ -130,6 +335,6 @@ export async function getProfileDataPublic(id: string) {
       docData,
     };
   } else {
-    // console.log('No such document!');
+    console.log('Profile data not found!');
   }
 }
