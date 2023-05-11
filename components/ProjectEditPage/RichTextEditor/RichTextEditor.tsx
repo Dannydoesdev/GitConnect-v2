@@ -29,7 +29,7 @@ type TipTapProps = {
 const templateContent =
   '<h2 style="text-align: center;">Welcome to GitConnect; text editor</h2><h3 style="text-align: center;">click the "Unlock Editor" button to add content, click it again when finished to save</h3><h3 style="text-align: center;">After clicking "Unlock Editor" you can choose to import the repo readme from Github</h3><hr /><p style="text-align: center;">You can type in this box regularly or use markdown, and use the toolbar above to style</p><p style="text-align: center;">You can also drag and drop images into this editor, or move images already added by clicking and dragging them</p><hr />';
 
-  // register languages that your are planning to use
+// register languages that your are planning to use
 lowlight.registerLanguage('ts', tsLanguageSyntax);
 
 function TipTapEditor({ repoId, repoName }: TipTapProps) {
@@ -79,12 +79,17 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
     editor?.commands.setContent(initialContent);
   }, [initialContent]);
 
-  
+
   const editor = useEditor({
     editable,
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        codeBlock: false,
+      }),
       CodeBlockLowlight.configure({
+        HTMLAttributes: {
+          class: 'lowlight',
+        },
         lowlight,
       }),
       Image.configure({
@@ -120,7 +125,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
           if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
 
             //  valid image so upload to server
-            
+
             // TODO: extract function outside handeDrop
             const uploadImage = (file: any) => {
 
@@ -153,10 +158,10 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             }
 
             uploadImage(file)
-       
+
           } else {
             window.alert("Images need to be in jpg, png, gif or webp format and less than 10mb in size.");
-          }  
+          }
           return true; // handled
         }
         return false; // not handled use default behaviour
@@ -195,21 +200,23 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
   // Note - to check if this creates a document even when the path doesn't exist yet
 
   async function sendContentToFirebase() {
+    // console.log(editorContent)
 
     // Sanitize with DomPurify before upload
     // need to add 'target = _blank' back in
     const sanitizedHTML = DOMPurify.sanitize(editorContent, { ADD_ATTR: ['target'] });
-
+    // console.log(`Sanitised \n\n`)
+    // console.log(sanitizedHTML)
     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
-    
+
     await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
     // const docSnap = await getDoc(docRef);
 
     // if (docSnap.exists()) {
 
-      
+
     // } else {
-      // console.log("No such document!");
+    // console.log("No such document!");
     //   await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
     // }
 
@@ -252,7 +259,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
         editor?.commands.setContent(sanitizedHTML);
       })
   }
-  
+
 
   return (
     <>
@@ -284,33 +291,33 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
         </Button>
       </Center>
 
-      {editor.isEditable && 
+      {editor.isEditable &&
         <Center>
-        <Button
-          component="a"
-          size="md"
-          radius="md"
-          mt={30}
-          className='mx-auto'
+          <Button
+            component="a"
+            size="md"
+            radius="md"
+            mt={30}
+            className='mx-auto'
             onClick={handleImportReadme}
             variant='outline'
             styles={(theme) => ({
               root: {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[0],
-              width: '40%',
-              [theme.fn.smallerThan('sm')]: {
-                width: '70%',
+                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[0],
+                width: '40%',
+                [theme.fn.smallerThan('sm')]: {
+                  width: '70%',
+                },
+                '&:hover': {
+                  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
+                },
               },
-              '&:hover': {
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
-              },
-            },
-          })}
+            })}
           >
             Import readme from Github - Will replace all editor content
-          {/* {editor.isEditable ? 'Save Changes in Text Editor' : 'Unlock Text Editor'} */}
-        </Button>
-      </Center>
+            {/* {editor.isEditable ? 'Save Changes in Text Editor' : 'Unlock Text Editor'} */}
+          </Button>
+        </Center>
       }
 
       <RichTextEditor
