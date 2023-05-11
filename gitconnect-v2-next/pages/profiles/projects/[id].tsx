@@ -124,7 +124,7 @@ export default function Project() {
 
   useEffect(() => {
     if (projects) {
-      console.log(starCount)
+      // console.log(starCount)
       const userId = projects[0].userId;
       const repoId = id;
 
