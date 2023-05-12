@@ -78,7 +78,6 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
 
     if (id && userData.userId === id) {
       setIsLoggedInUsersProfile(true)
-
     }
 
     // Set the profile data to the profile panel data if it exists, otherwise use the backup data
@@ -90,8 +89,13 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
       // FIXME: Couldn't resolve getting the new repo to show up on the page after adding it instantly - forcing a reload for now
       setTimeout(() => {
         router.reload()
-      }, 1200)
+      }, 2000)
     };
+      
+    // setTimeout(() => {
+    //   router.refresh()
+    // }, 1500)
+  // };
 
   }, [userData.userId, id, newRepoParam])
 
