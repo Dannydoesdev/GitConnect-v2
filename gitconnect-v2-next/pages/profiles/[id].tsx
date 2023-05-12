@@ -45,19 +45,19 @@ export async function getStaticProps({ params }: any) {
   let dataFromGithub
 
   const githubProfileData: any = await getGithubDataFromFirebaseIdOnly(params.id)
-  console.log('GSS - githubprofiledata')
-  console.log(githubProfileData)
+  // console.log('GSS - githubprofiledata')
+  // console.log(githubProfileData)
 
   if (!githubProfileData.docData) {
-    console.log('no github profile data found, fetching from github')
+    // console.log('no github profile data found, fetching from github')
     const profileData: any = await getProfileDataPublic(params.id);
     const githubPublicProfileData = await getGithubProfileData(profileData.docData.userName)
-    console.log('githubPublicProfileData')
-    
+    // console.log('githubPublicProfileData')
+
     dataFromGithub = {
-      ...githubProfileData
-    }
-   
+      ...githubPublicProfileData
+    };
+
   }
 
   return {
@@ -105,7 +105,10 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
 
   const { userData } = useContext(AuthContext)
   const router = useRouter();
-  const { id } = router.query;
+  // const { newRepoParam } = router.query;
+  const { id, newRepoParam } = router.query;
+  // console.log(router.query);
+  // console.log(router.query.newRepoParam);
 
 
   if (router.isFallback) {
@@ -130,6 +133,9 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
 
   // console.log(`Is logged in users profile: ${isLoggedInUsersProfile}`)
 
+  // console.log('new repo param before useEffec')
+  // console.log(newRepoParam)
+
   useEffect(() => {
 
     if (id && userData.userId === id) {
@@ -142,16 +148,28 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
       // handleSendGitHubDataToFirebase()
 
     }
-    console.log('backup data:')
-    console.log(backupData)
+    // console.log('backup data:')
+    // console.log(backupData)
     // Check if profile data available in Firestore - if not will add to DB
     // TODO: Extract to a server function or run when adding a profile
     // Note - ID = firestore ID, username = Github username
     // handleRetrieveProfileData()
     setGitHubProfileData(profilePanel ? profilePanel : backupData)
 
+    // TODO: SET NOTIFCATION THAT PAGE IS BEING REFRESHED
+    if (newRepoParam && JSON.parse(newRepoParam as string)) {
+      // console.log('new repo param found in useEffect')
+      // console.log(newRepoParam)
+      // console.log('parsing')
+      // console.log(JSON.parse(newRepoParam as string))
 
-  }, [userData.userId, id])
+      // FIXME: Couldn't resolve getting the new repo to show up on the page after adding it instantly - forcing a reload for now
+      setTimeout(() => {
+        router.reload()
+      }, 1200)
+    };
+
+  }, [userData.userId, id, newRepoParam])
 
   // Old method (only call the API endpoint) - new method runs firestore query first
   // TODO: delete or move to lib for reference

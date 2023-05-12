@@ -1,4 +1,5 @@
-// // pages/getrepos.tsx
+export { }
+// // pages / getrepos.tsx
 
 // import type { NextPage } from 'next';
 // import Link from 'next/link';
