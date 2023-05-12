@@ -30,7 +30,8 @@ export function LoginPage() {
 
 
   // Don't re-render the Github provider until the router changes (eg user is pushed home)
-  const loginHandler = useCallback(async () => {
+  const loginHandler = useCallback(async (e:any) => {
+    e.preventDefault();
     const provider = new GithubAuthProvider()
 
     try {
@@ -45,7 +46,7 @@ export function LoginPage() {
           const user = result.user;
 
           const userId = user.uid;
-          console.log(userId)
+          // console.log(userId)
 
           mixpanel.identify(userId)
 
@@ -54,8 +55,12 @@ export function LoginPage() {
           });
 
         })
-      // push to home after auth
-      Router.push("/")
+        .then(() => {
+        // push to home after auth
+          Router.push("/", undefined, { shallow: true })
+        })
+
+
     } catch (error) {
       console.log(error)
       // alert(error)
@@ -76,10 +81,10 @@ export function LoginPage() {
         <Group grow mx='xl' mb="md" mt="xl">
           <Link href="#" passHref legacyBehavior>
             <Button
-              // compact={true}
               component="a"
               size='lg'
-              onClick={loginHandler}
+              // onClick={loginHandler}
+              onClick={(e) => { loginHandler(e) }}
               leftIcon={<IconBrandGithub size={18} />}
               fullWidth={true}
             //  sx={(theme) => ({
@@ -101,10 +106,8 @@ export function LoginPage() {
         <Link href="/signup" passHref legacyBehavior>
           <Text align="center" mt="md">
             Don&apos;t have an account?{' '}
-            <Anchor<'a'> href="/signup" weight={700}>
-              <Text component="a">
-                Register
-              </Text>
+            <Anchor weight={700}>
+              Register
             </Anchor>
           </Text>
         </Link>
@@ -112,5 +115,3 @@ export function LoginPage() {
     </div>
   );
 }
-
-//    <Anchor<'a'> href="/signup" weight={700} onClick={(event) => event.preventDefault()}>

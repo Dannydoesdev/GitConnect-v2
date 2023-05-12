@@ -1,6 +1,7 @@
 import axios from 'axios'
 import useSWR from 'swr'
-import { getAllProfileIds, getProfileData, getProfileDataPublic } from '../../lib/profiles'
+import { getAllProfileIds, getGithubDataFromFirebase, getGithubDataFromFirebaseIdOnly, getProfileData, getProfileDataPublic, setGitHubProfileDataInFirebase } from '../../lib/profiles'
+import { getGithubProfileData } from '../../lib/github'
 import { getAllProjectDataFromProfile, getProjectData } from '../../lib/projects'
 import ProfilePageProjectGrid from '../../components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid'
 import { Title, Space, Container, Grid, Skeleton, rem } from '@mantine/core'
@@ -14,87 +15,89 @@ import AuthRoute from '../../HoC/authRoute'
 import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel'
 import { useRouter } from 'next/router'
 
-
 // const fetcher = (url: string) => axios.get(url).then(res => res.data)
 
-export const getStaticPaths = async () => {
+export async function getStaticProps({ params }: any) {
+  const projectData: any = await getAllProjectDataFromProfile(params.id);
 
-  const paths = await getAllProfileIds();
-  // console.log('getting static paths')
+  // FIXME: make better
+  // TODO: use github profile name as slug and query based on router.query
+  let dataFromGithub
+
+  const githubProfileData: any = await getGithubDataFromFirebaseIdOnly(params.id)
+
+  // TODO: Should be safe to remove this check & the backup data prop
+  if (!githubProfileData.docData) {
+    const profileData: any = await getProfileDataPublic(params.id);
+    const githubPublicProfileData = await getGithubProfileData(profileData.docData.userName)
+
+    dataFromGithub = {
+      ...githubPublicProfileData
+    };
+  }
+
+  return {
+    props: {
+      projects: projectData,
+      profilePanel: githubProfileData.docData,
+      backupData: dataFromGithub ? dataFromGithub : null,
+    },
+    revalidate: 1,
+  };
+}
+
+export async function getStaticPaths() {
+
+  const profileIds = await getAllProfileIds();
+
+  const paths = profileIds.map((id: any) => ({
+    params: { id: id.id }
+  }))
+
   return {
     paths,
     fallback: true,
   };
 }
 
-export async function getStaticProps({ params }: any) {
-  // const profileData: any = await getProfileData(params.id);
-  const profileData: any = await getProfileDataPublic(params.id);
-  const projectData: any = await getAllProjectDataFromProfile(params.id);
 
-  return {
-    props: {
-      profile: profileData,
-      projects: projectData,
-    },
-    revalidate: 1,
-  };
-}
-
-export default function Profile({ profile, projects }: any) {
+export default function Profile({ projects, profilePanel, backupData }: any) {
 
   const { userData } = useContext(AuthContext)
   const router = useRouter();
-  const { id } = router.query;
+  const { id, newRepoParam } = router.query;
 
-  // console.log(userData.userId)
-  // console.log(id)
-
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
 
   const [githubProfileData, setGitHubProfileData] = useState()
   const [isLoggedInUsersProfile, setIsLoggedInUsersProfile] = useState(false)
 
-  const profileData = profile.docData
-
-  // console.log(`Is logged in users profile: ${isLoggedInUsersProfile}`)
-
   useEffect(() => {
 
-    if (userData.userId === id) {
+    if (id && userData.userId === id) {
       setIsLoggedInUsersProfile(true)
+
     }
-    // Check if profile data available in Firestore - if not will add to DB
-    // TODO: Extract to a server function or run when adding a profile
-    // Note - ID = firestore ID, username = Github username
-    handleRetrieveProfileData()
 
+    // Set the profile data to the profile panel data if it exists, otherwise use the backup data
+    setGitHubProfileData(profilePanel ? profilePanel : backupData)
 
-  }, [userData.userId, id])
+    // TODO: SET NOTIFCATION THAT PAGE IS BEING REFRESHED
+    if (newRepoParam && JSON.parse(newRepoParam as string)) {
 
-  // Old method (only call the API endpoint) - new method runs firestore query first
-  // TODO: delete or move to lib for reference
-  async function handleRetrieveProfileData() {
+      // FIXME: Couldn't resolve getting the new repo to show up on the page after adding it instantly - forcing a reload for now
+      setTimeout(() => {
+        router.reload()
+      }, 1200)
+    };
 
-    const getGithubProfileData: any = await getProfileDataGithub(profile.id, profileData.userName)
+  }, [userData.userId, id, newRepoParam])
 
-    setGitHubProfileData(getGithubProfileData.docData)
-
-    // const profileDataUrl = `/api/profiles/${profile.id}`;
-    // await axios.get(profileDataUrl, {
-    //   params: {
-    //     username: profileData.userName,
-    //   }
-    // })
-    //   .then((response) => {
-    //     console.log(`front end response:`)
-    //     console.log(response.data)
-
-    //     const githubPublicProfileData = response.data
-    //   })
-  }
 
   return (
-  
+
     <Container fluid mx='md' my="md">
       <Space h={70} />
       <Grid grow>
@@ -112,7 +115,6 @@ export default function Profile({ profile, projects }: any) {
 
         {/* Remaining width for cover image and projects */}
         <Grid.Col md={9} lg={10}>
-          {/* // span={10} */}
           <Grid gutter="md">
 
             {/* TODO: Cover Image full grid span */}

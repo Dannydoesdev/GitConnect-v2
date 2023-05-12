@@ -1,39 +1,38 @@
-import type { NextPage } from 'next'
-import Link from 'next/link'
-import React, { useContext, useEffect, useState } from "react"
-import Router, { useRouter } from "next/router"
-import AuthRoute from "../HoC/authRoute"
-import { AuthContext } from "../context/AuthContext"
-import { getCookie } from 'cookies-next'
+import type { NextPage } from 'next';
+import Link from 'next/link';
+import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { AuthContext } from "../context/AuthContext";
 import axios from 'axios';
-import { Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack, useMantineTheme } from '@mantine/core';
-import { db } from '../firebase/clientApp'
-import { collection, setDoc, addDoc, where, query, getDoc, getDocs, doc, serverTimestamp } from "firebase/firestore";
+import { Avatar, Switch, Card, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack, useMantineTheme } from '@mantine/core';
+import { db } from '../firebase/clientApp';
+import { collection, setDoc, addDoc, where, query, getDoc, doc, serverTimestamp, getDocs } from "firebase/firestore";
 import { IconCheck, IconX } from '@tabler/icons-react';
+import { RepoDataFull } from '../types/repos';
 
-export const ShowRepo = (props: any) => {
 
-  const [checked, setChecked] = useState(false);
+interface ShowRepoProps {
+  repo: RepoDataFull;
+  existingRepos: string[];
+  addRepo: (repo: RepoDataFull) => void;
+  removeRepo: (repo: RepoDataFull) => void;
+}
+
+const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo, removeRepo }) => {
+  const { name: repoName, fork: isForked, url: repoUrl, description: repoDesc, license: repoLicense } = repo;
   const theme = useMantineTheme();
+  const [isChecked, setIsChecked] = useState(false);
 
-  const repo = props.props;
-  const repoName = repo.name;
-  const isForked = repo.fork;
-  const repoUrl = repo.url;
-  const repoDesc = repo.description;
-  const repoLicense = repo.license ? repo.license.name : '';
+  const repoAlreadyAdded = existingRepos.includes(repo.id.toString());
 
-
-  // Check if current repo already exists in Firebase
-  const existingRepos = props.existingRepos;
-  const repoAlreadyAdded = (existingRepos.includes(repo.id.toString()))
-
-
-  const handleCheck = (name: string, repoData: object, isChecked: boolean) => {
-    setChecked(isChecked)
-    props.newRepo(name, repoData, isChecked)
+  const handleCheck = (checked: boolean) => {
+    setIsChecked(checked);
+    if (checked) {
+      addRepo(repo);
+    } else {
+      removeRepo(repo);
+    }
   }
-
 
   return (
     <div>
@@ -58,7 +57,7 @@ export const ShowRepo = (props: any) => {
         </Text>
         <Space h='xs' />
         <Text size="xs" color="dimmed">
-          {repoLicense ? repoLicense : 'No license found from this Github Repo'}
+          {repoLicense ? repoLicense.name : 'No license found from this Github Repo'}
         </Text>
 
         {repoAlreadyAdded ?
@@ -72,26 +71,26 @@ export const ShowRepo = (props: any) => {
                   cursor: 'not-allowed',
                 }
               })} >
-             Already Added
+              Already Added
             </Badge>
           </Group>
           :
           <Group position='center'>
-          <Switch
-            onChange={(event) => handleCheck(repoName, repo, event.currentTarget.checked)}
-            labelPosition="left"
-            label="Add to portfolio"
-            mt='lg'
-            size="md"
-            radius="lg"
-            color="green"
-            thumbIcon={
-              checked ? (
-                <IconCheck size={12} color={theme.colors.teal[theme.fn.primaryShade()]} stroke={3} />
-              ) : (
-                <IconX size={12} color={theme.colors.red[theme.fn.primaryShade()]} stroke={3} />
-              )
-            }
+            <Switch
+              onChange={(event) => handleCheck(event.currentTarget.checked)}
+              labelPosition="left"
+              label="Add to portfolio"
+              mt='lg'
+              size="md"
+              radius="lg"
+              color="green"
+              thumbIcon={
+                isChecked ? (
+                  <IconCheck size={12} color={theme.colors.teal[theme.fn.primaryShade()]} stroke={3} />
+                ) : (
+                  <IconX size={12} color={theme.colors.red[theme.fn.primaryShade()]} stroke={3} />
+                )
+              }
             />
           </Group>
         }
@@ -103,90 +102,74 @@ export const ShowRepo = (props: any) => {
 
 const GetRepos = () => {
   const { userData } = useContext(AuthContext)
+  const { userId, userName } = userData;
+  const [repoData, setRepoData] = useState<RepoDataFull[]>([]);
+  const [addRepoData, setAddRepoData] = useState<RepoDataFull[]>([]);
+  const [existingRepos, setExistingRepos] = useState<string[]>([]);
+  const router = useRouter();
 
-  const [repoData, setRepoData] = useState([])
-  const [checked, setChecked] = useState(false);
-  const [addRepoData, setAddRepoData] = useState<any>([])
-  const [existingFirebaseData, setExistingFirebaseData] = useState<any>([])
 
-  // Function for child component to handle user toggling a repo to add
-
-  const newRepo = (repoName: string, repo: any, isChecked: boolean) => {
-    // add the selected repo to the selected repo state array
-    setAddRepoData([...addRepoData, repo])
-    // console.log(addRepoData)
+  const addRepo = (repo: RepoDataFull) => {
+    setAddRepoData(currentRepos => [...currentRepos, repo]);
   }
 
-  const userId = userData.userId
-  const userName = userData.userName
-
-  // handle when user hits the 'done' button
-  const handleDoneAdding = () => {
-
-    // map through selected repos array and pull out key identifiers
-    // Get the firestore docs of the user based on username
-
-    addRepoData.map(async (repoData: any) => {
-      // the document of the user in the users collection
-      // const rootRef = collection(db, 'users')
-
-      const repoName = repoData.name;
-      const repoId = repoData.id
-      const docRef = doc(db, 'users', userId);
-      const q = query(collection(db, 'users'), where('userName', '==', userName));
-      const querySnapshot = await getDocs(q);
-      const queryData = querySnapshot.docs.map((detail: any) => {
-      });
-
-      // Set all returned repo data from GH API in the users firestore data
-
-      queryData.map(async (v) => {
-        // add fields for user ID and hidden status (starts 'true')
-        await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, userId: userId, hidden: true }, { merge: true })
-          .then(() => {
-            console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
-          })
-          .catch((e) => {
-            console.log(e);
-          }).then(() => {
-            Router.push(`/profiles/${userId}`)
-          })
-      })
-    })
+  const removeRepo = (repo: RepoDataFull) => {
+    setAddRepoData(currentRepos => currentRepos.filter(currentRepo => currentRepo.id !== repo.id));
 
   }
 
-  // Initial call for API information on users repos - store inside the state for display
+  const handleDoneAdding = async () => {
+    // If no repos were added, redirect to profile page without added parameters for timeout
+    if (!addRepoData.length) {
+      router.push(`/profiles/${userId}`);
+    } else {
+
+      try {
+        const promises = addRepoData.map(async (repo) => {
+
+          await setDoc(doc(db, `users/${userId}/repos/${repo.id}`), { ...repo, userId, hidden: true }, { merge: true });
+        });
+        await Promise.all(promises);
+
+        router.push({
+          pathname: `/profiles/${userId}`,
+          query: {
+            newRepoParam: JSON.stringify(true)
+          }
+        }, `/profiles/${userId}`);
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 
   useEffect(() => {
-    const URL = `https://api.github.com/users/${userName}/repos`;
-    axios.get(URL)
-      .then((response) => {
-        setRepoData(response.data)
-      })
-  }, [userData])
+    const fetchData = async () => {
+      try {
+        // Fetch GitHub data
+        const { data } = await axios.get(`https://api.github.com/users/${userName}/repos`);
+        setRepoData(data);
 
+        // Fetch Firestore data
+        const q = query(collection(db, `users/${userId}/repos`));
+        const querySnapshot = await getDocs(q);
 
-  // Get users existing firestore repos to check what has already been added
-  useEffect(() => {
+        const existingRepoArr: string[] = [];
+        querySnapshot.forEach((doc) => {
+          existingRepoArr.push(doc.id);
+        });
 
-    const getFirebaseData = async () => {
-      const q = query(collection(db, `users/${userId}/repos`));
-      const querySnapshot = await getDocs(q);
+        // If there are existing repo added, set existingRepos state
+        setExistingRepos(existingRepoArr);
 
-      const existingRepoArr: string[] = []
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id);
-        existingRepoArr.push(doc.id)
-        // setExistingFirebaseData([...existingFirebaseData, doc.id])
-
-      });
-      setExistingFirebaseData(existingRepoArr)
-      // console.log(existingFirebaseData)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
-    getFirebaseData();
-  }, []);
+
+    fetchData();
+  }, [userId, userName]);
 
   return (
     <>
@@ -201,9 +184,9 @@ const GetRepos = () => {
           { maxWidth: 755, cols: 2, spacing: 'sm' },
           { maxWidth: 600, cols: 1, spacing: 'sm' },
         ]}>
-          {repoData.map((repo, index) => {
+          {repoData.map((repo) => {
             return (
-              <ShowRepo key={index} existingRepos={existingFirebaseData} newRepo={newRepo} props={repo} />
+              <ShowRepo key={repo.id} existingRepos={existingRepos} addRepo={addRepo} removeRepo={removeRepo} repo={repo} />
             )
           })}
         </SimpleGrid>
@@ -214,7 +197,7 @@ const GetRepos = () => {
           <Button
             component="a"
             size='lg'
-            onClick={handleDoneAdding}
+            onClick={() => { handleDoneAdding() }}
             className='mx-auto'
             sx={(theme) => ({
               // subscribe to color scheme changes
