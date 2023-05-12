@@ -42,7 +42,7 @@ export default function Project() {
     const URL = `/api/profiles/projects/${id}`;
     axios.get(URL).then((response) => {
       setProjects(response.data);
-      console.log(response.data);
+      // console.log(response.data);
       // Check user is authenticated
       if (response.data && response.data.length > 0 && userData) {
 
