@@ -18,94 +18,85 @@ interface ShowRepoProps {
   removeRepo: (repo: RepoDataFull) => void;
 }
 
-
 const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo, removeRepo }) => {
   const { name: repoName, fork: isForked, url: repoUrl, description: repoDesc, license: repoLicense } = repo;
   const theme = useMantineTheme();
   const [isChecked, setIsChecked] = useState(false);
 
-  // console.log(repo.id)
   const repoAlreadyAdded = existingRepos.includes(repo.id.toString());
-
-  // console.log('repoAlreadyAdded', repoAlreadyAdded)
 
   const handleCheck = (checked: boolean) => {
     setIsChecked(checked);
     if (checked) {
       addRepo(repo);
-      // console.log(`adding ${repo} to state`)
-      // console.log(`state is now ${existingRepos}`)
     } else {
       removeRepo(repo);
-      // console.log(`removing ${repo} from state`)
-      // console.log(`state is now ${existingRepos}`)
     }
   }
 
   return (
     <div>
-    <Card shadow="sm" p="lg" radius="md" withBorder>
-      <Card.Section>
-      </Card.Section>
+      <Card shadow="sm" p="lg" radius="md" withBorder>
+        <Card.Section>
+        </Card.Section>
 
-      <Group position="apart" mt="md" mb="xs">
-        <Text weight={500}>{repoName}</Text>
-        {isForked ?
-          <Badge color="grape" variant="light">
-            Forked repo
-          </Badge> :
-          <Badge size='xs' color="green" variant="light">
-            Not forked
-          </Badge>
-        }
-      </Group>
+        <Group position="apart" mt="md" mb="xs">
+          <Text weight={500}>{repoName}</Text>
+          {isForked ?
+            <Badge color="grape" variant="light">
+              Forked repo
+            </Badge> :
+            <Badge size='xs' color="green" variant="light">
+              Not forked
+            </Badge>
+          }
+        </Group>
 
-      <Text size="sm" color="dimmed">
-        {repoDesc ? repoDesc : 'No description found - you can add a custom description with GitConnect once you add this repo'}
-      </Text>
+        <Text size="sm" color="dimmed">
+          {repoDesc ? repoDesc : 'No description found - you can add a custom description with GitConnect once you add this repo'}
+        </Text>
         <Space h='xs' />
         <Text size="xs" color="dimmed">
-        {repoLicense ? repoLicense.name : 'No license found from this Github Repo'}
-      </Text>
+          {repoLicense ? repoLicense.name : 'No license found from this Github Repo'}
+        </Text>
 
-      {repoAlreadyAdded ?
-        <Group position='center'>
-          <Badge
-            mt='lg'
-            color="gray"
-            variant="light"
-            styles={(theme) => ({
-              root: {
-                cursor: 'not-allowed',
-              }
-            })} >
-           Already Added
-          </Badge>
-        </Group>
-        :
+        {repoAlreadyAdded ?
+          <Group position='center'>
+            <Badge
+              mt='lg'
+              color="gray"
+              variant="light"
+              styles={(theme) => ({
+                root: {
+                  cursor: 'not-allowed',
+                }
+              })} >
+              Already Added
+            </Badge>
+          </Group>
+          :
           <Group position='center'>
             <Switch
-          onChange={(event) => handleCheck(event.currentTarget.checked)}
-         
-          labelPosition="left"
-          label="Add to portfolio"
-          mt='lg'
-          size="md"
-          radius="lg"
-          color="green"
-          thumbIcon={
-            isChecked ? (
-              <IconCheck size={12} color={theme.colors.teal[theme.fn.primaryShade()]} stroke={3} />
-            ) : (
-              <IconX size={12} color={theme.colors.red[theme.fn.primaryShade()]} stroke={3} />
-            )
-          }
-          />
-        </Group>
-      }
+              onChange={(event) => handleCheck(event.currentTarget.checked)}
+              labelPosition="left"
+              label="Add to portfolio"
+              mt='lg'
+              size="md"
+              radius="lg"
+              color="green"
+              thumbIcon={
+                isChecked ? (
+                  <IconCheck size={12} color={theme.colors.teal[theme.fn.primaryShade()]} stroke={3} />
+                ) : (
+                  <IconX size={12} color={theme.colors.red[theme.fn.primaryShade()]} stroke={3} />
+                )
+              }
+            />
+          </Group>
+        }
 
-    </Card>
-  </div>
+      </Card>
+    </div>
   )
 }
 
@@ -120,40 +111,33 @@ const GetRepos = () => {
 
   const addRepo = (repo: RepoDataFull) => {
     setAddRepoData(currentRepos => [...currentRepos, repo]);
-    // console.log(`repo added to state: ${repo.id}`)
-    // console.log(`addRepoData is now ${addRepoData}`)
   }
 
   const removeRepo = (repo: RepoDataFull) => {
     setAddRepoData(currentRepos => currentRepos.filter(currentRepo => currentRepo.id !== repo.id));
-    // console.log(`repo removed from state: ${repo.id}`)
-    // console.log(`addRepoData is now ${{...addRepoData}}`)
+
   }
 
   const handleDoneAdding = async () => {
-    // console.log(`addRepo length: ${addRepoData.length}`)
-    // console.log(`Adding the following repos to Firestore: ${{ ...addRepoData }}`)
+    // If no repos were added, redirect to profile page without added parameters for timeout
     if (!addRepoData.length) {
       router.push(`/profiles/${userId}`);
     } else {
 
       try {
         const promises = addRepoData.map(async (repo) => {
-          // console.log(`Firestore path: users/${userId}/repos/${repo.id}`)
-          // console.log(`Firestore data: ${ ...repo }`)
-          // repo.map((i) => console.log(i))
+
           await setDoc(doc(db, `users/${userId}/repos/${repo.id}`), { ...repo, userId, hidden: true }, { merge: true });
         });
         await Promise.all(promises);
-        // router.push(`/profiles/${userId}`);
-        // router.push(`/profiles/${userId}`, { query: { newRepoParam: 'reload' } });
+
         router.push({
           pathname: `/profiles/${userId}`,
           query: {
             newRepoParam: JSON.stringify(true)
           }
         }, `/profiles/${userId}`);
-      
+
       } catch (err) {
         console.error(err);
       }
@@ -176,8 +160,9 @@ const GetRepos = () => {
           existingRepoArr.push(doc.id);
         });
 
+        // If there are existing repo added, set existingRepos state
         setExistingRepos(existingRepoArr);
-        // console.log(existingRepoArr)
+
       } catch (error) {
         console.error('Error fetching data:', error);
       }
