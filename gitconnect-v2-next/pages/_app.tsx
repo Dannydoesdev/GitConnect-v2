@@ -23,7 +23,14 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   return (
     <>
       <Head>
-        <title>GitConnect;</title>
+        {/* <title>GitConnect;</title> */}
+        {/* <!DOCTYPE html> */}
+        <title>GitConnect: Your Career Launchpad for Development</title>
+        <meta property="og:title" content="GitConnect: Your Career Launchpad for Development" />
+        <meta property="og:image" content="https://www.gitconnect.dev/img/favicon/gclogo.png" />
+        <meta property="og:url" content="https://www.gitconnect.dev/" />
+        <meta name="description" content="Showcase your work, discover inspiring projects, and connect with like-minded developers in just a few clicks. Perfect for junior developers and those starting their coding journey." />
+        <meta name="keywords" content="developers, projects, showcase, connect, collaborate, junior developers, coding, GitHub" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="icon" href="/img/favicon/gclogo.png" />
       </Head>
