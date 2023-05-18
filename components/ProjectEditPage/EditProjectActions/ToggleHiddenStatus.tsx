@@ -68,26 +68,28 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
       const hiddenStatus = repoData.hidden;
 
       if (hiddenStatus === true) {
-        setInitialState(false);
+       
         await setDoc(
           doc(db, `users/${userId}/repos/${repoId}`),
           { hidden: false },
           { merge: true }
         )
           .then(() => {
+            setInitialState(false);
             // console.log(`Repo ${repoId} hidden status set to false`);
           })
           .catch((e) => {
             console.log(e);
           });
       } else {
-        setInitialState(true);
+       
         await setDoc(
           doc(db, `users/${userId}/repos/${repoId}`),
           { hidden: true },
           { merge: true }
         )
           .then(() => {
+            setInitialState(true);
             // console.log(`Repo ${repoId} hidden status set to true`);
           })
           .catch((e) => {
@@ -110,7 +112,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
             radius='md'
             mt={40}
             className='mx-auto'
-            onClick={handleToggleState}
+            // onClick={handleToggleState}
             styles={(theme) => ({
               root: {
                 backgroundColor:
@@ -134,9 +136,11 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
             {/* empty space */}
             {/* <span>  </span> */}
             {/* <span>{'   '}</span> */}
-            Back to Project
+            Back to Project Page
           </Button>
         </Link>
+      </Group>
+      <Group position='center'>
         <Button
           component='a'
           size='lg'
@@ -149,7 +153,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
               backgroundColor: initialState
                 ? // && theme.colorScheme === 'dark'
                   theme.colors.green[6]
-                : theme.colors.red[6],
+                : theme.colors.gray[5],
 
               // 'Revert to draft'
 
@@ -161,7 +165,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
                 backgroundColor: initialState
                   ? // && theme.colorScheme === 'dark'
                     theme.colors.green[8]
-                  : theme.colors.red[8],
+                  : theme.colors.yellow[8],
               },
               //     theme.colorScheme === 'dark'
               //       ? theme.colors.dark[6]
@@ -170,7 +174,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
             },
           })}
         >
-          {initialState ? 'Publish project' : 'Revert to draft'}
+          {initialState ? 'Publish project' : 'Revert to draft project'}
         </Button>
       </Group>
       {/* </Center> */}

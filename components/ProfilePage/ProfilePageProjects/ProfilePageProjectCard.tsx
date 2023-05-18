@@ -1,47 +1,78 @@
 import { IconEye, IconMessageCircle } from '@tabler/icons-react';
-import { Card, Text, Group, Center, createStyles, Avatar } from '@mantine/core';
+import {
+  Card,
+  Text,
+  Group,
+  Center,
+  createStyles,
+  Avatar,
+  Overlay,
+  Button,
+} from '@mantine/core';
 import useStyles from './ProfilePageProjectCard.styles';
 import Link from 'next/link';
 
-
 // export function ProfilePageProjectCard({ image, title, author, views, comments, link }: ProfilePageProjectCardProps) {
 
-export function ProfilePageProjectCard({ image, profileUrl, title, author, avatar, views, comments, link }: ProfilePageProjectCardProps) {
+export function ProfilePageProjectCard({
+  hidden,
+  image,
+  profileUrl,
+  title,
+  author,
+  avatar,
+  views,
+  comments,
+  link,
+}: ProfilePageProjectCardProps) {
   const { classes, theme } = useStyles();
 
   return (
     <>
-
       <Card
-        p="xl"
+        p='xl'
         mb='lg'
-        shadow="lg"
+        shadow='lg'
         className={classes.card}
-        radius="md"
-        component="a"
+        radius='md'
+        component='a'
         href={link}
-      // target="_blank"
+        // target="_blank"
       >
+        {hidden && (
+          <Overlay color='#000' opacity={0.5} center>
+            <Button
+              color='lime'
+              size='xl'
+              radius='lg'
+              variant='outline'
+            >Draft Project</Button>
+           {/* <Text>Draft Project</Text> */}
+          </Overlay>
+        )}
         {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
 
         {/* Temporary workaround for static projects to work */}
-        <div className={classes.image} style={{ backgroundImage: `url(${image})` ? `url(${image})` : image }} />
+        <div
+          className={classes.image}
+          style={{
+            backgroundImage: `url(${image})`,
+            // `url(${image})` ? `url(${image})` : image
+          }}
+        />
 
         <div className={classes.overlay} />
 
         <div className={classes.content}>
           <div>
-            <Text size="lg" pb='md' className={classes.title} weight={500}>
+            <Text size='lg' pb='md' className={classes.title} weight={500}>
               {title}
             </Text>
           </div>
         </div>
       </Card>
-      <Group
-        position="apart" spacing="xs" mt='sm'
-      >
+      <Group position='apart' spacing='xs' mt='sm'>
         <Center>
-
           {/* Note - positioning hack to resolve nested link issues (temporary) */}
 
           <Link href={profileUrl} passHref legacyBehavior>
@@ -49,7 +80,7 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
               component='a'
               radius='xl'
               size={24}
-              mr="xs"
+              mr='xs'
               src={avatar}
               styles={() => ({
                 root: {
@@ -61,12 +92,7 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
             />
           </Link>
           <Link href={profileUrl} passHref legacyBehavior>
-            <Text
-              component='a'
-              size="sm"
-              inline
-              className={classes.author}
-            >
+            <Text component='a' size='sm' inline className={classes.author}>
               {author}
             </Text>
           </Link>
@@ -77,6 +103,7 @@ export function ProfilePageProjectCard({ image, profileUrl, title, author, avata
 }
 
 interface ProfilePageProjectCardProps {
+  hidden: boolean;
   link: string;
   image: string;
   profileUrl: string;
@@ -89,8 +116,11 @@ interface ProfilePageProjectCardProps {
 
 // OLD CARDS
 
-    {/* // <Link href={link} passHref legacyBehavior> */}
-      {/* <Card
+{
+  /* // <Link href={link} passHref legacyBehavior> */
+}
+{
+  /* <Card
          p="xl"
          mb='lg'
         // p="lg"
@@ -139,5 +169,8 @@ interface ProfilePageProjectCardProps {
             </Group>
           </div>
         </div>
-      </Card> */}
-      {/* // </Link> */}
+      </Card> */
+}
+{
+  /* // </Link> */
+}

@@ -180,7 +180,7 @@ export const AppContainer = ({ children }, props) => {
                       Add a Project
                     </Text> */}
                   </Link>
-                  <Link href='/profiles/projects' passHref legacyBehavior>
+                  <Link  href={`/profiles/${userData.userId}`} passHref legacyBehavior>
                     <Button
                       component='a'
                       size='xs'

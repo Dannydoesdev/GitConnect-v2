@@ -11,7 +11,7 @@ import Image from '@tiptap/extension-image';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { lowlight } from 'lowlight';
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
-import { Button, Center } from '@mantine/core';
+import { Button, Center, Group } from '@mantine/core';
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { db } from '../../../firebase/clientApp';
 import { storage } from '../../../firebase/clientApp'
@@ -19,6 +19,7 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { AuthContext } from '../../../context/AuthContext';
 import DOMPurify from 'dompurify';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 type TipTapProps = {
   repoId?: string
@@ -36,6 +37,8 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
   const { userData } = useContext(AuthContext)
   const userId = userData.userId
   const userName = userData.userName
+
+  const router = useRouter();
 
   const [editorContent, setEditorContent] = useState("");
   const [editable, setEditable] = useState(false)
@@ -61,18 +64,24 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
       if (docSnap.exists()) {
         const mainContent = docSnap.data()
         const htmlOutput = mainContent.htmlOutput
-
+        handleSetTipTap(htmlOutput);
         if (htmlOutput.length > 0) {
           setinitialContent(htmlOutput);
 
         }
       }
+      
 
     };
+
     getFirebaseData();
-  }, []);
+
+  }, [router, repoId, repoName]);
 
 
+  function handleSetTipTap(content: any){
+    editor?.commands.setContent(content);
+  }
   // Set the existing data as the editor content if found
 
   useEffect(() => {
@@ -276,7 +285,9 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
               flex: 'wrap',
             },
             root: {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+             
+              backgroundColor: editor.isEditable ? theme.colors.green[9] : theme.colors.indigo[7],
+              
               width: '20%',
               [theme.fn.smallerThan('sm')]: {
                 width: '70%',
@@ -287,7 +298,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             },
           })}
         >
-          {editor.isEditable ? 'Save Editor Changes' : 'Unlock Editor'}
+          {editor.isEditable ? 'Save Changes' : 'Edit Text content'}
         </Button>
       </Center>
 
@@ -319,10 +330,13 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
           </Button>
         </Center>
       }
-
+      <Group position='center'>
       <RichTextEditor
-        mt={70}
+        mt={40}
         editor={editor}
+       
+        w='60%'
+        // mx={200}
         styles={(theme) => ({
           content: {
             color: editor.isEditable ? 'auto' : '#999',
@@ -374,13 +388,14 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
 
         <RichTextEditor.Content />
       </RichTextEditor>
-
+     
       {
         !imgUrl && progresspercent > 0 &&
         <div className='outerbar'>
           <div className='innerbar' style={{ width: `${progresspercent}%` }}>{progresspercent}%</div>
         </div>
-      }
+        }
+         </Group>
     </>
   );
 }
