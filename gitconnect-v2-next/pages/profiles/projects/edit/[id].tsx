@@ -2,9 +2,9 @@ import axios from 'axios'
 import { useState, useEffect, useContext } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Container, Title, Group, Space, Center, Stack } from '@mantine/core';
+import { Container, Title, Group, Space, Center, Stack, Button } from '@mantine/core';
 import ProjectPageDynamicContent from '../../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent'
-import { ProjectPageDynamicHero } from '../../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero'
+import { ProjectEditPageHero } from '../../../../components/ProjectEditPage/ProjectEditPageHero/ProjectEditPageHero'
 import TipTapEditor from '../../../../components/ProjectEditPage/RichTextEditor/RichTextEditor'
 import { AuthContext } from '../../../../context/AuthContext'
 import { doc, getDoc } from 'firebase/firestore'
@@ -67,7 +67,7 @@ export default function EditProject() {
       // console.log(userData.userId)
       return (
         <>
-          <ProjectPageDynamicHero props={project} />
+          <ProjectEditPageHero props={project} />
           <Space h={40} />
           <Title
             order={1}
@@ -75,6 +75,7 @@ export default function EditProject() {
             mt="sm">
             {projectData.name}
           </Title>
+         
           <ToggleHiddenStatus repoId={projectData.id} />
           <UploadProjectCoverImage repoId={projectData.id} />
           <TipTapEditor repoId={projectData.id} repoName={projectData.name} />
