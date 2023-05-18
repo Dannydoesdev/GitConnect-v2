@@ -68,10 +68,9 @@ export const AppContainer = ({ children }, props) => {
   const signOutHandler = async (e) => {
     e.preventDefault();
     await signOut(auth).then(() => {
-      Router.push('/')
-    })
+      Router.push('/');
+    });
     // Router.push("/login")
-
   };
 
   const signInHandler = (e) => {
@@ -125,11 +124,9 @@ export const AppContainer = ({ children }, props) => {
 
             {currentUser ? (
               <>
-                
                 {/* Removing these nav items for now */}
-                
-                {/* <Group position='center'>
-                  <Link href='/userinfo' passHref legacyBehavior>
+
+                {/* <Link href='/userinfo' passHref legacyBehavior>
                     <Text
                       component='a'
                       className='dark:text-white'
@@ -138,33 +135,78 @@ export const AppContainer = ({ children }, props) => {
                     >
                       User
                     </Text>
+                  </Link> */}
+                <Group position='center'>
+                  <Link href='/landing' passHref legacyBehavior>
+                    <Button
+                      component='a'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
+                    >
+                      About
+                    </Button>
                   </Link>
                   <Link href='/getrepos' passHref legacyBehavior>
-                    <Text
+                    <Button
+                      component='a'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
+                    >
+                    
+                      Add Project
+                    </Button>
+                    {/* <Text
                       component='a'
                       className='dark:text-white'
                       size='md'
                       weight='bolder'
                     >
-                      Add Repos
-                    </Text>
+                      Add a Project
+                    </Text> */}
                   </Link>
-                  <Link href='/profiles/projects' passHref legacyBehavior>
-                    <Text
+                  <Link  href={`/profiles/${userData.userId}`} passHref legacyBehavior>
+                    <Button
                       component='a'
-                      className='dark:text-white'
-                      // color= {theme.white}
-                      size='md'
-                      weight='bolder'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
                     >
-                      Projects
-                    </Text>
+                       Profile
+                    </Button>
                   </Link>
-                </Group> */}
+                  
+                </Group>
 
                 <Group>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
-                  <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior>
+                  <Link
+                    href={`/profiles/${userData.userId}`}
+                    passHref
+                    legacyBehavior
+                  >
                     <Avatar
                       component='a'
                       radius='xl'
@@ -173,16 +215,16 @@ export const AppContainer = ({ children }, props) => {
                     />
                   </Link>
 
-                  <Link href="#" passHref legacyBehavior>
+                  <Link href='#' passHref legacyBehavior>
                     <Button
-                      component="a"
-                      size="xs"
+                      component='a'
+                      size='xs'
                       onClick={(e) => signOutHandler(e)}
                       // className='mx-auto'
                       sx={(theme) => ({
                         // subscribe to color scheme changes
                         backgroundColor:
-                          theme.colorScheme === "dark"
+                          theme.colorScheme === 'dark'
                             ? theme.colors.dark[5]
                             : theme.colors.blue[6],
                       })}
@@ -193,44 +235,84 @@ export const AppContainer = ({ children }, props) => {
                 </Group>
               </>
             ) : (
-              <Group>
-                <Link href='#' passHref legacyBehavior>
-                  <Button
-                    component='a'
-                    size='xs'
-                    onClick={(e) => signInHandler(e)}
-                    // onClick={signInHandler}
-                    // className='mx-auto'
-                    sx={(theme) => ({
-                      // subscribe to color scheme changes
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.dark[5]
-                          : theme.colors.blue[6],
-                    })}
-                  >
-                    Sign in
-                  </Button>
-                </Link>
-                <Link href='#' passHref legacyBehavior>
-                  <Button
-                    component='a'
+              <>
+                <Group position='center'>
+                  <Link href='/landing' passHref legacyBehavior>
+                    <Button
+                      component='a'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
+                      // color='indigo'
+                      // onClick={(e) => signInHandler(e)}
+                      // onClick={signInHandler}
+                      // className='mx-auto'
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        // textDecoration: 'underline',
+                        // border: '1px solid black',
+                        // subscribe to color scheme changes
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
+                    >
+                      About
+                    </Button>
+                  </Link>
+                  {/* <Link href='/landing' passHref legacyBehavior>
+                    <Text
+                      component='a'
+                      className='dark:text-white'
+                      // color= {theme.white}
+                      size='md'
+                      weight='bolder'
+                    >
+                      About
+                    </Text>
+                  </Link> */}
+                </Group>
+
+                <Group>
+                  <Link href='#' passHref legacyBehavior>
+                    <Button
+                      component='a'
+                      size='xs'
+                      onClick={(e) => signInHandler(e)}
+                      // onClick={signInHandler}
+                      // className='mx-auto'
+                      sx={(theme) => ({
+                        // subscribe to color scheme changes
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.dark[5]
+                            : theme.colors.blue[6],
+                      })}
+                    >
+                      Sign in
+                    </Button>
+                  </Link>
+                  <Link href='#' passHref legacyBehavior>
+                    <Button
+                      component='a'
                       size='xs'
                       onClick={(e) => registerHandler(e)}
-                    // onClick={registerHandler}
-                    // className='mx-auto'
-                    sx={(theme) => ({
-                      // subscribe to color scheme changes
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.dark[5]
-                          : theme.colors.blue[6],
-                    })}
-                  >
-                    Register
-                  </Button>
-                </Link>
-              </Group>
+                      // onClick={registerHandler}
+                      // className='mx-auto'
+                      sx={(theme) => ({
+                        // subscribe to color scheme changes
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.dark[5]
+                            : theme.colors.blue[6],
+                      })}
+                    >
+                      Register
+                    </Button>
+                  </Link>
+                </Group>
+              </>
             )}
           </Group>
         </Header>

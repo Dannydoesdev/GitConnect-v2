@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
-import useStyles from './ProjectPageDynamicHero.styles';
+import useStyles from './ProjectEditPageHero.styles';
 
-export function ProjectPageDynamicHero(props: any) {
+export function ProjectEditPageHero(props: any) {
   const { classes } = useStyles();
   // console.log('Dynamic project hero')
   // console.log(props)
@@ -20,7 +20,12 @@ export function ProjectPageDynamicHero(props: any) {
   return (
     // <div className={classes.hero}>
     // {/* </div> */}
-    <Group className={classes.hero} sx={{ backgroundImage: project.coverImage ? `url(${project.coverImage})` : '' }}>
+    <Group className={classes.hero} sx={{
+      backgroundImage: project.coverImage ? `url(${project.coverImage})` :
+        ''
+    }}>
+        {/* // `url(${makeAnImg(3200, 1200)})` '' */}
+   
       <Overlay
         gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
         opacity={1}
@@ -28,7 +33,7 @@ export function ProjectPageDynamicHero(props: any) {
       />
 
       <Container className={classes.container}>
-        <Title className={classes.title}>{project.name}</Title>
+        <Title className={classes.title}>Edit {project.name}</Title>
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}
         </Text>

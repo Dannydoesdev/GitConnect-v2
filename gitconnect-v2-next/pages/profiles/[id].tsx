@@ -97,7 +97,7 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
     // }, 1500)
   // };
 
-  }, [userData.userId, id, newRepoParam])
+  }, [userData.userId, id, newRepoParam, router])
 
 
   return (
