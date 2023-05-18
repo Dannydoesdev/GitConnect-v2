@@ -1,29 +1,34 @@
-import { createStyles, Overlay, Container, Title, Button, Text } from '@mantine/core';
+import {
+  createStyles,
+  Overlay,
+  Container,
+  Title,
+  Button,
+  Text,
+  Group,
+} from '@mantine/core';
 import Link from 'next/link';
 import { useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import useStyles from './HomePageHero.styles';
 
-
 export function HeroLanding() {
   const { classes } = useStyles();
   // console.log('landing hero hit')
 
-
-  const { userData, currentUser } = useContext(AuthContext)
+  const { userData, currentUser } = useContext(AuthContext);
   return (
     <div className={classes.hero}>
       <Overlay
-        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
+        gradient='linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)'
         opacity={1}
         zIndex={0}
       />
       <Container className={classes.container}>
-        <Title className={classes.title}>GitConnect;</Title>
-        <Text className={classes.description} size="xl" mt='xs'>
+        <Title className={classes.title}>GitConnect; <span className={classes.beta}>[beta]</span></Title>
+        <Text className={classes.description} size='xl' mt='xs'>
           Create. Share. Collaborate. Inspire.
         </Text>
-
 
         {/* <>
         <Text className={classes.description} size="sm" italic={true} mt="xl">
@@ -35,56 +40,134 @@ export function HeroLanding() {
         </Text>
         </> */}
 
-
-        {currentUser ?
+        {currentUser ? (
           <>
-
-            <Link href="/getrepos" passHref legacyBehavior>
+            <Link href='/getrepos' passHref legacyBehavior>
               <Button
-                component="a"
-                size="lg"
-                radius="md"
+                component='a'
+                size='lg'
+                radius='md'
                 mt={60}
                 className={classes.control}
               >
                 Add a project
               </Button>
             </Link>
-            <Text className={classes.description} italic={true} size="xs" mt="xl">
+            <Text
+              className={classes.description}
+              italic={true}
+              size='xs'
+              mt='xl'
+            >
               Note: This site is actively under construction
             </Text>
-            {/* <Link
-              href="https://git--connect.herokuapp.com/"
-              passHref
-              legacyBehavior>
-              <Text
-                component='a'
-                target='_blank'
-                className={classes.description} underline={true}
-                italic={true}
-                size="xs"
-                mt="sm">
-                Visit GitConnect; V1
-              </Text>
-            </Link> */}
 
+            <Group mt='md' spacing='xl'>
+              <Link
+                // href="https://git--connect.herokuapp.com/"
+                href='/landing'
+                passHref
+                legacyBehavior
+              >
+                <Text
+                  component='a'
+                  // target='_blank'
+                  className={classes.description}
+                  // underline={true}
+                  // italic={true}
+                  weight={500}
+                  size='xs'
+                  mt='sm'
+                >
+                  Learn more
+                </Text>
+              </Link>
+              <Link
+                // href="https://git--connect.herokuapp.com/"
+                href='https://discord.gg/hkajEH6WkW'
+                passHref
+                legacyBehavior
+              >
+                <Text
+                  component='a'
+                  target='_blank'
+                  className={classes.description}
+                  weight={500}
+                  // underline={true}
+                  // italic={true}
+                  size='xs'
+                  underline={false}
+                  mt='sm'
+                >
+                  Join the Discord
+                </Text>
+              </Link>
+            </Group>
           </>
-          :
+        ) : (
           <>
-            <Link href="/signup" passHref legacyBehavior>
+            <Link href='/signup' passHref legacyBehavior>
               <Button
-                component="a"
-                size="lg"
-                radius="md"
+                component='a'
+                size='lg'
+                radius='md'
                 mt={40}
                 className={classes.control}
               >
                 Get started
               </Button>
             </Link>
-            <Text className={classes.description} italic={true} size="xs" mt="xl">
+            <Text
+              className={classes.description}
+              italic={true}
+              size='xs'
+              mt='xl'
+            >
               Note: This site is actively under construction
             </Text>
+
+            <Group mt='md' spacing='xl'>
+              <Link
+                // href="https://git--connect.herokuapp.com/"
+                href='/landing'
+                passHref
+                legacyBehavior
+              >
+                <Text
+                  component='a'
+                  // target='_blank'
+                  className={classes.description}
+                  // underline={true}
+                  // italic={true}
+                  weight={500}
+                  size='xs'
+                  mt='sm'
+                >
+                  Learn more
+                </Text>
+              </Link>
+              <Link
+                // href="https://git--connect.herokuapp.com/"
+                href='https://discord.gg/hkajEH6WkW'
+                passHref
+                legacyBehavior
+              >
+                <Text
+                  component='a'
+                  target='_blank'
+                  className={classes.description}
+                  weight={500}
+                  // underline={true}
+                  // italic={true}
+                  size='xs'
+                  underline={false}
+                  mt='sm'
+                >
+                  Join the Discord
+                </Text>
+              </Link>
+            </Group>
+
             {/* <Link
               href="https://git--connect.herokuapp.com/"
               passHref
@@ -100,8 +183,7 @@ export function HeroLanding() {
               </Text> */}
             {/* </Link> */}
           </>
-
-        }
+        )}
       </Container>
     </div>
   );

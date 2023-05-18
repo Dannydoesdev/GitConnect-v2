@@ -1,11 +1,9 @@
 import { createStyles, rem } from '@mantine/core';
 
 export default createStyles((theme) => ({
-
   hero: {
     position: 'relative',
-    backgroundImage:
-      'url(../../img/gitconnect.jpg)', 
+    backgroundImage: 'url(../../img/gitconnect.jpg)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
@@ -46,6 +44,32 @@ export default createStyles((theme) => ({
     },
   },
 
+  beta: {
+    color: theme.white,
+    fontSize: 30,
+    fontWeight: 800,
+    // fontStyle: 'oblique',
+    textAlign: 'center',
+    reverse: true,
+    // direction: 'ltr',
+    // fontVariantCaps: 'small-caps',
+    fontVariantCaps: 'petite-caps',
+    // textDecoration: 'italic',
+    lineHeight: 1,
+    fontFamily: 'monospace',
+    // marginTop: '8px',
+
+    [theme.fn.smallerThan('sm')]: {
+      fontSize: 26,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('xs')]: {
+      fontSize: 18,
+      lineHeight: 1.3,
+    },
+  },
+
   description: {
     color: theme.white,
     maxWidth: 600,
@@ -69,12 +93,14 @@ export default createStyles((theme) => ({
   control: {
     // marginTop: theme.spacing.xl * 1.5,
     marginTop: `calc(${theme.spacing.xl} * 1.5)`,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
-    width: '30%',
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[5]
+        : theme.colors.blue[6],
+    width: '25%',
 
     [theme.fn.smallerThan('sm')]: {
       width: '70%',
     },
   },
-
 }));
