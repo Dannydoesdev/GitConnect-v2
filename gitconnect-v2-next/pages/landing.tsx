@@ -5,6 +5,23 @@ import { Container, Paper, Text, Col, Grid, Button, Space } from '@mantine/core'
 import { LandingPageFeatures } from '../components/LandingPage/LandingPageFeatures';
 import { LandingPageHero } from '../components/LandingPage/LandingPageHero';
 
+
+
+const LandingPage: React.FC = () => (
+  <Container>
+    <LandingPageHero />
+    <LandingPageFeatures />
+    {/* <Space h={70} />
+    <HeroSection />
+    <FeaturesSection />
+    <CTASection />
+    <Footer /> */}
+  </Container>
+);
+
+export default LandingPage;
+
+
 // const HeroSection: React.FC = () => (
 //   <Paper p="xl" shadow="xs">
 //     <Text align="center" size="xl">
@@ -61,17 +78,3 @@ import { LandingPageHero } from '../components/LandingPage/LandingPageHero';
 //     <Text>GitConnect © 2023. All rights reserved. | Privacy Policy | Terms of Service</Text>
 //   </Paper>
 // );
-
-const LandingPage: React.FC = () => (
-  <Container>
-    <LandingPageHero />
-    <LandingPageFeatures />
-    {/* <Space h={70} />
-    <HeroSection />
-    <FeaturesSection />
-    <CTASection />
-    <Footer /> */}
-  </Container>
-);
-
-export default LandingPage;
