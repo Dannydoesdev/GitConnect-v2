@@ -36,13 +36,7 @@ export function LandingHero() {
 
   return (
     <>
-      {/* <Head>
-        <title>GitConnect: Your Career Launchpad for Development</title>
-        <meta name="description" content="Showcase your work, discover inspiring projects, and connect with like-minded developers in just a few clicks. Perfect for junior developers and those starting their coding journey." />
-        <meta name="keywords" content="developers, projects, showcase, connect, collaborate, junior developers, coding, GitHub" />
-      </Head> */}
       <div>
-        {/* <Container> */}
           <div className={classes.inner}>
             <div className={classes.content}>
               <Title className={classes.title}>
