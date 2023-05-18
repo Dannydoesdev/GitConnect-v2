@@ -73,7 +73,7 @@ export default function EditProject() {
             order={1}
             align="center"
             mt="sm">
-            {projectData.name}
+            Edit {projectData.name}
           </Title>
          
           <ToggleHiddenStatus repoId={projectData.id} />

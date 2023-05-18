@@ -11,10 +11,10 @@ import { db } from '../../../firebase/clientApp';
 const ProfilePageProjectGrid = ({ projects }: any) => {
   // const { classes, theme } = useStyles();
 
-function makeAnImg(width: number, height: number) {
-    let randNum = Math.floor(Math.random() * 1000)
-    return `https://picsum.photos/${width}/${height}?random=${randNum}`
-  }
+// function makeAnImg(width: number, height: number) {
+//     let randNum = Math.floor(Math.random() * 1000)
+//     return `https://picsum.photos/${width}/${height}?random=${randNum}`
+//   }
   // const [projects, setProjects] = useState<any>(null)
 
   // useEffect(() => {
@@ -57,7 +57,9 @@ function makeAnImg(width: number, height: number) {
           return (
             <div key={project.docData.id} >
               <ProfilePageProjectCard
-                image={project.docData.coverImage ? project.docData.coverImage : makeAnImg(800,350)}
+                // image={project.docData.coverImage ? project.docData.coverImage : makeAnImg(800, 350)}
+                hidden={project.docData.hidden}
+                image={project.docData.coverImage }
                 // image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))}
                 title={project.docData.name}
                 avatar={project.docData.owner.avatar_url}
