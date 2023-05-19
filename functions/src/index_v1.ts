@@ -7,7 +7,8 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-// import * as logger from 'firebase-functions/logger';
+import { onRequest } from 'firebase-functions/v2/https';
+import * as logger from 'firebase-functions/logger';
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -33,17 +34,10 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
-  // getStream,
 } from 'firebase/storage';
-// import { downloadFileStream } from '../lib/downloadFileStream';
-// import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions';
 import { Storage } from '@google-cloud/storage';
-// explicitly import each trigger
-import { onRequest } from 'firebase-functions/v2/https';
-// import { bucket}
-// const { onDocumentCreated } = require("firebase-functions/v2/firestore");
-// import { StorageObjectData } from "firebase-functions/v2/storage"
-// import { storageBucket } from 'firebase-functions/params';
+
 
 const firebaseApp = initializeApp({
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -66,21 +60,15 @@ async function sendImageToFirebase(
   repoId: string
 ) {
   const imageUrl = new URL(url);
-
   const file = gcs.bucket(imageUrl.host).file(imageUrl.pathname);
-
-  // Download file into memory from bucket.
-  // const bucket = sorage.bucket(fileBucket);
-  // cpmst newBucket = StorageObjectData();
   try {
     const [fileExists] = await file.exists();
 
     if (fileExists) {
-      // const [fileData] = await downloadFileStream(file);
       const [fileData] = await file.download();
       const extension = file.name.split('.').pop();
       const fileName = `${file.name}_${Date.now()}`;
-      // const stream = getStream(storage, '');
+
       const storageRef = ref(
         storage,
         `users/${userId}/repos/${repoId}/images/coverImage/${fileName}`
@@ -135,37 +123,58 @@ async function sendImageToFirebase(
   }
 }
 
-export const migrateImages = onRequest({ cors: true }, async (req, res) => {
-  const q = query(collectionGroup(db, 'repos'));
-  const querySnapshot = await getDocs(q);
+export const migrateImages = functions
+  .runWith({ failurePolicy: true })
+  .https.onRequest(async (req, res) => {
+    // const snapshot = await getDocs(collection(db, 'users', 'repos'));
 
-  try {
-    const promises = [];
+    const q = query(collectionGroup(db, 'repos'));
+    const querySnapshot = await getDocs(q);
 
-    for (const doc of querySnapshot.docs) {
-      const data = doc.data();
+    try {
+      const promises = [];
 
-      if (typeof data.coverImage === 'string') {
-        const userId = data.userId;
-        const repoId = doc.id;
+      for (const doc of querySnapshot.docs) {
+        const data = doc.data();
 
-        promises.push(sendImageToFirebase(data.coverImage, userId, repoId));
+        if (typeof data.coverImage === 'string') {
+          const userId = data.userId;
+          const repoId = doc.id;
+
+          promises.push(sendImageToFirebase(data.coverImage, userId, repoId));
+        }
       }
+
+      await Promise.all(promises);
+    } catch (error) {
+      console.error('Error during migration:', error);
+      res.status(500).send('Error during migration');
+      return;
     }
 
-    await Promise.all(promises);
-  } catch (error) {
-    console.error('Error during migration:', error);
-    res.status(500).send('Error during migration');
-    return;
-  }
+    // querySnapshot.docs.forEach(async (doc) => {
+    // // snapshot.docs.forEach(async (doc) => {
+    //   const data = doc.data();
 
-  res.send('Migration complete');
-});
+    //   if (typeof data.coverImage === 'string') {
+    //     const userId = data.userId; // replace with correct user ID
+    //     const repoId = doc.id; // replace with correct repo ID
 
-export const migrateSingleImage = onRequest(
-  { cors: true },
-  async (req, res) => {
+    //     await sendImageToFirebase(data.coverImage, userId, repoId);
+    //   }
+    // });
+    // } catch (error) {
+    //   console.error('Error during migration:', error);
+    //   res.status(500).send('Error during migration');
+    //   return;
+    // }
+
+    res.send('Migration complete');
+  });
+
+export const migrateSingleImage = functions
+  .runWith({ failurePolicy: true })
+  .https.onRequest(async (req, res) => {
     const repoId = req.query.docId as string; // get the document ID from the query string
 
     if (!repoId) {
@@ -184,12 +193,14 @@ export const migrateSingleImage = onRequest(
     const data = docSnap.data();
 
     if (typeof data.coverImage === 'string') {
-      const userId = data.userId;
-      const repoId = data.id;
+      // const userId = docId; // replace with correct user ID
+      // const repoId = docId; // replace with correct repo ID
+
+      const userId = data.userId; // replace with correct user ID
+      const repoId = data.id; // replace with correct repo ID
 
       await sendImageToFirebase(data.coverImage, userId, repoId);
     }
 
     res.send('Migration complete for document ' + repoId);
-  }
-);
+  });
