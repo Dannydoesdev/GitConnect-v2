@@ -13,6 +13,20 @@
         "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
+    },
+    {
+      "source": "functions",
+      "codebase": "functions",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
     }
   ],
   "emulators": {
@@ -28,6 +42,19 @@
     },
     "storage": {
       "port": 9199
+    },
+    "auth": {
+      "port": 9099
+    },
+    "pubsub": {
+      "port": 8085
     }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }
