@@ -69,14 +69,11 @@ async function sendImageToFirebase(
 
   const file = gcs.bucket(imageUrl.host).file(imageUrl.pathname);
 
-  // Download file into memory from bucket.
-  // const bucket = sorage.bucket(fileBucket);
-  // cpmst newBucket = StorageObjectData();
+
   try {
     const [fileExists] = await file.exists();
 
     if (fileExists) {
-      // const [fileData] = await downloadFileStream(file);
       const [fileData] = await file.download();
       const extension = file.name.split('.').pop();
       const fileName = `${file.name}_${Date.now()}`;
@@ -135,33 +132,33 @@ async function sendImageToFirebase(
   }
 }
 
-export const migrateImages = onRequest({ cors: true }, async (req, res) => {
-  const q = query(collectionGroup(db, 'repos'));
-  const querySnapshot = await getDocs(q);
+// export const migrateImages = onRequest({ cors: true }, async (req, res) => {
+//   const q = query(collectionGroup(db, 'repos'));
+//   const querySnapshot = await getDocs(q);
 
-  try {
-    const promises = [];
+//   try {
+//     const promises = [];
 
-    for (const doc of querySnapshot.docs) {
-      const data = doc.data();
+//     for (const doc of querySnapshot.docs) {
+//       const data = doc.data();
 
-      if (typeof data.coverImage === 'string') {
-        const userId = data.userId;
-        const repoId = doc.id;
+//       if (typeof data.coverImage === 'string') {
+//         const userId = data.userId;
+//         const repoId = doc.id;
 
-        promises.push(sendImageToFirebase(data.coverImage, userId, repoId));
-      }
-    }
+//         promises.push(sendImageToFirebase(data.coverImage, userId, repoId));
+//       }
+//     }
 
-    await Promise.all(promises);
-  } catch (error) {
-    console.error('Error during migration:', error);
-    res.status(500).send('Error during migration');
-    return;
-  }
+//     await Promise.all(promises);
+//   } catch (error) {
+//     console.error('Error during migration:', error);
+//     res.status(500).send('Error during migration');
+//     return;
+//   }
 
-  res.send('Migration complete');
-});
+//   res.send('Migration complete');
+// });
 
 export const migrateSingleImage = onRequest(
   { cors: true },
