@@ -14,6 +14,7 @@ import { userInfo } from 'os'
 import AuthRoute from '../../HoC/authRoute'
 import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel'
 import { useRouter } from 'next/router'
+import useViewport from '../../hooks/useViewport'
 
 // const fetcher = (url: string) => axios.get(url).then(res => res.data)
 
@@ -73,6 +74,8 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
 
   const [githubProfileData, setGitHubProfileData] = useState()
   const [isLoggedInUsersProfile, setIsLoggedInUsersProfile] = useState(false)
+
+  
 
   useEffect(() => {
 
@@ -134,6 +137,7 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
 
             <Grid.Col>
               <ProfilePageProjectGrid
+                // imageUrl={imageUrl}
                 projects={projects}
               />
 
