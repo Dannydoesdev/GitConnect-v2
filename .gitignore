@@ -41,6 +41,8 @@ yarn-error.log*
 .env*.local
 */.env*.local
 functions/.env
+**/.env
+**/.env.local
 
 # vercel
 .vercel
@@ -48,3 +50,4 @@ functions/.env
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+functions/.env
