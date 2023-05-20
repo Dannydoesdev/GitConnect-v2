@@ -3,10 +3,59 @@ import { useViewportSize } from '@mantine/hooks';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/clientApp';
 
-// Define your image breakpoints here
 const breakpoints = [200, 400, 768, 1024, 2000];
 
-export default function useViewport(userId: string, repoId: string) {
+// Find the appropriate image size based on the current viewport width
+// Can be used for backwards compatibility of old firestore coverImage with only sting URL to new object metadata
+// Used to fetch all image sizes - requires the current coverImage firestore data
+
+export default function useViewportForImageSize(
+  coverImageObj: any,
+  userId: string,
+  repoId: string
+) {
+  const { height, width } = useViewportSize();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const imageSize = breakpoints.reduce((prev, curr) =>
+    Math.abs(curr - width) < Math.abs(prev - width) ? curr : prev
+  );
+
+  const newGetResizedImageUrl = (
+    coverImageName: any,
+    userId: string,
+    repoId: string,
+    width: number
+  ) => {
+    const encodedName = encodeURIComponent(coverImageName);
+
+    return `https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/users%2F${userId}%2Frepos%2F${repoId}%2Fimages%2FcoverImage%2F${encodedName}_${width}x${width}.webp?alt=media`;
+  };
+
+  useEffect(() => {
+    async function fetchCoverImage() {
+      if (typeof coverImageObj === 'string') {
+        setImageUrl(coverImageObj);
+        return imageUrl;
+      } else if (!coverImageObj) {
+        return '';
+      }
+
+      const filename = coverImageObj?.name.split('.').slice(0, -1).join('.');
+      const url = newGetResizedImageUrl(filename, userId, repoId, imageSize);
+
+      setImageUrl(url);
+    }
+
+    fetchCoverImage();
+  }, [userId, repoId, imageSize]);
+
+  return { width, imageSize, imageUrl };
+}
+
+// Used when only userId and repoId are available
+// CAUTION - this function will call firestore every time viewport changes
+export function useViewportFetchFromFirestore(userId: string, repoId: string) {
   const { height, width } = useViewportSize();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -15,7 +64,9 @@ export default function useViewport(userId: string, repoId: string) {
   );
 
   const getResizedImageUrl = (name: string, width: number) => {
-    return `https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/${name}_${width}x${width}.webp`;
+    const encodedName = encodeURIComponent(name);
+
+    return `https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/users%2F${userId}%2Frepos%2F${repoId}%2Fimages%2FcoverImage%2F${encodedName}_${width}x${width}.webp?alt=media`;
   };
 
   useEffect(() => {
@@ -27,6 +78,14 @@ export default function useViewport(userId: string, repoId: string) {
       );
       const docData = await getDoc(docRef);
       const coverImage = docData.data()?.coverImage;
+      // console.log(coverImage)
+
+      if (typeof coverImage === 'string') {
+        setImageUrl(coverImage);
+        return imageUrl;
+      } else if (!coverImage) {
+        return '';
+      }
 
       // Construct the URL
       const filename = coverImage?.name.split('.').slice(0, -1).join('.');
@@ -40,41 +99,3 @@ export default function useViewport(userId: string, repoId: string) {
 
   return { width, imageSize, imageUrl };
 }
-
-// import { useState, useEffect } from 'react';
-// import { useViewportSize } from '@mantine/hooks';
-
-// // Define your image breakpoints here
-// const breakpoints = [200, 400, 768, 1024, 2000];
-
-// function getResizedImageUrl(name: any, width: any) {
-//   return `https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/${name}_${width}x${width}.webp`;
-// }
-
-// export default function useViewport() {
-//   const { height, width } = useViewportSize();
-
-//   const imageSize = breakpoints.reduce((prev, curr) =>
-//     Math.abs(curr - width) < Math.abs(prev - width) ? curr : prev
-//   );
-
-//   return { width, imageSize, getResizedImageUrl };
-// }
-
-// function getResizedImageUrlAnyFormat(name: any, extension: any, width: any) {
-//   return `https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/${name}_${width}x${width}.${extension}`;
-// }
-
-// NOTE - using Mantine hook in place of this custom hook
-// export default function useViewport() {
-//   const [width, setWidth] = useState(window.innerWidth);
-
-//   // Add a listener for window resize events
-//   useEffect(() => {
-//     const handleResize = () => setWidth(window.innerWidth);
-//     window.addEventListener('resize', handleResize);
-//     return () => window.removeEventListener('resize', handleResize);
-//   }, []);
-
-//   // Find the appropriate image size based on the current viewport width
-// Find the appropriate image size based on the current viewport width
