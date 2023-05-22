@@ -9,7 +9,7 @@ export default createStyles((theme, _params, getRef) => {
       height: 280,
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
 
-      [`&:hover .${image}`]: {
+      [`&:hover .image`]: {
         transform: 'scale(1.03)',
       },
     },
@@ -21,6 +21,7 @@ export default createStyles((theme, _params, getRef) => {
       left: 0,
       right: 0,
       bottom: 0,
+      // backgroundImage: 'url(https://images.unsplash.com/photo-1612835362596-4b0b2b1b0b0f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y29tcHV0ZXIlMjBwcm9qZWN0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80)',
       backgroundSize: 'cover',
       transition: 'transform 500ms ease',
     },
