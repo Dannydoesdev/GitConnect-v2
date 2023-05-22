@@ -8,6 +8,7 @@ import { storage } from '../../../firebase/clientApp'
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db } from '../../../firebase/clientApp';
 import useViewportForImageSize from "../../../hooks/useViewport"
+import Image from "next/image"
 
 const ProfilePageProjectGrid = ({ projects }: any) => {
   // const { classes, theme } = useStyles();
@@ -59,10 +60,11 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
           console.log(project.docData.coverImage)
           const { imageUrl }: any = useViewportForImageSize(project.docData.coverImage, userId, project.docData.id);
 
-          // console.log(imageUrl)
-
+          console.log(imageUrl)
+          console.log(project.docData.coverImage)
           return (
             <div key={project.docData.id} >
+              
               <ProfilePageProjectCard
                 // image={project.docData.coverImage ? project.docData.coverImage : makeAnImg(800, 350)}
                 hidden={project.docData.hidden}
