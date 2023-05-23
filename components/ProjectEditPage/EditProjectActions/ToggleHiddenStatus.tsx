@@ -183,6 +183,4 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
 }
 
 export default ToggleHiddenStatus;
-function createUseStyles(arg0: (theme: any) => { root: {} }) {
-  throw new Error('Function not implemented.');
-}
+
