@@ -49,7 +49,7 @@ function ToggleHiddenStatus({ repoId }: RepoProps) {
         setInitialState(hiddenStatus);
 
         if (!hasImage) {
-          console.log('No image found');
+          // console.log('No image found');
           // alert("Sorry, you need to upload a cover image to unhide your project")
         } else {
           setCanShow(true);

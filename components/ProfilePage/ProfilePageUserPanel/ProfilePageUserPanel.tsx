@@ -39,7 +39,7 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
 
 
   function handleEditMode() {
-    console.log('edit mode')
+    // console.log('edit mode')
     setEditMode(!editMode)
   }
 
@@ -56,7 +56,7 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
     // Send data to Firebase, maps into DB & update state to show new static values instantly
 
     await updateProfileDataGithub(userId, form.values).then(() => {
-      console.log('Added to DB');
+      // console.log('Added to DB');
       setUpdatedBio(bio);
       setUpdatedLocation(location);
       setUpdatedName(name);
