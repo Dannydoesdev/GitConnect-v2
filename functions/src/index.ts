@@ -35,8 +35,10 @@ import {
 // import { downloadFileStream } from '../lib/downloadFileStream';
 // import * as functions from 'firebase-functions';
 import { Storage } from '@google-cloud/storage';
+import * as functions from 'firebase-functions';
+
 // explicitly import each trigger
-import { onRequest } from 'firebase-functions/v2/https';
+// import { onRequest } from 'firebase-functions/v2/https';
 // import { bucket}
 // const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 // import { StorageObjectData } from "firebase-functions/v2/storage"
@@ -157,9 +159,9 @@ async function sendImageToFirebase(
 //   res.send('Migration complete');
 // });
 
-export const migrateSingleImage = onRequest(
-  { cors: true },
-  async (req, res) => {
+export const migrateImages = functions
+  .runWith({ failurePolicy: true })
+  .https.onRequest(async (req, res) => {
     const repoId = req.query.docId as string; // get the document ID from the query string
 
     if (!repoId) {
