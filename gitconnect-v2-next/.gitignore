@@ -3,6 +3,8 @@
 #firebase
 firestore.rules
 firestore.indexes.json
+**/functions_new
+**/functions
 /functions_new
 /functions
 storage.rules

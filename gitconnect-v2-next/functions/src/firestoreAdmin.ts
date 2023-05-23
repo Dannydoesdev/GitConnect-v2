@@ -7,7 +7,6 @@ import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { getApps, initializeApp, cert, App } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-
 const serviceAccount = {
   projectId: process.env.CLOUD_FUNCTIONS_FIREBASE_PROJECT_ID,
   clientEmail: process.env.CLOUD_FUNCTIONS_FIREBASE_ADMIN_CLIENT_EMAIL,
