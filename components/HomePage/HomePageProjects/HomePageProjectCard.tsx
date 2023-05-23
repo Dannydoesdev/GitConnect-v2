@@ -47,7 +47,6 @@ export function HomePageProjectCard({
           radius='md'
           component='a'
           // href={link}
-          target='_blank'
         >
           {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
 
