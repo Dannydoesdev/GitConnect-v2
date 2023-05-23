@@ -205,13 +205,13 @@ export function UploadProjectCoverImage(
         onDrop={(file) => handleFileDrop(file)}
         // onDrop={setFiles}
         onReject={(files) => console.log('rejected files', files)}
-        maxSize={12 * 1024 ** 2}
+        maxSize={6 * 1024 ** 2}
         maxFiles={1}
         // accept='image'
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
-          maxWidth: 200,
-          maxHeight: 100,
+          maxWidth: 300,
+          maxHeight: 150,
           textAlign: 'center',
           margin: 'auto',
           display: 'flex',
@@ -243,7 +243,7 @@ export function UploadProjectCoverImage(
           </Dropzone.Reject>
           <Dropzone.Idle>
             <IconPhoto size={40} stroke={1.5} />
-            <Text size='md'>Click to update image</Text>
+            <Text size='md'>Click to update image - max 6MB</Text>
           </Dropzone.Idle>
         </Group>
       </Dropzone>
