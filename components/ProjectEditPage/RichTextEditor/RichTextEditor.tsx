@@ -129,10 +129,10 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
 
           let file = event.dataTransfer.files[0]; // the dropped file
           let filesize: any = ((file.size / 1024) / 1024).toFixed(4); // get the filesize in MB
-
+          console.log(filesize)
           // Check for accepted file types
-          if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
-
+          // if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
+            if (file.type === "image" && filesize < 15) {
             //  valid image so upload to server
 
             // TODO: extract function outside handeDrop
@@ -169,7 +169,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             uploadImage(file)
 
           } else {
-            window.alert("Images need to be in jpg, png, gif or webp format and less than 10mb in size.");
+            window.alert("Images need to be less than 15mb in size.");
           }
           return true; // handled
         }

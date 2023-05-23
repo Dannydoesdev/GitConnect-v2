@@ -12,12 +12,12 @@ const PRIMARY_COL_HEIGHT = rem(300);
 // export function ProfilePageLayoutGrid({ bio, projects, coverImage }: ProfileProps) {
 export function ProfilePageLayoutGrid({ props }: any) {
     
-  console.log(props)
+  // console.log(props)
 
   // destructure profile data into variabls
   const { bio, html_url, location, avatar_url, name, login, public_repos } = props;
 
-  console.log(bio)
+  // console.log(bio)
 
   const theme = useMantineTheme();
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - ${theme.spacing.md} / 2)`;

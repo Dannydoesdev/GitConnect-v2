@@ -14,7 +14,7 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     // Handle GET request
-    console.log('request received')
+    // console.log('request received')
     // const { repo, owner }: ResponseData = req.query;
     // const { repo, owner }: RequestData = req.query;
 
