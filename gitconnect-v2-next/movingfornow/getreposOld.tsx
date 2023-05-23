@@ -144,7 +144,7 @@ const GetRepos = () => {
         // add fields for user ID and hidden status (starts 'true')
         await setDoc(doc(db, `users/${userId}/repos/${repoId}`), { ...repoData, userId: userId, hidden: true }, { merge: true })
           .then(() => {
-            console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
+            // console.log(`Repo ${repoName} added to firestore under user ${userName} with ID: , ${repoId}`);
           })
           .then(() => {
             setTimeout(() => {

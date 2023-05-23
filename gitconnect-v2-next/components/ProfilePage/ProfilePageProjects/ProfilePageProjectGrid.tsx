@@ -7,6 +7,8 @@ import { AuthContext } from '../../../context/AuthContext';
 import { storage } from '../../../firebase/clientApp'
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db } from '../../../firebase/clientApp';
+import useViewportForImageSize from "../../../hooks/useViewport"
+import Image from "next/image"
 
 const ProfilePageProjectGrid = ({ projects }: any) => {
   // const { classes, theme } = useStyles();
@@ -40,9 +42,10 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
   const userName = userData.userName
     
   const [firebaseImgs, setFirebaseImgs] = useState('')
+
   
 // console.log(projects)
-
+ 
 
   return (
 
@@ -54,11 +57,18 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
 
       {projects ?
         projects.map((project: any) => {
+          // console.log(project.docData.coverImage)
+          // const { imageUrl }: any = useViewportForImageSize(project.docData.coverImage, userId, project.docData.id);
+
+          // console.log(imageUrl)
+          // console.log(project.docData.coverImage)
           return (
             <div key={project.docData.id} >
+              
               <ProfilePageProjectCard
                 // image={project.docData.coverImage ? project.docData.coverImage : makeAnImg(800, 350)}
                 hidden={project.docData.hidden}
+                // image={ imageUrl }
                 image={project.docData.coverImage }
                 // image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))}
                 title={project.docData.name}

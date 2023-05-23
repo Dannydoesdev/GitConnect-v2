@@ -54,7 +54,9 @@ export function UploadProjectCoverImage(
 
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
-
+    // console.log(imageUrl)
+    // setImgUrl(imageUrl)
+    // setImgCheck(true)
     return (
       <Image
         key={index}
@@ -78,9 +80,6 @@ export function UploadProjectCoverImage(
 
   async function sendImageToFirebase(file: any) {
     // console.log(file);
-    // Get the file extension
-    const extension = file.name.split('.').pop();
-    console.log(extension);
 
     const storageRef = ref(
       storage,
@@ -107,94 +106,29 @@ export function UploadProjectCoverImage(
               `users/${userId}/repos/${repoId}/projectData/images`
             );
             const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-            // const urlOnlyRef =
-            // Generate sizes
-            const sizes = [
-              '200x200',
-              '400x400',
-              '768x768',
-              '1024x1024',
-              '2000x2000',
-            ];
-            const coverImageMeta = {
-              name: file.name,
-              extension,
-              sizes,
-            };
-            // console.log(coverImageMeta)
 
-            await setDoc(
-              docRef,
-              { coverImageMeta: coverImageMeta, coverImage: downloadURL },
-              { merge: true }
-            );
+            await setDoc(docRef, { coverImage: downloadURL }, { merge: true });
             await setDoc(
               parentStorageRef,
-              {
-                coverImageMeta: coverImageMeta,
-                coverImage: downloadURL,
-              },
+              { coverImage: downloadURL },
               { merge: true }
             );
 
             setImgUrl(downloadURL);
-            console.log(`URL to stored img: ${downloadURL}`);
+            console.log(`URL to stored img: ${downloadURL}}`);
           })
           .then(() => {
+            // TODO - less hacky way of refreshing to allow 'showing project'
+            // TODO - Extract to parent components
             router.reload();
           });
+        // .then(async (downloadURL) => {
+        // const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`)
+
+        // });
       }
     );
   }
-
-  // async function sendImageToFirebase(file: any) {
-  //   // console.log(typeof file);
-
-  //   const storageRef = ref(
-  //     storage,
-  //     `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`
-  //   );
-  //   const uploadTask = uploadBytesResumable(storageRef, file);
-
-  //   uploadTask.on(
-  //     'state_changed',
-  //     (snapshot) => {
-  //       const progress = Math.round(
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-  //       );
-  //       setProgresspercent(progress);
-  //     },
-  //     (error) => {
-  //       alert(error);
-  //     },
-  //     () => {
-  //       getDownloadURL(uploadTask.snapshot.ref)
-  //         .then(async (downloadURL) => {
-  //           const docRef = doc(
-  //             db,
-  //             `users/${userId}/repos/${repoId}/projectData/images`
-  //           );
-  //           const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-
-  //           await setDoc(docRef, { coverImage: downloadURL }, { merge: true });
-  //           await setDoc(
-  //             parentStorageRef,
-  //             { coverImage: downloadURL },
-  //             { merge: true }
-  //           );
-
-  //           setImgUrl(downloadURL);
-  //           console.log(`URL to stored img: ${downloadURL}}`);
-  //         })
-  //         .then(() => {
-  //           // TODO - less hacky way of refreshing to allow 'showing project'
-  //           // TODO - Extract to parent components
-  //           router.reload();
-  //         });
-
-  //     }
-  //   );
-  // }
 
   return (
     <>
@@ -205,24 +139,31 @@ export function UploadProjectCoverImage(
         onDrop={(file) => handleFileDrop(file)}
         // onDrop={setFiles}
         onReject={(files) => console.log('rejected files', files)}
-        maxSize={6 * 1024 ** 2}
+        maxSize={3 * 1024 ** 2}
         maxFiles={1}
-        // accept='image'
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
-          maxWidth: 300,
-          maxHeight: 150,
+          maxWidth: 200,
+          maxHeight: 100,
           textAlign: 'center',
           margin: 'auto',
+          // minHeight: 120,
           display: 'flex',
           justifyContent: 'center',
+          // alignItems: 'center',
           marginTop: 30,
-
+          // marginRight: '20px',
+          // marginLeft: '20px',
+          // marginTop: '20px',
           backgroundColor: '#afafaf1a',
         })}
         {...props}
       >
-        <Group position='center'>
+        <Group
+          position='center'
+          // spacing='xl'
+          // style={{ minHeight: 220, pointerEvents: 'none' }}
+        >
           <Dropzone.Accept>
             <IconUpload
               size={50}
@@ -243,80 +184,126 @@ export function UploadProjectCoverImage(
           </Dropzone.Reject>
           <Dropzone.Idle>
             <IconPhoto size={40} stroke={1.5} />
-            <Text size='md'>Click to update image - max 6MB</Text>
+            <Text size='md'>Click to update image</Text>
           </Dropzone.Idle>
+          {/*
+          <div>
+           <Text size="md">
+              Click here or drag to change cover image
+            </Text> 
+             
+            <Text size="sm" color="dimmed" inline mt={7}>
+              Attach the image you want for your cover photo, file should not exceed 5mb
+            </Text> 
+          </div>*/}
         </Group>
       </Dropzone>
       {/* </Group> */}
       <Center>
         <Container size={200}>{previews}</Container>
       </Center>
-
+      {/* <SimpleGrid
+        cols={3}
+        breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+        mt={previews.length > 0 ? 'xl' : 0}
+      >
+        {previews}
+      </SimpleGrid> */}
       <Center>
         {!imgCheck ? (
           <></>
         ) : (
-          <>
-            <Group spacing='md'>
-              <Button
-                component='a'
-                size='lg'
-                radius='md'
-                mt={40}
-                className='mx-auto'
-                onClick={() => handleFileCancel(files[0])}
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor:
-                      theme.colorScheme === 'dark'
-                        ? theme.colors.dark[5]
-                        : theme.colors.blue[6],
-                    maxWidth: '70%',
-                    [theme.fn.smallerThan('sm')]: {
-                      maxWidth: '90%',
-                    },
-                    '&:hover': {
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.dark[6]
-                          : theme.colors.blue[7],
-                    },
-                  },
-                })}
-              >
-                Cancel
-              </Button>
-              <Button
-                component='a'
-                size='lg'
-                radius='md'
-                mt={40}
-                className='mx-auto'
-                // onClick={() => console.log(typeof files[0])}
+          // <Button
+          //   disabled
+          //   component="a"
+          //   size="lg"
+          //   radius="md"
+          //   mt={40}
 
-                onClick={() => sendImageToFirebase(files[0])}
-                styles={(theme) => ({
-                  root: {
+          //   className='mx-auto'
+          //   // onClick={() => console.log(files[0])}
+
+          //   onClick={() => sendImageToFirebase(files[0])}
+          //   styles={(theme) => ({
+          //     root: {
+          //       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.red[5] : theme.colors.blue[6],
+          //       width: '20%',
+          //       [theme.fn.smallerThan('sm')]: {
+          //         width: '70%',
+          //       },
+          //       '&:hover': {
+          //         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.blue[7],
+          //       },
+          //     },
+          //   })}
+          // >
+          //   Save new cover image
+          // </Button>
+
+            <>
+            <Group spacing='md'>
+            <Button
+              component='a'
+              size='lg'
+              radius='md'
+              mt={40}
+              className='mx-auto'
+              // onClick={() => console.log(files[0])}
+                  // onClick={() => files.pop()}
+                  onClick={() => handleFileCancel(files[0])}
+              // onClick={() => sendImageToFirebase(files[0])}
+              styles={(theme) => ({
+                root: {
+                  backgroundColor:
+                    theme.colorScheme === 'dark'
+                      ? theme.colors.dark[5]
+                      : theme.colors.blue[6],
+                  maxWidth: '70%',
+                  [theme.fn.smallerThan('sm')]: {
+                    maxWidth: '90%',
+                  },
+                  '&:hover': {
                     backgroundColor:
                       theme.colorScheme === 'dark'
-                        ? theme.colors.green[8]
-                        : theme.colors.green[6],
-                    maxWidth: '70%',
-                    [theme.fn.smallerThan('sm')]: {
-                      width: '90%',
-                    },
-                    '&:hover': {
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.green[9]
-                          : theme.colors.blue[7],
-                    },
+                        ? theme.colors.dark[6]
+                        : theme.colors.blue[7],
                   },
-                })}
-              >
-                Save new cover image
-              </Button>
-            </Group>
+                },
+              })}
+            >
+              Cancel
+            </Button>
+            <Button
+              component='a'
+              size='lg'
+              radius='md'
+              mt={40}
+              className='mx-auto'
+              // onClick={() => console.log(files[0])}
+
+              onClick={() => sendImageToFirebase(files[0])}
+              styles={(theme) => ({
+                root: {
+                  backgroundColor:
+                    theme.colorScheme === 'dark'
+                      ? theme.colors.green[8]
+                      : theme.colors.green[6],
+                      maxWidth: '70%',
+                  [theme.fn.smallerThan('sm')]: {
+                    width: '90%',
+                  },
+                  '&:hover': {
+                    backgroundColor:
+                      theme.colorScheme === 'dark'
+                        ? theme.colors.green[9]
+                        : theme.colors.blue[7],
+                  },
+                },
+              })}
+            >
+              Save new cover image
+                </Button>
+                </Group>
           </>
         )}
       </Center>

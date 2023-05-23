@@ -91,7 +91,7 @@ function TipTapEditorTest({ repoId, initialFirebaseData }: TipTapProps) {
   // Checks whether the user was actually editing before sending
   
   function handleDoneAdding() {
-    console.log(editable);
+    // console.log(editable);
     if (!editor) {
       return undefined
     }
@@ -124,7 +124,7 @@ function TipTapEditorTest({ repoId, initialFirebaseData }: TipTapProps) {
       // const newDocSnap = await getDoc(docRef);
       // console.log("New document data:", newDocSnap.data());
     } else {
-      console.log("No such document!");
+      // console.log("No such document!");
     }
 
   }

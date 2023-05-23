@@ -105,7 +105,7 @@ export async function getGithubDataFromFirebaseIdOnly(
     if (docSnap.exists()) {
       gitHubUserName = docSnap.data().userName;
     } else {
-      console.log('Profile data not found!');
+      // console.log('Profile data not found!');
     }
   }
 
@@ -166,7 +166,7 @@ export async function setGitHubProfileDataInFirebase(
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    console.log('Github profile data already exists!');
+    // console.log('Github profile data already exists!');
 
     const docData = docSnap.data();
     return {
@@ -186,7 +186,7 @@ export async function setGitHubProfileDataInFirebase(
         };
       })
       .catch((error) => {
-        console.log('Error adding document: ', error);
+        // console.log('Error adding document: ', error);
       });
   }
 }
@@ -200,10 +200,10 @@ export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(fir
   // const docSnap = await getDoc(docRef);
     try {
       await setDoc(docRef, { ...githubPublicProfileData }, { merge: true });
-      console.log(
-        `Data added to user ID ${firebaseId} with data:`,
-        githubPublicProfileData
-      );
+      // console.log(
+      //   `Data added to user ID ${firebaseId} with data:`,
+      //   githubPublicProfileData
+      // );
     } catch (error) {
       console.error('Error adding document:', error);
     }
@@ -264,10 +264,10 @@ export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(id: 
     // IF profile data from github is not saved in firestore - perform an API call to github and save
     // TODO: call this when creating a user (or logging in to ensure it's always updated)
 
-    console.log('No github profile data found!');
-    console.log('Adding Github Data');
+    // console.log('No github profile data found!');
+    // console.log('Adding Github Data');
     const profileDataUrl = `/api/profiles/${id}`;
-    console.log(`Calling API: ${profileDataUrl}`)
+    // console.log(`Calling API: ${profileDataUrl}`)
     axios
       .get(profileDataUrl, {
         params: {

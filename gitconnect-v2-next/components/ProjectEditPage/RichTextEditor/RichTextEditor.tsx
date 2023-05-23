@@ -28,7 +28,7 @@ type TipTapProps = {
 }
 
 const templateContent =
-  '<h2 style="text-align: center;">Welcome to GitConnect; text editor</h2><h3 style="text-align: center;">click the "Unlock Editor" button to add content, click it again when finished to save</h3><h3 style="text-align: center;">After clicking "Unlock Editor" you can choose to import the repo readme from Github</h3><hr /><p style="text-align: center;">You can type in this box regularly or use markdown, and use the toolbar above to style</p><p style="text-align: center;">You can also drag and drop images into this editor, or move images already added by clicking and dragging them</p><hr />';
+  '<br /><h1 style="text-align: center;"><strong>Edit me to cusomise your project page!</strong></h1><br /><br /><h3 style="text-align: center;">Click the "Edit Text Content" button to add content, click it again when finished to save</h3><br /><h3 style="text-align: center;">After clicking "Save Changes" you can choose to import the repo readme from Github</h3><br /><br /><hr /><br /><p style="text-align: center;">You can type in this box regularly or use markdown, and use the toolbar above to style</p><br /><p style="text-align: center;">You can also drag and drop images into this editor, or move images you have already added by dragging them</p><br /><hr />';
 
 // register languages that your are planning to use
 lowlight.registerLanguage('ts', tsLanguageSyntax);
@@ -129,10 +129,10 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
 
           let file = event.dataTransfer.files[0]; // the dropped file
           let filesize: any = ((file.size / 1024) / 1024).toFixed(4); // get the filesize in MB
-
+          console.log(filesize)
           // Check for accepted file types
-          if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
-
+          // if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
+            if (file.type === "image" && filesize < 15) {
             //  valid image so upload to server
 
             // TODO: extract function outside handeDrop
@@ -169,7 +169,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
             uploadImage(file)
 
           } else {
-            window.alert("Images need to be in jpg, png, gif or webp format and less than 10mb in size.");
+            window.alert("Images need to be less than 15mb in size.");
           }
           return true; // handled
         }
@@ -325,7 +325,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
               },
             })}
           >
-            Import readme from Github - Will replace all editor content
+            Import readme from Github - Replaces current content
             {/* {editor.isEditable ? 'Save Changes in Text Editor' : 'Unlock Text Editor'} */}
           </Button>
         </Center>
@@ -335,11 +335,13 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
         mt={40}
         editor={editor}
        
-        w='60%'
+        w='70%'
         // mx={200}
         styles={(theme) => ({
           content: {
             color: editor.isEditable ? 'auto' : '#999',
+            minHeight: 500,
+
           },
           root: {
             cursor: editor.isEditable ? 'auto' : 'not-allowed',
