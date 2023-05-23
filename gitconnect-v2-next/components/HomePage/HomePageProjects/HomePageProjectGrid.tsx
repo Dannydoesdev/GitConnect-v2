@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { ImageCard } from './HomePageProjectCard'
+import { HomePageProjectCard } from './HomePageProjectCard'
 import { Space, SimpleGrid, Stack, Grid, Group, Text, Title, Skeleton, rem, useMantineTheme } from '@mantine/core'
 import axios from 'axios'
 import { makeAnImg } from '../../../utils/makeAnImg'
@@ -41,7 +41,7 @@ const HomePageProjectGrid = ({ projects }: any) => {
          
           return (
             <div key={project.id} >
-              <ImageCard
+              <HomePageProjectCard
                  image={project.coverImage}
                 // image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
                 title={project.name}

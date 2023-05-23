@@ -73,13 +73,13 @@ export function UploadProjectCoverImage(
   };
 
   const handleFileDrop = (file: FileWithPath[]) => {
-    console.log('accepted file', file);
+    // console.log('accepted file', file);
     setFiles(file);
     setImgCheck(true);
   };
 
   async function sendImageToFirebase(file: any) {
-    console.log(file);
+    // console.log(file);
 
     const storageRef = ref(
       storage,

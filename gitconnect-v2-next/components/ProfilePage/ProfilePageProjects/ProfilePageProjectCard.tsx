@@ -32,7 +32,7 @@ export function ProfilePageProjectCard({
 }: ProfilePageProjectCardProps) {
   const { classes, theme } = useStyles();
 
-  console.log(image)
+  // console.log(image)
   const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
   return (
     <>

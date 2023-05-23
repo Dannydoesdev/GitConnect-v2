@@ -71,17 +71,15 @@ export function UploadProjectCoverImage(
   };
 
   const handleFileDrop = (file: FileWithPath[]) => {
-    console.log('accepted file', file);
+    // console.log('accepted file', file);
     setFiles(file);
     setImgCheck(true);
   };
 
-
   async function sendImageToFirebase(file: any) {
-
-    console.log(file)
+    // console.log(file);
     // Get the file extension
-    const extension = file.name.split(".").pop();
+    const extension = file.name.split('.').pop();
     console.log(extension);
 
     const storageRef = ref(
@@ -109,20 +107,33 @@ export function UploadProjectCoverImage(
               `users/${userId}/repos/${repoId}/projectData/images`
             );
             const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-
+            // const urlOnlyRef =
             // Generate sizes
-            const sizes = ["200x200", "400x400", "768x768", "1024x1024", "2000x2000"];
+            const sizes = [
+              '200x200',
+              '400x400',
+              '768x768',
+              '1024x1024',
+              '2000x2000',
+            ];
             const coverImageMeta = {
               name: file.name,
               extension,
-              sizes
-            }
-            console.log(coverImageMeta)
+              sizes,
+            };
+            // console.log(coverImageMeta)
 
-            await setDoc(docRef, { coverImage: coverImageMeta }, { merge: true });
+            await setDoc(
+              docRef,
+              { coverImageMeta: coverImageMeta, coverImage: downloadURL },
+              { merge: true }
+            );
             await setDoc(
               parentStorageRef,
-              { coverImage: coverImageMeta },
+              {
+                coverImageMeta: coverImageMeta,
+                coverImage: downloadURL,
+              },
               { merge: true }
             );
 
@@ -194,8 +205,9 @@ export function UploadProjectCoverImage(
         onDrop={(file) => handleFileDrop(file)}
         // onDrop={setFiles}
         onReject={(files) => console.log('rejected files', files)}
-        maxSize={3 * 1024 ** 2}
+        maxSize={12 * 1024 ** 2}
         maxFiles={1}
+        // accept='image'
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
           maxWidth: 200,
@@ -210,10 +222,7 @@ export function UploadProjectCoverImage(
         })}
         {...props}
       >
-        <Group
-          position='center'
-
-        >
+        <Group position='center'>
           <Dropzone.Accept>
             <IconUpload
               size={50}
@@ -236,7 +245,6 @@ export function UploadProjectCoverImage(
             <IconPhoto size={40} stroke={1.5} />
             <Text size='md'>Click to update image</Text>
           </Dropzone.Idle>
-
         </Group>
       </Dropzone>
       {/* </Group> */}
@@ -248,69 +256,67 @@ export function UploadProjectCoverImage(
         {!imgCheck ? (
           <></>
         ) : (
-
-            <>
+          <>
             <Group spacing='md'>
-            <Button
-              component='a'
-              size='lg'
-              radius='md'
-              mt={40}
-              className='mx-auto'
-          
-              onClick={() => handleFileCancel(files[0])}
-              styles={(theme) => ({
-                root: {
-                  backgroundColor:
-                    theme.colorScheme === 'dark'
-                      ? theme.colors.dark[5]
-                      : theme.colors.blue[6],
-                  maxWidth: '70%',
-                  [theme.fn.smallerThan('sm')]: {
-                    maxWidth: '90%',
-                  },
-                  '&:hover': {
+              <Button
+                component='a'
+                size='lg'
+                radius='md'
+                mt={40}
+                className='mx-auto'
+                onClick={() => handleFileCancel(files[0])}
+                styles={(theme) => ({
+                  root: {
                     backgroundColor:
                       theme.colorScheme === 'dark'
-                        ? theme.colors.dark[6]
-                        : theme.colors.blue[7],
+                        ? theme.colors.dark[5]
+                        : theme.colors.blue[6],
+                    maxWidth: '70%',
+                    [theme.fn.smallerThan('sm')]: {
+                      maxWidth: '90%',
+                    },
+                    '&:hover': {
+                      backgroundColor:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.dark[6]
+                          : theme.colors.blue[7],
+                    },
                   },
-                },
-              })}
-            >
-              Cancel
-            </Button>
-            <Button
-              component='a'
-              size='lg'
-              radius='md'
-              mt={40}
-              className='mx-auto'
-              // onClick={() => console.log(typeof files[0])}  
+                })}
+              >
+                Cancel
+              </Button>
+              <Button
+                component='a'
+                size='lg'
+                radius='md'
+                mt={40}
+                className='mx-auto'
+                // onClick={() => console.log(typeof files[0])}
 
-              onClick={() => sendImageToFirebase(files[0])}
-              styles={(theme) => ({
-                root: {
-                  backgroundColor:
-                    theme.colorScheme === 'dark'
-                      ? theme.colors.green[8]
-                      : theme.colors.green[6],
-                      maxWidth: '70%',
-                  [theme.fn.smallerThan('sm')]: {
-                    width: '90%',
-                  },
-                  '&:hover': {
+                onClick={() => sendImageToFirebase(files[0])}
+                styles={(theme) => ({
+                  root: {
                     backgroundColor:
                       theme.colorScheme === 'dark'
-                        ? theme.colors.green[9]
-                        : theme.colors.blue[7],
+                        ? theme.colors.green[8]
+                        : theme.colors.green[6],
+                    maxWidth: '70%',
+                    [theme.fn.smallerThan('sm')]: {
+                      width: '90%',
+                    },
+                    '&:hover': {
+                      backgroundColor:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.green[9]
+                          : theme.colors.blue[7],
+                    },
                   },
-                },
-              })}
-            >
-              Save new cover image
-                </Button>
-                </Group>
+                })}
+              >
+                Save new cover image
+              </Button>
+            </Group>
           </>
         )}
       </Center>
