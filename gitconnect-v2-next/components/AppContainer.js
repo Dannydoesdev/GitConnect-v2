@@ -33,6 +33,14 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 'bolder',
     lineHeight: 0,
   },
+
+  responsiveHide: {
+    [theme.fn.smallerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+
   header: {
     height: 70,
     padding: 20,
@@ -136,7 +144,7 @@ export const AppContainer = ({ children }, props) => {
                       User
                     </Text>
                   </Link> */}
-                <Group position='center'>
+                <Group className={classes.responsiveHide} position='center'>
                   <Link href='/landing' passHref legacyBehavior>
                     <Button
                       component='a'
@@ -236,7 +244,7 @@ export const AppContainer = ({ children }, props) => {
               </>
             ) : (
               <>
-                <Group position='center'>
+                <Group className={classes.responsiveHide} position='center'>
                   <Link href='/landing' passHref legacyBehavior>
                     <Button
                       component='a'

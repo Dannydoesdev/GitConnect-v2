@@ -48,7 +48,6 @@ export function ProfilePageProjectCard({
           radius='md'
           // href={link}
           component='a'
-          target='_blank'
         >
           {hidden && (
             <Overlay color='#000' opacity={0.5} center>
