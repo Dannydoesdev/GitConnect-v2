@@ -57,19 +57,19 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
 
       {projects ?
         projects.map((project: any) => {
-          console.log(project.docData.coverImage)
-          const { imageUrl }: any = useViewportForImageSize(project.docData.coverImage, userId, project.docData.id);
+          // console.log(project.docData.coverImage)
+          // const { imageUrl }: any = useViewportForImageSize(project.docData.coverImage, userId, project.docData.id);
 
-          console.log(imageUrl)
-          console.log(project.docData.coverImage)
+          // console.log(imageUrl)
+          // console.log(project.docData.coverImage)
           return (
             <div key={project.docData.id} >
               
               <ProfilePageProjectCard
                 // image={project.docData.coverImage ? project.docData.coverImage : makeAnImg(800, 350)}
                 hidden={project.docData.hidden}
-                image={ imageUrl }
-                // image={project.docData.coverImage }
+                // image={ imageUrl }
+                image={project.docData.coverImage }
                 // image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))}
                 title={project.docData.name}
                 avatar={project.docData.owner.avatar_url}

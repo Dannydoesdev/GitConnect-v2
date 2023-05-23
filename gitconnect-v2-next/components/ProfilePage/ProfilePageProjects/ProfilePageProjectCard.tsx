@@ -32,7 +32,8 @@ export function ProfilePageProjectCard({
 }: ProfilePageProjectCardProps) {
   const { classes, theme } = useStyles();
 
-  
+  console.log(image)
+  const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
   return (
     <>
       <Link href={link} passHref legacyBehavior>
@@ -66,18 +67,20 @@ export function ProfilePageProjectCard({
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundSize: 'cover',
+              // backgroundSize: 'cover',
               transition: 'transform 500ms ease',
             })}
           >
             <Image
-              src={image ? image : '/img/gitconnect.jpg'}
+              // src={image ? image : '/img/gitconnect.jpg'}
+              src={imageUrl}
               className='image'
               style={{  objectFit: 'cover', transition: 'transform 500ms ease', }}
-              // style={imageStyle}
+              sizes="(max-width: 768px) 100vw, (max-width: 520) 50vw, 33vw"
               fill={true}
+              quality={75}
               alt=''
-         
+              priority = {imageUrl.includes('.gif') ? true : false}
             /> 
    
           </Box>
