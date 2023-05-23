@@ -4,7 +4,11 @@
 firestore.rules
 firestore.indexes.json
 /functions_new
+/functions
 storage.rules
+firebase-debug.log
+firebase.json
+ui-debug.log
 
 # dependencies
 /node_modules
