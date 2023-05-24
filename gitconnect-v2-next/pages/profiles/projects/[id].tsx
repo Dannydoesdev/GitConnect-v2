@@ -21,6 +21,7 @@ import DOMPurify from 'dompurify';
 import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 import { incrementViewCount } from '../../../lib/views';
 import { starProject, unstarProject } from '../../../lib/stars';
+import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 
 export default function Project() {
   const { userData } = useContext(AuthContext);
@@ -174,7 +175,7 @@ export default function Project() {
                     mt={30}
                     mb={-10}
                     checked={false}
-                    variant="filled"
+                    variant='filled'
                     size='md'
                     styles={(theme) => ({
                       root: {
@@ -182,15 +183,15 @@ export default function Project() {
                       },
                       label: {
                         backgroundColor:
-                        theme.colorScheme === 'dark'
-                        ? theme.colors.indigo[5]
-                        : theme.colors.gray[5],
-                          color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.indigo[5]
+                            : theme.colors.gray[5],
+                        color:
                           theme.colorScheme === 'dark'
                             ? theme.colors.white
-                            : theme.colors.gray[1]
-                       
-                    //  s.blue[9],
+                            : theme.colors.gray[1],
+
+                        //  s.blue[9],
                         // },
                       },
                     })}
@@ -279,10 +280,10 @@ export default function Project() {
       </>
     );
   } else {
+    return (
+      <>
+        <LoadingPage />
+      </>
+    );
   }
-  return (
-    <>
-      <h2> loading </h2>
-    </>
-  );
 }
