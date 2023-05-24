@@ -3,7 +3,6 @@ import React from 'react';
 // import Head from 'next/head';
 import Image from 'next/image';
 import heroImage from '../public/img/landing/landingHeroImg.webp';
-import dannyAvatarImage from '../../public/img/landing/danny-avatar.webp';
 import {
   createStyles,
   Container,
@@ -14,7 +13,6 @@ import {
   Col,
   Grid,
   Text,
-  List,
   ThemeIcon,
   rem,
   Avatar,
@@ -29,15 +27,9 @@ import {
   IconAffiliate,
   IconBraces,
   IconWritingSign,
-  IconCheck,
-  IconGauge,
-  IconUser,
-  IconCookie,
   IconBrandDiscord,
-  IconBrandGithub,
   IconWorldUpload,
   IconMessages,
-  IconAward,
   IconHeartPlus,
 } from '@tabler/icons-react';
 
@@ -53,7 +45,6 @@ const useStyles = createStyles((theme) => ({
       fontSize: rem(14),
       marginRight: 0,
       textAlign: 'center',
-      // flexDirection: 'column',
       justifyContent: 'center',
       marginTop: '-30px',
     },
@@ -311,41 +302,6 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-// interface AboutMeProps {
-//   avatar: string;
-//   name: string;
-//   email: string;
-//   job: string;
-// }
-
-// export function UserInfoAction({ avatar, name, email, job }: AboutMeProps) {
-//   return (
-//     <Paper
-//       radius="md"
-//       withBorder
-//       p="lg"
-//       sx={(theme) => ({
-//         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-//       })}
-//     >
-//       {/* <Avatar src={dannyAvatarImage} size={120} radius={120} mx="auto" /> */}
-//       <Avatar src='../../public/img/landing/landingHeroImg.webp' size={120} radius={120} mx="auto" />
-
-//       <Text ta="center" fz="lg" weight={500} mt="md">
-//         Daniel McGee
-//       </Text>
-//       <Text ta="center" c="dimmed" fz="sm">
-//         danny@gitconnect.dev • Founder & Engineer
-//       </Text>
-
-//       <Button variant="default" fullWidth mt="md">
-//         My Linktree - Reach out!
-//       </Button>
-//     </Paper>
-//   );
-// }
-
-// Hero Section
 function HeroSection() {
   const { classes } = useStyles();
 
@@ -552,8 +508,6 @@ function AboutUsSection() {
 
   return (
     <Container mt={30}>
-      {/* <Group display='flex'> */}
-      {/* <div className={classes.wrapper}> */}
       <div className={classes.inner}>
         <div className={classes.wrapper}>
           <Grid gutter={80}>
@@ -577,7 +531,6 @@ function AboutUsSection() {
                 That's why I'm building GitConnect - a space for developers to collaborate, learn and grow together, throughout their coding journey. <br />  */}
               </Text>
               <br />
-              {/* <IconBrandDiscord size={32} strokeWidth={1} color='#5865f2' /> */}
 
               <Text c='dimmed' weight={450}>
                 I hope you find the potential in GitConnect and join our
@@ -619,14 +572,8 @@ function AboutUsSection() {
                 radius='lg'
                 // withBorder
                 p='md'
-                // sx={(theme) => ({
-                //   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] :
-                //     // theme.colors.gray[0],
-                //     theme.colors.blue[0],
-                // })}
               >
                 <Group position='center'>
-                  {/* <Avatar src={dannyAvatarImage} size={120} radius={120} mx="auto" /> */}
                   <Avatar
                     src='/img/landing/danny-avatar.webp'
                     size={180}
@@ -662,11 +609,7 @@ function AboutUsSection() {
                     </Link>
                     {/* <Link href= target='_blank'></Link> */}
                   </Text>
-                  {/* <Button variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }}>Indigo cyan</Button> */}
-                  {/* <Button variant="gradient" gradient={{ from: 'teal', to: 'lime', deg: 105 }}>Lime green</Button> */}
-                  {/* <Button variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Teal blue</Button> */}
-                  {/* <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }}>Orange red</Button> */}
-                  {/* <Button variant="gradient" gradient={{ from: '#ed6ea0', to: '#ec8c69', deg: 35 }}>Peach</Button> */}
+
                   <Link
                     // href='https://discord.gg/hkajEH6WkW'
                     href='https://linktr.ee/danieltmcgee'
@@ -676,36 +619,13 @@ function AboutUsSection() {
                     <Button
                       component='a'
                       target='_blank'
-                      // variant="filled"
-                      // variant='filled'
-                      // variant='gradient'
-                      // gradient={{ from: '#4970f0', to: '#5865F2', deg: 133 }}
-                      // gradient={{ from: 'indigo', to: '#318de3', deg: 200}}
-                      // variant="white"
-                      // #3f79ee
                       color='indigo'
                       radius='md'
                       size='sm'
-                      // #318de3
-                      // mx='auto'
-                      // m='auto'
-                      // withBorder
-                      // border='2px solid'
                       variant='outline'
-                      // variant="gradient"
-                      // gradient={{ deg: 133, from: 'blue', to: 'cyan' }}
-                      // fullWidth
                       mt='md'
                       className={classes.buttons}
-                      // className={classes.buttonLinktree}
                     >
-                      {/* <IconBrandDiscord
-                      size={24}
-                      strokeWidth={1}
-                      color='white'
-                      // paddingRight='sm'
-                      className={classes.iconDiscord}
-                    /> */}
                       Danny's Linktree
                     </Button>
                   </Link>
@@ -715,10 +635,6 @@ function AboutUsSection() {
           </Grid>
         </div>
       </div>
-      {/* </Group> */}
-      {/* </Group> */}
-
-      {/* </div> */}
     </Container>
   );
 }
@@ -731,21 +647,11 @@ function RegistrationProcessSection() {
     <Container mt={10}>
       <div className={classes.inner}>
         <div className={classes.wrapper}>
-          {/* <Group display='flex'> */}
-          {/* <div className={classes.content}> */}
-          {/* <Grid gutter={50}> */}
-          {/* <Col span={12} md={5}> */}
           <Stack>
             <Title className={classes.featuresTitle} order={2}>
               Simple and Secure Registration
             </Title>
 
-            {/* </Col> */}
-            {/* </Group> */}
-            {/* </Stack> */}
-            {/* </div> */}
-            {/* <Col mt='xl' span={12} md={7}> */}
-            {/* <div className={classes.registrationContent}> */}
             <Text c='dimmed'>
               Signing up to GitConnect is as simple as connecting with your
               GitHub account. We value your privacy and only use OAuth to access
@@ -762,12 +668,6 @@ function RegistrationProcessSection() {
                 size='lg'
                 radius='lg'
                 w={{ base: '100%', md: '30%' }}
-                // px={{ base: '0px', md: '0' }}
-
-                // sx={(theme) => ({
-                //     maxWidth: theme.fn.smallerThan('md') ? '30%' : '15%',
-                //   })}
-
                 mt='lg'
                 // className={classes.mobileLayout}
               >
@@ -785,66 +685,11 @@ function RegistrationProcessSection() {
   );
 }
 
-// // Registration Process Section
-// function RegistrationProcessSection() {
-//   const { classes } = useStyles();
-
-//   return (
-//     <Container mt={10}>
-//       <div className={classes.inner}>
-//         <div className={classes.wrapper}>
-//           {/* <Group display='flex'> */}
-//           {/* <div className={classes.content}> */}
-//           <Grid gutter={50}>
-//             <Col span={12} md={5}>
-//               {/* <Stack> */}
-//               <Title className={classes.featuresTitle} order={2}>
-//                 Simple and Secure Registration
-//               </Title>
-//               <Link href='/signup' passHref legacyBehavior>
-//                 <Button
-//                   className={classes.buttons}
-//                   component='a'
-//                   variant='gradient'
-//                   gradient={{ deg: 133, from: 'blue', to: 'cyan' }}
-//                   size='md'
-//                   radius='lg'
-//                   mt='lg'
-//                   // className={classes.mobileLayout}
-//                 >
-//                   Join securely today
-//                 </Button>
-//               </Link>
-//             </Col>
-//             {/* </Group> */}
-//             {/* </Stack> */}
-//             {/* </div> */}
-//             <Col mt='xl' span={12} md={7}>
-//               {/* <div className={classes.registrationContent}> */}
-//               <Text c='dimmed'>
-//                 Signing up to GitConnect is as simple as connecting with your
-//                 GitHub account. We value your privacy and only use OAuth to
-//                 access your public repositories and email address. Rest assured,
-//                 your private repositories and personal data remain strictly
-//                 confidential.
-//               </Text>
-
-//               {/* </div> */}
-//             </Col>
-//           </Grid>
-//         </div>
-//         {/* </Group> */}
-//       </div>
-//     </Container>
-//   );
-// }
+// // Registrati
 
 function MultiSection() {
   const { classes, theme } = useStyles();
-  // IconWorldUpload,
-  // IconMessages,
-  // IconAward,
-  // IconHeartPlus,
+
   const mockdata = [
     {
       title: 'Start Small - Dream Big',
@@ -861,7 +706,7 @@ function MultiSection() {
     {
       title: 'GitConnect Pro - Coming Soon',
       description:
-        "While all current features on GitConnect (and many more) will remain free forever. A 'Pro' version is coming in future. For a small monthly fee, you'll gain access to more career elevating features - stay tuned!",
+        "While all current features on GitConnect (and many more) will remain free. A 'Pro' version is coming in future. For a small monthly fee, you'll gain access to more career elevating features - stay tuned!",
       icon: IconHeartPlus,
     },
   ];
@@ -944,30 +789,15 @@ function MultiSection() {
             },
           },
         })}
-        // {(theme) => ({ [theme.fn.smallerThan('sm')]: 'center' })}
-        // 'center'
       >
         <Link href='/signup' passHref legacyBehavior>
           <Button
             component='a'
             variant='gradient'
             gradient={{ from: 'indigo', to: 'cyan' }}
-            // gradient={{ from: 'teal', to: 'lime', deg: 105 }}
-            // gradient={{ from: 'teal', to: 'blue', deg: 60 }}
-            // gradient={{ from: 'orange', to: 'red' }}
-            // gradient={{ from: '#ed6ea0', to: '#ec8c69', deg: 35 }}
             radius='lg'
             size='xl'
             ml={{ xs: 'auto', md: 200 }}
-            // textAlign='center'
-            // styles={(theme) => ({
-            //   [theme.fn.smallerThan('sm')]: {
-            //     // width: '70%',
-            //     margin: 'auto',
-            //     // marginTop: '30px',
-            //     textalign: 'center',
-            //   },
-            // })}
             className={classes.control}
           >
             Join The Journey
@@ -990,42 +820,23 @@ function MultiSection() {
   );
 }
 
-// // Future Roadmap Section
-// function FutureRoadmapSection() {
-//   const { classes } = useStyles();
+function LandingPage() {
+  return (
+    <div>
+      <HeroSection />
+      <FeatureSection />
+      <AboutUsSection />
+      <RegistrationProcessSection />
+      <MultiSection />
 
-//   return (
-//     <Container>
-//       <div className={classes.inner}>
-//         <Title className={classes.title} order={2}>
-//           Our Journey Together, The Road Ahead
-//         </Title>
-//         <div className={classes.content}>
-//           <Text>
-//             At GitConnect, we're just getting started. Stay tuned for exciting
-//             features like a job board, mentorship programs, and a 'reverse jobs
-//             board' for freelancers and agencies.
-//           </Text>
-//         </div>
-//       </div>
-//     </Container>
-//   );
-// }
+      {/* <BenefitsSection /> */}
+      {/* <FAQSection /> */}
+      {/* <EmailCollectionSection /> */}
+    </div>
+  );
+}
 
-// // Freemium Model Section
-// function FreemiumModelSection() {
-//   return (
-//     <Container>
-//       <Title order={2}>Discover More with GitConnect Pro - Coming Soon</Title>
-//       <Text>
-//         While all current features on GitConnect will remain free, we're excited
-//         to announce a 'Pro' version coming soon. For a modest monthly fee,
-//         you'll gain access to advanced features like video content, in-depth
-//         analytics, custom domains and more. Stay tuned!
-//       </Text>
-//     </Container>
-//   );
-// }
+export default LandingPage;
 
 // // Benefits Section
 // function BenefitsSection() {
@@ -1133,43 +944,3 @@ function MultiSection() {
 //     </Container>
 //   );
 // }
-
-// Landing Page
-function LandingPage() {
-  return (
-    <div>
-      <HeroSection />
-      <FeatureSection />
-      <AboutUsSection />
-      <RegistrationProcessSection />
-      <MultiSection />
-
-      {/* <BenefitsSection /> */}
-      {/*       
-      <FutureRoadmapSection />
-      <FreemiumModelSection /> */}
-
-      {/* <FeedbackSection /> */}
-      {/* <FAQSection /> */}
-      {/* <EmailCollectionSection /> */}
-    </div>
-  );
-}
-
-export default LandingPage;
-
-// Continue creating other sections in a similar manner...
-
-// // Landing Page
-// function LandingPage() {
-//   return (
-//     <div>
-//       <HeroSection />
-//       <AboutUsSection />
-//       <FeatureSection />
-//       {/* Include other sections here... */}
-//     </div>
-//   );
-// }
-
-// export default LandingPage;

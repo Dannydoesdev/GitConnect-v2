@@ -11,8 +11,8 @@ const useStyles = createStyles((theme) => ({
   skeleton: {
     backgroundColor:
       theme.colorScheme === 'dark'
-        ? theme.colors.dark[5]
-        : theme.colors.gray[1],
+        ? theme.colors.dark[7]
+        : theme.colors.gray[8],
     height: 220,
     width: '20vw',
 
@@ -38,7 +38,7 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'center',
     backgroundColor:
       theme.colorScheme === 'dark'
-        ? theme.colors.dark[7]
+        ? theme.colors.dark[8]
         : theme.colors.gray[4],
 
     [theme.fn.smallerThan('md')]: {
@@ -59,7 +59,7 @@ const useStyles = createStyles((theme) => ({
     },
     backgroundColor:
       theme.colorScheme === 'dark'
-        ? theme.colors.dark[8]
+        ? theme.colors.dark[9]
         : theme.colors.gray[4],
   },
 }));
@@ -96,12 +96,12 @@ export default function LoadingPage({}) {
     <Group w='100%'  position='center' className={classes.inner}>
       {/* <Container> */}
       {/* <Group> */}
-      <Skeleton width={50} height={50} circle mb='xl' />
+      {/* <Skeleton width={50} height={50} circle mb='xl' /> */}
         <Skeleton height={8} radius='xl' />
         <Skeleton height={8} mt={6} radius='xl' />
         <Skeleton height={8} mt={3} width='80%' radius='xl' />
         {/* </Group> */}
-      <Space h={100} />
+      <Space h={80} />
         {/* <Space h='xl' /> */}
 
         <LoadingGrid />
