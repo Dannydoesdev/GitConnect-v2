@@ -6,6 +6,8 @@ import { getCookie, setCookie } from 'cookies-next'
 import { collection, doc, setDoc, getDoc, addDoc, serverTimestamp } from "firebase/firestore";
 import { getGithubDataFromFirebase, getProfileDataGithub, setGitHubProfileDataInFirebase } from "../lib/profiles"
 import { getGithubProfileData } from "../lib/github"
+import { Skeleton } from "@mantine/core"
+import LoadingPage from "../components/LoadingPage/LoadingPage"
 
 // Add a new document with a generated id.
 // Create the context to store user data
@@ -102,8 +104,12 @@ export const AuthProvider = ({ children }: Props) => {
   }, [])
 
   if (loading) {
-    return <>Loading...</>
-  }
+    return (
+      <LoadingPage />
+
+      // <>Loading...</>
+    )
+    }
 
   // Passing the currentUser and userData to the context components
   return (
