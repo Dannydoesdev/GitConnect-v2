@@ -4,6 +4,7 @@ import { Space, SimpleGrid, Stack, Grid, Group, Text, Title, Skeleton, rem, useM
 import axios from 'axios'
 import { makeAnImg } from '../../../utils/makeAnImg'
 import { GetServerSideProps } from "next";
+import LoadingPage from "../../LoadingPage/LoadingPage"
 
 // export const getServerSideProps: GetServerSideProps = async () => {
 //   const URL = `/api/profiles/projects/all`;
@@ -29,48 +30,50 @@ const HomePageProjectGrid = ({ projects }: any) => {
   const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - ${theme.spacing.md} / 2)`;
 
   return (
-
-    <SimpleGrid cols={4} spacing="xl" breakpoints={[
+  
+  
+    projects ?
+    
+      <SimpleGrid cols = { 4 } spacing = "xl" breakpoints = {
+        [
       { maxWidth: 1500, cols: 3, spacing: 'md' },
       { maxWidth: 1079, cols: 2, spacing: 'sm' },
       { maxWidth: 600, cols: 1, spacing: 'sm' },
     ]}>
 
-      {projects ?
-        projects.map((project: any) => {
+        {
+          projects.map((project: any) => {
          
-          return (
-            <div key={project.id} >
-              <HomePageProjectCard
-                 image={project.coverImage}
-                // image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
-                title={project.name}
-                author={project.owner.login}
-                views={project.views}
-                stars={project.stars}
-                // views={project.views ? project.views : 0}
-                // stars={project.stars ? (project.stars).length : 0}
-                avatar={project.owner.avatar_url}
-                profileUrl={`/profiles/${project.userId}`}
-                link={`/profiles/projects/${project.id}`} />
-            </div>
-          )
-        })
+            return (
+              <div key={project.id} >
+                <HomePageProjectCard
+                  image={project.coverImage}
+                  // image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
+                  title={project.name}
+                  author={project.owner.login}
+                  views={project.views}
+                  stars={project.stars}
+                  // views={project.views ? project.views : 0}
+                  // stars={project.stars ? (project.stars).length : 0}
+                  avatar={project.owner.avatar_url}
+                  profileUrl={`/profiles/${project.userId}`}
+                  link={`/profiles/projects/${project.id}`} />
+              </div>
+            )
+          })
+        }
+   </SimpleGrid>
         :
-  
+        
         <>
+          <LoadingPage />
+          {/* <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
           <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
           <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
           <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
           <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
-          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
-          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
+          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div> */}
         </>
-
-
-      }
-
-    </SimpleGrid >
         
   )
 }

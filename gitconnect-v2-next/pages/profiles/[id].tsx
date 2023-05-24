@@ -15,6 +15,7 @@ import AuthRoute from '../../HoC/authRoute'
 import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel'
 import { useRouter } from 'next/router'
 import useViewport from '../../hooks/useViewport'
+import LoadingPage from '../../components/LoadingPage/LoadingPage'
 
 // const fetcher = (url: string) => axios.get(url).then(res => res.data)
 
@@ -69,7 +70,10 @@ export default function Profile({ projects, profilePanel, backupData }: any) {
   const { id, newRepoParam } = router.query;
 
   if (router.isFallback) {
-    return <div>Loading...</div>;
+    return (
+      <LoadingPage />
+    // <div>Loading...</div>;
+    )
   }
 
   const [githubProfileData, setGitHubProfileData] = useState()
