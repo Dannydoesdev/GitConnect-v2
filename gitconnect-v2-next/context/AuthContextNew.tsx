@@ -4,6 +4,7 @@ import { Auth, onAuthStateChanged } from "firebase/auth";
 import { AuthData } from "../types";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { getGithubProfileData } from "../lib/github";
+import LoadingPage from "../components/LoadingPage/LoadingPage";
 // import { AuthContext } from "./AuthContext";
 
 export const AuthContextNew = React.createContext<any>(null)
@@ -69,7 +70,8 @@ export const AuthProvider = ({ children }: Props) => {
   }, []);
 
   if (loading) {
-    return <>Loading...</>;
+    <LoadingPage />
+    // return <>Loading...</>;
   }
 
   if (error) {
