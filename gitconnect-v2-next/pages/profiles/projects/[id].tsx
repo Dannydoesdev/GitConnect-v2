@@ -6,76 +6,138 @@ import {
   Button,
   Center,
   Chip,
-  Container,
   Group,
   Stack,
-  Text,
-  Title,
 } from '@mantine/core';
 import ProjectPageDynamicContent from '../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import { AuthContext } from '../../../context/AuthContext';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../firebase/clientApp';
 import DOMPurify from 'dompurify';
 import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
-import { incrementViewCount } from '../../../lib/views';
 import { starProject, unstarProject } from '../../../lib/stars';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
+import { GetStaticProps } from 'next';
+import {
+  getAllProjectIds,
+  getProjectTextEditorContent,
+  getSingleProjectById,
+} from '../../../lib/projects';
 
-export default function Project() {
+export const getStaticProps: GetStaticProps = async ({ params }: any) => {
+  // const sortedProjects = await getAllPublicProjectsAndSort();
+  // console.log(params.id)
+
+  const projectData = await getSingleProjectById(params.id);
+
+  const textEditorContent = await getProjectTextEditorContent(
+    projectData[0].userId,
+    params.id
+  );
+
+  // TODO - make the 'has starred' calculation on server side & send in props
+
+  return {
+    props: {
+      projects: projectData,
+      textContent: textEditorContent,
+    },
+    revalidate: 1,
+  };
+};
+
+export async function getStaticPaths() {
+  const projectIds = await getAllProjectIds();
+
+  const paths = projectIds.map((id: any) => ({
+    params: { id: id.id },
+  }));
+
+  return {
+    paths,
+    fallback: true,
+  };
+}
+
+export default function Project({ projects, textContent }: any) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const { id } = router.query;
 
-  const [projects, setProjects] = useState<any>(null);
-  const [firebaseData, setFirebaseData] = useState('');
+  // const [projects, setProjects] = useState<any>(null);
+  // const [firebaseData, setFirebaseData] = useState('');
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
   const [repoOwner, setRepoOwner] = useState<string>('');
   const [starCount, setStarCount] = useState(0);
 
+  // console.log('project page', projects);
+  const project = projects[0];
 
+  // console.log(textContent)
+
+  // const URL = `/api/profiles/projects/${id}`;
+  // axios.get(URL).then((response) => {
+  //   setProjects(response.data);
+
+  // console.log(response.data);
+  // Check user is authenticated
+  // if (response.data && response.data.length > 0 && userData) {
+  // Check whether user has starred this project already
+  // setUserHasStarred(
+  //   response.data[0].stars
+  //     ? response.data[0].stars.includes(userData.userId)
+  //     : false
+  // );
+  // Set star count to allow live dynamic update of count
+  //   setStarCount(
+  //     response.data[0].stars ? response.data[0].stars.length : 0
+  //   );
+  // }
+
+  //      // Now that we have the projects data, increment the view count
+  //     // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
+  //     // Should be refactored to only run for unique users (currently increments on every refresh)
+
+  //     if (response.data && response.data.length > 0) {
+  //       const userId = response.data[0].userId;
+  //       const repoId = id;
+
+  //       setRepoOwner(userId);
+
+  //       axios.post('/api/projects/incrementView', {
+  //         userId: userId,
+  //         repoId: repoId,
+  //       });
+  //     }
+  //   });
+  // }, [id, userData]);
+
+  // Now that we have the projects data, increment the view count
+  // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
+  // Should be refactored to only run for unique users (currently increments on every refresh)
 
   useEffect(() => {
     if (!id) {
       return;
     }
+    if (projects && projects.length > 0 && userData) {
+      setUserHasStarred(
+        projects.stars ? project.stars.includes(userData.userId) : false
+      );
 
-    const URL = `/api/profiles/projects/${id}`;
-    axios.get(URL).then((response) => {
-      setProjects(response.data);
-      // console.log(response.data);
-      // Check user is authenticated
-      if (response.data && response.data.length > 0 && userData) {
-        // Check whether user has starred this project already
-        setUserHasStarred(
-          response.data[0].stars
-            ? response.data[0].stars.includes(userData.userId)
-            : false
-        );
+      // Set star count to allow live dynamic update of count
+      setStarCount(project.stars ? project.stars.length : 0);
+    }
+    if (project && project.length > 0) {
+      const userId = project.userId;
+      const repoId = id;
 
-        // Set star count to allow live dynamic update of count
-        setStarCount(
-          response.data[0].stars ? response.data[0].stars.length : 0
-        );
-      }
+      setRepoOwner(userId);
 
-      // Now that we have the projects data, increment the view count
-      // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
-      // Should be refactored to only run for unique users (currently increments on every refresh)
-
-      if (response.data && response.data.length > 0) {
-        const userId = response.data[0].userId;
-        const repoId = id;
-
-        setRepoOwner(userId);
-
-        axios.post('/api/projects/incrementView', {
-          userId: userId,
-          repoId: repoId,
-        });
-      }
-    });
+      axios.post('/api/projects/incrementView', {
+        userId: userId,
+        repoId: repoId,
+      });
+    }
   }, [id, userData]);
 
   const handleStarClick = async () => {
@@ -125,36 +187,36 @@ export default function Project() {
   // Load any existing data from Firestore & put in state
   // Will need to update page content with the data returned
 
-  useEffect(() => {
-    if (projects) {
-      // console.log(starCount)
-      const userId = projects[0].userId;
-      const repoId = id;
+  // useEffect(() => {
+  //   if (projects) {
+  //     // console.log(starCount)
+  //     const userId = projects[0].userId;
+  //     const repoId = id;
 
-      const getFirebaseData = async () => {
-        const docRef = doc(
-          db,
-          `users/${userId}/repos/${repoId}/projectData/mainContent`
-        );
-        const docSnap = await getDoc(docRef);
+  //     const getFirebaseData = async () => {
+  //       const docRef = doc(
+  //         db,
+  //         `users/${userId}/repos/${repoId}/projectData/mainContent`
+  //       );
+  //       const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          const mainContent = docSnap.data();
-          const htmlOutput = mainContent.htmlOutput;
-          // console.log(htmlOutput)
-          if (htmlOutput.length > 0) {
-            // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
-            const sanitizedHTML = DOMPurify.sanitize(htmlOutput, {
-              ADD_ATTR: ['target'],
-            });
+  //       if (docSnap.exists()) {
+  //         const mainContent = docSnap.data();
+  //         const htmlOutput = mainContent.htmlOutput;
+  //         // console.log(htmlOutput)
+  //         if (htmlOutput.length > 0) {
+  //           // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
+  //           const sanitizedHTML = DOMPurify.sanitize(htmlOutput, {
+  //             ADD_ATTR: ['target'],
+  //           });
 
-            setFirebaseData(sanitizedHTML);
-          }
-        }
-      };
-      getFirebaseData();
-    }
-  }, [projects]);
+  //           setFirebaseData(sanitizedHTML);
+  //         }
+  //       }
+  //     };
+  //     getFirebaseData();
+  //   }
+  // }, [projects]);
 
   // Check if projects are returned && if logged in user is owner - show edit button
 
@@ -275,14 +337,16 @@ export default function Project() {
         {/* HIDING TOP HEADINGS */}
         <ProjectPageDynamicContent props={projects} stars={starCount} />
 
-        {firebaseData && <RichTextEditorDisplay content={firebaseData} />}
-      </>
-    );
-  } else {
-    return (
-      <>
-        <LoadingPage />
+        {/* {firebaseData && <RichTextEditorDisplay content={firebaseData} />} */}
+        {textContent && <RichTextEditorDisplay content={textContent} />}
       </>
     );
   }
+  // else {
+  //   return (
+  //     <>
+  //       <LoadingPage />
+  //     </>
+  //   );
+  // }
 }

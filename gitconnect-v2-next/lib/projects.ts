@@ -1,29 +1,77 @@
-import { db } from '../firebase/clientApp'
-import { collection, collectionGroup, setDoc, addDoc, where, query, getDoc, getDocs, doc, serverTimestamp } from "firebase/firestore"; 
-// import { db } from '../firebase/clientApp'
+import { db } from '../firebase/clientApp';
+import {
+  collection,
+  collectionGroup,
+  where,
+  query,
+  getDoc,
+  getDocs,
+  doc,
+  serverTimestamp,
+} from 'firebase/firestore';
 
+export async function getSingleProjectById(repoId: string) {
+  const intId = parseInt(repoId);
+
+  const q = query(collectionGroup(db, 'repos'), where('id', '==', intId));
+
+  const querySnapshot = await getDocs(q);
+  const projectData: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    return {
+      ...data,
+      // id: doc.id,
+      stars: data.stars?.length ?? 0,
+      views: data.views ?? 0,
+    };
+  });
+  return projectData;
+}
 
 export async function getAllProjectIds() {
-  const profiles = []
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc: any) => {
-    // ...detail.data(),
-    // id: detail.id,
-    // console.log(doc.id, ' => ', doc.data());
-    // console.log({ ...doc.data() })
-    // console.log(detail.id)
+
+  const projectIds: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+
     return {
-      params: {
-        id: doc.id
-      }
+      // params: {
+      id: data.id.toString(),
+      // },
+    };
+  });
+  return projectIds;
+}
+
+
+export async function getProjectTextEditorContent(
+  userId: string,
+  repoId: string
+) {
+  const docRef = doc(
+    db,
+    `users/${userId}/repos/${repoId}/projectData/mainContent`
+  );
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const mainContent = docSnap.data();
+    const htmlOutput = mainContent.htmlOutput;
+    // console.log(htmlOutput)
+    if (htmlOutput.length > 0) {
+      // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
+      // const sanitizedHTML = DOMPurify.sanitize(htmlOutput, {
+      //   ADD_ATTR: ['target'],
+      // });
+
+      return htmlOutput;
     }
-  })
+  }
 }
 
 export async function getAllProjectsSimple() {
-
-  const projects: any = []
+  const projects: any = [];
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.forEach((doc: any) => {
@@ -32,45 +80,34 @@ export async function getAllProjectsSimple() {
     // console.log(doc.id, ' => ', doc.data());
     // console.log({ ...doc.data() })
     // console.log(detail.id)
-    projects.push({...doc.data()})
-       
-      return(projects)
-  })
-}
+    projects.push({ ...doc.data() });
 
+    return projects;
+  });
+}
 
 export async function getAllPublicProjects() {
-
-  const projects: any = []
+  const projects: any = [];
   const q = query(collectionGroup(db, 'repos'), where('hidden', '==', false));
   const querySnapshot = await getDocs(q);
-  
-  // console.log(querySnapshot)
-  // console.log('query snapshot done')
-   querySnapshot.docs.forEach((doc: any) => {
-    // ...detail.data(),
-    // id: detail.id,
-    // console.log(doc.id, ' => ', doc.data());
-    // console.log({ ...doc.data() })
-    // console.log(detail.id)
-    projects.push({...doc.data()})
-       
-      
-  })
-  return(projects)
+
+  querySnapshot.docs.forEach((doc: any) => {
+
+    projects.push({ ...doc.data() });
+  });
+  return projects;
 }
 
-// ChatGPT Implementation:
 
 export async function fetchProjects() {
   const userDocs = await getDocs(collection(db, 'users'));
-  let projects: { id: string; userId: string; }[] = [];
+  let projects: { id: string; userId: string }[] = [];
 
   for (const userDoc of userDocs.docs) {
     const userId = userDoc.id;
     const repoDocs = await getDocs(collection(db, `users/${userId}/repos`));
 
-    repoDocs.docs.forEach(repoDoc => {
+    repoDocs.docs.forEach((repoDoc) => {
       const project = {
         id: repoDoc.id,
         userId: userId,
@@ -83,80 +120,31 @@ export async function fetchProjects() {
   return projects;
 }
 
+export async function getAllProjectDataFromProfile(id: string) {
+  const projectQuery = query(
+    collectionGroup(db, 'repos'),
+    where('userId', '==', id)
+  );
+  const querySnapshot = await getDocs(projectQuery);
 
-export async function getAllProjectDataFromProfile(id:string) {
+  return querySnapshot.docs.map((detail: any) => {
+    const docData = { ...detail.data() };
 
-const projectQuery = query(collectionGroup(db, 'repos'), where('userId', '==', id));
-const querySnapshot = await getDocs(projectQuery);
+    return {
+      // id,
+      docData,
+    };
+  });
 
-return querySnapshot.docs.map((detail: any) => {
- 
-  const docData = { ...detail.data() }
-
-  return {
-    // id,
-    docData,
-  };
-
-})
-  
-  
-  
-  
-
-// console.log(querySnapshot.docs)
-//   querySnapshot.forEach((doc) => {
-//     console.log(doc.id, ' => ', doc.data());
-// });
-// return querySnapshot.docs.map((detail: any) => {
-
-//   console.log('id')
-//   console.log(id)
-//   console.log('details')
-//   const docData = { ...detail.data() }
-//   // remove timestamp - causing errors
-//   delete docData.createdAt;
-//   console.log(docData)
-//   // Combine the data with the id
-//   return {
-//     id,
-//     docData,
-//   };
- 
-
-// })
 }
-
 
 // return the data of the profiles
 
-export async function getProjectData(id:string) {
+// export async function getProjectData(id: string) {
+//   const projectQuery = query(
+//     collectionGroup(db, 'repos'),
+//     where('id', '==', id)
+//   );
+//   const querySnapshot = await getDocs(projectQuery);
 
-    const projectQuery = query(collectionGroup(db, 'repos'), where('id', '==', id));
-  const querySnapshot = await getDocs(projectQuery);
-
-  // console.log(querySnapshot.docs)
-
-  // console.log(querySnapshot.docs)
-//   querySnapshot.forEach((doc) => {
-//     console.log(doc.id, ' => ', doc.data());
-// });
-  // return querySnapshot.docs.map((detail: any) => {
- 
-  //   console.log('id')
-  //   console.log(id)
-  //   console.log('details')
-  //   const docData = { ...detail.data() }
-  //   // remove timestamp - causing errors
-  //   delete docData.createdAt;
-  //   console.log(docData)
-  //   // Combine the data with the id
-  //   return {
-  //     id,
-  //     docData,
-  //   };
-   
-  
-  // })
-}
-
+// }
