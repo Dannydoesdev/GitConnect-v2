@@ -4,20 +4,15 @@ import {
   Text,
   Group,
   Center,
-  createStyles,
   Avatar,
   Overlay,
   Box,
   Button,
-  // Image
 } from '@mantine/core';
 import useStyles from './ProfilePageProjectCard.styles';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-// import {  } from '/@mantine/core'
-
-// export function ProfilePageProjectCard({ image, title, author, views, comments, link }: ProfilePageProjectCardProps) {
+import { correctImageGetter } from '../../../lib/correctImageGetter';
 
 export function ProfilePageProjectCard({
   hidden,
@@ -29,11 +24,14 @@ export function ProfilePageProjectCard({
   views,
   comments,
   link,
+  index,
 }: ProfilePageProjectCardProps) {
   const { classes, theme } = useStyles();
 
+  const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 400) : '/img/gitconnect.webp';
+
   // console.log(image)
-  const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
+  // const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
   return (
     <>
       <Link href={link} passHref legacyBehavior>
@@ -50,7 +48,7 @@ export function ProfilePageProjectCard({
           component='a'
         >
           {hidden && (
-            <Overlay color='#000' opacity={0.5} center>
+            <Overlay color='#000' opacity={0.5} zIndex={1} center>
               <Button color='lime' size='xl' radius='lg' variant='outline'>
                 Draft Project
               </Button>
@@ -79,7 +77,8 @@ export function ProfilePageProjectCard({
               fill={true}
               quality={75}
               alt=''
-              priority = {imageUrl.includes('.gif') ? true : false}
+              priority ={index && index <= 4 ? true : false}
+              // priority = {imageUrl.includes('.gif') ? true : false}
             /> 
    
           </Box>
@@ -128,6 +127,7 @@ export function ProfilePageProjectCard({
 
 interface ProfilePageProjectCardProps {
   hidden: boolean;
+  index?: number;
   link: string;
   image: string;
   profileUrl: string;

@@ -2,15 +2,17 @@ import { createStyles, rem } from '@mantine/core';
 
 export default createStyles((theme) => ({
   hero: {
+    paddingTop: 10,
     position: 'relative',
-    backgroundImage: 'url(../../img/gitconnect.jpg)',
+    // backgroundImage: 'url(../../img/gitconnect.webp)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
 
   container: {
-    height: '56vh',
+    height: '58vh',
     marginTop: 50,
+    paddingTop: 10,
     paddingBottom: 70,
     maxWidth: '80rem',
     marginBottom: -30,
@@ -39,7 +41,7 @@ export default createStyles((theme) => ({
     },
 
     [theme.fn.smallerThan('xs')]: {
-      fontSize: 28,
+      fontSize: 32,
       lineHeight: 1.3,
     },
   },

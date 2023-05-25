@@ -34,8 +34,7 @@ export default function Project() {
   const [repoOwner, setRepoOwner] = useState<string>('');
   const [starCount, setStarCount] = useState(0);
 
-  // console.log('userData:')
-  // console.log(userData)
+
 
   useEffect(() => {
     if (!id) {
