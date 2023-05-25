@@ -92,12 +92,13 @@ export default function EditProject() {
         </>
       );
     }
-  } else {
-    // In case of data still loading
-    return (
-      <>
-        <LoadingPage />
-      </>
-    );
   }
+  // else {
+  //   // In case of data still loading
+  //   return (
+  //     <>
+  //       <LoadingPage />
+  //     </>
+  //   );
+  // }
 }
