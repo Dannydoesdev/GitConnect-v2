@@ -190,8 +190,6 @@ export function HeroLanding() {
                 </Text>
               </Link>
             </Group>
-
-       
           </>
         )}
       </Container>

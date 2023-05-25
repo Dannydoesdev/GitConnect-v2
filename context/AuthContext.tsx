@@ -103,13 +103,13 @@ export const AuthProvider = ({ children }: Props) => {
     })
   }, [])
 
-  if (loading) {
-    return (
-      <LoadingPage />
+  // if (loading) {
+  //   return (
+  //     <LoadingPage />
 
-      // <>Loading...</>
-    )
-    }
+  //     // <>Loading...</>
+  //   )
+  //   }
 
   // Passing the currentUser and userData to the context components
   return (

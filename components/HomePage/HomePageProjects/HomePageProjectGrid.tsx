@@ -1,9 +1,6 @@
-import React, { useContext, useEffect, useState } from "react"
+
 import { HomePageProjectCard } from './HomePageProjectCard'
 import { Space, SimpleGrid, Stack, Grid, Group, Text, Title, Skeleton, rem, useMantineTheme } from '@mantine/core'
-import axios from 'axios'
-import { makeAnImg } from '../../../utils/makeAnImg'
-import { GetServerSideProps } from "next";
 import LoadingPage from "../../LoadingPage/LoadingPage"
 
 // export const getServerSideProps: GetServerSideProps = async () => {
@@ -23,16 +20,12 @@ const HomePageProjectGrid = ({ projects }: any) => {
   // const [projects, setProjects] = useState<any>(null)
 
   // console.log('Grid component projects:')
-  // console.log(projects)
-  const theme = useMantineTheme();
 
-  const PRIMARY_COL_HEIGHT = rem(300);
-  const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - ${theme.spacing.md} / 2)`;
 
   return (
   
-  
-    projects ?
+
+    // projects ?
     
       <SimpleGrid cols = { 4 } spacing = "xl" breakpoints = {
         [
@@ -64,17 +57,17 @@ const HomePageProjectGrid = ({ projects }: any) => {
           })
         }
    </SimpleGrid>
-        :
+        // :
         
-        <>
-          <LoadingPage />
-          {/* <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
-          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
-          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
-          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
-          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
-          <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div> */}
-        </>
+        // <>
+        //   <LoadingPage />
+        //   {/* <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
+        //   <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
+        //   <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
+        //   <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
+        //   <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div>
+        //   <div><Skeleton height={SECONDARY_COL_HEIGHT} radius="md" /></div> */}
+        // </>
         
   )
 }
