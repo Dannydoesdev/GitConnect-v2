@@ -1,72 +1,116 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { createStyles, Overlay, Container, Title, Avatar, Switch, Card, Image, Text, SimpleGrid, Badge, Button, Group, Space, Center, Stack } from '@mantine/core';
+import Link from 'next/link';
+import {
+  Overlay,
+  Container,
+  Title,
+  Text,
+  Button,
+  Group,
+  Box,
+} from '@mantine/core';
 import useStyles from './ProjectEditPageHero.styles';
+import { correctImageGetter } from '../../../lib/correctImageGetter';
+import Image from 'next/image';
 
 export function ProjectEditPageHero(props: any) {
   const { classes } = useStyles();
-  // console.log('Dynamic project hero')
-  // console.log(props)
-  // function makeAnImg(width: number, height: number) {
-  //   let randNum = Math.floor(Math.random() * 1000)
-  //   return `https://picsum.photos/${width}/${height}?random=${randNum}`
-  // }
-
 
   const project = props.props[0];
 
+  const image = project.coverImage;
+
+  const imageUrl =
+    typeof image === 'string' && image
+      ? correctImageGetter(image, 2000)
+      : '/img/gitconnect.webp';
+
   return (
-    // <div className={classes.hero}>
-    // {/* </div> */}
-    <Group className={classes.hero} sx={{
-      backgroundImage: project.coverImage ? `url(${project.coverImage})` :
-        ''
-    }}>
-        {/* // `url(${makeAnImg(3200, 1200)})` '' */}
-   
+    <Group
+      className={classes.hero}
+      // sx={{
+      //   backgroundImage: `url(${imageUrl})`,
+      // }}
+    >
+      <Box
+        sx={(theme) => ({
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          // backgroundSize: 'cover',
+          transition: 'transform 500ms ease',
+        })}
+      >
+        <Image
+          src={imageUrl}
+          className='image'
+          style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
+          sizes='100vw'
+          fill={true}
+          quality={75}
+          alt=''
+          priority={true}
+          // priority = {imageUrl.includes('.gif') ? true : false}
+        />
+      </Box>
+
       <Overlay
-        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
+        gradient='linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)'
         opacity={1}
         zIndex={0}
       />
 
       <Container className={classes.container}>
         <Title className={classes.title}>Edit {project.name}</Title>
-        <Text className={classes.description} size="xl" mt="xl">
+        <Text className={classes.description} size='xl' mt='xl'>
           {/* {project.name} */}
         </Text>
         <Group className={classes.group} grow>
-          {project.live_url &&
-            <Link href={project.live_url ? project.live_url : ''} passHref legacyBehavior>
+          {project.live_url && (
+            <Link
+              href={project.live_url ? project.live_url : ''}
+              passHref
+              legacyBehavior
+            >
               <Button
-                component="a"
+                component='a'
                 target='_blank'
                 // size='xl'
                 // radius='xl'
                 className={classes.liveAndGithub}
                 sx={(theme) => ({
                   // subscribe to color scheme changes
-                  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+                  backgroundColor:
+                    theme.colorScheme === 'dark'
+                      ? theme.colors.dark[5]
+                      : theme.colors.blue[6],
                 })}
-              >Live site</Button>
+              >
+                Live site
+              </Button>
             </Link>
-          }
+          )}
           <Link href={project.html_url} passHref legacyBehavior>
             <Button
-              component="a"
+              component='a'
               target='_blank'
               // size='xl'
               // radius='xl'
-              className={project.live_url ? classes.liveAndGithub : classes.githubOnly}
+              className={
+                project.live_url ? classes.liveAndGithub : classes.githubOnly
+              }
               sx={(theme) => ({
                 // subscribe to color scheme changes
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
+                backgroundColor:
+                  theme.colorScheme === 'dark'
+                    ? theme.colors.dark[5]
+                    : theme.colors.blue[6],
               })}
-            >On GitHub</Button>
+            >
+              On GitHub
+            </Button>
           </Link>
-
         </Group>
         {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
         Check it out!

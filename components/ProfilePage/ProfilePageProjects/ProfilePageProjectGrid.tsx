@@ -1,22 +1,11 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useState } from "react"
 import { ProfilePageProjectCard } from './ProfilePageProjectCard'
-import { Space, SimpleGrid, Stack, Grid, Group, Text, Title } from '@mantine/core'
-import axios from 'axios'
-import { makeAnImg } from '../../../utils/makeAnImg'
-import { AuthContext } from '../../../context/AuthContext';
-import { storage } from '../../../firebase/clientApp'
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { db } from '../../../firebase/clientApp';
-import useViewportForImageSize from "../../../hooks/useViewport"
-import Image from "next/image"
+import { SimpleGrid } from '@mantine/core'
+
 
 const ProfilePageProjectGrid = ({ projects }: any) => {
   // const { classes, theme } = useStyles();
 
-// function makeAnImg(width: number, height: number) {
-//     let randNum = Math.floor(Math.random() * 1000)
-//     return `https://picsum.photos/${width}/${height}?random=${randNum}`
-//   }
   // const [projects, setProjects] = useState<any>(null)
 
   // useEffect(() => {
@@ -32,19 +21,6 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
   //     })
 
   // }, [])
-
-  // console.log('project grid projects')
-  // console.log(projects)
-// TODO - Make this an API call or seperate hook
-  
-  const { userData } = useContext(AuthContext)
-  const userId = userData.userId
-  const userName = userData.userName
-    
-  const [firebaseImgs, setFirebaseImgs] = useState('')
-
-  
-// console.log(projects)
  
 
   return (
@@ -56,21 +32,19 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
     ]}>
 
       {projects ?
-        projects.map((project: any) => {
+        projects.map((project: any, index: any) => {
           // console.log(project.docData.coverImage)
           // const { imageUrl }: any = useViewportForImageSize(project.docData.coverImage, userId, project.docData.id);
 
           // console.log(imageUrl)
-          // console.log(project.docData.coverImage)
+          
           return (
             <div key={project.docData.id} >
               
               <ProfilePageProjectCard
-                // image={project.docData.coverImage ? project.docData.coverImage : makeAnImg(800, 350)}
                 hidden={project.docData.hidden}
-                // image={ imageUrl }
-                image={project.docData.coverImage }
-                // image={`../../../img/${project.docData.id}.jpg` ? `../../../../img/${project.docData.id}.jpg` : (makeAnImg(600, 350))}
+                image={project.docData.coverImage}
+                index={index}
                 title={project.docData.name}
                 avatar={project.docData.owner.avatar_url}
                 author={project.docData.owner.login}
