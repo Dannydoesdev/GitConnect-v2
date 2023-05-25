@@ -44,7 +44,6 @@ export async function getAllProjectIds() {
   return projectIds;
 }
 
-
 export async function getProjectTextEditorContent(
   userId: string,
   repoId: string
@@ -92,12 +91,10 @@ export async function getAllPublicProjects() {
   const querySnapshot = await getDocs(q);
 
   querySnapshot.docs.forEach((doc: any) => {
-
     projects.push({ ...doc.data() });
   });
   return projects;
 }
-
 
 export async function fetchProjects() {
   const userDocs = await getDocs(collection(db, 'users'));
@@ -135,7 +132,6 @@ export async function getAllProjectDataFromProfile(id: string) {
       docData,
     };
   });
-
 }
 
 // return the data of the profiles

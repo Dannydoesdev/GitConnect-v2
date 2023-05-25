@@ -2,13 +2,7 @@ import axios from 'axios';
 import { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import {
-  Button,
-  Center,
-  Chip,
-  Group,
-  Stack,
-} from '@mantine/core';
+import { Button, Center, Chip, Group, Stack } from '@mantine/core';
 import ProjectPageDynamicContent from '../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import { AuthContext } from '../../../context/AuthContext';
