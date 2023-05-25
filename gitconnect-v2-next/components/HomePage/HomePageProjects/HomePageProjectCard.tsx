@@ -4,7 +4,6 @@ import {
   Text,
   Group,
   Center,
-  createStyles,
   Avatar,
   Box,
 } from '@mantine/core';
@@ -12,6 +11,7 @@ import useStyles from './HomePageProjectCard.styles';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { correctImageGetter } from '../../../lib/correctImageGetter';
 
 export function HomePageProjectCard({
   image,
@@ -22,19 +22,12 @@ export function HomePageProjectCard({
   views,
   stars,
   link,
+  index
 }: ImageCardProps) {
   const { classes, theme } = useStyles();
-  const Router = useRouter();
 
-  // const handleAvatarClick = () => {
-
-  //   console.log('pushing to' + profileUrl)
-
-  //   // Navigate to the user's profile page
-  //   Router.push(`${profileUrl}`)
-  // };
-  const imageUrl =
-    typeof image === 'string' && image ? image : '/img/gitconnect.jpg';
+  const imageUrl = image && typeof image === 'string' ? correctImageGetter(image, 400) : '/img/gc-sml.webp';
+  
   return (
     <>
       <Link href={link} passHref legacyBehavior>
@@ -48,11 +41,7 @@ export function HomePageProjectCard({
           component='a'
           // href={link}
         >
-          {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
-
-          {/* Temporary workaround for static projects to work */}
-          {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
-          {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` ? `url(${image})` : image }} /> */}
+         
           <Box
             sx={(theme) => ({
               position: 'absolute',
@@ -73,7 +62,7 @@ export function HomePageProjectCard({
               fill={true}
               quality={75}
               alt=''
-              priority={imageUrl.includes('.gif') ? true : false}
+              priority={index && index <= 6 ? true : false}
             />
           </Box>
           <div className={classes.overlay} />
@@ -111,15 +100,7 @@ export function HomePageProjectCard({
               size={29}
               // mr="xs"
               src={avatar}
-              // styles={() => ({
-              //   root: {
-              //     // zIndex: '2',
-              //     // padding: '4px 2px',
-              //     position: 'relative',
-              //     top: '-60px',
-              //     left: '25px',
-              //   },
-              // })}
+
             />
           </Link>
           <Link href={profileUrl} passHref legacyBehavior>
@@ -162,5 +143,6 @@ interface ImageCardProps {
   avatar: string;
   stars: number;
   views: number;
+  index?: number;
   // comments: number;
 }

@@ -42,7 +42,7 @@ const HomePageProjectGrid = ({ projects }: any) => {
     ]}>
 
         {
-          projects.map((project: any) => {
+          projects.map((project: any, index: any) => {
          
             return (
               <div key={project.id} >
@@ -50,6 +50,7 @@ const HomePageProjectGrid = ({ projects }: any) => {
                   image={project.coverImage}
                   // image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
                   title={project.name}
+                  index={index}
                   author={project.owner.login}
                   views={project.views}
                   stars={project.stars}

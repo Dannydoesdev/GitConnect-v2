@@ -3,14 +3,15 @@ import { createStyles } from '@mantine/core';
 export default createStyles((theme) => ({
   hero: {
     position: 'relative',
-    // backgroundImage:
-    //   'url(../../../img/486531641.jpg)',
     backgroundSize: 'contain',
     backgroundPosition: 'center',
+    marginTop: 55,
+    // height: '60vh',
+    // height: '400',
   },
 
   container: {
-    height: 700,
+    height: '80vh',
     marginLeft: 200,
     display: 'flex',
     flexDirection: 'column',

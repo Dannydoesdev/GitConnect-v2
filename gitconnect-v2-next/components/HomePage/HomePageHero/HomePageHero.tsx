@@ -1,16 +1,18 @@
 import {
-  createStyles,
   Overlay,
   Container,
   Title,
   Button,
   Text,
   Group,
+  Box,
 } from '@mantine/core';
 import Link from 'next/link';
 import { useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import useStyles from './HomePageHero.styles';
+import { correctImageGetter } from '../../../lib/correctImageGetter';
+import Image from 'next/image';
 
 export function HeroLanding() {
   const { classes } = useStyles();
@@ -19,6 +21,30 @@ export function HeroLanding() {
   const { userData, currentUser } = useContext(AuthContext);
   return (
     <div className={classes.hero}>
+       <Box
+        sx={() => ({
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          // backgroundSize: 'cover',
+          transition: 'transform 500ms ease',
+        })}
+      >
+        <Image
+          // src={image ? image : '/img/gitconnect.jpg'}
+          src='/img/gitconnect.webp'
+          className='image'
+          style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
+          sizes='100vw'
+          fill={true}
+          quality={75}
+          alt=''
+          priority={true}
+          // priority = {imageUrl.includes('.gif') ? true : false}
+        />
+      </Box>
       <Overlay
         gradient='linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)'
         opacity={1}
@@ -83,7 +109,6 @@ export function HeroLanding() {
                 </Text>
               </Link>
               <Link
-                // href="https://git--connect.herokuapp.com/"
                 href='https://discord.gg/hkajEH6WkW'
                 passHref
                 legacyBehavior
@@ -128,7 +153,6 @@ export function HeroLanding() {
 
             <Group mt='md' spacing='xl'>
               <Link
-                // href="https://git--connect.herokuapp.com/"
                 href='/landing'
                 passHref
                 legacyBehavior
@@ -147,7 +171,6 @@ export function HeroLanding() {
                 </Text>
               </Link>
               <Link
-                // href="https://git--connect.herokuapp.com/"
                 href='https://discord.gg/hkajEH6WkW'
                 passHref
                 legacyBehavior
@@ -168,20 +191,7 @@ export function HeroLanding() {
               </Link>
             </Group>
 
-            {/* <Link
-              href="https://git--connect.herokuapp.com/"
-              passHref
-              legacyBehavior>
-              <Text
-                component='a'
-                target='_blank'
-                className={classes.description} underline={true}
-                italic={true}
-                size="xs"
-                mt="sm">
-                Visit GitConnect; V1
-              </Text> */}
-            {/* </Link> */}
+       
           </>
         )}
       </Container>

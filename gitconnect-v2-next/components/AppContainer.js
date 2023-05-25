@@ -44,6 +44,7 @@ const useStyles = createStyles((theme) => ({
   header: {
     height: 70,
     padding: 20,
+    zIndex: 2,
 
     [theme.fn.smallerThan('sm')]: {
       paddingRight: 5,
@@ -100,6 +101,7 @@ export const AppContainer = ({ children }, props) => {
           height: '100vg',
           paddingLeft: '0px',
           paddingRight: '0px',
+          marginBottom: '20px',
         },
       }}
       // boolean fixed = fixed on every single page

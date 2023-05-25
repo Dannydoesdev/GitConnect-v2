@@ -91,19 +91,12 @@ const querySnapshot = await getDocs(projectQuery);
 
 return querySnapshot.docs.map((detail: any) => {
  
-  // console.log('id')
-  // console.log(id)
-  // console.log('details')
   const docData = { ...detail.data() }
-  // remove timestamp - causing errors
-  // delete docData.createdAt;
-  // console.log(docData)
-  // Combine the data with the id
+
   return {
     // id,
     docData,
   };
- 
 
 })
   
