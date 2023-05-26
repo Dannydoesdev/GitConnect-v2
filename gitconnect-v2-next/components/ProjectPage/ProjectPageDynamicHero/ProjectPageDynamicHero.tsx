@@ -52,7 +52,7 @@ export function ProjectPageDynamicHero(props: any) {
           // height={500}
           // width={2000}
           fill={true}
-          quality={75}
+          quality={100}
           alt=''
           priority={true}
           // priority = {imageUrl.includes('.gif') ? true : false}

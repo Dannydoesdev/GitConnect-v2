@@ -89,7 +89,6 @@ export async function getGithubDataFromFirebase(
   }
 }
 
-
 // This function allows you to get the github data from firebase using only the firebase id
 // This is useful for getting the github data for the current user or for the user who's profile you are viewing
 // Does NOT set the data in firebase
@@ -161,7 +160,6 @@ export async function setGitHubProfileDataInFirebase(
   gitHubUserName: string,
   gitHubData: any
 ) {
-
   const docRef = doc(db, `users/${firebaseId}/profileData/githubData`);
   const docSnap = await getDoc(docRef);
 
@@ -191,26 +189,24 @@ export async function setGitHubProfileDataInFirebase(
   }
 }
 
-
 // NOT IN USE
-export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(firebaseId: string, userName: string) {
-
+export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(
+  firebaseId: string,
+  userName: string
+) {
   const githubPublicProfileData = await getGithubProfileData(userName);
   const docRef = doc(db, `users/${firebaseId}/profileData/githubData`);
   // const docSnap = await getDoc(docRef);
-    try {
-      await setDoc(docRef, { ...githubPublicProfileData }, { merge: true });
-      // console.log(
-      //   `Data added to user ID ${firebaseId} with data:`,
-      //   githubPublicProfileData
-      // );
-    } catch (error) {
-      console.error('Error adding document:', error);
-    }
+  try {
+    await setDoc(docRef, { ...githubPublicProfileData }, { merge: true });
+    // console.log(
+    //   `Data added to user ID ${firebaseId} with data:`,
+    //   githubPublicProfileData
+    // );
+  } catch (error) {
+    console.error('Error adding document:', error);
   }
-
-
-
+}
 
 // await setDoc(docRef, { ...githubPublicProfileData }, { merge: true })
 //   .then(() => {
@@ -245,9 +241,13 @@ export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(fir
 
 // NOTE: This is a get OR set function - if data hasn't been added all when 'getting' - the default data from github will be set
 // NOT IN USE
-export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(id: string, userName: string) {
-
-  console.log(`Getting Github Data for user ID ${id} with username ${userName}`)
+export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(
+  id: string,
+  userName: string
+) {
+  console.log(
+    `Getting Github Data for user ID ${id} with username ${userName}`
+  );
 
   const docRef = doc(db, `users/${id}/profileData/githubData`);
   const docSnap = await getDoc(docRef);
@@ -278,17 +278,20 @@ export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(id: 
         // console.log(`API response`);
         // console.log(response.data);
         const githubPublicProfileData = response.data;
-        await setDoc(docRef, { ...githubPublicProfileData }, { merge: true })
-          .then(() => {
-            // console.log(`Data added to user ID ${id} with data:`);
-            // console.log(githubPublicProfileData);
-            return {
-              id,
-              githubPublicProfileData,
-            };
-          })
-
-      }).catch((error) => {
+        await setDoc(
+          docRef,
+          { ...githubPublicProfileData },
+          { merge: true }
+        ).then(() => {
+          // console.log(`Data added to user ID ${id} with data:`);
+          // console.log(githubPublicProfileData);
+          return {
+            id,
+            githubPublicProfileData,
+          };
+        });
+      })
+      .catch((error) => {
         console.error('Error adding document: ', error);
       });
   }
