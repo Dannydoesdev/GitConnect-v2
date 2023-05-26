@@ -28,7 +28,7 @@ export function ProfilePageProjectCard({
 }: ProfilePageProjectCardProps) {
   const { classes, theme } = useStyles();
 
-  const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 400) : '/img/gitconnect.webp';
+  const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 768) : '/img/gitconnect.webp';
 
   // console.log(image)
   // const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
@@ -75,7 +75,7 @@ export function ProfilePageProjectCard({
               style={{  objectFit: 'cover', transition: 'transform 500ms ease', }}
               sizes="(max-width: 768px) 100vw, (max-width: 520) 50vw, 33vw"
               fill={true}
-              quality={75}
+              quality={80}
               alt=''
               priority ={index && index <= 4 ? true : false}
               // priority = {imageUrl.includes('.gif') ? true : false}
