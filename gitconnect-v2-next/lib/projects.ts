@@ -7,7 +7,7 @@ import {
   getDoc,
   getDocs,
   doc,
-  serverTimestamp,
+  // serverTimestamp,
 } from 'firebase/firestore';
 
 export async function getSingleProjectById(repoId: string) {
@@ -18,11 +18,13 @@ export async function getSingleProjectById(repoId: string) {
   const querySnapshot = await getDocs(q);
   const projectData: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
+    if (!data) { return null; }
+
     return {
       ...data,
       // id: doc.id,
-      stars: data.stars?.length ?? 0,
-      views: data.views ?? 0,
+      // stars: data.stars?.length ?? 0,
+      // views: data.views ?? 0,
     };
   });
   return projectData;
@@ -34,11 +36,9 @@ export async function getAllProjectIds() {
 
   const projectIds: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
-
+    if (!data) { return null; }
     return {
-      // params: {
       id: data.id.toString(),
-      // },
     };
   });
   return projectIds;
@@ -65,8 +65,8 @@ export async function getProjectTextEditorContent(
       // });
 
       return htmlOutput;
-    }
-  }
+    } else return null
+  } else return null;
 }
 
 export async function getAllProjectsSimple() {

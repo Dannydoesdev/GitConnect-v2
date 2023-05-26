@@ -6,46 +6,52 @@ import { Button, Center, Chip, Group, Stack } from '@mantine/core';
 import ProjectPageDynamicContent from '../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import { AuthContext } from '../../../context/AuthContext';
-import DOMPurify from 'dompurify';
 import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 import { starProject, unstarProject } from '../../../lib/stars';
-import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import { GetStaticProps } from 'next';
+
 import {
   getAllProjectIds,
   getProjectTextEditorContent,
   getSingleProjectById,
 } from '../../../lib/projects';
 
-export const getStaticProps: GetStaticProps = async ({ params }: any) => {
+export async function getStaticProps({ params }: any) {
   // const sortedProjects = await getAllPublicProjectsAndSort();
   // console.log(params.id)
+  if (!params.id) return { props: { projects: null, textContent: null } };
+  
+  const projectData: any = await getSingleProjectById(params.id);
+  // console.log(projectData[0].userId)
 
-  const projectData = await getSingleProjectById(params.id);
-
-  const textEditorContent = await getProjectTextEditorContent(
-    projectData[0].userId,
-    params.id
-  );
-
+  let textEditorContent
+  if (!projectData || !projectData[0] || !projectData[0].userId) { textEditorContent = null } else {
+    textEditorContent = await getProjectTextEditorContent(
+      projectData[0].userId,
+      params.id
+    );
+  }
   // TODO - make the 'has starred' calculation on server side & send in props
 
   return {
     props: {
-      projects: projectData,
-      textContent: textEditorContent,
+      projects: projectData || null,
+      textContent: textEditorContent || null,
     },
-    revalidate: 1,
+    revalidate: 5,
   };
 };
 
 export async function getStaticPaths() {
   const projectIds = await getAllProjectIds();
 
-  const paths = projectIds.map((id: any) => ({
-    params: { id: id.id },
-  }));
-
+  // projectIds.map((id: any) => console.log(id.id));
+  type ProjectId = { id?: string };
+  const paths = projectIds.map((id: ProjectId) => (
+    {
+      params: { id: id.id },
+    }
+  ));
+    // console.log(paths)
   return {
     paths,
     fallback: true,
@@ -64,8 +70,9 @@ export default function Project({ projects, textContent }: any) {
   const [starCount, setStarCount] = useState(0);
 
   // console.log('project page', projects);
-  const project = projects[0];
-
+  // console.log('project page', projects);
+  // console.log(projects[0].userId)
+// console.log(project)
   // console.log(textContent)
 
   // const URL = `/api/profiles/projects/${id}`;
@@ -108,11 +115,13 @@ export default function Project({ projects, textContent }: any) {
   // Now that we have the projects data, increment the view count
   // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
   // Should be refactored to only run for unique users (currently increments on every refresh)
-
+// console.log(textContent)
   useEffect(() => {
     if (!id) {
       return;
     }
+    const project = projects[0] || null;
+
     if (projects && projects.length > 0 && userData) {
       setUserHasStarred(
         projects.stars ? project.stars.includes(userData.userId) : false
