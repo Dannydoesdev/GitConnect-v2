@@ -378,6 +378,7 @@ function HeroSection() {
 
           <Image
             src={heroImage}
+            priority={true}
             className={classes.image}
             alt='GitConnect Landing Hero image - 3D render of a galaxy popping out of a laptop'
           />
@@ -779,16 +780,16 @@ function MultiSection() {
         // px={ 100}
         // className={classes.heroMobileLayout}
         position='center'
-        styles={(theme) => ({
-          [theme.fn.smallerThan('sm')]: {
-            // width: '70%',
-            root: {
-              margin: '0px',
-              marginTop: '0px',
-              // textalign: 'center',
-            },
-          },
-        })}
+        // styles = {(theme) => ({
+        //   [theme.fn.smallerThan('sm')]: {
+        //     // width: '70%',
+        //     root: {
+        //       margin: '0px',
+        //       // marginTop: '0px',
+        //       // textalign: 'center',
+        //     },
+        //   },
+        // })}
       >
         <Link href='/signup' passHref legacyBehavior>
           <Button

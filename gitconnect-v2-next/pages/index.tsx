@@ -8,13 +8,9 @@ import HomePageProjectGrid from '../components/HomePage/HomePageProjects/HomePag
 import { getAllPublicProjectsAndSort } from '../lib/sortProjects'
 
 export const getStaticProps: GetStaticProps = async () => {
-  // const URL = `/api/profiles/projects/all`;
-  // const response = await axios.get(URL);
-  // const projects = response.data;
+
 
   const sortedProjects = await getAllPublicProjectsAndSort();
-  // const projects = await getAllPublicProjects();
-  // console.log(projects)
 
   return {
     props: {

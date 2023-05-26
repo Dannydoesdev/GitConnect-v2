@@ -7,6 +7,7 @@ export default createStyles((theme) => ({
     //   'url(../../../img/486531641.jpg)',
     backgroundSize: 'contain',
     backgroundPosition: 'center',
+    // marginTop: 55,
   },
 
   container: {
