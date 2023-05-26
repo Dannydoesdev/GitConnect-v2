@@ -39,7 +39,7 @@ export function HeroLanding() {
           style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
           sizes='100vw'
           fill={true}
-          quality={75}
+          quality={100}
           alt=''
           priority={true}
           // priority = {imageUrl.includes('.gif') ? true : false}
