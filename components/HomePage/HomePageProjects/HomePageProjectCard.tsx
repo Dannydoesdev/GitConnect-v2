@@ -26,7 +26,7 @@ export function HomePageProjectCard({
 }: ImageCardProps) {
   const { classes, theme } = useStyles();
 
-  const imageUrl = image && typeof image === 'string' ? correctImageGetter(image, 400) : '/img/gc-sml.webp';
+  const imageUrl = image && typeof image === 'string' ? correctImageGetter(image, 2000) : '/img/gc-sml.webp';
   
   return (
     <>
@@ -60,7 +60,7 @@ export function HomePageProjectCard({
               style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
               sizes='(max-width: 768px) 100vw, (max-width: 520) 50vw, 33vw'
               fill={true}
-              quality={75}
+              quality={95}
               alt=''
               priority={index && index <= 6 ? true : false}
             />
