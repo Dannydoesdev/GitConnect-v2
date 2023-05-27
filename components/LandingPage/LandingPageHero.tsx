@@ -1,151 +1,105 @@
-import {
-  createStyles,
-  Image,
-  Container,
-  Title,
-  Button,
-  Group,
-  Text,
-  List,
-  ThemeIcon,
-  rem,
-} from '@mantine/core';
-import { IconCheck } from '@tabler/icons-react';
 import Link from 'next/link';
-// import { useRouter } from 'next/router';
+import React from 'react';
+import Image from 'next/image';
+import heroImage from '/public/img/landing/landingHeroImg.webp';
+import { Container, Title, Button, Group, Text, Space, Flex } from '@mantine/core';
+import useStyles from './LandingPageHero.styles';
 
-const useStyles = createStyles((theme) => ({
-  inner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingTop: `calc(${theme.spacing.xl} * 4)`,
-    paddingBottom: `calc(${theme.spacing.xl} * 4)`,
-  },
-
-  content: {
-    maxWidth: rem(480),
-    marginRight: `calc(${theme.spacing.xl} * 3)`,
-
-    [theme.fn.smallerThan('md')]: {
-      maxWidth: '100%',
-      marginRight: 0,
-    },
-  },
-
-  title: {
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-    fontSize: rem(44),
-    lineHeight: 1.2,
-    fontWeight: 900,
-
-    [theme.fn.smallerThan('xs')]: {
-      fontSize: rem(28),
-    },
-  },
-
-  control: {
-    [theme.fn.smallerThan('xs')]: {
-      flex: 1,
-    },
-  },
-
-  image: {
-    flex: 1,
-    width: '400px',
-    height: '440px',
-
-    [theme.fn.smallerThan('md')]: {
-      display: 'none',
-    },
-  },
-
-  highlight: {
-    position: 'relative',
-    backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
-    borderRadius: theme.radius.sm,
-    padding: `${rem(4)} ${rem(4)}`,
-  },
-}));
-
-export function LandingPageHero() {
+export function HeroSection() {
   const { classes } = useStyles();
 
-  // Migrated to standard href link
-
-  // const Router = useRouter();
-
-  // const registerHandler = () => {
-  //   Router.push('/signup');
-  // };
-
-  // const homeHandler = () => {
-  //   Router.push('/')
-  // };
-
   return (
-    <div>
-      <Container>
+    <Container>
+      <div>
         <div className={classes.inner}>
           <div className={classes.content}>
             <Title className={classes.title}>
-              <span className={classes.highlight}>GitConnect;</span><br />Create. Share.<br /> Collaborate. Inspire.
+              <span className={classes.highlight}>GitConnect;</span>
+              <br />
+              <Space h='xs' />
+              Built for Devs, by Devs
             </Title>
-            <Text color="dimmed" mt="md">
-              Welcome to GitConnect, a community-driven platform where developers of all levels can showcase their work, discover inspiring projects, and connect with like-minded engineers.
-              {/* Join GitConnect with just two clicks using your Github account and start sharing your projects, getting recognition, and providing feedback to your peers. Don't let your amazing projects remain hidden, let them shine and inspire others! */}
+            <Text color='dimmed' mt='md'>
+              Welcome to GitConnect, a new community dedicated to empowering
+              early-stage developers. <br /> <br />
+              This is a platform where your projects shine, your ideas are
+              valued, and your growth is the priority.
+              {/* Embark on a coding journey where your projects take the spotlight. */}
+              {/* Join our budding community of developers and grow together. */}
+              {/* Welcome to GitConnect, a new community dedicated to empowering early-stage developers.
+              Our mission is to bridge the gap between devs, the community and the workplace. That's why we built a platform where your projects can shine, your ideas are valued, and your coding journey is elevated */}
+              {/* This is a platform where your projects shine, your ideas are valued, and your growth is propelled */}
+              {/* by providing a social platform where your projects shine, your ideas are valued, and your growth is our priority */}
             </Text>
 
-            <List
-              mt={30}
-              spacing="sm"
-              size="sm"
-              icon={
-                <ThemeIcon size={20} radius="xl">
-                  <IconCheck size={rem(12)} stroke={1.5} />
-                </ThemeIcon>
-              }
+            <Flex
+              mt={40}
+              // direction={{ xl: 'row', md:'row', xs: 'column' }}
+                direction={{ base:'column', md: 'column',sm:'row', xs:'row'}}
+              // justify='center'
+              justify={{ md: 'flex-start', sm:'center' }}
+              align='center'
+              // className={classes.heroMobileLayout}
+              // position='center'
+              // {(theme) => ({ [theme.fn.smallerThan('sm')]: 'center' })}
+              // 'center'
             >
-              <List.Item>
-                <b>Easy signup</b> – Join in two clicks using your GitHub account.
-              </List.Item>
-              <List.Item>
-                <b>Use existing projects</b> – Choose existing repos you want to add to your portfolio, GitConnect handles the rest
-              </List.Item>
-              <List.Item>
-                <b>Express yourself</b> – Add all the cutomisation you like to your project & then share it with the world
-              </List.Item>
-            </List>
-
-            <Group mt={30}>
-              <Link href="/signup" passHref legacyBehavior>
+              <Link href='/signup' passHref legacyBehavior>
                 <Button
                   component='a'
-                  radius="xl"
-                  size="md"
-                  className={classes.control}
+                  variant='gradient'
+                  gradient={{ from: 'indigo', to: 'cyan' }}
+                  // gradient={{ from: 'teal', to: 'lime', deg: 105 }}
+                  // gradient={{ from: 'teal', to: 'blue', deg: 60 }}
+                  // gradient={{ from: 'orange', to: 'red' }}
+                  // gradient={{ from: '#ed6ea0', to: '#ec8c69', deg: 35 }}
+                  radius='lg'
+                  size='lg'
+                  // textAlign='center'
+                  // styles={(theme) => ({
+                  //   [theme.fn.smallerThan('sm')]: {
+                  //     // width: '70%',
+                  //     margin: 'auto',
+                  //     textalign: 'center',
+                  //   },
+                  // })}
+                  className={classes.buttons}
                 >
-                  Get started
+                  Join The Journey
                 </Button>
               </Link>
               <Link href='/' passHref legacyBehavior>
                 <Button
                   component='a'
-                  variant="default"
-                  radius="xl"
-                  size="md"
-                  className={classes.control}
+                  variant='default'
+                  radius='lg'
+                  size='lg'
+                  className={classes.buttons}
+                  // className={classes.control}
                 >
-                  View Projects
+                  Explore Projects
                 </Button>
               </Link>
-            </Group>
+            </Flex>
           </div>
-          {/* <Image src={image.src} className={classes.image} /> */}
-          {/* <Image src='/img/landinghero-md.jpeg' className={classes.image} /> */}
-          <Image src='/img/landing/24.png' className={classes.image} />
+
+          <Image
+            // src={heroImage}
+            src='https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/landing%2Fhero_768x768.webp?alt=media&token=86d106e9-8486-4ffd-b1c8-479629bb7056'
+            width={600}
+            height={600}
+            priority={true}
+            quality={70}
+            className={classes.image}
+            alt='GitConnect Landing Hero image - 3D render of a galaxy popping out of a laptop'
+          />
         </div>
-      </Container>
-    </div>
+      </div>
+      {/* <Title order={1}>GitConnect: A New Space for Developers, by Developers</Title>
+      <Text>Embark on a coding journey where your projects take the spotlight. Join our budding community of developers and grow together.</Text>
+      <Button component={Link} href="/register">Join Our Journey</Button>
+      <Button component={Link} href="/dashboard">Explore Projects</Button>
+      <Image src="/path/to/hero-image.jpg" alt="A captivating AI generated 3D image of a planet coming out of a computer, representing a world of possibilities" /> */}
+    </Container>
   );
 }
