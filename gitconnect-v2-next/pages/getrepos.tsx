@@ -31,6 +31,8 @@ import {
   doc,
   serverTimestamp,
   getDocs,
+  Timestamp
+  // FieldValue,
 } from 'firebase/firestore';
 import { IconCheck, IconLineDashed, IconX } from '@tabler/icons-react';
 import { RepoDataFull } from '../types/repos';
@@ -185,7 +187,16 @@ const GetRepos = () => {
         const promises = addRepoData.map(async (repo) => {
           await setDoc(
             doc(db, `users/${userId}/repos/${repo.id}`),
-            { ...repo, userId, hidden: true },
+            // { ...repo, userId, hidden: true },
+            { 
+              ...repo, 
+              userId, 
+              hidden: true, 
+              gitconnect_created_at: new Date().toISOString(),
+              gitconnect_updated_at: new Date().toISOString(),
+              gitconnect_created_at_unix: Date.now(),
+              gitconnect_updated_at_unix: Date.now(),
+            },
             { merge: true }
           );
         });
