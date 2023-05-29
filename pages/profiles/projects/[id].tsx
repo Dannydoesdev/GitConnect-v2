@@ -147,7 +147,8 @@ export default function Project({ projects, textContent }: any) {
     if (!userData || !projects || projects.length === 0) return;
 
     const userId = userData.userId;
-    const ownerId = repoOwner;
+    // const ownerId = repoOwner;
+    const ownerId = projects[0].userId
     const repoId = projects[0].id;
 
     if (userHasStarred) {
