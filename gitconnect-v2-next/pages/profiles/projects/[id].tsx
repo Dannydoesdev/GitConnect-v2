@@ -122,15 +122,17 @@ export default function Project({ projects, textContent }: any) {
     }
     const project = projects[0] || null;
 
-    if (projects && projects.length > 0 && userData) {
+    if (project && projects.length > 0 && userData) {
       setUserHasStarred(
-        projects.stars ? project.stars.includes(userData.userId) : false
+        project.stars ? project.stars.includes(userData.userId) : false
       );
 
       // Set star count to allow live dynamic update of count
       setStarCount(project.stars ? project.stars.length : 0);
     }
-    if (project && project.length > 0) {
+
+    // console.log(projects.length)
+    if (project && projects.length > 0) {
       const userId = project.userId;
       const repoId = id;
 
@@ -147,7 +149,8 @@ export default function Project({ projects, textContent }: any) {
     if (!userData || !projects || projects.length === 0) return;
 
     const userId = userData.userId;
-    const ownerId = repoOwner;
+    // const ownerId = repoOwner;
+    const ownerId = projects[0].userId
     const repoId = projects[0].id;
 
     if (userHasStarred) {
