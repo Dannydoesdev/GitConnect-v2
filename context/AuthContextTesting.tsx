@@ -16,7 +16,7 @@ type Props = {
 
 const colRef = collection(db, 'users')
 
-export const AuthProvider = ({ children }: Props) => {
+export const AuthProviderTest = ({ children }: Props) => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
