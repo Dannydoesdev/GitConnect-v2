@@ -4,21 +4,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '../../../context/AuthContext';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
+import { Aside } from '@mantine/core';
+import axios from 'axios';
+import EditPortfolioProject from '../../../components/Portfolio/EditProject';
+import NewPortfolioProject from '../../../components/Portfolio/NewProject';
+import { Space } from '@mantine/core';
 // import { RepoData } from '../../../types/repos';
 
-// export interface NewPortfolioProjectProps {
-//   id: number;
-//   name: string;
-//   // fork: boolean;
-//   url: string;
-//   description?: string | null;
-//   // license?: { name?: string } | null;
-// }
-
-export default function NewPortfolioProject() {
+export default function UpdatePortfolioProject() {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
-  const { repoid, name, description, url, userId } = router.query;
+  const { repoid, name, description, url, userId, newRepoParam } = router.query;
+  const [existingProject, setExistingProject] = useState<any>();
 
   if (router.isFallback) {
     return <LoadingPage />;
@@ -31,20 +28,67 @@ export default function NewPortfolioProject() {
   console.log('userData.userId: ', userData.userId);
 
   // useEffect(() => {
-  //   if (userId === userData.userId) {
-  //     setIsLoggedInUsersProfile(true);
+  //   if (userId != userData.userId) {
+
   //   }
   // }, [userData.userId, id, router]);
 
-  if (userId === userData.userId) {
-    return (
-      <>
-        <h1>Editing {name}</h1>
-        <p>{description}</p>
-        <p>{url}</p>
-      </>
-    );
-  } else {
-    return <></>;
-  }
+  //TODO - check if the user is logged in and if the user is the owner of the repo
+  //TODO - if the user is not logged in, redirect to login page
+
+  useEffect(() => {
+    // TODO - implement Vercel SWR on front end
+    if (!repoid) {
+      return;
+    }
+    const URL = `/api/profiles/projects/${repoid}`;
+    axios.get(URL).then((response) => {
+      // console.log(response.data)
+      setExistingProject(response.data[0]);
+      // consol
+    });
+  }, []);
+
+  return (
+    <>
+      <Space h={70} />
+      {newRepoParam && JSON.parse(newRepoParam as string) ? (
+        <>
+          <EditPortfolioProject
+            name={name}
+            description={description}
+            url={url}
+          />
+        </>
+      ) : (
+        <>
+          {/* <EditPortfolioProject project={existingProject} /> */}
+          {existingProject && (
+            <EditPortfolioProject
+              name={existingProject.name}
+              description={existingProject.description}
+              url={existingProject.url}
+            />
+          )}
+        </>
+      )}
+    </>
+  );
+
+  // if (newRepoParam && JSON.parse(newRepoParam as string)) {
+  //   return (
+  //     <>
+  //       <EditPortfolioProject name={name} description={description} url={url} />
+  //     </>
+  //   );
+  // } else {
+  //   return (
+  //     <>
+  //       {/* <EditPortfolioProject project={existingProject} /> */}
+  //       {existingProject &&
+  //         <EditPortfolioProject name={existingProject.name} description={existingProject.description} url={existingProject.url} />
+  //       }
+  //     </>
+  //   );
+  // }
 }
