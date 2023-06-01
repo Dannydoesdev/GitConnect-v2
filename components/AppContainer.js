@@ -40,11 +40,10 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
-
   header: {
     height: 70,
     padding: 20,
-    zIndex: 2,
+    zIndex: 3,
 
     [theme.fn.smallerThan('sm')]: {
       paddingRight: 5,
@@ -178,7 +177,6 @@ export const AppContainer = ({ children }, props) => {
                             : theme.colors.dark,
                       })}
                     >
-                    
                       Add Project
                     </Button>
                     {/* <Text
@@ -190,7 +188,11 @@ export const AppContainer = ({ children }, props) => {
                       Add a Project
                     </Text> */}
                   </Link>
-                  <Link  href={`/profiles/${userData.userId}`} passHref legacyBehavior>
+                  <Link
+                    href={`/profiles/${userData.userId}`}
+                    passHref
+                    legacyBehavior
+                  >
                     <Button
                       component='a'
                       size='xs'
@@ -204,10 +206,9 @@ export const AppContainer = ({ children }, props) => {
                             : theme.colors.dark,
                       })}
                     >
-                       Profile
+                      Profile
                     </Button>
                   </Link>
-                  
                 </Group>
 
                 <Group>
