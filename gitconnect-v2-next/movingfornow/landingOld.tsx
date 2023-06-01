@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Container, Paper, Text, Col, Grid, Button, Space } from '@mantine/core';
-import { LandingPageFeatures } from '../components/LandingPageOld/LandingPageFeatures';
-import { LandingPageHero } from '../components/LandingPageOld/LandingPageHero';
+import { LandingPageFeatures } from './components/LandingPageOld/LandingPageFeatures';
+import { LandingPageHero } from './components/LandingPageOld/LandingPageHero';
 
 
 
