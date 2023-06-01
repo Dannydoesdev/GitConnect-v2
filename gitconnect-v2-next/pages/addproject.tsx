@@ -152,6 +152,7 @@ const GetRepos = () => {
             description: repo.description,
             url: repo.html_url,
             userId: userId,
+            newRepoParam: JSON.stringify(true),
           },
         },
         `/portfolio/new/${repo.id}`
