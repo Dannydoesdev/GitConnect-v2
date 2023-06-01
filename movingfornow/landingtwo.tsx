@@ -8,10 +8,10 @@ import { GetStaticProps } from 'next';
 // import FAQSection from '../components/FAQSection';
 // import Footer from '../components/Footer';
 import { Container, Paper, Text, Col, Grid, Button, Space } from '@mantine/core';
-import { LandingPageFeatures } from '../components/LandingPageOld/LandingPageFeatures';
-import { LandingPageHero } from '../components/LandingPageOld/LandingPageHero';
-import { LandingHero } from '../components/LandingPageOld/LandingHero';
-import { LandingFeatures } from '../components/LandingPageOld/LandingFeatures';
+import { LandingPageFeatures } from './components/LandingPageOld/LandingPageFeatures';
+import { LandingPageHero } from './components/LandingPageOld/LandingPageHero';
+import { LandingHero } from './components/LandingPageOld/LandingHero';
+import { LandingFeatures } from './components/LandingPageOld/LandingFeatures';
 
 interface HomePageProps {
   // Define the shape of your data here
