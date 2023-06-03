@@ -20,12 +20,12 @@ export default function UpdatePortfolioProject() {
   if (router.isFallback) {
     return <LoadingPage />;
   }
-  console.log('repoid: ', repoid);
-  console.log('name: ', name);
-  console.log('description: ', description);
-  console.log('url: ', url);
-  console.log('userId: ', userId);
-  console.log('userData.userId: ', userData.userId);
+  // console.log('repoid: ', repoid);
+  // console.log('name: ', name);
+  // console.log('description: ', description);
+  // console.log('url: ', url);
+  // console.log('userId: ', userId);
+  // console.log('userData.userId: ', userData.userId);
 
   // useEffect(() => {
   //   if (userId != userData.userId) {
@@ -45,9 +45,8 @@ export default function UpdatePortfolioProject() {
     axios.get(URL).then((response) => {
       // console.log(response.data)
       setExistingProject(response.data[0]);
-      // consol
     });
-  }, []);
+  }, [router, repoid]);
 
   return (
     <>
@@ -62,7 +61,6 @@ export default function UpdatePortfolioProject() {
         </>
       ) : (
         <>
-          {/* <EditPortfolioProject project={existingProject} /> */}
           {existingProject && (
             <EditPortfolioProject
               name={existingProject.name}
@@ -74,21 +72,4 @@ export default function UpdatePortfolioProject() {
       )}
     </>
   );
-
-  // if (newRepoParam && JSON.parse(newRepoParam as string)) {
-  //   return (
-  //     <>
-  //       <EditPortfolioProject name={name} description={description} url={url} />
-  //     </>
-  //   );
-  // } else {
-  //   return (
-  //     <>
-  //       {/* <EditPortfolioProject project={existingProject} /> */}
-  //       {existingProject &&
-  //         <EditPortfolioProject name={existingProject.name} description={existingProject.description} url={existingProject.url} />
-  //       }
-  //     </>
-  //   );
-  // }
 }
