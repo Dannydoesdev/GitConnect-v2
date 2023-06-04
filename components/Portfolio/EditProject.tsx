@@ -18,6 +18,7 @@ import {
 import RichTextEditorBeefy from './RichTextEditorBeefy';
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
+import BlockNote from './EditorExperiments/BlockNote';
 
 const useStyles = createStyles((theme) => ({
   icon: {
@@ -57,6 +58,9 @@ export default function EditPortfolioProject({ name, description, url }: any) {
           <Text>{description}</Text>
           <Text>{url}</Text>
           <RichTextEditorBeefy />
+
+          <BlockNote />
+
         </Group>
       </Container>
       <Aside
