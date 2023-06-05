@@ -2,6 +2,7 @@ import { BlockNoteEditor } from "@blocknote/core";
 import { BlockNoteView, useBlockNote } from "@blocknote/react";
 import "@blocknote/core/style.css";
 
+
 function BlockNote() {
   // Creates a new editor instance.
   const editor: BlockNoteEditor | null = useBlockNote({});
