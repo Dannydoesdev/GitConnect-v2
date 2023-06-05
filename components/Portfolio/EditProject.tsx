@@ -45,11 +45,15 @@ export default function EditPortfolioProject({ name, description, url }: any) {
             // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
             sm: 'calc(100% - 220px)',
 
+            md: 'calc(100% - 220px)',
             // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
             // lg: 'calc(100vw - 350px)',
             lg: 'calc(100% - 200px)',
 
-            xl: 'calc(100% - 100px)',
+            xl: 'calc(100% - 180px)',
+
+            xxl: 'calc(100% - 100px)',
+            
             // When other breakpoints do not match base width is used, defaults to 100%
             base: 'calc(100% - 120px)',
           }}
@@ -59,7 +63,7 @@ export default function EditPortfolioProject({ name, description, url }: any) {
           <Text>{url}</Text>
           <RichTextEditorBeefy />
 
-          <BlockNote />
+          {/* <BlockNote /> */}
 
         </Group>
       </Container>
