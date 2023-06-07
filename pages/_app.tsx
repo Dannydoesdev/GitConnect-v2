@@ -13,7 +13,7 @@ import {
 import { AppContainer } from '../components/AppContainer';
 import { mantineCache } from '../mantine/cache';
 import { ThemeProvider } from 'next-themes';
-import '@/styles/globals.css'
+import '../styles/globals.css'
 // import { NotificationsProvider } from '@mantine/notifications';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
