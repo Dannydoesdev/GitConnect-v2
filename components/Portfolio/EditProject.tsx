@@ -39,18 +39,19 @@ export default function EditPortfolioProject({ name, description, url }: any) {
 
   return (
     <>
-      <Container>
+      <Container size='xl'>
         <Group
           w={{
+            xs: 'calc(100% - 180px)',
             // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
-            sm: 'calc(100% - 220px)',
+            sm: 'calc(100% - 240px)',
 
-            md: 'calc(100% - 220px)',
+            md: 'calc(100% - 280px)',
             // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
             // lg: 'calc(100vw - 350px)',
-            lg: 'calc(100% - 200px)',
+            lg: 'calc(100% - 255px)',
 
-            xl: 'calc(100% - 180px)',
+            xl: 'calc(100% - 210px)',
 
             xxl: 'calc(100% - 100px)',
             
@@ -76,12 +77,18 @@ export default function EditPortfolioProject({ name, description, url }: any) {
         zIndex={1}
         mt={80}
         width={{
+
+          xs: 145,
           // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
           sm: 200,
 
+          md: 230,
           // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
-          lg: 350,
+          lg: 260,
 
+          xl: 300,
+          
+          xxl: 400,
           // When other breakpoints do not match base width is used, defaults to 100%
           base: 120,
         }}
