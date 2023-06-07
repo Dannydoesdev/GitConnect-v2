@@ -15,6 +15,8 @@ import { mantineCache } from '../mantine/cache';
 import { ThemeProvider } from 'next-themes';
 import '../styles/globals.css'
 // import { NotificationsProvider } from '@mantine/notifications';
+import "../styles/tiptap.scss";
+
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
