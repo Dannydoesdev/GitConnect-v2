@@ -10,13 +10,12 @@
     "cypress": "cypress open"
   },
   "dependencies": {
-    "@blocknote/core": "^0.8.0",
-    "@blocknote/react": "^0.8.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@google-cloud/storage": "^6.11.0",
     "@mantine/core": "^6.0.13",
+    "@mantine/dates": "^6.0.13",
     "@mantine/dropzone": "^6.0.13",
     "@mantine/ds": "^6.0.13",
     "@mantine/form": "^6.0.13",
@@ -60,7 +59,6 @@
     "next-themes": "^0.2.1",
     "octokit": "^2.0.19",
     "openai": "^3.2.1",
-    "perf_hooks": "^0.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sharp": "^0.32.1",
