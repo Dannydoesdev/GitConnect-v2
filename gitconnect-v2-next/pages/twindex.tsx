@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Autocomplete, Button, Drawer, Group } from '@mantine/core'
-// import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle'
+import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle'
 import { Welcome } from '../components/Welcome/Welcome'
 import Formku from '../components/Form'
 import TextEditor from '../components/TextEditor/Index'
@@ -11,7 +11,7 @@ export default function Demo() {
   return (
     <>
       <Welcome />
-      {/* <ColorSchemeToggle /> */}
+      <ColorSchemeToggle />
       <Formku />
       <div className="w-1/3 m-20 mx-auto">
         <TextEditor />

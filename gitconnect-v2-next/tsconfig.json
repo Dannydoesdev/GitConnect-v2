@@ -16,12 +16,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@/ui/*": ["./src/components/ui/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/config/*": ["./src/config/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/components/*": ["./src/components/*"]
+      // "@/ui/*": ["./components/ui/*"],
+      "@/hooks/*": ["./hooks/*"],
+      // "@/config/*": ["./config/*"],
+      "@/styles/*": ["./styles/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/components/*": ["./components/*"]
     },
     "plugins": [
       {
