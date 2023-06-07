@@ -77,28 +77,29 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       // Resizable Media
       Video,
-      ResizableMedia.configure({
-        uploadFn: async (image) => {
-          const fd = new FormData();
+      ResizableMedia,
+      //   .configure({
+      //   uploadFn: async (image) => {
+      //     const fd = new FormData();
 
-          fd.append('file', image);
+      //     fd.append('file', image);
 
-          try {
-            const response = await fetch('https://api.imgur.com/3/image', {
-              method: 'POST',
-              body: fd,
-            });
+      //     try {
+      //       const response = await fetch('https://api.imgur.com/3/image', {
+      //         method: 'POST',
+      //         body: fd,
+      //       });
 
-            console.log(await response.json());
-          } catch {
-            // do your thing
-          } finally {
-            // do your thing
-          }
+      //       console.log(await response.json());
+      //     } catch {
+      //       // do your thing
+      //     } finally {
+      //       // do your thing
+      //     }
 
-          return 'https://source.unsplash.com/8xznAGy4HcY/800x400';
-        },
-      }),
+      //     return 'https://source.unsplash.com/8xznAGy4HcY/800x400';
+      //   },
+      // }),
     ],
     content,
     onUpdate({ editor }) {
@@ -110,6 +111,16 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
   useEffect(() => {
     existingContent && editor?.commands.setContent(existingContent);
   }, [existingContent, editor]);
+
+  const addImage = () =>
+  editor?.commands.setMedia({
+    src: "https://source.unsplash.com/8xznAGy4HcY/800x400",
+    "media-type": "img",
+    alt: "Something else",
+    title: "placeholder",
+    width: "800",
+    height: "400",
+  });
 
   const addVideo = () => editor?.commands.setVideo(videoUrl) && closeModal();
 
@@ -133,6 +144,7 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
 
       {/* <Group position='center'> */}
       <Button onClick={openModal}>Add Video</Button>
+      <Button onClick={() => addImage()}>Add Image</Button>
       <RichTextEditor
         mt={40}
         editor={editor}
