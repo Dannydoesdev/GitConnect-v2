@@ -36,6 +36,9 @@ import {
 import { db } from '../../firebase/clientApp';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { Video } from './extensions';
+// import "tippy.js/animations/shift-toward-subtle.css";
+import { notitapEditorClass } from './proseClassString'
+
 
 type RichTextEditorBeefyProps = {
   repoId?: string;
@@ -77,31 +80,39 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       // Resizable Media
       Video,
-      ResizableMedia,
-      //   .configure({
-      //   uploadFn: async (image) => {
-      //     const fd = new FormData();
+      ResizableMedia
+        .configure({
+        uploadFn: async (image) => {
+          const fd = new FormData();
 
-      //     fd.append('file', image);
+          fd.append('file', image);
 
-      //     try {
-      //       const response = await fetch('https://api.imgur.com/3/image', {
-      //         method: 'POST',
-      //         body: fd,
-      //       });
+          try {
+            const response = await fetch('https://api.imgur.com/3/image', {
+              method: 'POST',
+              body: fd,
+            });
 
-      //       console.log(await response.json());
-      //     } catch {
-      //       // do your thing
-      //     } finally {
-      //       // do your thing
-      //     }
+            console.log(await response.json());
+          } catch {
+            // do your thing
+          } finally {
+            // do your thing
+          }
 
-      //     return 'https://source.unsplash.com/8xznAGy4HcY/800x400';
-      //   },
-      // }),
+          return 'https://source.unsplash.com/8xznAGy4HcY/800x400';
+        },
+      }),
     ],
     content,
+    // Taken from Notitap:
+    editorProps: {
+      attributes: {
+        class: `${notitapEditorClass} focus:outline-none w-full`,
+        spellcheck: "false",
+        suppressContentEditableWarning: "true",
+      },
+    },
     onUpdate({ editor }) {
       // Update state every time the editor content changes
       setEditorContent(editor.getHTML());

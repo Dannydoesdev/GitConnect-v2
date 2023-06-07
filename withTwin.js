@@ -1,4 +1,5 @@
-const path = require('path')
+const path = require('path');
+const UnoCSS = require('@unocss/webpack').default;
 
 // The folders containing files importing twin.macro
 // const includedDirs = [path.resolve(__dirname, './')]
@@ -12,6 +13,7 @@ module.exports = function withTwin(nextConfig) {
       const { dev, isServer } = options
       config.module = config.module || {}
       config.module.rules = config.module.rules || []
+
       config.module.rules.push({
         test: /\.(tsx|ts)$/,
         include: includedDirs,
@@ -41,7 +43,9 @@ module.exports = function withTwin(nextConfig) {
           },
         ],
       })
-
+      config.plugins.push(
+        UnoCSS(),
+      )
       if (!isServer) {
         config.resolve.fallback = {
           ...(config.resolve.fallback || {}),
