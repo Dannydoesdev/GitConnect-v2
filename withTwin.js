@@ -43,9 +43,10 @@ module.exports = function withTwin(nextConfig) {
           },
         ],
       })
-      config.plugins.push(
-        UnoCSS(),
-      )
+      // config.cache = false
+      // config.plugins.push(
+      //   UnoCSS(),
+      // )
       if (!isServer) {
         config.resolve.fallback = {
           ...(config.resolve.fallback || {}),

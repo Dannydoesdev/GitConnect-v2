@@ -19,7 +19,7 @@ import "../styles/tiptap.scss";
 
 // MAY CAUSE ISSUES - just for icons for notitap
 // import '@unocss/reset/tailwind.css'
-import 'uno.css'
+// import 'uno.css'
 
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
