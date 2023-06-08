@@ -16,6 +16,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import { auth } from '../firebase/clientApp';
 import { signOut } from 'firebase/auth';
+import { ColorSchemeToggle } from './ColorSchemeToggle/ColorSchemeToggle';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -126,7 +127,8 @@ export const AppContainer = ({ children }, props) => {
                   GitConnect;
                 </Text>
               </Link>
-              <ColorModeSwitcher />
+              {/* <ColorModeSwitcher /> */}
+              <ColorSchemeToggle />
             </Group>
 
             {/* NAV BUTTONS FOR SIGNED IN USER */}
