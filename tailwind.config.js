@@ -5,8 +5,8 @@ module.exports = {
   // content: ['./src/**/*.tsx'],
   // content: ['./**/*.tsx'],
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
  
     // "./src/utils/**/*.{js,ts,jsx,tsx,mdx}",
@@ -26,4 +26,9 @@ module.exports = {
   },
   // plugins: [],
   plugins: [require("@tailwindcss/typography")],
+  safelist: [
+    {
+      pattern: /justify-(start|end)/
+    }
+  ]
 }
