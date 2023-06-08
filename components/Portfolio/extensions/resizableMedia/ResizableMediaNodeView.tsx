@@ -6,6 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import { NodeViewWrapper, NodeViewProps } from "@tiptap/react";
 
 import { resizableMediaActions } from "./resizableMediaMenuUtil";
+import {
+  IconAlignLeft,
+  IconAlignCenter,
+  IconAlignRight,
+  IconTrash,
+} from '@tabler/icons-react';
+import { ActionIcon } from "@mantine/core";
 
 // import "./styles.scss";
 
@@ -198,6 +205,7 @@ export const ResizableMediaNodeView = ({
         media-node-view not-prose transition-all ease-in-out w-full
         ${(isFloat && `f-${node.attrs.dataFloat}`) || ""}
         ${(isAlign && `justify-${node.attrs.dataAlign}`) || ""}
+        ${(isAlign && `moveit-${node.attrs.dataAlign}`) || ""}
       `}
     >
       <div className="w-fit flex relative group transition-all ease-in-out">
@@ -239,7 +247,7 @@ export const ResizableMediaNodeView = ({
               <button
                 key={btn.tooltip}
                 type="button"
-                className={`btn rounded-none h-8 px-2 ${
+                className={`btn rounded-none h-8 px-1 ${
                   mediaActionActiveState[btn.tooltip] ? "active" : ""
                 }`}
                 onClick={() =>
@@ -248,7 +256,10 @@ export const ResizableMediaNodeView = ({
                     : btn.action?.(updateAttributes)
                 }
               >
-                <i className={`${btn.icon} scale-150`} />
+                {/* <i className={`${btn.icon} scale-150`} /> */}
+                <ActionIcon size='sm' variant="filled">
+                 <btn.icon size="sm" />
+                </ActionIcon>
               </button>
             );
           })}

@@ -1,10 +1,12 @@
-const path = require('path');
-const UnoCSS = require('@unocss/webpack').default;
+const path = require('path')
+// const UnoCSS = require('@unocss/webpack').default;
 
 // The folders containing files importing twin.macro
 // const includedDirs = [path.resolve(__dirname, './')]
-const includedDirs = [path.resolve(__dirname, './pages'), path.resolve(__dirname, './components')]
-
+const includedDirs = [
+  path.resolve(__dirname, './pages'),
+  path.resolve(__dirname, './components'),
+]
 
 module.exports = function withTwin(nextConfig) {
   return {
@@ -30,14 +32,11 @@ module.exports = function withTwin(nextConfig) {
                 ],
               ],
               plugins: [
-                require.resolve(
-                "babel-plugin-twin"),
+                require.resolve('babel-plugin-twin'),
                 require.resolve('babel-plugin-macros'),
                 require.resolve('@emotion/babel-plugin'),
-                [
-                  require.resolve('@babel/plugin-syntax-typescript'),
-                  { isTSX: true },
-                ],
+                [require.resolve('@babel/plugin-syntax-typescript'), { isTSX: true }],
+                // require.resolve('@unocss/webpack'),
               ],
             },
           },
