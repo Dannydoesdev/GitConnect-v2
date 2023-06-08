@@ -9,42 +9,56 @@
     @apply flex relative w-full my-2;
 
     &.f-left {
-      @apply float-left
+      @apply float-left;
     }
-  
+
     &.f-right {
-      @apply float-right
+      @apply float-right;
     }
-  
+
     &.align-left {
-      @apply justify-start
+      @apply justify-start;
     }
-  
+
     &.align-center {
-      @apply justify-center
+      @apply justify-center;
     }
-  
+
+    // TODO: figure out why justify start + end don't work
     &.align-right {
-      @apply justify-end
+      @apply justify-end;
     }
-  
+
+    // .moveit-end {
+    //   justify-content: end;
+    // }
+    // &.align-right {
+    //   @apply justify-end justify-items-end justify-self-end
+    // }
+    // justify-content: flex-end
+    // .horizontal-resize-handle {
+    //   @apply h-24 w-2.5 top-[30%] right-1 cursor-col-resize absolute z-50 opacity-50 translate-y-[-50%] rounded
+    // }
     .horizontal-resize-handle {
-      @apply h-24 w-2.5 top-[50%] right-1 cursor-col-resize absolute z-50 opacity-50 translate-y-[-50%] rounded 
+      @apply h-[50%] w-2 top-[30%] right-1 cursor-col-resize absolute z-50 opacity-50 translate-y-[-50%] rounded;
     }
 
     .btn {
-      @apply inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200
+      @apply inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200;
     }
 
+    // .btn {
+    //   @apply inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200
+    // }
+
     .btn.active {
-      @apply bg-gray-300
+      @apply bg-gray-300;
     }
 
     .media-control-buttons {
-      @apply absolute top-2 right-2 bg-white transition-all duration-200 ease-linear shadow-xl rounded-sm overflow-hidden border border-slate-200 box-border
+      @apply absolute top-2 right-2 bg-white transition-all duration-200 ease-linear shadow-xl rounded-sm overflow-hidden border border-slate-200 box-border;
     }
   }
-
 
   table {
     border-collapse: collapse;
@@ -62,7 +76,7 @@
       box-sizing: border-box;
       position: relative;
 
-      >* {
+      > * {
         margin-bottom: 0;
       }
     }
@@ -85,7 +99,7 @@
     .selectedCell:after {
       z-index: 2;
       position: absolute;
-      content: "";
+      content: '';
       left: 0;
       right: 0;
       top: 0;
@@ -110,7 +124,7 @@
   }
 
   .d-block-button {
-    @apply bg-gray-200 hover:bg-gray-300 cursor-grab text-lg py-1 opacity-0 transition duration-200 ease-in-out text-black h-fit rounded flex justify-center items-center
+    @apply bg-gray-200 hover:bg-gray-300 cursor-grab text-lg py-1 opacity-0 transition duration-200 ease-in-out text-black h-fit rounded flex justify-center items-center;
   }
 }
 

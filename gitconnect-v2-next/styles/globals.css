@@ -6,6 +6,12 @@
   border: 2px solid #ff0000;
 }
 
+/* Hack to fix image resizing align options */
+
+.moveit-end {
+  justify-content: end;
+}
+
 /* * {
   box-sizing: border-box;
   padding: 0;
