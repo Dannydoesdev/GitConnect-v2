@@ -1,28 +1,15 @@
-import {
-  RichTextEditor,
-  Link,
-  useRichTextEditorContext,
-} from '@mantine/tiptap';
-import { useEditor } from '@tiptap/react';
 import { useState, useEffect, useContext } from 'react';
-import Highlight from '@tiptap/extension-highlight';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import TextAlign from '@tiptap/extension-text-align';
-import Superscript from '@tiptap/extension-superscript';
-import SubScript from '@tiptap/extension-subscript';
-import Image from '@tiptap/extension-image';
+import { Button, Center, Container, Group, Modal, TextInput } from '@mantine/core';
+import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import { lowlight } from 'lowlight';
-import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
-import {
-  Button,
-  Center,
-  Container,
-  Group,
-  Modal,
-  TextInput,
-} from '@mantine/core';
+import Highlight from '@tiptap/extension-highlight';
+import Image from '@tiptap/extension-image';
+import SubScript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import TextAlign from '@tiptap/extension-text-align';
+import Underline from '@tiptap/extension-underline';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import {
   collection,
   doc,
@@ -33,12 +20,14 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
+import { lowlight } from 'lowlight';
 import { db } from '../../firebase/clientApp';
-import { ResizableMedia } from './extensions/resizableMedia';
 import { Video } from './extensions';
+import { CustomImage } from './extensions/CustomImage';
+import { ResizableMedia } from './extensions/resizableMedia';
 // import "tippy.js/animations/shift-toward-subtle.css";
-import { notitapEditorClass } from './proseClassString'
-
+import { notitapEditorClass } from './proseClassString';
 
 type RichTextEditorBeefyProps = {
   repoId?: string;
@@ -80,8 +69,14 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       // Resizable Media
       Video,
-      ResizableMedia
-        .configure({
+      // CustomImage,
+      // Image.configure({
+      //   allowBase64: true,
+      // }),
+      CustomImage.configure({
+        allowBase64: true,
+      }),
+      ResizableMedia.configure({
         uploadFn: async (image) => {
           const fd = new FormData();
 
@@ -109,8 +104,8 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full`,
-        spellcheck: "false",
-        suppressContentEditableWarning: "true",
+        spellcheck: 'false',
+        suppressContentEditableWarning: 'true',
       },
     },
     onUpdate({ editor }) {
@@ -123,15 +118,25 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
     existingContent && editor?.commands.setContent(existingContent);
   }, [existingContent, editor]);
 
-  const addImage = () =>
-  editor?.commands.setMedia({
-    src: "https://source.unsplash.com/8xznAGy4HcY/800x400",
-    "media-type": "img",
-    alt: "Something else",
-    title: "placeholder",
-    width: "800",
-    height: "400",
-  });
+  const addImage = () => editor?.commands.insertImage;
+  // function addImage() {
+  //   // editor &&
+  //   if (editor && editor != undefined) {
+  //     editor.commands.insertImage();
+  //   }
+  // }
+  // editor?.commands.setMedia({
+  //   src: 'https://source.unsplash.com/8xznAGy4HcY/800x400',
+  //   'media-type': 'img',
+  //   alt: 'Something else',
+  //   title: 'placeholder',
+  //   width: '800',
+  //   height: '400',
+  // });
+
+  //   <RichTextEditor.ControlsGroup>
+  //   <Button onClick={() => editor?.commands.insertImage()}>Upload Image</Button>
+  // </RichTextEditor.ControlsGroup>
 
   const addVideo = () => editor?.commands.setVideo(videoUrl) && closeModal();
 
@@ -150,87 +155,89 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
   };
 
   return (
-    <Group w='100%'>
+    <Group w="100%">
       {/* <Container> */}
 
       {/* <Group position='center'> */}
       <Button onClick={openModal}>Add Video</Button>
-      <Button onClick={() => addImage()}>Add Image</Button>
-      <RichTextEditor
-        mt={40}
-        editor={editor}
-        w='100%'
-        // mx={200}
-        // styles={(theme) => ({
-        //   content: {
-        //     color: editor?.isEditable ? 'auto' : '#999',
-        //     minHeight: 500,
+      {/* <Button onClick={() => addImage()}>Add Image</Button> */}
+      <Button onClick={() => editor?.commands.insertImage()}>Add Image</Button>
 
-        //   },
-        //   root: {
-        //     cursor: editor?.isEditable ? 'auto' : 'not-allowed',
-        //   },
-        // })}
-      >
-        <RichTextEditor.Toolbar sticky stickyOffset={60}>
-          <RichTextEditor.ControlsGroup>
-            <RichTextEditor.Bold />
-            <RichTextEditor.Italic />
-            <RichTextEditor.Underline />
-            <RichTextEditor.Strikethrough />
-            <RichTextEditor.ClearFormatting />
-            <RichTextEditor.Highlight />
-            <RichTextEditor.Code />
-          </RichTextEditor.ControlsGroup>
+      {editor && (
+        <RichTextEditor
+          mt={40}
+          editor={editor}
+          w="100%"
+          // mx={200}
+          // styles={(theme) => ({
+          //   content: {
+          //     color: editor?.isEditable ? 'auto' : '#999',
+          //     minHeight: 500,
 
-          <RichTextEditor.ControlsGroup>
-            <RichTextEditor.H1 />
-            <RichTextEditor.H2 />
-            <RichTextEditor.H3 />
-            <RichTextEditor.H4 />
-          </RichTextEditor.ControlsGroup>
+          //   },
+          //   root: {
+          //     cursor: editor?.isEditable ? 'auto' : 'not-allowed',
+          //   },
+          // })}
+        >
+          <RichTextEditor.Toolbar sticky stickyOffset={60}>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Bold />
+              <RichTextEditor.Italic />
+              <RichTextEditor.Underline />
+              <RichTextEditor.Strikethrough />
+              <RichTextEditor.ClearFormatting />
+              <RichTextEditor.Highlight />
+              <RichTextEditor.Code />
+            </RichTextEditor.ControlsGroup>
 
-          <RichTextEditor.ControlsGroup>
-            <RichTextEditor.Blockquote />
-            <RichTextEditor.Hr />
-            <RichTextEditor.BulletList />
-            <RichTextEditor.OrderedList />
-          </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.H1 />
+              <RichTextEditor.H2 />
+              <RichTextEditor.H3 />
+              <RichTextEditor.H4 />
+            </RichTextEditor.ControlsGroup>
 
-          <RichTextEditor.ControlsGroup>
-            <RichTextEditor.Link />
-            <RichTextEditor.Unlink />
-          </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Blockquote />
+              <RichTextEditor.Hr />
+              <RichTextEditor.BulletList />
+              <RichTextEditor.OrderedList />
+            </RichTextEditor.ControlsGroup>
 
-          <RichTextEditor.ControlsGroup>
-            <RichTextEditor.AlignLeft />
-            <RichTextEditor.AlignCenter />
-            <RichTextEditor.AlignJustify />
-            <RichTextEditor.AlignRight />
-          </RichTextEditor.ControlsGroup>
-        </RichTextEditor.Toolbar>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Link />
+              <RichTextEditor.Unlink />
+            </RichTextEditor.ControlsGroup>
 
-        <RichTextEditor.Content />
-      </RichTextEditor>
-      {/* </Group> */}
-      {/* </Container> */}
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.AlignLeft />
+              <RichTextEditor.AlignCenter />
+              <RichTextEditor.AlignJustify />
+              <RichTextEditor.AlignRight />
+            </RichTextEditor.ControlsGroup>
+          </RichTextEditor.Toolbar>
+
+          <RichTextEditor.Content />
+        </RichTextEditor>
+      )}
       <Modal
-        size='auto'
+        size="auto"
         opened={isVideoInputModalOpen}
         onClose={closeModal}
-        title='Add Vieo Url'
+        title="Add Vieo Url"
       >
         {/* Modal content */}
-        <Group noWrap mt='md'>
+        <Group noWrap mt="md">
           <TextInput
-            label='Add Video Url'
-            placeholder='Enter Video Url'
+            label="Add Video Url"
+            placeholder="Enter Video Url"
             value={videoUrl}
             onInput={(e) => setVideoUrl((e.target as HTMLInputElement).value)}
           />
         </Group>
-        <Group position='center'>
-          <Button variant='outline' onClick={closeModal}>
+        <Group position="center">
+          <Button variant="outline" onClick={closeModal}>
             Close
           </Button>
           <Button onClick={addVideo}>Add Video</Button>

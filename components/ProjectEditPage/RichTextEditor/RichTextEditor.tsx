@@ -214,8 +214,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
     // Sanitize with DomPurify before upload
     // need to add 'target = _blank' back in
     const sanitizedHTML = DOMPurify.sanitize(editorContent, { ADD_ATTR: ['target'] });
-    // console.log(`Sanitised \n\n`)
-    // console.log(sanitizedHTML)
+
     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`)
 
     await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
