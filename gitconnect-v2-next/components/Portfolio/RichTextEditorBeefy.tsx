@@ -23,7 +23,7 @@ import {
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
 import { lowlight } from 'lowlight';
 import { db } from '../../firebase/clientApp';
-import { Video } from './extensions';
+import { Video } from './extensions/video';
 import { CustomImage } from './extensions/CustomImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 // import "tippy.js/animations/shift-toward-subtle.css";
