@@ -4,6 +4,8 @@ import { mergeAttributes } from "@tiptap/react";
 import { uploadImagePlugin, UploadFn } from "./upload_image";
 
 // FROM https://gist.github.com/waptik/f44b0d3c803fade75456817b1b1df6b4
+// ORIGINAL: https://gist.github.com/slava-vishnyakov/16076dff1a77ddaca93c4bccd4ec4521
+
 
 /**
  * Tiptap Extension to upload images

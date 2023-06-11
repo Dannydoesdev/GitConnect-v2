@@ -14,7 +14,8 @@ import Placeholder from '@tiptap/extension-placeholder';
 
 import { TipTapCustomImage } from './image';
 import { UploadFn } from './image/upload_image';
-
+import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
+import { lowlight } from 'lowlight';
 import { Indent } from './indent';
 // import { Spoiler } from './Spoiler';
 // import { ColorHighlighter } from './ColorHighlighter';
@@ -27,6 +28,7 @@ interface GetTipTapExtensions {
   placeholder?: string;
 }
 
+lowlight.registerLanguage('ts', tsLanguageSyntax);
 
 export function getTipTapExtensions({
   placeholder,
@@ -51,7 +53,13 @@ export function getTipTapExtensions({
       Placeholder.configure({
         placeholder
       }),
-      CodeBlockLowlight,
+      // CodeBlockLowlight,
+      CodeBlockLowlight.configure({
+        HTMLAttributes: {
+          class: 'lowlight',
+        },
+        lowlight,
+      }),
       CharacterCount.configure({
         limit
       }),
@@ -79,7 +87,13 @@ export function getTipTapExtensions({
       Placeholder.configure({
         placeholder
       }),
-      CodeBlockLowlight,
+      // CodeBlockLowlight,
+      CodeBlockLowlight.configure({
+        HTMLAttributes: {
+          class: 'lowlight',
+        },
+        lowlight,
+      }),
       CharacterCount.configure({
         limit
       }),
