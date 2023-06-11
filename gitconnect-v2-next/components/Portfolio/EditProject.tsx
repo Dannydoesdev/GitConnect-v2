@@ -19,6 +19,7 @@ import RichTextEditorBeefy from './RichTextEditorBeefy';
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
 import BlockNote from './EditorExperiments/BlockNote';
+import TipTapImageTest from './TipTapImageTest';
 
 const useStyles = createStyles((theme) => ({
   icon: {
@@ -36,6 +37,7 @@ export default function EditPortfolioProject({ name, description, url }: any) {
   // }, [userData.userId, id, router]);
   // const theme =
   const { classes, theme } = useStyles();
+  const [text, setText] = useState("");
 
   return (
     <>
@@ -62,7 +64,8 @@ export default function EditPortfolioProject({ name, description, url }: any) {
           <Title>Editing {name}</Title>
           <Text>{description}</Text>
           <Text>{url}</Text>
-          <RichTextEditorBeefy />
+          <RichTextEditorBeefy withImage={true} />
+          {/* <TipTapImageTest withImage={true} text={text} setText={setText}/> */}
 
           {/* <BlockNote /> */}
 

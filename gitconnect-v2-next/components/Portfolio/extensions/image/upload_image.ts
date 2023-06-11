@@ -1,5 +1,7 @@
 import { Plugin } from "prosemirror-state";
 
+// From: https://gist.github.com/slava-vishnyakov/16076dff1a77ddaca93c4bccd4ec4521
+
 /**
  * function for image drag n drop(for tiptap)
  * @see https://gist.github.com/slava-vishnyakov/16076dff1a77ddaca93c4bccd4ec4521#gistcomment-3744392
