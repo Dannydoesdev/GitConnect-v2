@@ -10,6 +10,11 @@
     "cypress": "cypress open"
   },
   "dependencies": {
+    "@emotion-icons/boxicons-regular": "^3.19.0",
+    "@emotion-icons/fa-brands": "^3.19.0",
+    "@emotion-icons/fa-solid": "^3.14.0",
+    "@emotion-icons/material": "^3.14.0",
+    "@emotion-icons/octicons": "^3.27.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
