@@ -26,11 +26,23 @@ import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
 import { lowlight } from 'lowlight';
 import { db } from '../../firebase/clientApp';
 import { Video } from './extensions/video';
-import { CustomImage } from './extensions/CustomImage';
+// import { CustomImage } from './extensions/CustomImage';
+import { CustomImage } from './extensions/image/customImageNew';
 import { ResizableMedia } from './extensions/resizableMedia';
 // import "tippy.js/animations/shift-toward-subtle.css";
 import { notitapEditorClass } from './proseClassString';
 import { read } from 'fs';
+
+// declare module '@tiptap/core' {
+//   interface Commands<ReturnType> {
+//     customImage: {
+//       /**
+//        * Set an image node
+//        */
+//       insertImage: () => ReturnType,
+//     }
+//   }
+// }
 
 type RichTextEditorBeefyProps = {
   repoId?: string;
@@ -140,7 +152,7 @@ function RichTextEditorBeefy({
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       // Resizable Media
-      Video,
+      // Video,
       // CustomImage,
       // Image.configure({
       //   allowBase64: true,
@@ -170,11 +182,12 @@ function RichTextEditorBeefy({
           return 'https://source.unsplash.com/8xznAGy4HcY/800x400';
         },
       }),
-      withImage ?
-        TipTapCustomImage(handleUpload) :
-        CustomImage.configure({
-        allowBase64: true,
-      }),
+      CustomImage,
+      // withImage ?
+      //   TipTapCustomImage(handleUpload) :
+      //   CustomImage.configure({
+      //   allowBase64: true,
+      // }),
     ],
     content,
     // Taken from Notitap:
@@ -239,7 +252,17 @@ function RichTextEditorBeefy({
       {/* <Group position='center'> */}
       <Button onClick={openModal}>Add Video</Button>
       {/* <Button onClick={() => addImage()}>Add Image</Button> */}
-      <Button onClick={() => editor?.commands.insertImage()}>Add Image</Button>
+      
+      {/* <Button onClick={() => (editor as any).commands.customImage.insertImage()}> */}
+      <Button onClick={() => editor?.commands.insertImage()}>
+        Insert Image single cmd
+      </Button>
+      <Button onClick={() => editor?.chain().focus().insertImage().run()}>
+      Insert Image chained cmd
+    </Button>
+      {/* <Button onClick={() => editor?.commands.insertImage()}>
+        Add Image
+      </Button> */}
       {withImage && (
         <Button
           // onClick={(event: any) => setImage(event)}
