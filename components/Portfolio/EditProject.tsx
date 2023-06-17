@@ -2,8 +2,6 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { AuthContext } from '../../context/AuthContext';
-import LoadingPage from '../../components/LoadingPage/LoadingPage';
 import {
   Aside,
   Button,
@@ -15,12 +13,14 @@ import {
   MediaQuery,
   Flex,
 } from '@mantine/core';
-import RichTextEditorBeefy from './RichTextEditorBeefy';
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
+import LoadingPage from '../../components/LoadingPage/LoadingPage';
+import { AuthContext } from '../../context/AuthContext';
 import BlockNote from './EditorExperiments/BlockNote';
-import TipTapImageTest from './TipTapImageTest';
+import RichTextEditorBeefy from './RichTextEditorBeefy';
 import RichTextEditorVanilla from './RichTextEditorVanilla';
+import TipTapImageTest from './TipTapImageTest';
 
 const useStyles = createStyles((theme) => ({
   icon: {
@@ -38,11 +38,11 @@ export default function EditPortfolioProject({ name, description, url }: any) {
   // }, [userData.userId, id, router]);
   // const theme =
   const { classes, theme } = useStyles();
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
 
   return (
     <>
-      <Container size='xl'>
+      <Container size="xl">
         <Group
           w={{
             xs: 'calc(100% - 180px)',
@@ -57,7 +57,7 @@ export default function EditPortfolioProject({ name, description, url }: any) {
             xl: 'calc(100% - 210px)',
 
             xxl: 'calc(100% - 100px)',
-            
+
             // When other breakpoints do not match base width is used, defaults to 100%
             base: 'calc(100% - 120px)',
           }}
@@ -69,7 +69,6 @@ export default function EditPortfolioProject({ name, description, url }: any) {
           {/* <TipTapImageTest withImage={true} text={text} setText={setText}/> */}
           <RichTextEditorVanilla />
           {/* <BlockNote /> */}
-
         </Group>
       </Container>
       <Aside
@@ -81,7 +80,6 @@ export default function EditPortfolioProject({ name, description, url }: any) {
         zIndex={1}
         mt={80}
         width={{
-
           xs: 145,
           // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
           sm: 200,
@@ -91,7 +89,7 @@ export default function EditPortfolioProject({ name, description, url }: any) {
           lg: 260,
 
           xl: 300,
-          
+
           xxl: 400,
           // When other breakpoints do not match base width is used, defaults to 100%
           base: 120,
@@ -105,10 +103,10 @@ export default function EditPortfolioProject({ name, description, url }: any) {
 
         {/* Last section with normal height (depends on section content) */}
         <Aside.Section>
-          <Flex direction='column' align='center'>
+          <Flex direction="column" align="center">
             <Button
-              component='a'
-              radius='lg'
+              component="a"
+              radius="lg"
               w={{
                 base: '95%',
                 md: '80%',
@@ -116,7 +114,7 @@ export default function EditPortfolioProject({ name, description, url }: any) {
                 sm: '90%',
               }}
               mt={40}
-              className='mx-auto'
+              className="mx-auto"
               // onClick={handleSave}
               styles={(theme) => ({
                 root: {
@@ -137,12 +135,12 @@ export default function EditPortfolioProject({ name, description, url }: any) {
               Continue
             </Button>
             <Button
-              component='a'
+              component="a"
               // size={{
               //   md: 'lg',
               //   sm: 'sm',
               // }}
-              radius='lg'
+              radius="lg"
               w={{
                 base: '95%',
                 md: '80%',
@@ -151,8 +149,8 @@ export default function EditPortfolioProject({ name, description, url }: any) {
               }}
               mt={12}
               mb={30}
-              className='mx-auto'
-              variant='outline'
+              className="mx-auto"
+              variant="outline"
               // onClick={handleSave}
               styles={(theme) => ({
                 root: {
