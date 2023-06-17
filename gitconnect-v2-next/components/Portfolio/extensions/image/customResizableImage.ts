@@ -1,24 +1,66 @@
 import { storage } from '@/firebase/clientApp';
+import { mergeAttributes, Node, nodeInputRule } from '@tiptap/core';
 import { Image as TiptapImage } from '@tiptap/extension-image';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
+// declare module '@tiptap/core' {
+//   interface Commands<ReturnType> {
+//     customResizableImage: {
+//       insertResizableImage: () => ReturnType;
+//     };
+//   }
+// }
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     customResizableImage: {
-      insertResizableImage: () => ReturnType;
+      insertResizableImage: (attributes: {
+        userId: string;
+        repoId: string;
+      }) => ReturnType;
     };
   }
 }
+export interface MediaOptions {
+  repoId: string;
+  userId: string;
+  // inline: boolean, // we have floating support, so block is good enough
+  // HTMLAttributes: Record<string, any>;
+  // uploadFn: UploadFnType;
+}
 
-const userId = 'bO4o8u9IskNbFk2wXZmjtJhAYkR2';
-const repoId = 519774186;
+export const CustomResizableImage = Node.create<MediaOptions>({
+  name: 'customResizableImage',
+  // export const CustomResizableImage = TiptapImage.extend({
 
-export const CustomResizableImage = TiptapImage.extend({
+  draggable: true,
+  selectable: true,
+
+  addOptions() {
+    return {
+      repoId: '',
+      userId: '',
+    };
+  },
+
+  addAttributes() {
+    return {
+      userId: {
+        default: null,
+      },
+      repoId: {
+        default: null,
+      },
+    };
+  },
+
   addCommands() {
     return {
+      // insertResizableImage: () =>
       insertResizableImage:
-        () =>
+        (attributes) =>
         ({ commands, editor }) => {
+          const { userId, repoId } = attributes;
           const fileInput = document.createElement('input');
           fileInput.type = 'file';
           fileInput.accept = 'image/*';
@@ -26,8 +68,8 @@ export const CustomResizableImage = TiptapImage.extend({
             if (fileInput.files && fileInput.files[0]) {
               let file = fileInput.files[0]; // the dropped file
               let filesize: any = (file.size / 1024 / 1024).toFixed(4); // get the filesize in MB
-              console.log(filesize);
-              console.log(file.type);
+              // console.log(filesize);
+              // console.log(file.type);
               if (file.type.startsWith('image/') && filesize < 15) {
                 const uploadImage = (file: any) => {
                   if (!file) return;

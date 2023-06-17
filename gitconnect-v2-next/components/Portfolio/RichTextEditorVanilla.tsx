@@ -12,60 +12,17 @@ import js from 'highlight.js/lib/languages/javascript';
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
 import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
-// import { lowlight } from 'lowlight';
 import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
 
-function InsertImageControl() {
-  const { editor } = useRichTextEditorContext();
-  return (
-    <RichTextEditor.Control
-      onClick={() => editor?.chain().focus().insertResizableImage().run()}
-      aria-label="Insert an image"
-      title="Insert an image"
-    >
-      <IconPhotoPlus stroke={1.5} size="1rem" />
-    </RichTextEditor.Control>
-  );
-}
-
-function InsertCodeLineControl() {
-  const { editor } = useRichTextEditorContext();
-  return (
-    <RichTextEditor.Control
-      // onClick={() => editor?.chain().focus().insertResizableImage().run()}
-      onClick={() => editor.chain().focus().toggleCode().run()}
-      aria-label="Code"
-      title="Code"
-    >
-      <IconCode stroke={1.5} size="1rem" />
-    </RichTextEditor.Control>
-  );
-}
-
-function InsertCodeBlockControl() {
-  const { editor } = useRichTextEditorContext();
-  return (
-    <RichTextEditor.Control
-      // onClick={() => editor?.chain().focus().insertResizableImage().run()}
-      onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-      aria-label="Code block"
-      title="Code block"
-    >
-      <IconSourceCode stroke={1.5} size="1rem" />
-    </RichTextEditor.Control>
-  );
-}
-
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
   return (
     <RichTextEditor.ControlsGroup>
       <RichTextEditor.Control
-        // onClick={() => editor?.chain().focus().insertResizableImage().run()}
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         aria-label="Code block"
         title="Code block"
@@ -73,7 +30,6 @@ function InsertCodeControls() {
         <IconSourceCode stroke={1.5} size="1rem" />
       </RichTextEditor.Control>
       <RichTextEditor.Control
-        // onClick={() => editor?.chain().focus().insertResizableImage().run()}
         onClick={() => editor.chain().focus().toggleCode().run()}
         aria-label="Code"
         title="Code"
@@ -84,7 +40,7 @@ function InsertCodeControls() {
   );
 }
 
-type RichTextEditorBeefyProps = {
+type RichTextEditorVanillaProps = {
   repoId?: string;
   userId?: string;
   existingContent?: string | null | undefined;
@@ -96,12 +52,47 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
+function RichTextEditorVanilla({
+  existingContent,
+  repoId,
+  userId,
+}: RichTextEditorVanillaProps) {
   const [editorContent, setEditorContent] = useState('');
   const [content, setContent] = useState(existingContent);
   const [readme, setReadme] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
+
+  function InsertImageControl() {
+    const { editor } = useRichTextEditorContext();
+    if (!userId || !repoId) {
+      return null;
+    }
+    return (
+      <RichTextEditor.Control
+        onClick={() =>
+          editor
+            ?.chain()
+            .focus()
+            .insertResizableImage({
+              userId: userId,
+              repoId: repoId,
+            })
+            .run()
+        }
+        aria-label="Insert an image"
+        title="Insert an image"
+      >
+        <IconPhotoPlus stroke={1.5} size="1rem" />
+      </RichTextEditor.Control>
+    );
+  }
+
+  useEffect(() => {
+    if (existingContent && editor) {
+      editor?.commands.setContent(existingContent);
+    }
+  }, [existingContent]);
 
   const editor = useEditor({
     extensions: [
@@ -148,19 +139,19 @@ function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
 
   return (
     <Group w="100%">
-      <Button onClick={() => editor?.chain().focus()?.insertImage()?.run()}>
+      {/* <Button onClick={() => editor?.chain().focus()?.insertImage()?.run()}>
         Insert Image
       </Button>
       <Button onClick={() => editor?.commands.insertImage()}>
         Insert Image single cmd
-      </Button>
+      </Button> */}
 
       <RichTextEditor mt={40} editor={editor} w="100%">
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <InsertImageControl />
+
           <InsertCodeControls />
-          {/* <InsertCodeLineControl />
-          <InsertCodeBlockControl /> */}
+
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
             <RichTextEditor.Italic />
@@ -168,7 +159,6 @@ function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
             <RichTextEditor.Strikethrough />
             <RichTextEditor.ClearFormatting />
             <RichTextEditor.Highlight />
-            {/* <RichTextEditor.Code /> */}
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
