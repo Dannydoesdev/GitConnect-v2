@@ -32,6 +32,7 @@ import { ResizableMedia } from './extensions/resizableMedia';
 // import "tippy.js/animations/shift-toward-subtle.css";
 import { notitapEditorClass } from './proseClassString';
 import { read } from 'fs';
+import { IconPhotoPlus } from '@tabler/icons-react';
 
 // declare module '@tiptap/core' {
 //   interface Commands<ReturnType> {
@@ -43,6 +44,19 @@ import { read } from 'fs';
 //     }
 //   }
 // }
+
+function InsertImageControl() {
+  const { editor } = useRichTextEditorContext();
+  return (
+    <RichTextEditor.Control
+      onClick={() => editor?.chain().focus().insertImage().run()}
+      aria-label="Insert an image"
+      title="Insert an image"
+    >
+      <IconPhotoPlus stroke={1.5} size="1rem" />
+    </RichTextEditor.Control>
+  );
+}
 
 type RichTextEditorBeefyProps = {
   repoId?: string;
@@ -208,21 +222,22 @@ function RichTextEditorBeefy({
     existingContent && editor?.commands.setContent(existingContent);
   }, [existingContent, editor]);
 
-  const addImage = () => editor?.commands.insertImage;
-  // function addImage() {
-  //   // editor &&
-  //   if (editor && editor != undefined) {
-  //     editor.commands.insertImage();
-  //   }
-  // }
-  // editor?.commands.setMedia({
-  //   src: 'https://source.unsplash.com/8xznAGy4HcY/800x400',
-  //   'media-type': 'img',
-  //   alt: 'Something else',
-  //   title: 'placeholder',
-  //   width: '800',
-  //   height: '400',
-  // });
+  // const addImage = () => editor?.commands.insertImage;
+  function addImage() {
+      editor?.commands.setMedia({
+    src: 'https://source.unsplash.com/8xznAGy4HcY/800x400',
+    'media-type': 'img',
+    alt: 'Something else',
+    title: 'placeholder',
+    width: '800',
+    height: '400',
+  });
+    // editor &&
+    // if (editor && editor != undefined) {
+    //   editor.commands.insertImage();
+    // }
+  }
+
 
   //   <RichTextEditor.ControlsGroup>
   //   <Button onClick={() => editor?.commands.insertImage()}>Upload Image</Button>
@@ -251,7 +266,7 @@ function RichTextEditorBeefy({
 
       {/* <Group position='center'> */}
       <Button onClick={openModal}>Add Video</Button>
-      {/* <Button onClick={() => addImage()}>Add Image</Button> */}
+      <Button onClick={() => addImage()}>Add Image</Button>
       
       {/* <Button onClick={() => (editor as any).commands.customImage.insertImage()}> */}
       <Button onClick={() => editor?.commands.insertImage()}>
@@ -292,6 +307,7 @@ function RichTextEditorBeefy({
           // })}
         >
           <RichTextEditor.Toolbar sticky stickyOffset={60}>
+            <InsertImageControl />
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.Bold />
               <RichTextEditor.Italic />
