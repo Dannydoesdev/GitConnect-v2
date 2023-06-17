@@ -14,7 +14,7 @@ import { AuthContext } from '../../../context/AuthContext';
 
 export async function getStaticProps({ params }: any) {
   // console.log(params.id)
-  if (!params.repoid) return { props: { projects: null, textContent: null } };
+  if (!params.repoid) return { props: { projectData: null, textContent: null } };
 
   const projectData: any = await getSingleProjectById(params.repoid);
   // console.log(projectData[0].userId);
@@ -61,8 +61,19 @@ export default function UpdatePortfolioProject({ projectData, textContent }: any
   const router = useRouter();
   const { repoid, name, description, url, userId, newRepoParam } = router.query;
 
+  const [existingProject, setExistingProject] = useState<any>();
+
   const loggedInUserId = userData ? userData.userId : null;
-  const existingProject = projectData[0];
+  // const existingProject = projectData[0];
+
+  useEffect(() => {
+    if (!repoid || !projectData[0]) {
+      return;
+    }
+    setExistingProject(projectData[0]);
+
+    // const existingProject = projectData[0] || null;
+  }, [projectData, repoid, router])  
 
   if (router.isFallback || !projectData[0] || !userData.userId) {
     return <LoadingPage />;
@@ -79,35 +90,37 @@ export default function UpdatePortfolioProject({ projectData, textContent }: any
   //   }
   // }, [userData.userId, id, router]);
 
-  return (
-    <>
-      <Space h={70} />
-      {newRepoParam && userData.userName && JSON.parse(newRepoParam as string) ? (
-        <>
-          <EditPortfolioProject
-            repoName={name as string}
-            description={description as string}
-            url={url as string}
-            repoid={repoid as string}
-            userid={userId as string}
-            userName={userData.userName}
-          />
-        </>
-      ) : (
-        <>
-          {existingProject && loggedInUserId && (
+  if (projectData && existingProject) {
+    return (
+      <>
+        <Space h={70} />
+        {newRepoParam && userData.userName && JSON.parse(newRepoParam as string) ? (
+          <>
             <EditPortfolioProject
-              repoName={existingProject.name}
-              description={existingProject.description}
-              url={existingProject.url}
+              repoName={name as string}
+              description={description as string}
+              url={url as string}
               repoid={repoid as string}
-              userid={loggedInUserId as string}
-              textContent={textContent}
+              userid={userId as string}
               userName={userData.userName}
             />
-          )}
-        </>
-      )}
-    </>
-  );
+          </>
+        ) : (
+          <>
+            {existingProject && loggedInUserId && (
+              <EditPortfolioProject
+                repoName={existingProject.name}
+                description={existingProject.description}
+                url={existingProject.url}
+                repoid={repoid as string}
+                userid={loggedInUserId as string}
+                textContent={textContent}
+                userName={userData.userName}
+              />
+            )}
+          </>
+        )}
+      </>
+    );
+  }
 }
