@@ -64,6 +64,7 @@ export default function Profile({ projects, profilePanel }: any) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const { id, newRepoParam } = router.query;
+  // const [reloadProfile, setReloadProfile] = useState(false);
 
   if (router.isFallback) {
     return (
@@ -72,7 +73,20 @@ export default function Profile({ projects, profilePanel }: any) {
     );
   }
 
+  // function handleReloadProfile(bool: boolean) {
+  //   // setReloadProfile(true);
+  //   if (bool === true) {
+  //     setTimeout(() => {
+  //       router.reload()
+  //       // newRepoParam && JSON.parse(newRepoParam as string) ? router.reload() : null;
+  //     }, 2000);
+  //   }
+  // }
+
   useEffect(() => {
+
+    // handleReloadProfile(newRepoParam && JSON.parse(newRepoParam as string) ? true : false);
+    // setReloadProfile(newRepoParam && JSON.parse(newRepoParam as string) ? true : false);
   //   if (id && userData.userId === id) {
   //     setIsLoggedInUsersProfile(true);
   //   }
@@ -80,11 +94,13 @@ export default function Profile({ projects, profilePanel }: any) {
     // Set the profile data to the profile panel data if it exists, otherwise use the backup data
     // setGitHubProfileData(profilePanel ? profilePanel : backupData);
     // console.log('profilePanel', profilePanel);
+
     // TODO: SET NOTIFCATION THAT PAGE IS BEING REFRESHED
     if (newRepoParam && JSON.parse(newRepoParam as string)) {
       // FIXME: Couldn't resolve getting the new repo to show up on the page after adding it instantly - forcing a reload for now
-      setTimeout(() => {
-        router.reload();
+    setTimeout(() => {
+      router.reload()
+        // newRepoParam && JSON.parse(newRepoParam as string) ? router.reload() : null;
       }, 2000);
     }
 
