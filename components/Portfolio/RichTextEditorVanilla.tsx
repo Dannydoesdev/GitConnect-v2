@@ -168,7 +168,7 @@ function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
             <RichTextEditor.Strikethrough />
             <RichTextEditor.ClearFormatting />
             <RichTextEditor.Highlight />
-            <RichTextEditor.Code />
+            {/* <RichTextEditor.Code /> */}
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
