@@ -17,7 +17,7 @@ export default async function handler(
     // console.log('request received')
     // const { repo, owner }: ResponseData = req.query;
     // const { repo, owner }: RequestData = req.query;
-
+    // console.log(req.query)
     const repoReq = req.query.repo;
     const ownerReq = req.query.owner;
 
@@ -30,7 +30,7 @@ export default async function handler(
       const octokit = new Octokit();
       // const owner = "dannydoesdev"; // change this to your desired owner
       // const repo = "gitconnect"; // change this to your desired repo
-
+      // console.log(`GET /repos/${owner}/${repo}/readme`)
       // Get README.md file conten
       type GetReadmeResponse = Endpoints["GET /repos/{owner}/{repo}/readme"]["response"];
     
