@@ -17,8 +17,6 @@ import LoadingPage from '../../components/LoadingPage/LoadingPage';
 export async function getStaticProps({ params }: any) {
   const projectData: any = await getAllProjectDataFromProfile(params.id);
 
-
-  
   // FIXME: make better
   // TODO: use github profile name as slug and query based on router.query
   // let dataFromGithub;

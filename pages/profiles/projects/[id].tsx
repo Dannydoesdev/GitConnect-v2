@@ -1,30 +1,31 @@
-import axios from 'axios';
 import { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Button, Center, Chip, Group, Stack } from '@mantine/core';
+import axios from 'axios';
 import ProjectPageDynamicContent from '../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
-import { AuthContext } from '../../../context/AuthContext';
 import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
-import { starProject, unstarProject } from '../../../lib/stars';
-
+import { AuthContext } from '../../../context/AuthContext';
 import {
   getAllProjectIds,
   getProjectTextEditorContent,
   getSingleProjectById,
 } from '../../../lib/projects';
+import { starProject, unstarProject } from '../../../lib/stars';
 
 export async function getStaticProps({ params }: any) {
   // const sortedProjects = await getAllPublicProjectsAndSort();
   // console.log(params.id)
   if (!params.id) return { props: { projects: null, textContent: null } };
-  
+
   const projectData: any = await getSingleProjectById(params.id);
   // console.log(projectData[0].userId)
 
-  let textEditorContent
-  if (!projectData || !projectData[0] || !projectData[0].userId) { textEditorContent = null } else {
+  let textEditorContent;
+  if (!projectData || !projectData[0] || !projectData[0].userId) {
+    textEditorContent = null;
+  } else {
     textEditorContent = await getProjectTextEditorContent(
       projectData[0].userId,
       params.id
@@ -39,19 +40,17 @@ export async function getStaticProps({ params }: any) {
     },
     revalidate: 5,
   };
-};
+}
 
 export async function getStaticPaths() {
   const projectIds = await getAllProjectIds();
 
   // projectIds.map((id: any) => console.log(id.id));
   type ProjectId = { id?: string };
-  const paths = projectIds.map((id: ProjectId) => (
-    {
-      params: { id: id.id },
-    }
-  ));
-    // console.log(paths)
+  const paths = projectIds.map((id: ProjectId) => ({
+    params: { id: id.id },
+  }));
+  // console.log(paths)
   return {
     paths,
     fallback: true,
@@ -63,59 +62,13 @@ export default function Project({ projects, textContent }: any) {
   const router = useRouter();
   const { id } = router.query;
 
-  // const [projects, setProjects] = useState<any>(null);
-  // const [firebaseData, setFirebaseData] = useState('');
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
   const [repoOwner, setRepoOwner] = useState<string>('');
   const [starCount, setStarCount] = useState(0);
 
-  // console.log('project page', projects);
-  // console.log('project page', projects);
-  // console.log(projects[0].userId)
-// console.log(project)
-  // console.log(textContent)
-
-  // const URL = `/api/profiles/projects/${id}`;
-  // axios.get(URL).then((response) => {
-  //   setProjects(response.data);
-
-  // console.log(response.data);
-  // Check user is authenticated
-  // if (response.data && response.data.length > 0 && userData) {
-  // Check whether user has starred this project already
-  // setUserHasStarred(
-  //   response.data[0].stars
-  //     ? response.data[0].stars.includes(userData.userId)
-  //     : false
-  // );
-  // Set star count to allow live dynamic update of count
-  //   setStarCount(
-  //     response.data[0].stars ? response.data[0].stars.length : 0
-  //   );
-  // }
-
-  //      // Now that we have the projects data, increment the view count
-  //     // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
-  //     // Should be refactored to only run for unique users (currently increments on every refresh)
-
-  //     if (response.data && response.data.length > 0) {
-  //       const userId = response.data[0].userId;
-  //       const repoId = id;
-
-  //       setRepoOwner(userId);
-
-  //       axios.post('/api/projects/incrementView', {
-  //         userId: userId,
-  //         repoId: repoId,
-  //       });
-  //     }
-  //   });
-  // }, [id, userData]);
-
-  // Now that we have the projects data, increment the view count
   // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
-  // Should be refactored to only run for unique users (currently increments on every refresh)
-// console.log(textContent)
+  // Could be refactored to only run for unique users (currently increments on every refresh)
+
   useEffect(() => {
     if (!id) {
       return;
@@ -123,34 +76,55 @@ export default function Project({ projects, textContent }: any) {
     const project = projects[0] || null;
 
     if (project && projects.length > 0 && userData) {
-      setUserHasStarred(
-        project.stars ? project.stars.includes(userData.userId) : false
-      );
+      setUserHasStarred(project.stars ? project.stars.includes(userData.userId) : false);
 
       // Set star count to allow live dynamic update of count
       setStarCount(project.stars ? project.stars.length : 0);
     }
 
-    // console.log(projects.length)
-    if (project && projects.length > 0) {
+    // Don't increment view count if user is owner, unless project has no views
+    if (
+      project &&
+      projects.length > 0 &&
+      projects[0].userId &&
+      userData &&
+      userData.userId &&
+      id
+    ) {
       const userId = project.userId;
-      const repoId = id;
-
+      const repoId = id as string;
       setRepoOwner(userId);
 
-      axios.post('/api/projects/incrementView', {
-        userId: userId,
-        repoId: repoId,
-      });
+      handleIncrementView(userId, repoId);
     }
-  }, [id, userData]);
+  }, [id, userData, projects]);
+
+  const handleIncrementView = async (userId: string, repoId: string) => {
+    if (
+      !userData ||
+      !userData.userId ||
+      !projects[0].userId ||
+      !projects ||
+      projects.length === 0
+    )
+      return;
+    
+    const project = projects[0] || null;
+    
+    if (projects[0].userId == userData.userId && project.views > 1) return;
+
+    await axios.post('/api/projects/incrementView', {
+      userId: userId,
+      repoId: repoId,
+    });
+  };
 
   const handleStarClick = async () => {
     if (!userData || !projects || projects.length === 0) return;
 
     const userId = userData.userId;
     // const ownerId = repoOwner;
-    const ownerId = projects[0].userId
+    const ownerId = projects[0].userId;
     const repoId = projects[0].id;
 
     if (userHasStarred) {
@@ -234,7 +208,7 @@ export default function Project({ projects, textContent }: any) {
         <ProjectPageDynamicHero props={projects} />
 
         {projects[0].userId === userData.userId && (
-          <Group position='center'>
+          <Group position="center">
             <Stack>
               {projects[0].hidden === true && (
                 <>
@@ -242,8 +216,8 @@ export default function Project({ projects, textContent }: any) {
                     mt={30}
                     mb={-10}
                     checked={false}
-                    variant='filled'
-                    size='md'
+                    variant="filled"
+                    size="md"
                     styles={(theme) => ({
                       root: {
                         pointerEvents: 'none',
@@ -276,12 +250,12 @@ export default function Project({ projects, textContent }: any) {
                 legacyBehavior
               >
                 <Button
-                  component='a'
-                  variant='filled'
-                  size='lg'
-                  radius='md'
+                  component="a"
+                  variant="filled"
+                  size="lg"
+                  radius="md"
                   // mt={10}
-                  className='mx-auto'
+                  className="mx-auto"
                   styles={(theme) => ({
                     root: {
                       border:
@@ -318,13 +292,13 @@ export default function Project({ projects, textContent }: any) {
           //  If user is logged in - show star buttons
           <Center>
             <Button
-              component='a'
+              component="a"
               onClick={handleStarClick}
-              variant='filled'
-              size='lg'
-              radius='md'
+              variant="filled"
+              size="lg"
+              radius="md"
               mt={40}
-              className='mx-auto'
+              className="mx-auto"
               sx={(theme) => ({
                 // subscribe to color scheme changes
                 backgroundColor:

@@ -17,10 +17,18 @@ import {
 import { createStyles } from '@mantine/core';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../context/AuthContext';
-import BlockNote from './EditorExperiments/BlockNote';
 import RichTextEditorBeefy from './RichTextEditorBeefy';
 import RichTextEditorVanilla from './RichTextEditorVanilla';
-import TipTapImageTest from './TipTapImageTest';
+
+type EditPortfolioProps = {
+  name: string;
+  description: string;
+  url: string;
+  repoid: string;
+  userid: string;
+  textContent?: string;
+};
+
 
 const useStyles = createStyles((theme) => ({
   icon: {
@@ -28,7 +36,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function EditPortfolioProject({ name, description, url }: any) {
+export default function EditPortfolioProject({ name, description, url, repoid, userid, textContent }: EditPortfolioProps) {
   // const { name, description, url } = project[0];
 
   // useEffect(() => {
@@ -39,7 +47,7 @@ export default function EditPortfolioProject({ name, description, url }: any) {
   // const theme =
   const { classes, theme } = useStyles();
   const [text, setText] = useState('');
-
+console.log('userid' + userid)
   return (
     <>
       <Container size="xl">
@@ -63,11 +71,11 @@ export default function EditPortfolioProject({ name, description, url }: any) {
           }}
         >
           <Title>Editing {name}</Title>
-          <Text>{description}</Text>
-          <Text>{url}</Text>
+          {/* <Text>{description}</Text>
+          <Text>{url}</Text> */}
           {/* <RichTextEditorBeefy withImage={true} /> */}
           {/* <TipTapImageTest withImage={true} text={text} setText={setText}/> */}
-          <RichTextEditorVanilla />
+          <RichTextEditorVanilla existingContent={textContent} userId={userid} repoId={repoid} />
           {/* <BlockNote /> */}
         </Group>
       </Container>
