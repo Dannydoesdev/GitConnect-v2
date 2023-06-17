@@ -43,6 +43,7 @@ function InsertCodeControls() {
 type RichTextEditorVanillaProps = {
   repoId?: string;
   userId?: string;
+  readme?: string;
   existingContent?: string | null | undefined;
 };
 
@@ -56,12 +57,20 @@ function RichTextEditorVanilla({
   existingContent,
   repoId,
   userId,
+  readme,
 }: RichTextEditorVanillaProps) {
   const [editorContent, setEditorContent] = useState('');
   const [content, setContent] = useState(existingContent);
-  const [readme, setReadme] = useState('');
+  const [newReadme, setNewReadme] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
+
+  useEffect(() => {
+    if (readme && readme !== newReadme) {
+      setNewReadme(readme);
+      editor?.commands.setContent(readme);
+    }
+  }, [readme]);
 
   function InsertImageControl() {
     const { editor } = useRichTextEditorContext();

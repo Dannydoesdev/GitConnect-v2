@@ -17,7 +17,7 @@ export async function getStaticProps({ params }: any) {
   if (!params.repoid) return { props: { projects: null, textContent: null } };
 
   const projectData: any = await getSingleProjectById(params.repoid);
-  console.log(projectData[0].userId);
+  // console.log(projectData[0].userId);
 
   let textEditorContent;
   if (!projectData || !projectData[0] || !projectData[0].userId) {
@@ -62,117 +62,48 @@ export default function UpdatePortfolioProject({ projectData, textContent }: any
   const { repoid, name, description, url, userId, newRepoParam } = router.query;
 
   const loggedInUserId = userData ? userData.userId : null;
-  console.log('loggedInUserId', loggedInUserId);
-  // const [existingProject, setExistingProject] = useState<any>();
-  // const [existingEditorContent, setExistingEditorContent] = useState<any>();
-
   const existingProject = projectData[0];
-  // const [initialEditorContent, setInitialEditorContent] = useState<any>();
 
-  // console.log(projectData);
-  // console.log(textContent);
-  if (router.isFallback) {
+  if (router.isFallback || !projectData[0] || !userData.userId) {
     return <LoadingPage />;
   }
 
-  // TODO - move to the server
-  // useEffect(() => {
-  //   const getFirebaseData = async () => {
-  //     const docRef = doc(db, `users/${userId}/repos/${repoid}/projectData/mainContent`);
-  //     const docSnap = await getDoc(docRef);
-
-  //     if (docSnap.exists()) {
-  //       const mainContent = docSnap.data();
-  //       const htmlOutput = mainContent.htmlOutput;
-  //       console.log('htmlOutput', htmlOutput);
-  //       // handleSetTipTap(htmlOutput);
-  //       if (htmlOutput.length > 0) {
-  //         setInitialEditorContent(htmlOutput);
-  //       }
-  //     }
-  //   };
-
-  //   getFirebaseData();
-  // }, [userId, repoid]);
-
-  // function handleImportReadme() {
-  //   const readmeUrl = `/api/profiles/projects/edit/readme`;
-  //   axios.get(readmeUrl, {
-  //     params: {
-  //       owner: userData.userName,
-  //       repo: repoName,
-  //     }
-  //   })
-  //     .then((response) => {
-  //       const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
-  //       console.log(sanitizedHTML)
-  //       setReadme(sanitizedHTML)
-  //       setContent(sanitizedHTML)
-  //       setEditorContent(sanitizedHTML)
-  //       editor?.commands.setContent(sanitizedHTML);
-  //     })
-  // }
-
-  // useEffect(() => {
-  //   if (userId != userData.userId) {
-
-  //   }
-  // }, [userData.userId, id, router]);
-
-  // const { data, error } = useSWR(`/api/profiles/projects/${repoid}`, fetcher);
-
-  // useEffect(() => {
-  //   if (error) {
-  //     console.log(error);
-  //   }
-  //   if (!data) return;
-  //   setExistingProject(data[0]);
-  // }, [data, error]);
-
-  // console.log(data[0])
-  // const existingProject = data[0];
-
   //TODO - check if the user is logged in and if the user is the owner of the repo
   //TODO - if the user is not logged in, redirect to login page
-
   // useEffect(() => {
-  //   // TODO - implement Vercel SWR on front end
-  //   if (!repoid) {
-  //     return;
+  // if (!loggedInUserId && !existingProject.userId) {
+  //  return
+  // }
+  //   if (loggedInUserId != existingProject.userId) {
+  //     return <LoadingPage />
   //   }
-  //   const URL = `/api/profiles/projects/${repoid}`;
-
-  //   axios.get(URL).then((response) => {
-  //     // console.log(response.data[0])
-  //     setExistingProject(response.data[0]);
-  //   });
-  // }, [router, repoid]);
-
-  // if (!data) return <LoadingPage />;
+  // }, [userData.userId, id, router]);
 
   return (
     <>
       <Space h={70} />
-      {newRepoParam && JSON.parse(newRepoParam as string) ? (
+      {newRepoParam && userData.userName && JSON.parse(newRepoParam as string) ? (
         <>
           <EditPortfolioProject
-            name={name as string}
+            repoName={name as string}
             description={description as string}
             url={url as string}
             repoid={repoid as string}
             userid={userId as string}
+            userName={userData.userName}
           />
         </>
       ) : (
         <>
           {existingProject && loggedInUserId && (
             <EditPortfolioProject
-              name={existingProject.name}
+              repoName={existingProject.name}
               description={existingProject.description}
               url={existingProject.url}
               repoid={repoid as string}
               userid={loggedInUserId as string}
               textContent={textContent}
+              userName={userData.userName}
             />
           )}
         </>
