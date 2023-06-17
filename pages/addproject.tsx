@@ -198,7 +198,7 @@ const GetRepos = () => {
           src={userData.userPhotoLink}
         />
         <Text size='lg' weight='bolder' className='mx-auto'>
-          {userName}'s public repos
+          {userName}`&apos;`'s public repos
         </Text>
         <Text size='lg' className='mx-auto'></Text>
         <Blockquote
