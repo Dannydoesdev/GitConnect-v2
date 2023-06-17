@@ -15,20 +15,24 @@ import {
 } from '@mantine/core';
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
+import { useRichTextEditorContext } from '@mantine/tiptap';
+import axios from 'axios';
+import DOMPurify from 'dompurify';
+import useSWR from 'swr';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../context/AuthContext';
 import RichTextEditorBeefy from './RichTextEditorBeefy';
 import RichTextEditorVanilla from './RichTextEditorVanilla';
 
 type EditPortfolioProps = {
-  name: string;
+  repoName: string;
   description: string;
   url: string;
   repoid: string;
   userid: string;
   textContent?: string;
+  userName?: string;
 };
-
 
 const useStyles = createStyles((theme) => ({
   icon: {
@@ -36,22 +40,93 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function EditPortfolioProject({ name, description, url, repoid, userid, textContent }: EditPortfolioProps) {
-  // const { name, description, url } = project[0];
+// const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+async function fetcher(params: any) {
+  const [url, args] = params;
+  const res = await axios.get(url, { params: args });
+  // console.log(res.data)
+  return res.data;
+}
+
+export default function EditPortfolioProject({
+  repoName,
+  description,
+  url,
+  repoid,
+  userid,
+  textContent,
+  userName,
+}: EditPortfolioProps) {
+  const [shouldFetch, setShouldFetch] = useState(false);
+  const [readme, setReadme] = useState('');
+
+  const { classes, theme } = useStyles();
+
+  //TODO: Figure out how to get the editor from child component
+  // const { editor } = useRichTextEditorContext();
 
   // useEffect(() => {
-  //   if (userId === userData.userId) {
-  //     setIsLoggedInUsersProfile(true);
+  //   if (editor) {
+  //     console.log(editor.getHTML());
   //   }
-  // }, [userData.userId, id, router]);
-  // const theme =
-  const { classes, theme } = useStyles();
-  const [text, setText] = useState('');
-console.log('userid' + userid)
+  // }, [editor]);
+
+  const params = {
+    owner: userName,
+    // repo: repoName,
+    //TODO change to repoName - currently hardcoded for as GC2 is private
+    repo: 'gitconnect',
+  };
+
+  // TODO: Figure out how to set SWR call to button click trigger
+
+  const { data } = useSWR(
+    shouldFetch ? ['/api/profiles/projects/edit/readme', params] : null,
+    fetcher
+  );
+
+  function handleImportReadmeSWR() {
+    setShouldFetch(true);
+    // console.log(data);
+    setTimeout(() => {
+      setShouldFetch(false);
+    }, 2000);
+  }
+
+  useEffect(() => {
+    if (data) {
+      // console.log(data);
+      const sanitizedHTML = DOMPurify.sanitize(data, { ADD_ATTR: ['target'] });
+      if (data !== sanitizedHTML) {
+        setReadme(sanitizedHTML);
+      }
+    }
+  }, [data]);
+
+  // function handleImportReadme() {
+  //   const readmeUrl = `/api/profiles/projects/edit/readme`;
+  //   axios
+  //     .get(readmeUrl, {
+  //       params: {
+  //         owner: userName,
+  //         // repo: repoName,
+  //         repo: 'gitconnect',
+  //       },
+  //     })
+  //     .then((response) => {
+  //       const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
+  //       // console.log(sanitizedHTML);
+  //       if (readme !== sanitizedHTML) {
+  //         setReadme(sanitizedHTML);
+  //       }
+  //     });
+  // }
+
   return (
     <>
       <Container size="xl">
         <Group
+          mt={40}
           w={{
             xs: 'calc(100% - 180px)',
             // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
@@ -70,13 +145,16 @@ console.log('userid' + userid)
             base: 'calc(100% - 120px)',
           }}
         >
-          <Title>Editing {name}</Title>
+          <Title mx="auto">Editing {repoName}</Title>
           {/* <Text>{description}</Text>
           <Text>{url}</Text> */}
           {/* <RichTextEditorBeefy withImage={true} /> */}
-          {/* <TipTapImageTest withImage={true} text={text} setText={setText}/> */}
-          <RichTextEditorVanilla existingContent={textContent} userId={userid} repoId={repoid} />
-          {/* <BlockNote /> */}
+          <RichTextEditorVanilla
+            existingContent={textContent}
+            userId={userid}
+            repoId={repoid}
+            readme={readme}
+          />
         </Group>
       </Container>
       <Aside
@@ -104,11 +182,48 @@ console.log('userid' + userid)
         }}
       >
         {/* First section with normal height (depends on section content) */}
-        <Aside.Section mt={85}>BUTTONS</Aside.Section>
+        <Aside.Section mx="auto" mt={85}>
+          More Buttons
+        </Aside.Section>
 
         {/* Grow section will take all available space that is not taken by first and last sections */}
-        <Aside.Section grow={true}>FIELDS AND BUTTONS</Aside.Section>
-
+        <Aside.Section grow={true}>
+          {/* FIELDS AND BUTTONS */}
+          <Flex direction="column" align="center">
+            <Button
+              component="a"
+              // onClick={handleImportReadme}
+              onClick={handleImportReadmeSWR}
+              radius="md"
+              w={{
+                base: '95%',
+                md: '80%',
+                lg: '60%',
+                sm: '90%',
+              }}
+              mt={40}
+              className="mx-auto"
+              // onClick={handleSave}
+              styles={(theme) => ({
+                root: {
+                  backgroundColor: theme.colors.blue[8],
+                  // width: '40%',
+                  [theme.fn.smallerThan('sm')]: {
+                    // width: '70%',
+                  },
+                  '&:hover': {
+                    backgroundColor:
+                      theme.colorScheme === 'dark'
+                        ? theme.colors.green[9]
+                        : theme.colors.green[9],
+                  },
+                },
+              })}
+            >
+              Import Readme
+            </Button>
+          </Flex>
+        </Aside.Section>
         {/* Last section with normal height (depends on section content) */}
         <Aside.Section>
           <Flex direction="column" align="center">
