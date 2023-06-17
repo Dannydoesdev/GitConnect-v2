@@ -1,15 +1,20 @@
 import { useState, useEffect, useContext } from 'react';
 import { Button, Center, Container, Group } from '@mantine/core';
 import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
-import { IconPhoto, IconPhotoPlus } from '@tabler/icons-react';
+import { IconCode, IconPhoto, IconPhotoPlus, IconSourceCode } from '@tabler/icons-react';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import js from 'highlight.js/lib/languages/javascript';
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
-import { lowlight } from 'lowlight';
+import ts from 'highlight.js/lib/languages/typescript';
+import html from 'highlight.js/lib/languages/xml';
+// import { lowlight } from 'lowlight';
+import { lowlight } from 'lowlight/lib/core';
+import css from 'highlight.js/lib/languages/css';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
@@ -27,13 +32,69 @@ function InsertImageControl() {
   );
 }
 
+function InsertCodeLineControl() {
+  const { editor } = useRichTextEditorContext();
+  return (
+    <RichTextEditor.Control
+      // onClick={() => editor?.chain().focus().insertResizableImage().run()}
+      onClick={() => editor.chain().focus().toggleCode().run()}
+      aria-label="Code"
+      title="Code"
+    >
+      <IconCode stroke={1.5} size="1rem" />
+    </RichTextEditor.Control>
+  );
+}
+
+function InsertCodeBlockControl() {
+  const { editor } = useRichTextEditorContext();
+  return (
+    <RichTextEditor.Control
+      // onClick={() => editor?.chain().focus().insertResizableImage().run()}
+      onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+      aria-label="Code block"
+      title="Code block"
+    >
+      <IconSourceCode stroke={1.5} size="1rem" />
+    </RichTextEditor.Control>
+  );
+}
+
+function InsertCodeControls() {
+  const { editor } = useRichTextEditorContext();
+  return (
+    <RichTextEditor.ControlsGroup>
+      <RichTextEditor.Control
+        // onClick={() => editor?.chain().focus().insertResizableImage().run()}
+        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        aria-label="Code block"
+        title="Code block"
+      >
+        <IconSourceCode stroke={1.5} size="1rem" />
+      </RichTextEditor.Control>
+      <RichTextEditor.Control
+        // onClick={() => editor?.chain().focus().insertResizableImage().run()}
+        onClick={() => editor.chain().focus().toggleCode().run()}
+        aria-label="Code"
+        title="Code"
+      >
+        <IconCode stroke={1.5} size="1rem" />
+      </RichTextEditor.Control>
+    </RichTextEditor.ControlsGroup>
+  );
+}
+
 type RichTextEditorBeefyProps = {
   repoId?: string;
   userId?: string;
   existingContent?: string | null | undefined;
 };
 
-lowlight.registerLanguage('ts', tsLanguageSyntax);
+// lowlight.registerLanguage('ts', tsLanguageSyntax);
+lowlight.registerLanguage('html', html);
+lowlight.registerLanguage('css', css);
+lowlight.registerLanguage('js', js);
+lowlight.registerLanguage('ts', ts);
 
 function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
   const [editorContent, setEditorContent] = useState('');
@@ -55,6 +116,7 @@ function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
         },
       }),
       CustomResizableImage,
+      // Info here https://tiptap.dev/api/nodes/code-block-lowlight
       CodeBlockLowlight.configure({
         HTMLAttributes: {
           class: 'lowlight',
@@ -73,7 +135,7 @@ function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
     content,
     editorProps: {
       attributes: {
-        class: `${notitapEditorClass} focus:outline-none w-full`,
+        class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
         spellcheck: 'false',
         suppressContentEditableWarning: 'true',
       },
@@ -96,6 +158,9 @@ function RichTextEditorVanilla({ existingContent }: RichTextEditorBeefyProps) {
       <RichTextEditor mt={40} editor={editor} w="100%">
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <InsertImageControl />
+          <InsertCodeControls />
+          {/* <InsertCodeLineControl />
+          <InsertCodeBlockControl /> */}
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
             <RichTextEditor.Italic />
