@@ -6,7 +6,20 @@
     content: attr(data-placeholder);
   }
 
-  p {
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  blockquote,
+  ul,
+  ol,
+  // pre,
+  hr,
+  table,
+  .media-node-view {
     @apply text-slate-700 dark:text-white;
   }
   .media-node-view {
