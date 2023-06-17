@@ -1,11 +1,11 @@
 // .ProseMirror {
 .project-edit-tiptap {
-  p.is-empty::before {
-    // @apply text-slate-400 float-left h-0 pointer-events-none absolute ml-[2px];
+  // p.is-empty::before {
+  //   // @apply text-slate-400 float-left h-0 pointer-events-none absolute ml-[2px];
 
-    @apply float-left text-slate-400 dark:text-white h-0 pointer-events-none absolute ml-[2px];
-    content: attr(data-placeholder);
-  }
+  //   @apply float-left text-slate-400 dark:text-white h-0 pointer-events-none absolute ml-[2px];
+  //   content: attr(data-placeholder);
+  // }
 
   p,
   h1,
