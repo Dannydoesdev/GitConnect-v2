@@ -15,7 +15,14 @@ import Image from '@tiptap/extension-image';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { lowlight } from 'lowlight';
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
-import { Button, Center, Container, Group } from '@mantine/core';
+import {
+  Button,
+  Center,
+  Container,
+  Group,
+  Modal,
+  TextInput,
+} from '@mantine/core';
 import {
   collection,
   doc,
@@ -27,6 +34,8 @@ import {
   where,
 } from 'firebase/firestore';
 import { db } from '../../firebase/clientApp';
+import { ResizableMedia } from './extensions/resizableMedia';
+import { Video } from './extensions';
 
 type RichTextEditorBeefyProps = {
   repoId?: string;
@@ -40,6 +49,12 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
   const [editorContent, setEditorContent] = useState('');
   const [content, setContent] = useState(existingContent);
   const [readme, setReadme] = useState('');
+
+  const [isVideoInputModalOpen, setIsVideoInputModalOpen] = useState(false);
+
+  const [videoUrl, setVideoUrl] = useState(
+    'https://user-images.githubusercontent.com/45892659/168123851-5fb7a3c3-d83f-4659-845f-3f96d4a2236c.mov'
+  );
 
   const editor = useEditor({
     extensions: [
@@ -60,6 +75,31 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
       }),
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      // Resizable Media
+      Video,
+      ResizableMedia,
+      //   .configure({
+      //   uploadFn: async (image) => {
+      //     const fd = new FormData();
+
+      //     fd.append('file', image);
+
+      //     try {
+      //       const response = await fetch('https://api.imgur.com/3/image', {
+      //         method: 'POST',
+      //         body: fd,
+      //       });
+
+      //       console.log(await response.json());
+      //     } catch {
+      //       // do your thing
+      //     } finally {
+      //       // do your thing
+      //     }
+
+      //     return 'https://source.unsplash.com/8xznAGy4HcY/800x400';
+      //   },
+      // }),
     ],
     content,
     onUpdate({ editor }) {
@@ -71,6 +111,22 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
   useEffect(() => {
     existingContent && editor?.commands.setContent(existingContent);
   }, [existingContent, editor]);
+
+  const addImage = () =>
+  editor?.commands.setMedia({
+    src: "https://source.unsplash.com/8xznAGy4HcY/800x400",
+    "media-type": "img",
+    alt: "Something else",
+    title: "placeholder",
+    width: "800",
+    height: "400",
+  });
+
+  const addVideo = () => editor?.commands.setVideo(videoUrl) && closeModal();
+
+  const openModal = () => setIsVideoInputModalOpen(true);
+
+  const closeModal = () => setIsVideoInputModalOpen(false);
 
   const handleSave = async () => {
     // Save the edited content back to Firebase
@@ -85,66 +141,90 @@ function RichTextEditorBeefy({ existingContent }: RichTextEditorBeefyProps) {
   return (
     <Group w='100%'>
       {/* <Container> */}
-      
-        {/* <Group position='center'> */}
-          <RichTextEditor
-            mt={40}
-            editor={editor}
-            w='100%'
-            // mx={200}
-            // styles={(theme) => ({
-            //   content: {
-            //     color: editor?.isEditable ? 'auto' : '#999',
-            //     minHeight: 500,
 
-            //   },
-            //   root: {
-            //     cursor: editor?.isEditable ? 'auto' : 'not-allowed',
-            //   },
-            // })}
-          >
-            <RichTextEditor.Toolbar sticky stickyOffset={60}>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-                <RichTextEditor.Highlight />
-                <RichTextEditor.Code />
-              </RichTextEditor.ControlsGroup>
+      {/* <Group position='center'> */}
+      <Button onClick={openModal}>Add Video</Button>
+      <Button onClick={() => addImage()}>Add Image</Button>
+      <RichTextEditor
+        mt={40}
+        editor={editor}
+        w='100%'
+        // mx={200}
+        // styles={(theme) => ({
+        //   content: {
+        //     color: editor?.isEditable ? 'auto' : '#999',
+        //     minHeight: 500,
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
+        //   },
+        //   root: {
+        //     cursor: editor?.isEditable ? 'auto' : 'not-allowed',
+        //   },
+        // })}
+      >
+        <RichTextEditor.Toolbar sticky stickyOffset={60}>
+          <RichTextEditor.ControlsGroup>
+            <RichTextEditor.Bold />
+            <RichTextEditor.Italic />
+            <RichTextEditor.Underline />
+            <RichTextEditor.Strikethrough />
+            <RichTextEditor.ClearFormatting />
+            <RichTextEditor.Highlight />
+            <RichTextEditor.Code />
+          </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-              </RichTextEditor.ControlsGroup>
+          <RichTextEditor.ControlsGroup>
+            <RichTextEditor.H1 />
+            <RichTextEditor.H2 />
+            <RichTextEditor.H3 />
+            <RichTextEditor.H4 />
+          </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
+          <RichTextEditor.ControlsGroup>
+            <RichTextEditor.Blockquote />
+            <RichTextEditor.Hr />
+            <RichTextEditor.BulletList />
+            <RichTextEditor.OrderedList />
+          </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.AlignLeft />
-                <RichTextEditor.AlignCenter />
-                <RichTextEditor.AlignJustify />
-                <RichTextEditor.AlignRight />
-              </RichTextEditor.ControlsGroup>
-            </RichTextEditor.Toolbar>
+          <RichTextEditor.ControlsGroup>
+            <RichTextEditor.Link />
+            <RichTextEditor.Unlink />
+          </RichTextEditor.ControlsGroup>
 
-            <RichTextEditor.Content />
-          </RichTextEditor>
-        {/* </Group> */}
+          <RichTextEditor.ControlsGroup>
+            <RichTextEditor.AlignLeft />
+            <RichTextEditor.AlignCenter />
+            <RichTextEditor.AlignJustify />
+            <RichTextEditor.AlignRight />
+          </RichTextEditor.ControlsGroup>
+        </RichTextEditor.Toolbar>
+
+        <RichTextEditor.Content />
+      </RichTextEditor>
+      {/* </Group> */}
       {/* </Container> */}
+      <Modal
+        size='auto'
+        opened={isVideoInputModalOpen}
+        onClose={closeModal}
+        title='Add Vieo Url'
+      >
+        {/* Modal content */}
+        <Group noWrap mt='md'>
+          <TextInput
+            label='Add Video Url'
+            placeholder='Enter Video Url'
+            value={videoUrl}
+            onInput={(e) => setVideoUrl((e.target as HTMLInputElement).value)}
+          />
+        </Group>
+        <Group position='center'>
+          <Button variant='outline' onClick={closeModal}>
+            Close
+          </Button>
+          <Button onClick={addVideo}>Add Video</Button>
+        </Group>
+      </Modal>
     </Group>
   );
 }
