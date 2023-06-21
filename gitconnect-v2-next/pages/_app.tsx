@@ -13,7 +13,14 @@ import {
 import { AppContainer } from '../components/AppContainer';
 import { mantineCache } from '../mantine/cache';
 import { ThemeProvider } from 'next-themes';
+import '../styles/globals.css'
 // import { NotificationsProvider } from '@mantine/notifications';
+import "../styles/tiptap.scss";
+
+// MAY CAUSE ISSUES - just for icons for notitap
+// import '@unocss/reset/tailwind.css'
+// import 'uno.css'
+
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
@@ -65,7 +72,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         <link rel='icon' href='/img/favicon/gclogo.png' />
       </Head>
 
-      {/* <ThemeProvider attribute='class'> */}
+      <ThemeProvider attribute='class'>
       <ColorSchemeProvider
         colorScheme={colorScheme}
         toggleColorScheme={toggleColorScheme}
@@ -88,7 +95,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           {/* </NotificationsProvider> */}
         </MantineProvider>
       </ColorSchemeProvider>
-      {/* </ThemeProvider> */}
+      </ThemeProvider>
     </>
   );
 }
