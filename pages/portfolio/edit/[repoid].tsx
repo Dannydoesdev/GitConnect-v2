@@ -73,10 +73,10 @@ export default function UpdatePortfolioProject({ projectData, textContent }: any
     setExistingProject(projectData[0]);
 
     // const existingProject = projectData[0] || null;
-  }, [projectData, repoid, router])  
+  }, [projectData, repoid, router]);
 
   if (router.isFallback || !projectData[0] || !userData.userId) {
-    return <LoadingPage />;
+    // return <LoadingPage />;
   }
 
   //TODO - check if the user is logged in and if the user is the owner of the repo
