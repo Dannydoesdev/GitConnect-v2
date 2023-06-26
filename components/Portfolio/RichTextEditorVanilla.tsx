@@ -14,6 +14,7 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
+import { DBlock } from './extensions/dBlock';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
@@ -40,11 +41,37 @@ function InsertCodeControls() {
   );
 }
 
+// function InsertImageControlNew(userId: any, repoId: any) {
+//   const { editor } = useRichTextEditorContext();
+//   // if (!userId || !repoId) {
+//   //   return null;
+//   // }
+//   return (
+//     <RichTextEditor.Control
+//       onClick={() =>
+//         editor
+//           ?.chain()
+//           .focus()
+//           .insertResizableImage({
+//             userId: userId,
+//             repoId: repoId,
+//           })
+//           .run()
+//       }
+//       aria-label="Insert an image"
+//       title="Insert an image"
+//     >
+//       <IconPhotoPlus stroke={1.5} size="1rem" />
+//     </RichTextEditor.Control>
+//   );
+// }
+
 type RichTextEditorVanillaProps = {
   repoId?: string;
   userId?: string;
   readme?: string;
   existingContent?: string | null | undefined;
+  onUpdateEditor?: (content: string) => void;
 };
 
 // lowlight.registerLanguage('ts', tsLanguageSyntax);
@@ -58,6 +85,7 @@ function RichTextEditorVanilla({
   repoId,
   userId,
   readme,
+  onUpdateEditor,
 }: RichTextEditorVanillaProps) {
   const [editorContent, setEditorContent] = useState('');
   const [content, setContent] = useState(existingContent);
@@ -124,6 +152,7 @@ function RichTextEditorVanilla({
         lowlight,
       }),
       Underline,
+      DBlock,
       Link.configure({
         HTMLAttributes: {
           target: '_blank',
@@ -143,6 +172,7 @@ function RichTextEditorVanilla({
     onUpdate({ editor }) {
       // Update state every time the editor content changes
       setEditorContent(editor.getHTML());
+      onUpdateEditor?.(editor.getHTML());
     },
   });
 
@@ -158,6 +188,7 @@ function RichTextEditorVanilla({
       <RichTextEditor mt={40} editor={editor} w="100%">
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <InsertImageControl />
+          {/* <InsertImageControlNew userId={userId as string} repoId={repoId as string} /> */}
 
           <InsertCodeControls />
 
