@@ -26,7 +26,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { db } from '../../../firebase/clientApp';
+import { db } from '../../../../firebase/clientApp';
 
 type RichTextEditorBeefyProps = {
   repoId?: string;
