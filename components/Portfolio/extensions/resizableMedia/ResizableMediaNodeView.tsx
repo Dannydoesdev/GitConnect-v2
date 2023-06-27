@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /* eslint-disable jsx-a11y/media-has-caption */
-
-import { useEffect, useRef, useState } from "react";
-import { NodeViewWrapper, NodeViewProps } from "@tiptap/react";
-
-import { resizableMediaActions } from "./resizableMediaMenuUtil";
+import { useEffect, useRef, useState } from 'react';
+import { ActionIcon, ThemeIcon } from '@mantine/core';
 import {
   IconAlignLeft,
   IconAlignCenter,
   IconAlignRight,
   IconTrash,
 } from '@tabler/icons-react';
-import { ActionIcon } from "@mantine/core";
+import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
+import { resizableMediaActions } from './resizableMediaMenuUtil';
 
 // import "./styles.scss";
 
@@ -25,10 +25,10 @@ export const ResizableMediaNodeView = ({
   updateAttributes,
   deleteNode,
 }: NodeViewProps) => {
-  const [mediaType, setMediaType] = useState<"img" | "video">();
+  const [mediaType, setMediaType] = useState<'img' | 'video'>();
 
   useEffect(() => {
-    setMediaType(node.attrs["media-type"]);
+    setMediaType(node.attrs['media-type']);
   }, [node.attrs]);
 
   const [aspectRatio, setAspectRatio] = useState(0);
@@ -39,9 +39,7 @@ export const ResizableMediaNodeView = ({
     Record<string, boolean>
   >({});
 
-  const resizableImgRef = useRef<HTMLImageElement | HTMLVideoElement | null>(
-    null
-  );
+  const resizableImgRef = useRef<HTMLImageElement | HTMLVideoElement | null>(null);
 
   const calculateMediaActionActiveStates = () => {
     const activeStates: Record<string, boolean> = {};
@@ -59,7 +57,7 @@ export const ResizableMediaNodeView = ({
 
   const mediaSetupOnLoad = () => {
     // ! TODO: move this to extension storage
-    const proseMirrorContainerDiv = document.querySelector(".ProseMirror");
+    const proseMirrorContainerDiv = document.querySelector('.ProseMirror');
 
     if (proseMirrorContainerDiv)
       setProseMirrorContainerWidth(proseMirrorContainerDiv?.clientWidth);
@@ -67,16 +65,16 @@ export const ResizableMediaNodeView = ({
     // When the media has loaded
     if (!resizableImgRef.current) return;
 
-    if (mediaType === "video") {
+    if (mediaType === 'video') {
       const video = resizableImgRef.current as HTMLVideoElement;
 
-      video.addEventListener("loadeddata", function () {
+      video.addEventListener('loadeddata', function () {
         // Aspect Ratio from its original size
         setAspectRatio(video.videoWidth / video.videoHeight);
 
         // for the first time when video is added with custom width and height
         // and we have to adjust the video height according to it's width
-        onHorizontalResize("left", 0);
+        onHorizontalResize('left', 0);
       });
     } else {
       resizableImgRef.current.onload = () => {
@@ -99,8 +97,7 @@ export const ResizableMediaNodeView = ({
     mediaSetupOnLoad();
   });
 
-  const [isHorizontalResizeActive, setIsHorizontalResizeActive] =
-    useState(false);
+  const [isHorizontalResizeActive, setIsHorizontalResizeActive] = useState(false);
 
   interface WidthAndHeight {
     width: number;
@@ -119,8 +116,8 @@ export const ResizableMediaNodeView = ({
     lastClientX = e.clientX;
 
     setTimeout(() => {
-      document.addEventListener("mousemove", documentHorizontalMouseMove);
-      document.addEventListener("mouseup", stopHorizontalResize);
+      document.addEventListener('mousemove', documentHorizontalMouseMove);
+      document.addEventListener('mouseup', stopHorizontalResize);
     });
   };
 
@@ -128,16 +125,13 @@ export const ResizableMediaNodeView = ({
     setIsHorizontalResizeActive(false);
     lastClientX = -1;
 
-    document.removeEventListener("mousemove", documentHorizontalMouseMove);
-    document.removeEventListener("mouseup", stopHorizontalResize);
+    document.removeEventListener('mousemove', documentHorizontalMouseMove);
+    document.removeEventListener('mouseup', stopHorizontalResize);
   };
 
-  const onHorizontalResize = (
-    directionOfMouseMove: "right" | "left",
-    diff: number
-  ) => {
+  const onHorizontalResize = (directionOfMouseMove: 'right' | 'left', diff: number) => {
     if (!resizableImgRef.current) {
-      console.error("Media ref is undefined|null", {
+      console.error('Media ref is undefined|null', {
         resizableImg: resizableImgRef.current,
       });
       return;
@@ -153,7 +147,7 @@ export const ResizableMediaNodeView = ({
       height: -1,
     };
 
-    if (directionOfMouseMove === "left") {
+    if (directionOfMouseMove === 'left') {
       newMediaDimensions.width = currentMediaDimensions.width - Math.abs(diff);
     } else {
       newMediaDimensions.width = currentMediaDimensions.width + Math.abs(diff);
@@ -178,7 +172,7 @@ export const ResizableMediaNodeView = ({
 
     if (diff === 0) return;
 
-    const directionOfMouseMove: "left" | "right" = diff > 0 ? "left" : "right";
+    const directionOfMouseMove: 'left' | 'right' = diff > 0 ? 'left' : 'right';
 
     setTimeout(() => {
       onHorizontalResize(directionOfMouseMove, Math.abs(diff));
@@ -203,13 +197,13 @@ export const ResizableMediaNodeView = ({
       as="article"
       className={`
         media-node-view not-prose transition-all ease-in-out w-full
-        ${(isFloat && `f-${node.attrs.dataFloat}`) || ""}
-        ${(isAlign && `justify-${node.attrs.dataAlign}`) || ""}
-        ${(isAlign && `moveit-${node.attrs.dataAlign}`) || ""}
+        ${(isFloat && `f-${node.attrs.dataFloat}`) || ''}
+        ${(isAlign && `justify-${node.attrs.dataAlign}`) || ''}
+        ${(isAlign && `moveit-${node.attrs.dataAlign}`) || ''}
       `}
     >
       <div className="w-fit flex relative group transition-all ease-in-out">
-        {mediaType === "img" && (
+        {mediaType === 'img' && (
           <img
             src={node.attrs.src}
             ref={resizableImgRef as any}
@@ -220,7 +214,7 @@ export const ResizableMediaNodeView = ({
           />
         )}
 
-        {mediaType === "video" && (
+        {mediaType === 'video' && (
           <video
             ref={resizableImgRef as any}
             className="rounded-lg"
@@ -247,19 +241,20 @@ export const ResizableMediaNodeView = ({
               <button
                 key={btn.tooltip}
                 type="button"
-                className={`btn rounded-none h-8 px-1 ${
-                  mediaActionActiveState[btn.tooltip] ? "active" : ""
+                className={`hover:cursor-pointer btn rounded-none h-8 px-1 ${
+                  mediaActionActiveState[btn.tooltip] ? 'active' : ''
                 }`}
                 onClick={() =>
-                  btn.tooltip === "Delete"
-                    ? deleteNode()
-                    : btn.action?.(updateAttributes)
+                  btn.tooltip === 'Delete' ? deleteNode() : btn.action?.(updateAttributes)
                 }
               >
                 {/* <i className={`${btn.icon} scale-150`} /> */}
-                <ActionIcon size='sm' variant="filled">
-                 <btn.icon size="sm" />
-                </ActionIcon>
+                {/* <ActionIcon size='sm' variant="filled"> */}
+                {/* On themeicon hover - change mouse pointer to pointer */}
+                <ThemeIcon size="sm" color="gray" variant="filled">
+                  <btn.icon size="sm" />
+                </ThemeIcon>
+                {/* </ActionIcon> */}
               </button>
             );
           })}
