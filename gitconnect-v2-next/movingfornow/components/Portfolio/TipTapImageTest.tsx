@@ -17,7 +17,7 @@ import { ActionIcon, Box, Flex, Group, Stack, Text, Tooltip } from '@mantine/cor
 import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import { useDropzone } from 'react-dropzone';
 // import MarkdownHelpText from "../MarkdownHelpText";
-import { getTipTapExtensions } from './extensions';
+import { getTipTapExtensions } from '../../../components/Portfolio/extensions';
 import {
   IconFormatBold,
   IconFormatClear,
@@ -39,7 +39,7 @@ import {
   IconPen,
   IconRedo,
   IconUndo,
-} from './icons/Icons';
+} from '../../../components/Portfolio/icons/Icons';
 
 // import theme from "../../theme";
 

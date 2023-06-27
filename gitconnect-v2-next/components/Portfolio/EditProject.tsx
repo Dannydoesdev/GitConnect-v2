@@ -2,6 +2,7 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { db } from '@/firebase/clientApp';
 import {
   Aside,
   Button,
@@ -15,13 +16,11 @@ import {
 } from '@mantine/core';
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
-import { useRichTextEditorContext } from '@mantine/tiptap';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import useSWR from 'swr';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
-import { AuthContext } from '../../context/AuthContext';
-import RichTextEditorBeefy from './RichTextEditorBeefy';
 import RichTextEditorVanilla from './RichTextEditorVanilla';
 
 type EditPortfolioProps = {
@@ -59,8 +58,11 @@ export default function EditPortfolioProject({
 }: EditPortfolioProps) {
   const [shouldFetch, setShouldFetch] = useState(false);
   const [readme, setReadme] = useState('');
+  const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
 
   const { classes, theme } = useStyles();
+
+  // console.log('textContent: ', textContent);
 
   //TODO: Figure out how to get the editor from child component
   // const { editor } = useRichTextEditorContext();
@@ -71,11 +73,57 @@ export default function EditPortfolioProject({
   //   }
   // }, [editor]);
 
+  // Hoist the editor state up to this component
+  const handleEditorChange = (value: string) => {
+    setRealtimeEditorContent(value);
+    // console.log(value);
+    // console.log('editor changed');
+  };
+
+  async function handleSaveAndContinue() {
+    // console.log(realtimeEditorContent);
+
+    // Sanitize with DomPurify before upload
+    // need to add 'target = _blank' back in
+    const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
+      ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+    });
+
+    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+
+    await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+
+    const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+
+    await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
+    // console.log('saved and continue')
+  }
+
+  async function handleSaveAsDraft() {
+    // console.log(realtimeEditorContent);
+
+    // Sanitize with DomPurify before upload
+    // need to add 'target = _blank' back in
+    const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
+      ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+    });
+
+    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+
+    await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+    // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
+
+    const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+
+    await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
+    // console.log('saved as draft');
+  }
+
   const params = {
     owner: userName,
-    // repo: repoName,
+    repo: repoName,
     //TODO change to repoName - currently hardcoded for as GC2 is private
-    repo: 'gitconnect',
+    // repo: 'gitconnect',
   };
 
   // TODO: Figure out how to set SWR call to button click trigger
@@ -103,57 +151,54 @@ export default function EditPortfolioProject({
     }
   }, [data]);
 
-  // function handleImportReadme() {
-  //   const readmeUrl = `/api/profiles/projects/edit/readme`;
-  //   axios
-  //     .get(readmeUrl, {
-  //       params: {
-  //         owner: userName,
-  //         // repo: repoName,
-  //         repo: 'gitconnect',
-  //       },
-  //     })
-  //     .then((response) => {
-  //       const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
-  //       // console.log(sanitizedHTML);
-  //       if (readme !== sanitizedHTML) {
-  //         setReadme(sanitizedHTML);
-  //       }
-  //     });
-  // }
-
   return (
     <>
-      <Container size="xl">
+      {/* TODO: Consider if non-fluid and static sizing is better for this use case */}
+      <Container fluid>
+        {/* // size="xl"> */}
         <Group
           mt={40}
+          // ml={300}
+          ml={{
+            xxs: 'calc(5%)',
+            xs: 'calc(10%)',
+            md: 'calc(18%)',
+            base: 'calc(10%)',
+          }}
+          // mx='auto'
+          // ml={-25}
+          // ml={80}
+          // ml = 'calc(6%)'
+          // position='center'
           w={{
-            xs: 'calc(100% - 180px)',
+            // xs: 'calc(100% - 180px)',
             // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
-            sm: 'calc(100% - 240px)',
+            // sm: 'calc(100% - 240px)',
 
-            md: 'calc(100% - 280px)',
+            // md: 'calc(100% - 280px)',
             // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
-            // lg: 'calc(100vw - 350px)',
-            lg: 'calc(100% - 255px)',
+            // lg: 'calc(100% - 255px)',
 
-            xl: 'calc(100% - 210px)',
+            // xl: 'calc(100% - 250px)',
+            // xl: 'calc(70%)',
 
-            xxl: 'calc(100% - 100px)',
+            // xxl: 'calc(100% - 100px)',
 
             // When other breakpoints do not match base width is used, defaults to 100%
-            base: 'calc(100% - 120px)',
+            // base: 'calc(100% - 120px)',
+            base: 'calc(60%)',
           }}
         >
           <Title mx="auto">Editing {repoName}</Title>
           {/* <Text>{description}</Text>
           <Text>{url}</Text> */}
-          {/* <RichTextEditorBeefy withImage={true} /> */}
+
           <RichTextEditorVanilla
             existingContent={textContent}
             userId={userid}
             repoId={repoid}
             readme={readme}
+            onUpdateEditor={handleEditorChange}
           />
         </Group>
       </Container>
@@ -166,24 +211,31 @@ export default function EditPortfolioProject({
         zIndex={1}
         mt={80}
         width={{
-          xs: 145,
+          // xs: 145,
+          xxs: 'calc(25%)',
+          xs: 'calc(23%)',
           // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
-          sm: 200,
+          // sm: 200,
+          sm: 'calc(20%)',
 
-          md: 230,
+          // md: 230,
+          md: 'calc(20%)',
           // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
-          lg: 260,
+          // lg: 260,
 
-          xl: 300,
-
-          xxl: 400,
+          // xl: 280,
+          xl: 'calc(16%)',
+          // xxl: 400,
           // When other breakpoints do not match base width is used, defaults to 100%
-          base: 120,
+          // base: 120,
+          base: 'calc(18%)',
         }}
       >
         {/* First section with normal height (depends on section content) */}
-        <Aside.Section mx="auto" mt={85}>
-          More Buttons
+        <Aside.Section mx="auto" mt={90}>
+          <Text weight={600} c="dimmed">
+            Editing Tools{' '}
+          </Text>
         </Aside.Section>
 
         {/* Grow section will take all available space that is not taken by first and last sections */}
@@ -206,7 +258,7 @@ export default function EditPortfolioProject({
               // onClick={handleSave}
               styles={(theme) => ({
                 root: {
-                  backgroundColor: theme.colors.blue[8],
+                  backgroundColor: theme.colors.blue[7],
                   // width: '40%',
                   [theme.fn.smallerThan('sm')]: {
                     // width: '70%',
@@ -214,13 +266,45 @@ export default function EditPortfolioProject({
                   '&:hover': {
                     backgroundColor:
                       theme.colorScheme === 'dark'
-                        ? theme.colors.green[9]
-                        : theme.colors.green[9],
+                        ? theme.colors.blue[9]
+                        : theme.colors.blue[9],
                   },
                 },
               })}
             >
               Import Readme
+            </Button>
+            <Button
+              component="a"
+              // onClick={handleImportReadme}
+              onClick={handleImportReadmeSWR}
+              radius="md"
+              w={{
+                base: '95%',
+                md: '80%',
+                lg: '60%',
+                sm: '90%',
+              }}
+              mt={40}
+              className="mx-auto"
+              // onClick={handleSave}
+              styles={(theme) => ({
+                root: {
+                  backgroundColor: theme.colors.blue[7],
+                  // width: '40%',
+                  [theme.fn.smallerThan('sm')]: {
+                    // width: '70%',
+                  },
+                  '&:hover': {
+                    backgroundColor:
+                      theme.colorScheme === 'dark'
+                        ? theme.colors.blue[9]
+                        : theme.colors.blue[9],
+                  },
+                },
+              })}
+            >
+              Settings{' '}
             </Button>
           </Flex>
         </Aside.Section>
@@ -237,6 +321,7 @@ export default function EditPortfolioProject({
                 sm: '90%',
               }}
               mt={40}
+              onClick={handleSaveAndContinue}
               className="mx-auto"
               // onClick={handleSave}
               styles={(theme) => ({
@@ -272,6 +357,7 @@ export default function EditPortfolioProject({
               }}
               mt={12}
               mb={30}
+              onClick={handleSaveAsDraft}
               className="mx-auto"
               variant="outline"
               // onClick={handleSave}
