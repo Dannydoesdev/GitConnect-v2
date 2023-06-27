@@ -6,6 +6,7 @@ import { db } from '@/firebase/clientApp';
 import {
   Aside,
   Button,
+  ScrollArea,
   Container,
   Title,
   Text,
@@ -16,11 +17,13 @@ import {
 } from '@mantine/core';
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import useSWR from 'swr';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
+import ProjectSettingsModal from './EditProjectSettings';
 import RichTextEditorVanilla from './RichTextEditorVanilla';
 
 type EditPortfolioProps = {
@@ -59,19 +62,9 @@ export default function EditPortfolioProject({
   const [shouldFetch, setShouldFetch] = useState(false);
   const [readme, setReadme] = useState('');
   const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
+  const [opened, { open, close }] = useDisclosure(false);
 
   const { classes, theme } = useStyles();
-
-  // console.log('textContent: ', textContent);
-
-  //TODO: Figure out how to get the editor from child component
-  // const { editor } = useRichTextEditorContext();
-
-  // useEffect(() => {
-  //   if (editor) {
-  //     console.log(editor.getHTML());
-  //   }
-  // }, [editor]);
 
   // Hoist the editor state up to this component
   const handleEditorChange = (value: string) => {
@@ -80,11 +73,12 @@ export default function EditPortfolioProject({
     // console.log('editor changed');
   };
 
-  async function handleSaveAndContinue() {
-    // console.log(realtimeEditorContent);
+  async function handlePublish() {
+    console.log('publishing');
+    close();
+  }
 
-    // Sanitize with DomPurify before upload
-    // need to add 'target = _blank' back in
+  async function handleSaveAndContinue() {
     const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
@@ -102,8 +96,6 @@ export default function EditPortfolioProject({
   async function handleSaveAsDraft() {
     // console.log(realtimeEditorContent);
 
-    // Sanitize with DomPurify before upload
-    // need to add 'target = _blank' back in
     const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
@@ -126,7 +118,7 @@ export default function EditPortfolioProject({
     // repo: 'gitconnect',
   };
 
-  // TODO: Figure out how to set SWR call to button click trigger
+  // TODO: Figure out how to set SWR call to button click trigger - temp workaround
 
   const { data } = useSWR(
     shouldFetch ? ['/api/profiles/projects/edit/readme', params] : null,
@@ -143,7 +135,6 @@ export default function EditPortfolioProject({
 
   useEffect(() => {
     if (data) {
-      // console.log(data);
       const sanitizedHTML = DOMPurify.sanitize(data, { ADD_ATTR: ['target'] });
       if (data !== sanitizedHTML) {
         setReadme(sanitizedHTML);
@@ -155,6 +146,14 @@ export default function EditPortfolioProject({
     <>
       {/* TODO: Consider if non-fluid and static sizing is better for this use case */}
       <Container fluid>
+        <ProjectSettingsModal
+          handlePublish={handlePublish}
+          handleSaveAsDraft={handleSaveAsDraft}
+          opened={opened}
+          open={open}
+          close={close}
+        />
+        {/* <ScrollArea type="always" offsetScrollbars> */}
         {/* // size="xl"> */}
         <Group
           mt={40}
@@ -201,6 +200,7 @@ export default function EditPortfolioProject({
             onUpdateEditor={handleEditorChange}
           />
         </Group>
+        {/* </ScrollArea> */}
       </Container>
       <Aside
         styles={(theme) => ({
@@ -234,7 +234,7 @@ export default function EditPortfolioProject({
         {/* First section with normal height (depends on section content) */}
         <Aside.Section mx="auto" mt={90}>
           <Text weight={600} c="dimmed">
-            Editing Tools{' '}
+            Project Tools{' '}
           </Text>
         </Aside.Section>
 
@@ -277,7 +277,7 @@ export default function EditPortfolioProject({
             <Button
               component="a"
               // onClick={handleImportReadme}
-              onClick={handleImportReadmeSWR}
+              onClick={open}
               radius="md"
               w={{
                 base: '95%',

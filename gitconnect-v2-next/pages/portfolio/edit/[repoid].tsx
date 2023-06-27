@@ -2,7 +2,7 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Space } from '@mantine/core';
+import { ScrollArea, Space } from '@mantine/core';
 import {
   getSingleProjectById,
   getProjectTextEditorContent,
@@ -93,33 +93,35 @@ export default function UpdatePortfolioProject({ projectData, textContent }: any
   if (projectData && existingProject) {
     return (
       <>
-        <Space h={70} />
-        {newRepoParam && userData.userName && JSON.parse(newRepoParam as string) ? (
-          <>
-            <EditPortfolioProject
-              repoName={name as string}
-              description={description as string}
-              url={url as string}
-              repoid={repoid as string}
-              userid={userId as string}
-              userName={userData.userName}
-            />
-          </>
-        ) : (
-          <>
-            {existingProject && loggedInUserId && (
+        {/* <ScrollArea type="always"> */}
+          <Space h={70} />
+          {newRepoParam && userData.userName && JSON.parse(newRepoParam as string) ? (
+            <>
               <EditPortfolioProject
-                repoName={existingProject.name}
-                description={existingProject.description}
-                url={existingProject.url}
+                repoName={name as string}
+                description={description as string}
+                url={url as string}
                 repoid={repoid as string}
-                userid={loggedInUserId as string}
-                textContent={textContent}
+                userid={userId as string}
                 userName={userData.userName}
               />
-            )}
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              {existingProject && loggedInUserId && (
+                <EditPortfolioProject
+                  repoName={existingProject.name}
+                  description={existingProject.description}
+                  url={existingProject.url}
+                  repoid={repoid as string}
+                  userid={loggedInUserId as string}
+                  textContent={textContent}
+                  userName={userData.userName}
+                />
+              )}
+            </>
+          )}
+        {/* </ScrollArea> */}
       </>
     );
   }
