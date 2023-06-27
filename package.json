@@ -26,6 +26,7 @@
     "@mantine/ds": "^6.0.14",
     "@mantine/form": "^6.0.14",
     "@mantine/hooks": "^6.0.14",
+    "@mantine/modals": "^6.0.14",
     "@mantine/next": "^6.0.14",
     "@mantine/notifications": "^6.0.14",
     "@mantine/prism": "^6.0.14",
