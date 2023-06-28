@@ -147,6 +147,7 @@ export default function EditPortfolioProject({
       {/* TODO: Consider if non-fluid and static sizing is better for this use case */}
       <Container fluid>
         <ProjectSettingsModal
+          repoId={repoid}
           handlePublish={handlePublish}
           handleSaveAsDraft={handleSaveAsDraft}
           opened={opened}

@@ -1,17 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { db } from '../../firebase/clientApp';
-import { AuthContext } from '../../context/AuthContext';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from 'firebase/firestore';
-import { storage } from '../../firebase/clientApp';
-import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { Router, useRouter } from 'next/router';
 import {
   Group,
   Text,
@@ -21,18 +9,31 @@ import {
   Button,
   Center,
   Container,
+  Space,
 } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
 import {
   Dropzone,
   DropzoneProps,
   FileWithPath,
   IMAGE_MIME_TYPE,
 } from '@mantine/dropzone';
-import { Router, useRouter } from 'next/router';
+import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
+import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { AuthContext } from '../../context/AuthContext';
+import { db } from '../../firebase/clientApp';
+import { storage } from '../../firebase/clientApp';
 
 type RepoProps = {
-  repoId?: string;
+  repoId: string | number;
   // initialFirebaseData?: string
 };
 
@@ -100,49 +101,39 @@ export function UploadProjectCoverImage(
         alert(error);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref)
-          .then(async (downloadURL) => {
-            const docRef = doc(
-              db,
-              `users/${userId}/repos/${repoId}/projectData/images`
-            );
-            const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-            // const urlOnlyRef =
-            // Generate sizes
-            const sizes = [
-              '200x200',
-              '400x400',
-              '768x768',
-              '1024x1024',
-              '2000x2000',
-            ];
-            const coverImageMeta = {
-              name: file.name,
-              extension,
-              sizes,
-            };
-            // console.log(coverImageMeta)
+        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
+          const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
+          // const urlOnlyRef =
+          // Generate sizes
+          const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'];
+          const coverImageMeta = {
+            name: file.name,
+            extension,
+            sizes,
+          };
+          // console.log(coverImageMeta)
 
-            await setDoc(
-              docRef,
-              { coverImageMeta: coverImageMeta, coverImage: downloadURL },
-              { merge: true }
-            );
-            await setDoc(
-              parentStorageRef,
-              {
-                coverImageMeta: coverImageMeta,
-                coverImage: downloadURL,
-              },
-              { merge: true }
-            );
+          await setDoc(
+            docRef,
+            { coverImageMeta: coverImageMeta, coverImage: downloadURL },
+            { merge: true }
+          );
+          await setDoc(
+            parentStorageRef,
+            {
+              coverImageMeta: coverImageMeta,
+              coverImage: downloadURL,
+            },
+            { merge: true }
+          );
 
-            setImgUrl(downloadURL);
-            console.log(`URL to stored img: ${downloadURL}`);
-          })
-          .then(() => {
-            router.reload();
-          });
+          setImgUrl(downloadURL);
+          console.log(`URL to stored img: ${downloadURL}`);
+        });
+        // .then(() => {
+        //   router.reload();
+        // });
       }
     );
   }
@@ -207,10 +198,11 @@ export function UploadProjectCoverImage(
         onReject={(files) => console.log('rejected files', files)}
         maxSize={6 * 1024 ** 2}
         maxFiles={1}
+        mb="lg"
         // accept='image'
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
-          maxWidth: 300,
+          maxWidth: 200,
           maxHeight: 150,
           textAlign: 'center',
           margin: 'auto',
@@ -222,15 +214,13 @@ export function UploadProjectCoverImage(
         })}
         {...props}
       >
-        <Group position='center'>
+        <Group position="center">
           <Dropzone.Accept>
             <IconUpload
               size={50}
               stroke={1.5}
               color={
-                theme.colors[theme.primaryColor][
-                  theme.colorScheme === 'dark' ? 4 : 6
-                ]
+                theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]
               }
             />
           </Dropzone.Accept>
@@ -243,83 +233,130 @@ export function UploadProjectCoverImage(
           </Dropzone.Reject>
           <Dropzone.Idle>
             <IconPhoto size={40} stroke={1.5} />
-            <Text size='md'>Click to update image - max 6MB</Text>
+            <Text size="md">Edit cover image</Text>
+            <Text> Max 6MB</Text>
           </Dropzone.Idle>
         </Group>
       </Dropzone>
       {/* </Group> */}
-      <Center>
+      {/* {files.length > 1 && (
+        <Group position="center">
+          <Space h="xl" />
+          <Space h="xl" />
+          <Space h="lg" />
+
+          <Text>Preview:</Text>
+          <Space h="sm" />
+          <Container size={200}>{previews}</Container>
+        </Group>
+      )} */}
+
+      {/* <Center>
         <Container size={200}>{previews}</Container>
-      </Center>
+      </Center> */}
 
-      <Center>
-        {!imgCheck ? (
-          <></>
-        ) : (
-          <>
-            <Group spacing='md'>
-              <Button
-                component='a'
-                size='lg'
-                radius='md'
-                mt={40}
-                className='mx-auto'
-                onClick={() => handleFileCancel(files[0])}
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor:
-                      theme.colorScheme === 'dark'
-                        ? theme.colors.dark[5]
-                        : theme.colors.blue[6],
-                    maxWidth: '70%',
-                    [theme.fn.smallerThan('sm')]: {
-                      maxWidth: '90%',
-                    },
-                    '&:hover': {
+      {/* <Center> */}
+      {/* {!imgCheck ? (
+        <></>
+      ) : ( */}
+      {/* // TODO: Check this logic for conditionally showing when image successfully uploaded */}
+      {/* {imgUrl && imgCheck && (
+        <Group position="center">
+
+          <Space h="lg" />
+
+          <Space h="sm" />
+          <Container size={200}>{previews}</Container>
+          <Text>Image Saved</Text>
+        </Group>
+      )} */}
+
+      {imgCheck &&  (
+        <>
+          <Group position="center">
+            {/* <Space h="xl" />
+          // <Space h="xl" /> */}
+            <Space h="lg" />
+
+            <Text>Preview:</Text>
+            <Space h="sm" />
+            <Container size={200}>{previews}</Container>
+          </Group>
+          <Group mt="lg" position="center" spacing="xs">
+            {imgUrl ? (
+              <Text>Image Saved</Text>
+            ) : (
+              <>
+                <Button
+                  component="a"
+                  size="xs"
+                  radius="md"
+                  // px={30}
+                  // className="mx-auto"
+                  // onClick={() => console.log(typeof files[0])}
+
+                  onClick={() => sendImageToFirebase(files[0])}
+                  styles={(theme) => ({
+                    root: {
                       backgroundColor:
                         theme.colorScheme === 'dark'
-                          ? theme.colors.dark[6]
-                          : theme.colors.blue[7],
+                          ? theme.colors.green[8]
+                          : theme.colors.green[6],
+                      // maxWidth: '70%',
+                      [theme.fn.smallerThan('sm')]: {
+                        // width: '90%',
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.green[9]
+                            : theme.colors.green[9],
+                      },
                     },
-                  },
-                })}
-              >
-                Cancel
-              </Button>
-              <Button
-                component='a'
-                size='lg'
-                radius='md'
-                mt={40}
-                className='mx-auto'
-                // onClick={() => console.log(typeof files[0])}
-
-                onClick={() => sendImageToFirebase(files[0])}
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor:
-                      theme.colorScheme === 'dark'
-                        ? theme.colors.green[8]
-                        : theme.colors.green[6],
-                    maxWidth: '70%',
-                    [theme.fn.smallerThan('sm')]: {
-                      width: '90%',
+                  })}
+                >
+                  Save Image
+                </Button>
+                <Button
+                  component="a"
+                  size="xs"
+                  radius="md"
+                  // px={20}
+                  // mt={40}
+                  // className="mx-auto"
+                  variant="outline"
+                  onClick={() => handleFileCancel(files[0])}
+                  styles={(theme) => ({
+                    root: {
+                      // backgroundColor:
+                      //   theme.colorScheme === 'dark'
+                      //     ? theme.colors.dark[5]
+                      //     : theme.colors.blue[6],
+                      // maxWidth: '70%',
+                      [theme.fn.smallerThan('sm')]: {
+                        // maxWidth: '90%',
+                      },
+                      '&:hover': {
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[0]
+                            : theme.colors.blue[0],
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[7],
+                      },
                     },
-                    '&:hover': {
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.green[9]
-                          : theme.colors.blue[7],
-                    },
-                  },
-                })}
-              >
-                Save new cover image
-              </Button>
-            </Group>
-          </>
-        )}
-      </Center>
+                  })}
+                >
+                  Remove
+                </Button>
+              </>
+            )}
+          </Group>
+        </>
+      )}
+      {/* </Center> */}
     </>
   );
 }

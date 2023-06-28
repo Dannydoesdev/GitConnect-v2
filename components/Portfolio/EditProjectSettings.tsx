@@ -13,6 +13,7 @@ import {
   Checkbox,
   Stack,
   Grid,
+  MultiSelect,
 } from '@mantine/core';
 import '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -21,6 +22,7 @@ import axios from 'axios';
 import { doc, setDoc } from 'firebase/firestore';
 import useSWR from 'swr';
 import { AuthContext } from '../../context/AuthContext';
+import UploadProjectCoverImage from './UploadProjectCoverImage';
 
 interface ProjectSettingsSimpleProps {
   repoId?: string;
@@ -31,7 +33,7 @@ interface ProjectSettingsSimpleProps {
 }
 
 interface ProjectSettingsProps {
-  repoId?: string;
+  repoId: string;
   repoName?: string;
   opened: boolean;
   open: () => void;
@@ -93,6 +95,26 @@ function ProjectSettingsModal({
   const [openToCollaborationValue, setOpenToCollaborationValue] =
     useState<boolean>(false);
 
+  const [data, setData] = useState([
+    { value: 'react', label: 'React', group: 'Frontend' },
+    { value: 'javascript', label: 'Javascript', group: 'Frontend' },
+    { value: 'typescript', label: 'TypeScript', group: 'Frontend' },
+    { value: 'nextjs', label: 'Next.js', group: 'Backend' },
+    { value: 'nodejs', label: 'Node.js', group: 'Backend' },
+    { value: 'firebase', label: 'Firebase', group: 'Backend' },
+    { value: 'python', label: 'Python', group: 'Backend' },
+    { value: 'flask', label: 'Flask', group: 'Frontend' },
+    { value: 'sql', label: 'SQL', group: 'Database' },
+    { value: 'firestore', label: 'Firestore', group: 'Database' },
+    { value: 'mongodb', label: 'MongoDB', group: 'Database' },
+    { value: 'html', label: 'HTML', group: 'Frontend' },
+    { value: 'css', label: 'CSS', group: 'Frontend' },
+    { value: 'tailwindcss', label: 'Tailwind CSS', group: 'Styling + Components' },
+    { value: 'bootstrap', label: 'Bootstrap', group: 'Styling + Components' },
+    { value: 'materialui', label: 'Material UI', group: 'Styling + Components' },
+    { value: 'chakraui', label: 'Chakra UI', group: 'Styling + Components' },
+  ]);
+
   const form = useForm({
     initialValues: {
       projectTitle: repoName || '',
@@ -119,6 +141,10 @@ function ProjectSettingsModal({
     // },
   });
 
+  function logFormValues() {
+    console.log(form.values);
+  }
+
   return (
     <>
       {/* <Modal.Root opened={opened} onClose={close}>
@@ -143,148 +169,177 @@ function ProjectSettingsModal({
         centered
       >
         <Grid gutter="lg">
-          <Grid.Col span={4}>{/* <Button>Cover Image</Button> */}</Grid.Col>
+          <Grid.Col span={4}>{/* <Button>Cover Image</Button> */}
+          <UploadProjectCoverImage repoId={repoId} />
+          </Grid.Col>
           <Grid.Col span={8}>
-            <Stack spacing="lg" mr="lg" my="lg">
-              <TextInput
-                // data-autofocus
-                label="Project Title"
-                placeholder="The name of your project"
-                {...form.getInputProps('projectTitle')}
-              />
-              <TextInput
-                label="Tech Stack"
-                placeholder="React, Next.js, Firebase, etc."
-                {...form.getInputProps('techStack')}
-              />
-              <TextInput
-                label="Project Tags"
-                placeholder="Open Source, Social Network, etc."
-                {...form.getInputProps('projectTags')}
-              />
-              <TextInput
-                label="Live URL"
-                placeholder="https://myproject.com"
-                {...form.getInputProps('liveUrl')}
-              />
-              <TextInput
-                label="Repo URL"
-                placeholder="github.com/myusername/myproject"
-                {...form.getInputProps('repoUrl')}
-              />
+            <form onSubmit={form.onSubmit((values) => console.log(values))}>
+              <Stack spacing="lg" mr="lg" my="lg">
+                <TextInput
+                  // data-autofocus
+                  label="Project Title"
+                  placeholder="The name of your project"
+                  {...form.getInputProps('projectTitle')}
+                />
+                {/* <TextInput
+                  label="Tech Stack"
+                  placeholder="React, Next.js, Firebase, etc."
+                  {...form.getInputProps('techStack')}
+                /> */}
 
-              <Checkbox.Group
-                mt='sm'
-                mb='md'
-                value={categoryValue}
-                onChange={setCategoryValue}
-                label="Project Categories"
-                description="Pick the categories that best describe your project"
-              >
-                <Group spacing='xl' mt="md">
-                  <Checkbox value="frontend" label="Frontend" />
-                  <Checkbox value="backend" label="Backend" />
-                  <Checkbox value="fullstack" label="Fullstack" />
-                  <Checkbox value="ai" label="AI" />
+                <MultiSelect
+                  label="Tech Stack"
+                  data={data}
+                  placeholder="Languages, Frameworks, tools used in your project"
+                  searchable
+                  creatable
+                  clearable
+                  getCreateLabel={(query) => `+ Create ${query}`}
+                  onCreate={(query) => {
+                    const item = { value: query, label: query, group: 'Custom' };
+                    setData((current) => [...current, item]);
+                    return item;
+                  }}
+                  {...form.getInputProps('techStack')}
+                />
+
+                {/* <TextInput
+                  label="Project Tags"
+                  placeholder="Open Source, Social Network, etc."
+                  {...form.getInputProps('projectTags')}
+                /> */}
+
+                <TextInput
+                  label="Live URL"
+                  placeholder="https://myproject.com"
+                  {...form.getInputProps('liveUrl')}
+                />
+                <TextInput
+                  label="Repo URL"
+                  placeholder="github.com/myusername/myproject"
+                  {...form.getInputProps('repoUrl')}
+                />
+
+                <Checkbox.Group
+                  mt="sm"
+                  mb="md"
+                  // value={categoryValue}
+                  // onChange={setCategoryValue}
+                  label="Project Categories"
+                  description="Pick the categories that best describe your project"
+                  {...form.getInputProps('projectCategories', { type: 'checkbox' })}
+                >
+                  <Group spacing="xl" mt="md">
+                    <Checkbox value="frontend" label="Frontend" />
+                    <Checkbox value="backend" label="Backend" />
+                    <Checkbox value="fullstack" label="Fullstack" />
+                    <Checkbox value="ai" label="AI" />
+                  </Group>
+                </Checkbox.Group>
+
+                <Checkbox
+                  mb="sm"
+                  label="Visible to Public"
+                  description="Make your project visible on the homepage"
+                  checked={visibleToPublicValue}
+                  // onChange={(event) => setVisibleToPublicValue(event.currentTarget.checked)}
+                  {...form.getInputProps('visibleToPublic', { type: 'checkbox' })}
+                />
+
+                <Checkbox
+                  label="Open to Collaboration"
+                  description="Let users know they can contribute to your project"
+                  checked={openToCollaborationValue}
+                  // onChange={(event) =>
+                  //   setOpenToCollaborationValue(event.currentTarget.checked)
+                  // }
+                  {...form.getInputProps('openToCollaboration', { type: 'checkbox' })}
+                />
+
+                <Group position="right" mt="lg" mr="md">
+                  <Button
+                    component="a"
+                    radius="lg"
+                    size="sm"
+                    px={30}
+                    // size={{
+                    //   md: 'lg',
+                    //   sm: 'sm',
+                    // }}
+                    // w={{
+                    //   base: '95%',
+                    //   md: '80%',
+                    //   lg: '60%',
+                    //   sm: '90%',
+                    // }}
+                    // mt={12}
+                    // mb={30}
+                    onClick={handleSaveAsDraft}
+                    // className="mx-auto"
+                    variant="outline"
+                    // onClick={handleSave}
+                    styles={(theme) => ({
+                      root: {
+                        // backgroundColor: theme.colors.green[8],
+                        // width: '40%',
+                        [theme.fn.smallerThan('sm')]: {
+                          // width: '70%',
+                        },
+                        '&:hover': {
+                          // color: theme.colors.white,
+                          color:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.blue[0]
+                              : theme.colors.blue[0],
+                          backgroundColor:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.blue[9]
+                              : theme.colors.blue[7],
+                        },
+                      },
+                    })}
+                  >
+                    Save Draft
+                  </Button>
+                  <Button
+                    component="a"
+                    radius="lg"
+                    size="sm"
+                    px={40}
+                    // w='xl'
+                    // w={{
+                    //   base: '95%',
+                    //   md: '80%',
+                    //   lg: '60%',
+                    //   sm: '90%',
+                    // }}
+                    // mt={40}
+                    // onClick={handlePublish}
+                    onClick={logFormValues}
+                    // className="mx-auto"
+                    // onClick={handleSave}
+                    styles={(theme) => ({
+                      root: {
+                        backgroundColor: theme.colors.green[7],
+                        // width: '40%',
+                        [theme.fn.smallerThan('sm')]: {
+                          // width: '70%',
+                        },
+                        '&:hover': {
+                          backgroundColor:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.green[9]
+                              : theme.colors.green[9],
+                        },
+                      },
+                    })}
+                  >
+                    Publish
+                  </Button>
+                  {/* <Button onClick={open}>Publish</Button> */}
                 </Group>
-              </Checkbox.Group>
-
-              <Checkbox
-                mb='sm'
-                label="Visible to the Public"
-                checked={visibleToPublicValue}
-                onChange={(event) => setVisibleToPublicValue(event.currentTarget.checked)}
-              />
-
-              <Checkbox
-                label="Open to Collaboration"
-                checked={openToCollaborationValue}
-                onChange={(event) =>
-                  setOpenToCollaborationValue(event.currentTarget.checked)
-                }
-              />
-              <Group position="right" mt="lg" mr="md">
-                <Button
-                  component="a"
-                  radius="lg"
-                  size="sm"
-                  px={30}
-                  // size={{
-                  //   md: 'lg',
-                  //   sm: 'sm',
-                  // }}
-                  // w={{
-                  //   base: '95%',
-                  //   md: '80%',
-                  //   lg: '60%',
-                  //   sm: '90%',
-                  // }}
-                  // mt={12}
-                  // mb={30}
-                  onClick={handleSaveAsDraft}
-                  // className="mx-auto"
-                  variant="outline"
-                  // onClick={handleSave}
-                  styles={(theme) => ({
-                    root: {
-                      // backgroundColor: theme.colors.green[8],
-                      // width: '40%',
-                      [theme.fn.smallerThan('sm')]: {
-                        // width: '70%',
-                      },
-                      '&:hover': {
-                        // color: theme.colors.white,
-                        color:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.blue[0]
-                            : theme.colors.blue[0],
-                        backgroundColor:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.blue[9]
-                            : theme.colors.blue[7],
-                      },
-                    },
-                  })}
-                >
-                  Save Draft
-                </Button>
-                <Button
-                  component="a"
-                  radius="lg"
-                  size="sm"
-                  px={40}
-                  // w='xl'
-                  // w={{
-                  //   base: '95%',
-                  //   md: '80%',
-                  //   lg: '60%',
-                  //   sm: '90%',
-                  // }}
-                  // mt={40}
-                  onClick={handlePublish}
-                  // className="mx-auto"
-                  // onClick={handleSave}
-                  styles={(theme) => ({
-                    root: {
-                      backgroundColor: theme.colors.green[7],
-                      // width: '40%',
-                      [theme.fn.smallerThan('sm')]: {
-                        // width: '70%',
-                      },
-                      '&:hover': {
-                        backgroundColor:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.green[9]
-                            : theme.colors.green[9],
-                      },
-                    },
-                  })}
-                >
-                  Publish
-                </Button>
-                {/* <Button onClick={open}>Publish</Button> */}
-              </Group>
-            </Stack>
+              </Stack>
+            </form>
           </Grid.Col>
         </Grid>
       </Modal>
