@@ -1,8 +1,6 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { ProjectPageDynamicHero } from '../ProjectPageDynamicHero/ProjectPageDynamicHero';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   createStyles,
   Badge,
@@ -16,38 +14,43 @@ import {
   Space,
   Center,
 } from '@mantine/core';
-import { IconGauge, IconUser, IconCookie, IconFall, IconReportAnalytics, IconListNumbers, IconEye, IconStar } from '@tabler/icons-react';
-import useStyles from './ProjectPageDynamicContent.styles'
-
+import {
+  IconGauge,
+  IconUser,
+  IconCookie,
+  IconFall,
+  IconReportAnalytics,
+  IconListNumbers,
+  IconEye,
+  IconStar,
+} from '@tabler/icons-react';
+import axios from 'axios';
+import { ProjectPageDynamicHero } from '../ProjectPageDynamicHero/ProjectPageDynamicHero';
+import useStyles from './ProjectPageDynamicContent.styles';
 
 export default function ProjectPageDynamicContent(props: any) {
-
-
   const { classes, theme } = useStyles();
   const project = props.props[0];
   const stars = props.stars;
 
   // Temporary workaround for non-static projects
 
-  let projectData: any = []
+  let projectData: any = [];
   if (project.process && project.challenges && project.outcomes) {
     projectData = [
       {
         title: 'Process',
-        description:
-          project.process,
+        description: project.process,
         icon: IconListNumbers,
       },
       {
         title: 'Challenges',
-        description:
-          project.challenges,
+        description: project.challenges,
         icon: IconFall,
       },
       {
         title: 'Outcomes',
-        description:
-          project.outcomes,
+        description: project.outcomes,
         icon: IconReportAnalytics,
       },
     ];
@@ -57,20 +60,17 @@ export default function ProjectPageDynamicContent(props: any) {
     projectData = [
       {
         title: 'Process',
-        description:
-          'Process not added yet',
+        description: 'Process not added yet',
         icon: IconListNumbers,
       },
       {
         title: 'Challenges',
-        description:
-          'Challenges not added yet',
+        description: 'Challenges not added yet',
         icon: IconFall,
       },
       {
         title: 'Outcomes',
-        description:
-          'Outcomes not added yet',
+        description: 'Outcomes not added yet',
         icon: IconReportAnalytics,
       },
     ];
@@ -88,10 +88,8 @@ export default function ProjectPageDynamicContent(props: any) {
     </Card>
   ));
 
-
   return (
-    <Container size="lg" mt='lg' py="xs">
-
+    <Container size="lg" mt="lg" py="xs">
       <Group position="center">
         {/* <Badge variant="filled" size="lg">
           {project.name}
@@ -106,13 +104,12 @@ export default function ProjectPageDynamicContent(props: any) {
         {project.description}
       </Text>
 
-      <Group mt='lg' position='center' spacing="lg">
+      <Group mt="lg" position="center" spacing="lg">
         <Center>
           <IconEye size="1.3rem" stroke={1.5} color={theme.colors.dark[2]} />
           <Text size="sm" weight={450} className={classes.bodyText}>
             {/* {project.views} */}
             {project.views ? project.views : 0}
-
           </Text>
         </Center>
         <Center>
@@ -124,8 +121,10 @@ export default function ProjectPageDynamicContent(props: any) {
         </Center>
       </Group>
 
+      {/* NOTE: Removing special content for now */}
+      {/* TODO: Incorporate back if and when useful */}
 
-      {project.process && project.challenges && project.outcomes &&
+      {/* {project.process && project.challenges && project.outcomes &&
         <>
           <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
             {features}
@@ -138,18 +137,21 @@ export default function ProjectPageDynamicContent(props: any) {
         <>
           <Title order={2} className={classes.title} align="center" mt="sm">
             Check out the live site:
-          </Title>
-          {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
-          <Group>
-            {/* referrerPolicy="origin-when-cross-origin" llow-storage-access-by-user-activation   allow-scripts*/}
+          </Title> */}
 
-            {/* TODO - enforce stricter sandboxing (without breaking iFrame content) */}
+      {/* Note - this is test code not included previously */}
+      {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
+
+      {/* referrerPolicy="origin-when-cross-origin" allow-storage-access-by-user-activation   allow-scripts*/}
+
+      {/* TODO - enforce stricter sandboxing (without breaking iFrame content) */}
+
+      {/* <Group>
             <iframe sandbox="allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock" className={classes.iframe} src={project.live_url}></iframe>
 
           </Group>
         </>
-      }
+      } */}
     </Container>
   );
-
 }
