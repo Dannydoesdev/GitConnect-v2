@@ -2,13 +2,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Overlay, Container, Title, Text, Button, Group, Box } from '@mantine/core';
 import { correctImageGetter } from '../../../lib/correctImageGetter';
-import useStyles from './ProjectPageDynamicHero.styles';
+import useStyles from './ViewProjectHero.styles';
 
-export function ProjectPageDynamicHero(props: any) {
+interface ViewProjectHeroProps {
+  coverImage?: string;
+  repoUrl: string;
+  liveUrl?: string;
+  name: string;
+}
+
+export function ViewProjectHero({coverImage, repoUrl, liveUrl, name }: ViewProjectHeroProps) {
   const { classes } = useStyles();
 
-  const project = props.props[0];
-  const image = project.coverImage;
+  // const project = props.props[0];
+  const image = coverImage;
 
   const imageUrl =
     typeof image === 'string' && image
@@ -57,13 +64,13 @@ export function ProjectPageDynamicHero(props: any) {
       />
 
       <Container className={classes.container}>
-        <Title className={classes.title}>{project.name}</Title>
+        <Title className={classes.title}>{name}</Title>
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}
         </Text>
         <Group className={classes.group} grow>
-          {project.live_url && (
-            <Link href={project.live_url ? project.live_url : ''} passHref legacyBehavior>
+          {liveUrl && (
+            <Link href={liveUrl ? liveUrl : ''} passHref legacyBehavior>
               <Button
                 component="a"
                 target="_blank"
@@ -82,13 +89,13 @@ export function ProjectPageDynamicHero(props: any) {
               </Button>
             </Link>
           )}
-          <Link href={project.html_url} passHref legacyBehavior>
+          <Link href={repoUrl} passHref legacyBehavior>
             <Button
               component="a"
               target="_blank"
               // size='xl'
               // radius='xl'
-              className={project.live_url ? classes.liveAndGithub : classes.githubOnly}
+              className={repoUrl ? classes.liveAndGithub : classes.githubOnly}
               sx={(theme) => ({
                 // subscribe to color scheme changes
                 backgroundColor:
