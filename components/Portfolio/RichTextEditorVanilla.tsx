@@ -6,7 +6,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
-import { useEditor } from '@tiptap/react';
+import { useEditor, FloatingMenu, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import js from 'highlight.js/lib/languages/javascript';
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
@@ -41,6 +41,30 @@ function InsertCodeControls() {
   );
 }
 
+// function InsertImageControl(userId: any, repoId: any) {
+//   const { editor } = useRichTextEditorContext();
+//   // if (!userId || !repoId) {
+//   //   return null;
+//   // }
+//   return (
+//     <RichTextEditor.Control
+//       onClick={() =>
+//         editor
+//           ?.chain()
+//           .focus()
+//           .insertResizableImage({
+//             userId: userId,
+//             repoId: repoId,
+//           })
+//           .run()
+//       }
+//       aria-label="Insert an image"
+//       title="Insert an image"
+//     >
+//       <IconPhotoPlus stroke={1.5} size="1rem" />
+//     </RichTextEditor.Control>
+//   );
+// }
 // function InsertImageControlNew(userId: any, repoId: any) {
 //   const { editor } = useRichTextEditorContext();
 //   // if (!userId || !repoId) {
@@ -98,35 +122,10 @@ function RichTextEditorVanilla({
   useEffect(() => {
     if (readme && readme !== newReadme) {
       setNewReadme(readme);
-    // if (readme) {
+      // if (readme) {
       editor?.commands.setContent(readme);
     }
   }, [readme]);
-
-  function InsertImageControl() {
-    const { editor } = useRichTextEditorContext();
-    if (!userId || !repoId) {
-      return null;
-    }
-    return (
-      <RichTextEditor.Control
-        onClick={() =>
-          editor
-            ?.chain()
-            .focus()
-            .insertResizableImage({
-              userId: userId,
-              repoId: repoId,
-            })
-            .run()
-        }
-        aria-label="Insert an image"
-        title="Insert an image"
-      >
-        <IconPhotoPlus stroke={1.5} size="1rem" />
-      </RichTextEditor.Control>
-    );
-  }
 
   // useEffect(() => {
   //   if (existingContent && editor) {
@@ -145,6 +144,12 @@ function RichTextEditorVanilla({
       StarterKit.configure({
         codeBlock: false,
       }),
+      // BubbleMenu.configure({
+      //   shouldShow: ({ editor, view, state, oldState, from, to }) => {
+      //     // only show the bubble menu for images and links
+      //     return editor.isActive('image') || editor.isActive('link')
+      //   },
+      // }),
       ResizableMedia.configure({
         uploadFn: async (file: File): Promise<string> => {
           // Optional Logic to handle pasting images into editor
@@ -170,7 +175,7 @@ function RichTextEditorVanilla({
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content:updatedContent || existingContent,
+    content: updatedContent || existingContent,
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
@@ -185,6 +190,33 @@ function RichTextEditorVanilla({
     },
   });
 
+  function InsertImageControl() {
+    // const { editor } = useRichTextEditorContext();
+    if (!userId || !repoId) {
+      return null;
+    }
+    return (
+      <RichTextEditor.Control
+        onClick={() =>
+          editor
+            ?.chain()
+            .focus()
+            .insertResizableImage({
+              userId: userId,
+              repoId: repoId,
+            })
+            .run()
+        }
+        aria-label="Insert an image"
+        title="Insert an image"
+      >
+        <IconPhotoPlus stroke={1.5} size="1rem" />
+      </RichTextEditor.Control>
+    );
+  }
+
+  // const shouldShow = ({ editor, view, state, oldState, from, to }) => { return editor.isActive('image') || editor.isActive('link') }
+
   return (
     <Group w="100%">
       {/* <Button onClick={() => editor?.chain().focus()?.insertImage()?.run()}>
@@ -194,9 +226,39 @@ function RichTextEditorVanilla({
         Insert Image single cmd
       </Button> */}
 
-      <RichTextEditor mt={40} editor={editor} w="100%">
+      <RichTextEditor mt={40} editor={editor} w="100%"
+       styles={(theme) => ({
+        control: {
+          // backgroundColor: '#00acee',
+          // border: 0,
+        },
+        // content: {
+        //   backgroundColor: '#00000000',
+        //   border: 0,
+        // }
+      })}
+      >
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
-          <InsertImageControl />
+          {/* <InsertImageControl /> */}
+
+          {userId && repoId && <RichTextEditor.Control
+            onClick={() =>
+              editor
+                ?.chain()
+                .focus()
+                .insertResizableImage({
+                  userId: userId,
+                  repoId: repoId,
+                })
+                .run()
+            }
+            aria-label="Insert an image"
+            title="Insert an image"
+          >
+            <IconPhotoPlus stroke={1.5} size="1rem" />
+          </RichTextEditor.Control>}
+          {/* <InsertImageControl userId={userId} repoId={repoId} /> */}
+
           {/* <InsertImageControlNew userId={userId as string} repoId={repoId as string} /> */}
 
           <InsertCodeControls />
@@ -236,7 +298,52 @@ function RichTextEditorVanilla({
             <RichTextEditor.AlignRight />
           </RichTextEditor.ControlsGroup>
         </RichTextEditor.Toolbar>
-
+        {editor && (
+          <BubbleMenu
+            editor={editor}
+            shouldShow={({ editor, view, state, oldState, from, to }) => {
+              // console.log(from)
+              // console.log(to)
+              // don't show bubble menu on resizable images due to custom menu showing
+              return (
+                from !== to && (
+                editor.isActive('text') ||
+                editor.isActive('link') ||
+                editor.isActive('heading') ||
+                editor.isActive('bulletList') ||
+                editor.isActive('orderedList') ||
+                  editor.isActive('blockquote')
+                )
+              );
+            }}
+          >
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.H1 />
+              <RichTextEditor.H2 />
+              <RichTextEditor.H3 />
+              <RichTextEditor.Bold />
+              <RichTextEditor.Italic />
+              <RichTextEditor.Link />
+              <RichTextEditor.AlignLeft />
+              <RichTextEditor.AlignCenter />
+              <RichTextEditor.AlignRight />
+            </RichTextEditor.ControlsGroup>
+          </BubbleMenu>
+        )}
+        {editor && (
+          <FloatingMenu editor={editor}>
+            <RichTextEditor.ControlsGroup>
+              {/* <RichTextEditor.H1 />
+              <RichTextEditor.H2 />
+              <RichTextEditor.H3 /> */}
+              <InsertImageControl />
+              <InsertCodeControls />
+              <RichTextEditor.AlignLeft />
+              <RichTextEditor.AlignCenter />
+              <RichTextEditor.AlignRight />
+            </RichTextEditor.ControlsGroup>
+          </FloatingMenu>
+        )}
         <RichTextEditor.Content />
       </RichTextEditor>
     </Group>

@@ -35,13 +35,16 @@ import { storage } from '../../firebase/clientApp';
 
 type RepoProps = {
   repoId: string | number;
+  existingCoverImage?: string;
+  handleNewCoverImage: (url: string) => void;
   // initialFirebaseData?: string
 };
 
 export function UploadProjectCoverImage(
-  { repoId }: RepoProps,
+  { repoId, existingCoverImage, handleNewCoverImage }: RepoProps,
   props: Partial<DropzoneProps>
 ) {
+  // console.log('existingCoverImage', existingCoverImage)
   const { userData } = useContext(AuthContext);
   const userId = userData.userId;
   const userName = userData.userName;
@@ -143,6 +146,7 @@ export function UploadProjectCoverImage(
             );
 
             setImgUrl(downloadURL);
+            handleNewCoverImage(downloadURL);
             // console.log(`URL to stored img: ${downloadURL}`);
           });
           // .then(() => {
@@ -172,55 +176,6 @@ export function UploadProjectCoverImage(
     }
   }
 
-  // async function sendImageToFirebase(file: any) {
-  //   // console.log(typeof file);
-
-  //   const storageRef = ref(
-  //     storage,
-  //     `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`
-  //   );
-  //   const uploadTask = uploadBytesResumable(storageRef, file);
-
-  //   uploadTask.on(
-  //     'state_changed',
-  //     (snapshot) => {
-  //       const progress = Math.round(
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-  //       );
-  //       setProgresspercent(progress);
-  //     },
-  //     (error) => {
-  //       alert(error);
-  //     },
-  //     () => {
-  //       getDownloadURL(uploadTask.snapshot.ref)
-  //         .then(async (downloadURL) => {
-  //           const docRef = doc(
-  //             db,
-  //             `users/${userId}/repos/${repoId}/projectData/images`
-  //           );
-  //           const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-
-  //           await setDoc(docRef, { coverImage: downloadURL }, { merge: true });
-  //           await setDoc(
-  //             parentStorageRef,
-  //             { coverImage: downloadURL },
-  //             { merge: true }
-  //           );
-
-  //           setImgUrl(downloadURL);
-  //           console.log(`URL to stored img: ${downloadURL}}`);
-  //         })
-  //         .then(() => {
-  //           // TODO - less hacky way of refreshing to allow 'showing project'
-  //           // TODO - Extract to parent components
-  //           router.reload();
-  //         });
-
-  //     }
-  //   );
-  // }
-
   return (
     <>
       {/* <Group mx={10}> */}
@@ -237,7 +192,7 @@ export function UploadProjectCoverImage(
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
           maxWidth: 200,
-          maxHeight: 150,
+          maxHeight: 180,
           textAlign: 'center',
           margin: 'auto',
           display: 'flex',
@@ -266,46 +221,34 @@ export function UploadProjectCoverImage(
             />
           </Dropzone.Reject>
           <Dropzone.Idle>
-            <IconPhoto size={40} stroke={1.5} />
+            {existingCoverImage && !imgUrl ? (
+              <Image
+                mb="xs"
+                height={100}
+                src={existingCoverImage}
+                alt="Current cover image"
+                // sx={{ maxHeight: 160 }}
+              />
+            ) : imgUrl ? (
+              <Image
+                  mb="xs"
+                  height={100}
+
+                src={imgUrl}
+                alt="Current cover image"
+                // sx={{ width: '100%' }}
+              />
+            ) : (
+              <IconPhoto size={40} stroke={1.5} />
+            )}
             <Text size="md">Edit cover image</Text>
-            <Text> Max 6MB</Text>
+            <Text size="xs"> Max 6MB</Text>
           </Dropzone.Idle>
         </Group>
       </Dropzone>
-      {/* </Group> */}
-      {/* {files.length > 1 && (
-        <Group position="center">
-          <Space h="xl" />
-          <Space h="xl" />
-          <Space h="lg" />
 
-          <Text>Preview:</Text>
-          <Space h="sm" />
-          <Container size={200}>{previews}</Container>
-        </Group>
-      )} */}
 
-      {/* <Center>
-        <Container size={200}>{previews}</Container>
-      </Center> */}
-
-      {/* <Center> */}
-      {/* {!imgCheck ? (
-        <></>
-      ) : ( */}
-      {/* // TODO: Check this logic for conditionally showing when image successfully uploaded */}
-      {/* {imgUrl && imgCheck && (
-        <Group position="center">
-
-          <Space h="lg" />
-
-          <Space h="sm" />
-          <Container size={200}>{previews}</Container>
-          <Text>Image Saved</Text>
-        </Group>
-      )} */}
-
-      {imgCheck && (
+      {imgCheck && !imgUrl &&(
         <>
           <Group position="center">
             {/* <Space h="xl" />
