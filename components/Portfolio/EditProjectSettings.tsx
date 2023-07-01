@@ -38,7 +38,7 @@ interface ProjectSettingsProps {
   opened: boolean;
   open: () => void;
   close: () => void;
-  handlePublish?: () => void;
+  handlePublish: (formData: any) => void;
   handleSaveAsDraft?: () => void;
   projectTitle?: string;
   techStack?: string[];
@@ -125,7 +125,7 @@ function ProjectSettingsModal({
       projectCategories: projectCategories || [],
       visibleToPublic: visibleToPublic || false,
       openToCollaboration: openToCollaboration || false,
-      coverImage: coverImage || '',
+      // coverImage: coverImage || '',
       projectDescription: projectDescription || '',
     },
     // `${repoName}`,
@@ -141,9 +141,9 @@ function ProjectSettingsModal({
     // },
   });
 
-  function logFormValues() {
-    console.log(form.values);
-  }
+  // function logFormValues() {
+  //   console.log(form.values);
+  // }
 
   return (
     <>
@@ -294,18 +294,8 @@ function ProjectSettingsModal({
                     radius="lg"
                     size="sm"
                     px={40}
-                    // w='xl'
-                    // w={{
-                    //   base: '95%',
-                    //   md: '80%',
-                    //   lg: '60%',
-                    //   sm: '90%',
-                    // }}
-                    // mt={40}
-                    // onClick={handlePublish}
-                    onClick={logFormValues}
-                    // className="mx-auto"
-                    // onClick={handleSave}
+                    onClick={() => handlePublish(form.values)}
+                    // onClick={logFormValues}
                     styles={(theme) => ({
                       root: {
                         backgroundColor: theme.colors.green[7],
