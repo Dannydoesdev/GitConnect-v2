@@ -103,7 +103,8 @@ export default function UpdatePortfolioProject({ projectData, textContent }: any
                 url={url as string}
                 repoid={repoid as string}
                 userid={userId as string}
-                userName={userData.userName}
+              userName={userData.userName}
+              otherProjectData={existingProject}
               />
             </>
           ) : (
@@ -117,6 +118,7 @@ export default function UpdatePortfolioProject({ projectData, textContent }: any
                   userid={loggedInUserId as string}
                   textContent={textContent}
                   userName={userData.userName}
+                  otherProjectData={existingProject}
                 />
               )}
             </>
