@@ -71,6 +71,7 @@ type RichTextEditorVanillaProps = {
   userId?: string;
   readme?: string;
   existingContent?: string | null | undefined;
+  updatedContent?: string | null | undefined;
   onUpdateEditor?: (content: string) => void;
 };
 
@@ -82,6 +83,7 @@ lowlight.registerLanguage('ts', ts);
 
 function RichTextEditorVanilla({
   existingContent,
+  updatedContent,
   repoId,
   userId,
   readme,
@@ -96,6 +98,7 @@ function RichTextEditorVanilla({
   useEffect(() => {
     if (readme && readme !== newReadme) {
       setNewReadme(readme);
+    // if (readme) {
       editor?.commands.setContent(readme);
     }
   }, [readme]);
@@ -125,11 +128,17 @@ function RichTextEditorVanilla({
     );
   }
 
+  // useEffect(() => {
+  //   if (existingContent && editor) {
+  //     editor?.commands.setContent(existingContent);
+  //   }
+  // }, []);
+
   useEffect(() => {
-    if (existingContent && editor) {
-      editor?.commands.setContent(existingContent);
+    if (updatedContent && editor) {
+      editor?.commands.setContent(updatedContent);
     }
-  }, [existingContent]);
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -161,7 +170,7 @@ function RichTextEditorVanilla({
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content,
+    content:updatedContent || existingContent,
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
@@ -171,7 +180,7 @@ function RichTextEditorVanilla({
     },
     onUpdate({ editor }) {
       // Update state every time the editor content changes
-      setEditorContent(editor.getHTML());
+      // setEditorContent(editor.getHTML());
       onUpdateEditor?.(editor.getHTML());
     },
   });
