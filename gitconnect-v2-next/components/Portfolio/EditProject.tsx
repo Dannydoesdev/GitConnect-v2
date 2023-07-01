@@ -1,7 +1,7 @@
 // import type { NextPage } from 'next';
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { db } from '@/firebase/clientApp';
 import {
   Aside,
@@ -70,19 +70,9 @@ export default function EditPortfolioProject({
   const [readme, setReadme] = useState('');
   // const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
   const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
+  const [currentCoverImage, setcurrentCoverImage] = useState('');
 
-  // useEffect(() => {
-  //   console.log('Real time content')
-  //   console.log(realtimeEditorContent)
-
-  // },[realtimeEditorContent])
-
-  // useEffect(() => {
-  //   console.log('Existing Content')
-  //   console.log(textContent)
-
-  // },[textContent])
-
+  const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   // const [previewOpened, { open, close }] = useDisclosure(false);
 
@@ -103,17 +93,29 @@ export default function EditPortfolioProject({
     }
   }, []);
 
+  const handleNewCoverImage = (imageURL: string) => {
+    setcurrentCoverImage(imageURL);
+  };
+
+  useEffect(() => {
+    if (currentCoverImage === '' && otherProjectData && otherProjectData.coverImage !== '') {
+      setcurrentCoverImage(otherProjectData.coverImage)
+    }
+  }, []);
+
+
   // Publish the data from the editor settings modal to Firebase
   //! TODO - should this be duplicated to a shallower collection?
 
   async function handlePublish(formData: any) {
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
     try {
       notifications.show({
         id: 'load-data',
         loading: true,
-        title: 'Loading your data',
-        message: 'Data is being saved to the database',
+        title: 'Publishing your project',
+        message: 'Project is being saved to the database',
         autoClose: false,
         withCloseButton: false,
       });
@@ -122,6 +124,7 @@ export default function EditPortfolioProject({
         { ...formData, userId: userid, repoId: repoid },
         { merge: true }
       );
+      await setDoc(parentDocRef, { ...formData }, { merge: true });
       // console.log(formData)
       // console.log('publishing');
       // close();
@@ -139,17 +142,17 @@ export default function EditPortfolioProject({
       notifications.update({
         id: 'load-data',
         color: 'teal',
-        title: 'Data was saved',
-        message: 'Your updates were saved to the database',
+        title: 'Project was published',
+        message: 'Your updates have been saved and published',
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
       close();
     }
-    // await setDoc(docRef, { ...formData, userId: userid, repoId: repoid }, { merge: true });
-    // console.log(formData)
-    // console.log('publishing');
-    // close();
+
+    // TODO: New project view page
+    // router.push(`/profiles/projects/${repoid}`);
+
   }
 
   // When continuing - save the data to Firebase and set the hidden status to false
@@ -176,14 +179,44 @@ export default function EditPortfolioProject({
     });
 
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Saving draft',
+        message: 'Please wait',
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+      // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
 
-    await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-    // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
+      const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
-    const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
-
-    await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
-    close();
+      await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
+      // close();
+    } catch (error) {
+      console.log(error);
+      notifications.update({
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        title: 'Draft was saved',
+        message: 'Your updates were saved to the database',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
+      close();
+    
+    }
   }
 
   // const params = {
@@ -283,7 +316,8 @@ export default function EditPortfolioProject({
           name={repoName}
           // description={description}
           repoUrl={url}
-          coverImage={otherProjectData.coverImage}
+          // coverImage={otherProjectData.coverImage}
+          coverImage={currentCoverImage}
           liveUrl={otherProjectData.liveUrl}
         />
 
@@ -304,12 +338,25 @@ export default function EditPortfolioProject({
       <>
         <Container fluid>
           <ProjectSettingsModal
+            handleNewCoverImage={handleNewCoverImage}
             repoId={repoid}
             handlePublish={handlePublish}
             handleSaveAsDraft={handleSaveAsDraft}
             opened={opened}
             open={open}
             close={close}
+            techStack={otherProjectData.techStack}
+            liveUrl={otherProjectData.liveUrl || otherProjectData.live_url}
+            repoUrl={otherProjectData.repoUrl || otherProjectData.html_url}
+            // coverImage={otherProjectData.coverImage}
+            coverImage={currentCoverImage}
+            projectCategories={otherProjectData.projectCategories}
+            projectTags={otherProjectData.projectTags}
+            projectDescription={otherProjectData.projectDescription || otherProjectData.description}
+            projectTitle={otherProjectData.projectTitle || otherProjectData.name}
+            repoName={repoName}
+            openToCollaboration={otherProjectData.openToCollaboration}
+            visibleToPublic={otherProjectData.visibleToPublic}
           />
           {/* <> */}
           <Group
