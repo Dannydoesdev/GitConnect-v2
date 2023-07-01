@@ -17,7 +17,8 @@ import {
   FileWithPath,
   IMAGE_MIME_TYPE,
 } from '@mantine/dropzone';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { IconUpload, IconPhoto, IconX, IconCheck, IconCross } from '@tabler/icons-react';
 import {
   collection,
   doc,
@@ -72,7 +73,10 @@ export function UploadProjectCoverImage(
   };
 
   const handleFileDrop = (file: FileWithPath[]) => {
+    setImgUrl('');
+    // setImgCheck(false);
     // console.log('accepted file', file);
+    // console.log('droptime')
     setFiles(file);
     setImgCheck(true);
   };
@@ -81,61 +85,91 @@ export function UploadProjectCoverImage(
     // console.log(file);
     // Get the file extension
     const extension = file.name.split('.').pop();
-    console.log(extension);
+    // console.log(extension);
 
     const storageRef = ref(
       storage,
       `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`
     );
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Uploading Image',
+        message: 'Cover image is being uploaded',
+        autoClose: false,
+        withCloseButton: false,
+      });
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgresspercent(progress);
-      },
-      (error) => {
-        alert(error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
-          const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-          // const urlOnlyRef =
-          // Generate sizes
-          const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'];
-          const coverImageMeta = {
-            name: file.name,
-            extension,
-            sizes,
-          };
-          // console.log(coverImageMeta)
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-          await setDoc(
-            docRef,
-            { coverImageMeta: coverImageMeta, coverImage: downloadURL },
-            { merge: true }
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           );
-          await setDoc(
-            parentStorageRef,
-            {
-              coverImageMeta: coverImageMeta,
-              coverImage: downloadURL,
-            },
-            { merge: true }
-          );
+          setProgresspercent(progress);
+        },
+        (error) => {
+          alert(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
+            const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
+            // const urlOnlyRef =
+            // Generate sizes
+            const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'];
+            const coverImageMeta = {
+              name: file.name,
+              extension,
+              sizes,
+            };
+            // console.log(coverImageMeta)
 
-          setImgUrl(downloadURL);
-          console.log(`URL to stored img: ${downloadURL}`);
-        });
-        // .then(() => {
-        //   router.reload();
-        // });
-      }
-    );
+            await setDoc(
+              docRef,
+              { coverImageMeta: coverImageMeta, coverImage: downloadURL },
+              { merge: true }
+            );
+            await setDoc(
+              parentStorageRef,
+              {
+                coverImageMeta: coverImageMeta,
+                coverImage: downloadURL,
+              },
+              { merge: true }
+            );
+
+            setImgUrl(downloadURL);
+            // console.log(`URL to stored img: ${downloadURL}`);
+          });
+          // .then(() => {
+          //   router.reload();
+          // });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      notifications.update({
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        title: 'Image was saved',
+        message: 'Cover image uploaded to the database',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
+    }
   }
 
   // async function sendImageToFirebase(file: any) {
@@ -271,7 +305,7 @@ export function UploadProjectCoverImage(
         </Group>
       )} */}
 
-      {imgCheck &&  (
+      {imgCheck && (
         <>
           <Group position="center">
             {/* <Space h="xl" />

@@ -1,4 +1,3 @@
-import { db } from '../firebase/clientApp';
 import {
   collection,
   collectionGroup,
@@ -6,9 +5,9 @@ import {
   query,
   getDoc,
   getDocs,
-  doc,
-  // serverTimestamp,
+  doc, // serverTimestamp,
 } from 'firebase/firestore';
+import { db } from '../firebase/clientApp';
 
 export async function getSingleProjectById(repoId: string) {
   const intId = parseInt(repoId);
@@ -16,9 +15,12 @@ export async function getSingleProjectById(repoId: string) {
   const q = query(collectionGroup(db, 'repos'), where('id', '==', intId));
 
   const querySnapshot = await getDocs(q);
+
   const projectData: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
-    if (!data) { return null; }
+    if (!data) {
+      return null;
+    }
 
     return {
       ...data,
@@ -36,7 +38,9 @@ export async function getAllProjectIds() {
 
   const projectIds: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
-    if (!data) { return null; }
+    if (!data) {
+      return null;
+    }
     return {
       id: data.id.toString(),
     };
@@ -44,14 +48,8 @@ export async function getAllProjectIds() {
   return projectIds;
 }
 
-export async function getProjectTextEditorContent(
-  userId: string,
-  repoId: string
-) {
-  const docRef = doc(
-    db,
-    `users/${userId}/repos/${repoId}/projectData/mainContent`
-  );
+export async function getProjectTextEditorContent(userId: string, repoId: string) {
+  const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -65,8 +63,31 @@ export async function getProjectTextEditorContent(
       // });
 
       return htmlOutput;
-    } else return null
+    } else return null;
   } else return null;
+}
+
+export async function getAllCustomProjectData(userId: string, repoId: string) {
+  // console.log('testing getAllCustomProjectData');
+  // const docRef = doc(
+  //   db,
+  //   `users/${userId}/repos/${repoId}/projectData/mainContent`
+  // );
+  // const docSnap = await getDoc(docRef);
+  // const imageRef = doc(
+  //   db,
+  //   `users/${userId}/repos/${repoId}/projectData/images`
+  // );
+  const customProjectData: any = [];
+
+  const querySnapshot = await getDocs(
+    collection(db, `users/${userId}/repos/${repoId}/projectData`)
+  );
+  querySnapshot.docs.forEach((doc: any) => {
+    customProjectData.push({ ...doc.data() });
+  });
+
+  return customProjectData;
 }
 
 export async function getAllProjectsSimple() {
@@ -118,10 +139,7 @@ export async function fetchProjects() {
 }
 
 export async function getAllProjectDataFromProfile(id: string) {
-  const projectQuery = query(
-    collectionGroup(db, 'repos'),
-    where('userId', '==', id)
-  );
+  const projectQuery = query(collectionGroup(db, 'repos'), where('userId', '==', id));
   const querySnapshot = await getDocs(projectQuery);
 
   return querySnapshot.docs.map((detail: any) => {

@@ -5,6 +5,7 @@ export default createStyles((theme) => ({
     position: 'relative',
     backgroundSize: 'contain',
     backgroundPosition: 'center',
+    marginTop: -20,
     // marginTop: 55,
     // height: '60vh',
     // height: '400',

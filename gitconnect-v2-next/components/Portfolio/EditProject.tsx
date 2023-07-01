@@ -19,15 +19,17 @@ import {
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconCross } from '@tabler/icons-react';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import useSWR from 'swr';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
 import ProjectSettingsModal from './EditProjectSettings';
-import { ViewProjectHero } from './Hero/ViewProjectHero';
 import RichTextEditorVanilla from './RichTextEditorVanilla';
-import ViewPreviewProjectEditor from './ViewProject';
+import { ViewProjectHero } from './ViewProjectHero/ViewProjectHero';
+import ViewPreviewProjectEditor from './ViewProjectPreview/ViewProjectPreview';
 
 type EditPortfolioProps = {
   repoName: string;
@@ -47,12 +49,12 @@ const useStyles = createStyles((theme) => ({
 }));
 
 // const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-async function fetcher(params: any) {
-  const [url, args] = params;
-  const res = await axios.get(url, { params: args });
-  // console.log(res.data)
-  return res.data;
-}
+// async function fetcher(params: any) {
+//   const [url, args] = params;
+//   const res = await axios.get(url, { params: args });
+//   // console.log(res.data)
+//   return res.data;
+// }
 
 export default function EditPortfolioProject({
   repoName,
@@ -64,9 +66,23 @@ export default function EditPortfolioProject({
   userName,
   otherProjectData,
 }: EditPortfolioProps) {
-  const [shouldFetch, setShouldFetch] = useState(false);
+  // const [shouldFetch, setShouldFetch] = useState(false);
   const [readme, setReadme] = useState('');
+  // const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
   const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
+
+  // useEffect(() => {
+  //   console.log('Real time content')
+  //   console.log(realtimeEditorContent)
+
+  // },[realtimeEditorContent])
+
+  // useEffect(() => {
+  //   console.log('Existing Content')
+  //   console.log(textContent)
+
+  // },[textContent])
+
   const [opened, { open, close }] = useDisclosure(false);
   // const [previewOpened, { open, close }] = useDisclosure(false);
 
@@ -81,11 +97,62 @@ export default function EditPortfolioProject({
     // console.log('editor changed');
   };
 
-  async function handlePublish() {
-    console.log('publishing');
-    close();
+  useEffect(() => {
+    if (textContent && textContent !== '' && realtimeEditorContent === '') {
+      setRealtimeEditorContent(textContent);
+    }
+  }, []);
+
+  // Publish the data from the editor settings modal to Firebase
+  //! TODO - should this be duplicated to a shallower collection?
+
+  async function handlePublish(formData: any) {
+    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Loading your data',
+        message: 'Data is being saved to the database',
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await setDoc(
+        docRef,
+        { ...formData, userId: userid, repoId: repoid },
+        { merge: true }
+      );
+      // console.log(formData)
+      // console.log('publishing');
+      // close();
+    } catch (error) {
+      console.log(error);
+      notifications.update({
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        title: 'Data was saved',
+        message: 'Your updates were saved to the database',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
+      close();
+    }
+    // await setDoc(docRef, { ...formData, userId: userid, repoId: repoid }, { merge: true });
+    // console.log(formData)
+    // console.log('publishing');
+    // close();
   }
 
+  // When continuing - save the data to Firebase and set the hidden status to false
   async function handleSaveAndContinue() {
     const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
@@ -98,12 +165,12 @@ export default function EditPortfolioProject({
     const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
     await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
+    open();
     // console.log('saved and continue')
   }
 
+  // When saving as draft - save the data to Firebase and set the hidden status to true
   async function handleSaveAsDraft() {
-    // console.log(realtimeEditorContent);
-
     const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
@@ -116,43 +183,60 @@ export default function EditPortfolioProject({
     const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
     await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
-    // console.log('saved as draft');
+    close();
   }
 
-  const params = {
-    owner: userName,
-    repo: repoName,
-    //TODO change to repoName - currently hardcoded for as GC2 is private
-    // repo: 'gitconnect',
-  };
+  // const params = {
+  //   owner: userName,
+  //   repo: repoName,
+  //   //TODO change to repoName - currently hardcoded for as GC2 is private
+  //   // repo: 'gitconnect',
+  // };
 
   // TODO: Figure out how to set SWR call to button click trigger - temp workaround
 
-  const { data } = useSWR(
-    shouldFetch ? ['/api/profiles/projects/edit/readme', params] : null,
-    fetcher
-  );
+  // const { data } = useSWR(
+  //   shouldFetch ? ['/api/profiles/projects/edit/readme', params] : null,
+  //   fetcher
+  // );
 
-  function handleImportReadmeSWR() {
-    setShouldFetch(true);
-    // console.log(data);
-    setTimeout(() => {
-      setShouldFetch(false);
-    }, 2000);
+  // function handleImportReadmeSWR() {
+  //   setShouldFetch(true);
+  //   // console.log(data);
+  //   setTimeout(() => {
+  //     setShouldFetch(false);
+  //   }, 2000);
+  // }
+
+  // useEffect(() => {
+  //   if (data) {
+  //     const sanitizedHTML = DOMPurify.sanitize(data, { ADD_ATTR: ['target'] });
+  //     if (data !== sanitizedHTML) {
+  //       setReadme(sanitizedHTML);
+  //     }
+  //   }
+  // }, [data]);
+
+  function handleImportReadme() {
+    const readmeUrl = `/api/profiles/projects/edit/readme`;
+    axios
+      .get(readmeUrl, {
+        params: {
+          owner: userName,
+          repo: repoName,
+        },
+      })
+      .then((response) => {
+        const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
+        // console.log(sanitizedHTML);
+        setReadme(sanitizedHTML);
+        handleEditorChange(sanitizedHTML);
+      });
   }
 
   function handlePreview() {
     setPreview(!preview);
   }
-
-  useEffect(() => {
-    if (data) {
-      const sanitizedHTML = DOMPurify.sanitize(data, { ADD_ATTR: ['target'] });
-      if (data !== sanitizedHTML) {
-        setReadme(sanitizedHTML);
-      }
-    }
-  }, [data]);
 
   if (preview) {
     return (
@@ -174,7 +258,7 @@ export default function EditPortfolioProject({
           // withCloseButton
           // onClose={close}
           withBorder
-          size="sm"
+          size="md"
           radius="md"
         >
           <Text size="sm" align="center" mb="xs" weight={500}>
@@ -201,66 +285,23 @@ export default function EditPortfolioProject({
           repoUrl={url}
           coverImage={otherProjectData.coverImage}
           liveUrl={otherProjectData.liveUrl}
-          
         />
 
-        <Container size='lg'>
-          <ViewPreviewProjectEditor
-            existingContent={textContent}
-            userId={userid}
-            repoId={repoid}
-            readme={readme}            
-            // onUpdateEditor={handleEditorChange}
-          />
-        </Container>
+        {/* <Container size="xl"> */}
+
+        <ViewPreviewProjectEditor
+          updatedContent={realtimeEditorContent}
+          // existingContent={textContent}
+          userId={userid}
+          repoId={repoid}
+          readme={readme}
+        />
+        {/* </Container> */}
       </>
-      //   <Container size='xl'>
-      // </Container>
     );
   } else
     return (
       <>
-        {/* TODO: Consider if non-fluid and static sizing is better for this use case */}
-        {/* <ScrollArea type="always" offsetScrollbars> */}
-        {/* // size="xl"> */}
-        {/* {preview ? (
-        <Container fluid>
-          <Group position="right">
-            <Button
-              component="a"
-              // onClick={handleImportReadme}
-              onClick={handlePreview}
-              radius="md"
-              variant="outline"
-              // w={{
-              //   base: '95%',
-              //   md: '80%',
-              //   lg: '60%',
-              //   sm: '90%',
-              // }}
-              // mt={20}
-              // className="mx-auto"
-            >
-              {preview ? 'Back to editing' : 'View a Preview'}
-            </Button>
-          </Group>
-          <ViewProjectHero
-            name={repoName}
-            // description={description}
-            repoUrl={url}
-            coverImage={otherProjectData.coverImage}
-            liveUrl={otherProjectData.liveUrl}
-          />
-
-          <PreviewProjectEditor
-            existingContent={textContent}
-            userId={userid}
-            repoId={repoid}
-            readme={readme}
-            // onUpdateEditor={handleEditorChange}
-          />
-        </Container>
-      ) : ( */}
         <Container fluid>
           <ProjectSettingsModal
             repoId={repoid}
@@ -310,6 +351,7 @@ export default function EditPortfolioProject({
 
             <RichTextEditorVanilla
               existingContent={textContent}
+              updatedContent={realtimeEditorContent}
               userId={userid}
               repoId={repoid}
               readme={readme}
@@ -363,8 +405,8 @@ export default function EditPortfolioProject({
             <Flex direction="column" align="center">
               <Button
                 component="a"
-                // onClick={handleImportReadme}
-                onClick={handleImportReadmeSWR}
+                onClick={handleImportReadme}
+                // onClick={handleImportReadmeSWR}
                 radius="md"
                 w={{
                   base: '95%',
