@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Overlay, Container, Title, Text, Button, Group, Box } from '@mantine/core';
-import { correctImageGetter } from '../../../lib/correctImageGetter';
+import { correctImageGetter } from '../../../../lib/correctImageGetter';
 import useStyles from './ViewProjectHero.styles';
 
 interface ViewProjectHeroProps {
@@ -11,14 +11,10 @@ interface ViewProjectHeroProps {
   name: string;
 }
 
-export function ViewProjectHero({
-  coverImage,
-  repoUrl,
-  liveUrl,
-  name,
-}: ViewProjectHeroProps) {
+export function ViewProjectHero({coverImage, repoUrl, liveUrl, name }: ViewProjectHeroProps) {
   const { classes } = useStyles();
 
+  // const project = props.props[0];
   const image = coverImage;
 
   const imageUrl =
@@ -27,7 +23,13 @@ export function ViewProjectHero({
       : '/img/gitconnect.webp';
 
   return (
-    <Group className={classes.hero}>
+    // <Group className={classes.hero} sx={{ backgroundImage: project.coverImage ? `url(${project.coverImage})` : '' }}>
+    <Group
+      className={classes.hero}
+      // sx={{
+      //   backgroundImage: `url(${imageUrl})`,
+      // }}
+    >
       <Box
         // h='100%'
         sx={(theme) => ({
@@ -41,14 +43,18 @@ export function ViewProjectHero({
         })}
       >
         <Image
+          // src={image ? image : '/img/gitconnect.jpg'}
           src={imageUrl}
           className="image"
           style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
           sizes="100vw"
+          // height={500}
+          // width={2000}
           fill={true}
           quality={100}
           alt=""
           priority={true}
+          // priority = {imageUrl.includes('.gif') ? true : false}
         />
       </Box>
       <Overlay
@@ -68,6 +74,8 @@ export function ViewProjectHero({
               <Button
                 component="a"
                 target="_blank"
+                // size='xl'
+                // radius='xl'
                 className={classes.liveAndGithub}
                 sx={(theme) => ({
                   // subscribe to color scheme changes
@@ -100,6 +108,9 @@ export function ViewProjectHero({
             </Button>
           </Link>
         </Group>
+        {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
+        Check it out!
+      </Button> */}
       </Container>
     </Group>
   );
