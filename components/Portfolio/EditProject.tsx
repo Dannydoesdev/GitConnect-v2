@@ -318,7 +318,7 @@ export default function EditPortfolioProject({
           repoUrl={url}
           // coverImage={otherProjectData.coverImage}
           coverImage={currentCoverImage}
-          liveUrl={otherProjectData.liveUrl}
+          liveUrl={otherProjectData?.liveUrl}
         />
 
         {/* <Container size="xl"> */}
@@ -345,28 +345,32 @@ export default function EditPortfolioProject({
             opened={opened}
             open={open}
             close={close}
-            techStack={otherProjectData.techStack}
-            liveUrl={otherProjectData.liveUrl || otherProjectData.live_url}
-            repoUrl={otherProjectData.repoUrl || otherProjectData.html_url}
+            techStack={otherProjectData?.techStack}
+            liveUrl={otherProjectData?.liveUrl ||otherProjectData?.live_url}
+            repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url}
             // coverImage={otherProjectData.coverImage}
             coverImage={currentCoverImage}
-            projectCategories={otherProjectData.projectCategories}
-            projectTags={otherProjectData.projectTags}
-            projectDescription={otherProjectData.projectDescription || otherProjectData.description}
-            projectTitle={otherProjectData.projectTitle || otherProjectData.name}
+            projectCategories={otherProjectData?.projectCategories}
+            projectTags={otherProjectData?.projectTags}
+            projectDescription={otherProjectData?.projectDescription || otherProjectData?.description}
+            projectTitle={otherProjectData?.projectTitle || otherProjectData?.name}
             repoName={repoName}
-            openToCollaboration={otherProjectData.openToCollaboration}
-            visibleToPublic={otherProjectData.visibleToPublic}
+            openToCollaboration={otherProjectData?.openToCollaboration}
+            visibleToPublic={otherProjectData?.visibleToPublic}
           />
           {/* <> */}
           <Group
             mt={40}
             // ml={300}
             ml={{
-              xxs: 'calc(5%)',
-              xs: 'calc(10%)',
-              md: 'calc(18%)',
-              base: 'calc(10%)',
+              // xxs: 'calc(5%)',
+              // xs: 'calc(10%)',
+              xxs: 0,
+              xs: 0,
+              md: 'calc(14%)',
+              // lg: 'calc(15%)',
+              // xl: 'calc(15%)',
+              // base: 'calc(10%)',
             }}
             // mx='auto'
             // ml={-25}
@@ -389,7 +393,7 @@ export default function EditPortfolioProject({
 
               // When other breakpoints do not match base width is used, defaults to 100%
               // base: 'calc(100% - 120px)',
-              base: 'calc(60%)',
+              base: 'calc(63%)',
             }}
           >
             <Title mx="auto">Editing {repoName}</Title>
@@ -419,12 +423,12 @@ export default function EditPortfolioProject({
           zIndex={1}
           mt={80}
           width={{
-            // xs: 145,
-            xxs: 'calc(25%)',
-            xs: 'calc(23%)',
+            // base: 'calc(20%)',
+            xxs: 'calc(30%)',
+            xs: 'calc(25%)',
             // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
             // sm: 200,
-            sm: 'calc(20%)',
+            sm: 'calc(22%)',
 
             // md: 230,
             md: 'calc(20%)',
@@ -432,11 +436,12 @@ export default function EditPortfolioProject({
             // lg: 260,
 
             // xl: 280,
-            xl: 'calc(16%)',
+            xl: 'calc(18%)',
+            xxl: 'calc(15%)',
             // xxl: 400,
             // When other breakpoints do not match base width is used, defaults to 100%
             // base: 120,
-            base: 'calc(18%)',
+            base: 'calc(30%)',
           }}
         >
           {/* First section with normal height (depends on section content) */}
@@ -462,6 +467,11 @@ export default function EditPortfolioProject({
                   sm: '90%',
                 }}
                 mt={40}
+                // size={{
+                //   base: 'md',
+                //   sm: 'sm',
+                //   xs: 'xs',
+                // }}
                 className="mx-auto"
                 // onClick={handleSave}
                 styles={(theme) => ({
@@ -469,7 +479,9 @@ export default function EditPortfolioProject({
                     backgroundColor: theme.colors.blue[7],
                     // width: '40%',
                     [theme.fn.smallerThan('sm')]: {
-                      // width: '70%',
+                      // size: 'xs' ,
+                      padding: 0,
+                      fontSize: 12,
                     },
                     '&:hover': {
                       backgroundColor:
@@ -501,7 +513,9 @@ export default function EditPortfolioProject({
                     backgroundColor: theme.colors.blue[7],
                     // width: '40%',
                     [theme.fn.smallerThan('sm')]: {
-                      // width: '70%',
+                      // size: 'xs' ,
+                      padding: 0,
+                      fontSize: 12,
                     },
                     '&:hover': {
                       backgroundColor:
@@ -526,6 +540,23 @@ export default function EditPortfolioProject({
                   lg: '60%',
                   sm: '90%',
                 }}
+                styles={(theme) => ({
+                  root: {
+                    // backgroundColor: theme.colors.blue[7],
+                    // width: '40%',
+                    [theme.fn.smallerThan('sm')]: {
+                      // size: 'xs' ,
+                      padding: 0,
+                      fontSize: 12,
+                    },
+                    // '&:hover': {
+                    //   backgroundColor:
+                    //     theme.colorScheme === 'dark'
+                    //       ? theme.colors.blue[9]
+                    //       : theme.colors.blue[9],
+                    // },
+                  },
+                })}
                 mt={20}
                 className="mx-auto"
               >

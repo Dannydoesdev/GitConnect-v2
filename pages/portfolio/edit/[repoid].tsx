@@ -19,7 +19,7 @@ export async function getStaticProps({ params }: any) {
 
   const projectData: any = await getSingleProjectById(params.repoid);
   // console.log(projectData[0].userId);
-  let customProjectData;
+  // let customProjectData;
   let textEditorContent;
   if (!projectData || !projectData[0] || !projectData[0].userId) {
     textEditorContent = null;
@@ -30,10 +30,10 @@ export async function getStaticProps({ params }: any) {
     );
 
     // Handle new custom data added to project settings modal
-    customProjectData = await getAllCustomProjectData(
-      projectData[0].userId,
-      params.repoid
-    );
+    // customProjectData = await getAllCustomProjectData(
+    //   projectData[0].userId,
+    //   params.repoid
+    // );
   }
   // TODO - make the 'has starred' calculation on server side & send in props
 
@@ -42,7 +42,7 @@ export async function getStaticProps({ params }: any) {
     props: {
       projectData: projectData || null,
       textContent: textEditorContent || null,
-      customProjectData: customProjectData || null,
+      // customProjectData: customProjectData || null,
     },
     revalidate: 5,
   };
@@ -68,7 +68,7 @@ export async function getStaticPaths() {
 export default function UpdatePortfolioProject({
   projectData,
   textContent,
-  customProjectData,
+  // customProjectData,
 }: any) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
