@@ -15,10 +15,16 @@ import {
   Grid,
   MultiSelect,
   Spoiler,
+  Text,
+  Space
 } from '@mantine/core';
-import '@mantine/core';
+// import '@mantine/core';
 import { useForm } from '@mantine/form';
+import { modals } from '@mantine/modals';
+// import { useDisclosure } from '@mantine/hooks';
 import UploadProjectCoverImage from './UploadProjectCoverImage';
+import { notifications } from '@mantine/notifications';
+import { IconX } from '@tabler/icons-react';
 
 interface ProjectSettingsSimpleProps {
   repoId?: string;
@@ -131,6 +137,32 @@ function ProjectSettingsModal({
     // },
   });
 
+  const openCoverImageRequiredModal = () =>
+    modals.open({
+      id: 'coverImage',
+      title: 'Cover image is required',
+      children: (
+        <>
+          <Group position="center">  
+          <Text fw='bold' size="lg" >Please upload a cover image for your project.</Text>
+          <Space h='md' />
+          <Text size="md" >Click anywhere outside of this modal to close it.</Text>
+          {/* <Button onClick={() => modals.close('coverImage')} mt="md">Close</Button> */}
+          {/* <TextInput label="Your email" placeholder="Your email" data-autofocus /> */}
+          {/* <Button onClick={() => modals.close('coverImage')} mt="md">
+            Close
+          </Button> */}
+            </Group>
+        </>
+      ),
+      // centered: true,
+      size: 'lg',
+      withCloseButton: true,
+      // labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      // onCancel: () => console.log('Cancel'),
+      // onConfirm: () => console.log('Confirmed'),
+      // styles: { root: { padding: '40px', border: 'red 1px 1px' } },
+    });
   // function logFormValues() {
   //   console.log(form.values);
   // }
@@ -228,16 +260,17 @@ function ProjectSettingsModal({
                   // {...form.getInputProps('projectCategories', { type: 'checkbox' })}
                   {...form.getInputProps('projectCategories')}
                 >
-                  <Spoiler maxHeight={140} showLabel="Show all categories" hideLabel="Hide"
+                  <Spoiler
+                    maxHeight={140}
+                    showLabel="Show all categories"
+                    hideLabel="Hide"
                     styles={(theme) => ({
                       control: {
-                      marginTop: 15,
-                      }
+                        marginTop: 15,
+                      },
                     })}
-                  
                   >
-                  <Group spacing="xl" mt="md">
-                 
+                    <Group spacing="xl" mt="md">
                       <Checkbox value="frontend" label="Frontend" />
                       <Checkbox value="backend" label="Backend" />
                       <Checkbox value="databases" label="Databases" />
@@ -264,11 +297,10 @@ function ProjectSettingsModal({
                       <Checkbox value="testing" label="Testing" />
                       {/* Security, Cloud, Development Tools, Apps, Automation, Components, Libraries, Open Source */}
                       <Checkbox value="security" label="Security" />
-                     
+
                       <Checkbox value="other" label="Other" />
                     </Group>
-                    </Spoiler>
-
+                  </Spoiler>
                 </Checkbox.Group>
 
                 <Checkbox
@@ -323,12 +355,36 @@ function ProjectSettingsModal({
                   >
                     Save Draft
                   </Button>
-                  <Button
+                  {/* {
+                    coverImage ?  */}
+                    <Button
                     component="a"
                     radius="lg"
                     size="sm"
                     px={40}
-                    onClick={() => handlePublish(form.values)}
+             
+                      // onClick = {() => handlePublish(form.values)}
+                      // onClick={coverImage ? () => handlePublish(form.values) : openCoverImageRequiredModal}
+
+                    onClick={coverImage ? () => handlePublish(form.values) :
+                      () => notifications.show({
+                        id: 'hello-there',
+                        withCloseButton: true,
+                        // onClose: () => console.log('unmounted'),
+                        // onOpen: () => console.log('mounted'),
+                        autoClose: 5000,
+                        title: "Cover Image is required",
+                        message: 'Please upload a cover image before publishing',
+                        color: 'red',
+                        withBorder: true,
+                        icon: <IconX />,
+                        className: 'my-notification-class',
+                        style: { borderWidth: 0.5, borderColor: 'red' },
+                        // sx: { borderColor: 'red' },
+                        loading: false,
+                      })
+                    }
+                    // onClick={() => handlePublish(form.values)}
                     // onClick={logFormValues}
                     styles={(theme) => ({
                       root: {
@@ -348,6 +404,39 @@ function ProjectSettingsModal({
                   >
                     Publish
                   </Button>
+                      {/* :
+                      <Button
+                    component="a"
+                    radius="lg"
+                    size="sm"
+                    px={40}
+                    // {coverImage ? 
+                      // onClick = {() => handlePublish(form.values)}
+                // :
+                  onClick={coverImage ? () => handlePublish(form.values) : openCoverImageRequiredModal}
+                    // }
+                    // onClick={() => handlePublish(form.values)}
+                    // onClick={logFormValues}
+                    styles={(theme) => ({
+                      root: {
+                        backgroundColor: theme.colors.green[7],
+                        // width: '40%',
+                        [theme.fn.smallerThan('sm')]: {
+                          // width: '70%',
+                        },
+                        '&:hover': {
+                          backgroundColor:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.green[9]
+                              : theme.colors.green[9],
+                        },
+                      },
+                    })}
+                  >
+                    Publish
+                  </Button>
+                  } */}
+                  
                   {/* <Button onClick={open}>Publish</Button> */}
                 </Group>
               </Stack>
