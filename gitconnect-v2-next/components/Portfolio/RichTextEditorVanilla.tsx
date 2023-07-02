@@ -226,37 +226,42 @@ function RichTextEditorVanilla({
         Insert Image single cmd
       </Button> */}
 
-      <RichTextEditor mt={40} editor={editor} w="100%"
-       styles={(theme) => ({
-        control: {
-          // backgroundColor: '#00acee',
-          // border: 0,
-        },
-        // content: {
-        //   backgroundColor: '#00000000',
-        //   border: 0,
-        // }
-      })}
+      <RichTextEditor
+        mt={40}
+        editor={editor}
+        w="100%"
+        styles={(theme) => ({
+          control: {
+            // backgroundColor: '#00acee',
+            // border: 0,
+          },
+          // content: {
+          //   backgroundColor: '#00000000',
+          //   border: 0,
+          // }
+        })}
       >
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           {/* <InsertImageControl /> */}
 
-          {userId && repoId && <RichTextEditor.Control
-            onClick={() =>
-              editor
-                ?.chain()
-                .focus()
-                .insertResizableImage({
-                  userId: userId,
-                  repoId: repoId,
-                })
-                .run()
-            }
-            aria-label="Insert an image"
-            title="Insert an image"
-          >
-            <IconPhotoPlus stroke={1.5} size="1rem" />
-          </RichTextEditor.Control>}
+          {userId && repoId && (
+            <RichTextEditor.Control
+              onClick={() =>
+                editor
+                  ?.chain()
+                  .focus()
+                  .insertResizableImage({
+                    userId: userId,
+                    repoId: repoId,
+                  })
+                  .run()
+              }
+              aria-label="Insert an image"
+              title="Insert an image"
+            >
+              <IconPhotoPlus stroke={1.5} size="1rem" />
+            </RichTextEditor.Control>
+          )}
           {/* <InsertImageControl userId={userId} repoId={repoId} /> */}
 
           {/* <InsertImageControlNew userId={userId as string} repoId={repoId as string} /> */}
@@ -306,14 +311,13 @@ function RichTextEditorVanilla({
               // console.log(to)
               // don't show bubble menu on resizable images due to custom menu showing
               return (
-                from !== to && (
-                editor.isActive('text') ||
-                editor.isActive('link') ||
-                editor.isActive('heading') ||
-                editor.isActive('bulletList') ||
-                editor.isActive('orderedList') ||
-                  editor.isActive('blockquote')
-                )
+                from !== to &&
+                (editor.isActive('text') ||
+                  editor.isActive('link') ||
+                  editor.isActive('heading') ||
+                  editor.isActive('bulletList') ||
+                  editor.isActive('orderedList') ||
+                  editor.isActive('blockquote'))
               );
             }}
           >
@@ -336,7 +340,25 @@ function RichTextEditorVanilla({
               {/* <RichTextEditor.H1 />
               <RichTextEditor.H2 />
               <RichTextEditor.H3 /> */}
-              <InsertImageControl />
+              {/* <InsertImageControl /> */}
+              {userId && repoId && (
+                <RichTextEditor.Control
+                  onClick={() =>
+                    editor
+                      ?.chain()
+                      .focus()
+                      .insertResizableImage({
+                        userId: userId,
+                        repoId: repoId,
+                      })
+                      .run()
+                  }
+                  aria-label="Insert an image"
+                  title="Insert an image"
+                >
+                  <IconPhotoPlus stroke={1.5} size="1rem" />
+                </RichTextEditor.Control>
+              )}
               <InsertCodeControls />
               <RichTextEditor.AlignLeft />
               <RichTextEditor.AlignCenter />
