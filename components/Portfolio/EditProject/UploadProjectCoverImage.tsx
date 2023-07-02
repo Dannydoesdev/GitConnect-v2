@@ -29,9 +29,9 @@ import {
   where,
 } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
-import { AuthContext } from '../../context/AuthContext';
-import { db } from '../../firebase/clientApp';
-import { storage } from '../../firebase/clientApp';
+import { AuthContext } from '../../../context/AuthContext';
+import { db } from '../../../firebase/clientApp';
+import { storage } from '../../../firebase/clientApp';
 
 type RepoProps = {
   repoId: string | number;

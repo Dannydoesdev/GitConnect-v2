@@ -12,11 +12,11 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
-import { DBlock } from '../extensions/dBlock';
-import { CustomResizableImage } from '../extensions/image/customResizableImage';
-import { ResizableMedia } from '../extensions/resizableMedia';
-import { notitapEditorClass } from '../proseClassString';
-import useStyles from './ViewProjectPreview.styles';
+// import { DBlock } from '../extensions/dBlock';
+import { CustomResizableImage } from '../RichTextEditor/extensions/image/customResizableImage';
+import { ResizableMedia } from '../RichTextEditor/extensions/resizableMedia';
+import { notitapEditorClass } from '../RichTextEditor/proseClassString';
+import useStyles from './ViewPreviewProjectContent.styles';
 
 type RichTextEditorVanillaProps = {
   repoId?: string;
@@ -90,7 +90,7 @@ RichTextEditorVanillaProps) {
         lowlight,
       }),
       Underline,
-      DBlock,
+      // DBlock,
       Link.configure({
         HTMLAttributes: {
           target: '_blank',
