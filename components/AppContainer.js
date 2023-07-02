@@ -181,6 +181,27 @@ export const AppContainer = ({ children }, props) => {
                     >
                       Add Project
                     </Button>
+                    </Link>
+                    {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' &&
+                     <Link href='/addproject' passHref legacyBehavior>
+                     <Button
+                       component='a'
+                       size='xs'
+                       color='gray'
+                       variant='subtle'
+                       sx={(theme) => ({
+                         fontSize: '16px',
+                         color:
+                           theme.colorScheme === 'dark'
+                             ? theme.colors.white
+                             : theme.colors.dark,
+                       })}
+                     >
+                       Add Project [new]
+                     </Button>
+                     </Link>
+                    
+                    }
                     {/* <Text
                       component='a'
                       className='dark:text-white'
@@ -189,7 +210,7 @@ export const AppContainer = ({ children }, props) => {
                     >
                       Add a Project
                     </Text> */}
-                  </Link>
+                
                   <Link
                     href={`/profiles/${userData.userId}`}
                     passHref

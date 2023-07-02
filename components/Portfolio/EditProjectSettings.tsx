@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { Check } from '@emotion-icons/boxicons-regular';
 import {
-  Modal,
-  // Paper,
+  Modal, // Paper,
   // Textarea,
   // Space,
   // Container,
@@ -14,6 +14,7 @@ import {
   Stack,
   Grid,
   MultiSelect,
+  Spoiler,
 } from '@mantine/core';
 import '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -68,12 +69,14 @@ function ProjectSettingsModal({
   projectTitle,
   projectDescription,
 }: ProjectSettingsProps) {
-  
-
   const [projectCategoriesValue, setProjectCategoriesValue] = useState<string[]>([]);
 
   useEffect(() => {
-   if (projectCategories && projectCategories.length > 0 && projectCategoriesValue.length === 0) {
+    if (
+      projectCategories &&
+      projectCategories.length > 0 &&
+      projectCategoriesValue.length === 0
+    ) {
       setProjectCategoriesValue(projectCategories);
     }
   }, [projectCategories]);
@@ -156,8 +159,13 @@ function ProjectSettingsModal({
         centered
       >
         <Grid gutter="lg">
-          <Grid.Col span={4}>{/* <Button>Cover Image</Button> */}
-          <UploadProjectCoverImage handleNewCoverImage={handleNewCoverImage} existingCoverImage={coverImage} repoId={repoId} />
+          <Grid.Col span={4}>
+            {/* <Button>Cover Image</Button> */}
+            <UploadProjectCoverImage
+              handleNewCoverImage={handleNewCoverImage}
+              existingCoverImage={coverImage}
+              repoId={repoId}
+            />
           </Grid.Col>
           <Grid.Col span={8}>
             <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -167,6 +175,11 @@ function ProjectSettingsModal({
                   label="Project Title"
                   placeholder="The name of your project"
                   {...form.getInputProps('projectTitle')}
+                />
+                <TextInput
+                  label="Project Description"
+                  placeholder="A short description of your project"
+                  {...form.getInputProps('projectDescription')}
                 />
                 {/* <TextInput
                   label="Tech Stack"
@@ -214,14 +227,48 @@ function ProjectSettingsModal({
                   description="Pick the categories that best describe your project"
                   // {...form.getInputProps('projectCategories', { type: 'checkbox' })}
                   {...form.getInputProps('projectCategories')}
-
                 >
+                  <Spoiler maxHeight={140} showLabel="Show all categories" hideLabel="Hide"
+                    styles={(theme) => ({
+                      control: {
+                      marginTop: 15,
+                      }
+                    })}
+                  
+                  >
                   <Group spacing="xl" mt="md">
-                    <Checkbox value="frontend" label="Frontend" />
-                    <Checkbox value="backend" label="Backend" />
-                    <Checkbox value="fullstack" label="Fullstack" />
-                    <Checkbox value="ai" label="AI" />
-                  </Group>
+                 
+                      <Checkbox value="frontend" label="Frontend" />
+                      <Checkbox value="backend" label="Backend" />
+                      <Checkbox value="databases" label="Databases" />
+                      <Checkbox value="fullstack" label="Fullstack" />
+                      <Checkbox value="cloud" label="Cloud" />
+                      <Checkbox value="games" label="Games" />
+                      <Checkbox value="machinelearning" label="Machine Learning" />
+                      <Checkbox value="ai" label="AI" />
+                      <Checkbox value="developmenttools" label="Development Tools" />
+                      <Checkbox value="apps" label="Apps" />
+                      <Checkbox value="design" label="Design" />
+                      <Checkbox value="productivity" label="Productivity" />
+                      <Checkbox value="utilities" label="Utilities" />
+                      <Checkbox value="automation" label="Automation" />
+                      <Checkbox value="components" label="Components" />
+                      <Checkbox value="libraries" label="Libraries" />
+                      <Checkbox value="opensource" label="Open Source" />
+                      <Checkbox value="mobile" label="Mobile" />
+                      <Checkbox value="web" label="Web" />
+                      <Checkbox value="desktop" label="Desktop" />
+                      <Checkbox value="datascience" label="Data Science" />
+                      <Checkbox value="security" label="Security" />
+                      <Checkbox value="devops" label="DevOps" />
+                      <Checkbox value="testing" label="Testing" />
+                      {/* Security, Cloud, Development Tools, Apps, Automation, Components, Libraries, Open Source */}
+                      <Checkbox value="security" label="Security" />
+                     
+                      <Checkbox value="other" label="Other" />
+                    </Group>
+                    </Spoiler>
+
                 </Checkbox.Group>
 
                 <Checkbox
