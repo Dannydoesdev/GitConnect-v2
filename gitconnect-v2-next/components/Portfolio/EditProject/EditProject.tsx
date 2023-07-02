@@ -25,11 +25,11 @@ import axios from 'axios';
 import DOMPurify from 'dompurify';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import useSWR from 'swr';
-import LoadingPage from '../../components/LoadingPage/LoadingPage';
+import LoadingPage from '../../LoadingPage/LoadingPage';
 import ProjectSettingsModal from './EditProjectSettings';
-import RichTextEditorVanilla from './RichTextEditorVanilla';
-import { ViewProjectHero } from './ViewProjectHero/ViewProjectHero';
-import ViewPreviewProjectEditor from './ViewProjectPreview/ViewProjectPreview';
+import RichTextEditorVanilla from '../RichTextEditor/RichTextEditorVanilla';
+import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
+import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
 
 type EditPortfolioProps = {
   repoName: string;
