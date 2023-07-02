@@ -2,13 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Group, ScrollArea, Space, Title } from '@mantine/core';
 import {
-  getSingleProjectById,
   getProjectTextEditorContent,
-  getAllProjectIds,
-  getAllCustomProjectData,
   getSingleProjectByName,
-  getAllProjectNames,
-  getSingleProjectByUserAndName,
   getAllUserAndProjectNameCombinations,
 } from '@/lib/projects';
 import ViewProject from '@/components/Portfolio/ViewProject/ViewProjectContent/ViewProject';

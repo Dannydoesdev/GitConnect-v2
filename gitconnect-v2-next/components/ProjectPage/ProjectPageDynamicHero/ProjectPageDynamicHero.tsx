@@ -61,9 +61,10 @@ export function ProjectPageDynamicHero(props: any) {
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}
         </Text>
-        <Group className={classes.group} grow>
-          {project.live_url && (
-            <Link href={project.live_url ? project.live_url : ''} passHref legacyBehavior>
+        {/* <Group className={classes.group} grow> */}
+          <Group>
+          {(project.live_url || project.liveUrl) && (
+            <Link href={project.live_url || project.liveUrl || ''} passHref legacyBehavior>
               <Button
                 component="a"
                 target="_blank"
@@ -81,14 +82,16 @@ export function ProjectPageDynamicHero(props: any) {
                 Live site
               </Button>
             </Link>
-          )}
-          <Link href={project.html_url} passHref legacyBehavior>
+          )
+            // : null
+        }
+          <Link href={project.repoUrl || project.html_url || ''} passHref legacyBehavior>
             <Button
               component="a"
               target="_blank"
               // size='xl'
               // radius='xl'
-              className={project.live_url ? classes.liveAndGithub : classes.githubOnly}
+              className={(project.live_url || project.liveUrl) ? classes.liveAndGithub : classes.githubOnly}
               sx={(theme) => ({
                 // subscribe to color scheme changes
                 backgroundColor:

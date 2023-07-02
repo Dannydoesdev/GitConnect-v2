@@ -18,12 +18,7 @@ import { notitapEditorClass } from '../RichTextEditor/proseClassString';
 import useStyles from './ViewPreviewProjectContent.styles';
 
 type RichTextEditorVanillaProps = {
-  repoId?: string;
-  userId?: string;
-  readme?: string;
-  existingContent?: string | null | undefined;
   updatedContent?: string | null | undefined;
-  onUpdateEditor?: (content: string) => void;
 };
 
 // lowlight.registerLanguage('ts', tsLanguageSyntax);
