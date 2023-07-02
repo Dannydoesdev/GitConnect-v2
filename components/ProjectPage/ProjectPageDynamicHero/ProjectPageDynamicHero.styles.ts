@@ -57,15 +57,15 @@ export default createStyles((theme) => ({
     },
   },
 
-  group: {
-    width: '100%',
-  },
+  // group: {
+  //   width: '100%',
+  // },
 
   githubOnly: {
     // marginTop: theme.spacing.xl * 1,
     marginTop: `calc(${theme.spacing.xl} * 1)`,
     fontSize: 16,
-    width: 220,
+    width: 260,
     // width: '80%',
     height: 52,
     borderRadius: 10,
