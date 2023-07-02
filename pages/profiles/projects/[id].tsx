@@ -108,9 +108,9 @@ export default function Project({ projects, textContent }: any) {
       projects.length === 0
     )
       return;
-    
+
     const project = projects[0] || null;
-    
+
     if (projects[0].userId == userData.userId && project.views > 1) return;
 
     await axios.post('/api/projects/incrementView', {
@@ -282,6 +282,54 @@ export default function Project({ projects, textContent }: any) {
                   Edit your project
                 </Button>
               </Link>
+              {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && (
+                <Link
+                href={`/portfolio/edit/${projects[0].id}`}
+                  passHref legacyBehavior>
+                  <Button
+                    component="a"
+                    size="lg"
+                    radius="md"
+                    // mt={10}
+                    className="mx-auto"
+                    // size="md"
+                    color="gray"
+                    mt='xs'
+                    variant="outline"
+                    styles={(theme) => ({
+                      root: {
+                        border:
+                          theme.colorScheme === 'dark'
+                            ? 'white solid 1px'
+                            : 'darkblue solid 3px',
+                        // backgroundColor:
+                        //   theme.colorScheme === 'dark'
+                        //     ? theme.colors.dark[3]
+                        //     : theme.colors.blue[8],
+                        width: '100%',
+                        [theme.fn.smallerThan('sm')]: {
+                          width: '100%',
+                        },
+                        '&:hover': {
+                          backgroundColor:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.dark[4]
+                              : theme.colors.blue[9],
+                        },
+                      },
+                    })}
+                    // sx={(theme) => ({
+                    //   fontSize: '16px',
+                    //   color:
+                    //     theme.colorScheme === 'dark'
+                    //       ? theme.colors.white
+                    //       : theme.colors.dark,
+                    // })}
+                  >
+                    Edit Project [new]
+                  </Button>
+                </Link>
+              )}
 
               {/* </Center> */}
             </Stack>
