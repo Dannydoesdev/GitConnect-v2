@@ -326,9 +326,9 @@ export default function EditPortfolioProject({
         <ViewPreviewProjectEditor
           updatedContent={realtimeEditorContent}
           // existingContent={textContent}
-          userId={userid}
-          repoId={repoid}
-          readme={readme}
+          // userId={userid}
+          // repoId={repoid}
+          // readme={readme}
         />
         {/* </Container> */}
       </>
