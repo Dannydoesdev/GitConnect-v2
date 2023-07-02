@@ -144,9 +144,22 @@ const GetRepos = () => {
         { merge: true }
       );
 
+      // router.push(
+      //   {
+      //     pathname: `/portfolio/new/${repo.id}`,
+      //     query: {
+      //       name: repo.name,
+      //       description: repo.description,
+      //       url: repo.html_url,
+      //       userId: userId,
+      //       newRepoParam: JSON.stringify(true),
+      //     },
+      //   },
+      //   `/portfolio/new/${repo.id}`
+      // );
       router.push(
         {
-          pathname: `/portfolio/new/${repo.id}`,
+          pathname: `/portfolio/edit/${repo.id}`,
           query: {
             name: repo.name,
             description: repo.description,
@@ -155,7 +168,7 @@ const GetRepos = () => {
             newRepoParam: JSON.stringify(true),
           },
         },
-        `/portfolio/new/${repo.id}`
+        `/portfolio/edit/${repo.id}`
       );
     } catch (err) {
       console.error(err);
@@ -198,7 +211,7 @@ const GetRepos = () => {
           src={userData.userPhotoLink}
         />
         <Text size='lg' weight='bolder' className='mx-auto'>
-          {userName}`&apos;`'s public repos
+          {userName}'s public repos
         </Text>
         <Text size='lg' className='mx-auto'></Text>
         <Blockquote

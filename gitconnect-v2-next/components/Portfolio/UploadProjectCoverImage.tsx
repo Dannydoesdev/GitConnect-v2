@@ -1,17 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { db } from '../../firebase/clientApp';
-import { AuthContext } from '../../context/AuthContext';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from 'firebase/firestore';
-import { storage } from '../../firebase/clientApp';
-import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { Router, useRouter } from 'next/router';
 import {
   Group,
   Text,
@@ -21,25 +9,42 @@ import {
   Button,
   Center,
   Container,
+  Space,
 } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
 import {
   Dropzone,
   DropzoneProps,
   FileWithPath,
   IMAGE_MIME_TYPE,
 } from '@mantine/dropzone';
-import { Router, useRouter } from 'next/router';
+import { notifications } from '@mantine/notifications';
+import { IconUpload, IconPhoto, IconX, IconCheck, IconCross } from '@tabler/icons-react';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
+import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { AuthContext } from '../../context/AuthContext';
+import { db } from '../../firebase/clientApp';
+import { storage } from '../../firebase/clientApp';
 
 type RepoProps = {
-  repoId?: string;
+  repoId: string | number;
+  existingCoverImage?: string;
+  handleNewCoverImage: (url: string) => void;
   // initialFirebaseData?: string
 };
 
 export function UploadProjectCoverImage(
-  { repoId }: RepoProps,
+  { repoId, existingCoverImage, handleNewCoverImage }: RepoProps,
   props: Partial<DropzoneProps>
 ) {
+  // console.log('existingCoverImage', existingCoverImage)
   const { userData } = useContext(AuthContext);
   const userId = userData.userId;
   const userName = userData.userName;
@@ -71,7 +76,10 @@ export function UploadProjectCoverImage(
   };
 
   const handleFileDrop = (file: FileWithPath[]) => {
+    setImgUrl('');
+    // setImgCheck(false);
     // console.log('accepted file', file);
+    // console.log('droptime')
     setFiles(file);
     setImgCheck(true);
   };
@@ -80,42 +88,42 @@ export function UploadProjectCoverImage(
     // console.log(file);
     // Get the file extension
     const extension = file.name.split('.').pop();
-    console.log(extension);
+    // console.log(extension);
 
     const storageRef = ref(
       storage,
       `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`
     );
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Uploading Image',
+        message: 'Cover image is being uploaded',
+        autoClose: false,
+        withCloseButton: false,
+      });
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgresspercent(progress);
-      },
-      (error) => {
-        alert(error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref)
-          .then(async (downloadURL) => {
-            const docRef = doc(
-              db,
-              `users/${userId}/repos/${repoId}/projectData/images`
-            );
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgresspercent(progress);
+        },
+        (error) => {
+          alert(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
             const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
             // const urlOnlyRef =
             // Generate sizes
-            const sizes = [
-              '200x200',
-              '400x400',
-              '768x768',
-              '1024x1024',
-              '2000x2000',
-            ];
+            const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'];
             const coverImageMeta = {
               name: file.name,
               extension,
@@ -138,63 +146,35 @@ export function UploadProjectCoverImage(
             );
 
             setImgUrl(downloadURL);
-            console.log(`URL to stored img: ${downloadURL}`);
-          })
-          .then(() => {
-            router.reload();
+            handleNewCoverImage(downloadURL);
+            // console.log(`URL to stored img: ${downloadURL}`);
           });
-      }
-    );
+          // .then(() => {
+          //   router.reload();
+          // });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      notifications.update({
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        title: 'Image was saved',
+        message: 'Cover image uploaded to the database',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
+    }
   }
-
-  // async function sendImageToFirebase(file: any) {
-  //   // console.log(typeof file);
-
-  //   const storageRef = ref(
-  //     storage,
-  //     `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`
-  //   );
-  //   const uploadTask = uploadBytesResumable(storageRef, file);
-
-  //   uploadTask.on(
-  //     'state_changed',
-  //     (snapshot) => {
-  //       const progress = Math.round(
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-  //       );
-  //       setProgresspercent(progress);
-  //     },
-  //     (error) => {
-  //       alert(error);
-  //     },
-  //     () => {
-  //       getDownloadURL(uploadTask.snapshot.ref)
-  //         .then(async (downloadURL) => {
-  //           const docRef = doc(
-  //             db,
-  //             `users/${userId}/repos/${repoId}/projectData/images`
-  //           );
-  //           const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-
-  //           await setDoc(docRef, { coverImage: downloadURL }, { merge: true });
-  //           await setDoc(
-  //             parentStorageRef,
-  //             { coverImage: downloadURL },
-  //             { merge: true }
-  //           );
-
-  //           setImgUrl(downloadURL);
-  //           console.log(`URL to stored img: ${downloadURL}}`);
-  //         })
-  //         .then(() => {
-  //           // TODO - less hacky way of refreshing to allow 'showing project'
-  //           // TODO - Extract to parent components
-  //           router.reload();
-  //         });
-
-  //     }
-  //   );
-  // }
 
   return (
     <>
@@ -207,11 +187,12 @@ export function UploadProjectCoverImage(
         onReject={(files) => console.log('rejected files', files)}
         maxSize={6 * 1024 ** 2}
         maxFiles={1}
+        mb="lg"
         // accept='image'
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
-          maxWidth: 300,
-          maxHeight: 150,
+          maxWidth: 200,
+          maxHeight: 180,
           textAlign: 'center',
           margin: 'auto',
           display: 'flex',
@@ -222,15 +203,13 @@ export function UploadProjectCoverImage(
         })}
         {...props}
       >
-        <Group position='center'>
+        <Group position="center">
           <Dropzone.Accept>
             <IconUpload
               size={50}
               stroke={1.5}
               color={
-                theme.colors[theme.primaryColor][
-                  theme.colorScheme === 'dark' ? 4 : 6
-                ]
+                theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]
               }
             />
           </Dropzone.Accept>
@@ -242,84 +221,119 @@ export function UploadProjectCoverImage(
             />
           </Dropzone.Reject>
           <Dropzone.Idle>
-            <IconPhoto size={40} stroke={1.5} />
-            <Text size='md'>Click to update image - max 6MB</Text>
+            {existingCoverImage && !imgUrl ? (
+              <Image
+                mb="xs"
+                height={100}
+                src={existingCoverImage}
+                alt="Current cover image"
+                // sx={{ maxHeight: 160 }}
+              />
+            ) : imgUrl ? (
+              <Image
+                  mb="xs"
+                  height={100}
+
+                src={imgUrl}
+                alt="Current cover image"
+                // sx={{ width: '100%' }}
+              />
+            ) : (
+              <IconPhoto size={40} stroke={1.5} />
+            )}
+            <Text size="md">Edit cover image</Text>
+            <Text size="xs"> Max 6MB</Text>
           </Dropzone.Idle>
         </Group>
       </Dropzone>
-      {/* </Group> */}
-      <Center>
-        <Container size={200}>{previews}</Container>
-      </Center>
 
-      <Center>
-        {!imgCheck ? (
-          <></>
-        ) : (
-          <>
-            <Group spacing='md'>
-              <Button
-                component='a'
-                size='lg'
-                radius='md'
-                mt={40}
-                className='mx-auto'
-                onClick={() => handleFileCancel(files[0])}
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor:
-                      theme.colorScheme === 'dark'
-                        ? theme.colors.dark[5]
-                        : theme.colors.blue[6],
-                    maxWidth: '70%',
-                    [theme.fn.smallerThan('sm')]: {
-                      maxWidth: '90%',
-                    },
-                    '&:hover': {
+
+      {imgCheck && !imgUrl &&(
+        <>
+          <Group position="center">
+            {/* <Space h="xl" />
+          // <Space h="xl" /> */}
+            <Space h="lg" />
+
+            <Text>Preview:</Text>
+            <Space h="sm" />
+            <Container size={200}>{previews}</Container>
+          </Group>
+          <Group mt="lg" position="center" spacing="xs">
+            {imgUrl ? (
+              <Text>Image Saved</Text>
+            ) : (
+              <>
+                <Button
+                  component="a"
+                  size="xs"
+                  radius="md"
+                  // px={30}
+                  // className="mx-auto"
+                  // onClick={() => console.log(typeof files[0])}
+
+                  onClick={() => sendImageToFirebase(files[0])}
+                  styles={(theme) => ({
+                    root: {
                       backgroundColor:
                         theme.colorScheme === 'dark'
-                          ? theme.colors.dark[6]
-                          : theme.colors.blue[7],
+                          ? theme.colors.green[8]
+                          : theme.colors.green[6],
+                      // maxWidth: '70%',
+                      [theme.fn.smallerThan('sm')]: {
+                        // width: '90%',
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.green[9]
+                            : theme.colors.green[9],
+                      },
                     },
-                  },
-                })}
-              >
-                Cancel
-              </Button>
-              <Button
-                component='a'
-                size='lg'
-                radius='md'
-                mt={40}
-                className='mx-auto'
-                // onClick={() => console.log(typeof files[0])}
-
-                onClick={() => sendImageToFirebase(files[0])}
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor:
-                      theme.colorScheme === 'dark'
-                        ? theme.colors.green[8]
-                        : theme.colors.green[6],
-                    maxWidth: '70%',
-                    [theme.fn.smallerThan('sm')]: {
-                      width: '90%',
+                  })}
+                >
+                  Save Image
+                </Button>
+                <Button
+                  component="a"
+                  size="xs"
+                  radius="md"
+                  // px={20}
+                  // mt={40}
+                  // className="mx-auto"
+                  variant="outline"
+                  onClick={() => handleFileCancel(files[0])}
+                  styles={(theme) => ({
+                    root: {
+                      // backgroundColor:
+                      //   theme.colorScheme === 'dark'
+                      //     ? theme.colors.dark[5]
+                      //     : theme.colors.blue[6],
+                      // maxWidth: '70%',
+                      [theme.fn.smallerThan('sm')]: {
+                        // maxWidth: '90%',
+                      },
+                      '&:hover': {
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[0]
+                            : theme.colors.blue[0],
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[7],
+                      },
                     },
-                    '&:hover': {
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.green[9]
-                          : theme.colors.blue[7],
-                    },
-                  },
-                })}
-              >
-                Save new cover image
-              </Button>
-            </Group>
-          </>
-        )}
-      </Center>
+                  })}
+                >
+                  Remove
+                </Button>
+              </>
+            )}
+          </Group>
+        </>
+      )}
+      {/* </Center> */}
     </>
   );
 }

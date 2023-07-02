@@ -1,4 +1,105 @@
 // .ProseMirror {
+
+.view-only-mode {
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  blockquote,
+  ul,
+  ol,
+  strong,
+em,
+  // pre,
+  hr,
+  table,
+  .media-node-view {
+    @apply text-slate-700 dark:text-white;
+  }
+  .media-node-view {
+    @apply flex relative w-full my-2;
+
+    &.f-left {
+      @apply float-left;
+    }
+
+    &.f-right {
+      @apply float-right;
+    }
+
+    &.align-left {
+      @apply justify-start;
+    }
+
+    &.align-center {
+      @apply justify-center;
+    }
+
+    // TODO: figure out why justify start + end don't work
+    &.align-right {
+      @apply justify-end;
+    }
+
+    @apply pointer-events-none;
+
+    .horizontal-resize-handle {
+      @apply hidden;
+    }
+    .btn {
+      @apply hidden;
+    }
+    .media-control-buttons {
+      @apply hidden;
+    }
+    .d-block-button {
+      @apply hidden;
+    }
+    .column-resize-handle {
+      @apply hidden;
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0;
+    overflow-x: hidden;
+
+    td,
+    th {
+      min-width: 1em;
+      border: 2px solid #ced4da;
+      padding: 3px 5px;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+
+      > * {
+        margin-bottom: 0;
+      }
+    }
+
+    tr {
+      // display: flex;
+
+      div {
+        // display: inline-block;
+        width: 100%;
+      }
+    }
+
+    th {
+      font-weight: bold;
+      text-align: left;
+      background-color: #f1f3f5;
+    }
+  }
+}
+
 .project-edit-tiptap {
   // p.is-empty::before {
   //   // @apply text-slate-400 float-left h-0 pointer-events-none absolute ml-[2px];
@@ -17,6 +118,8 @@
   blockquote,
   ul,
   ol,
+  strong,
+  em,
   // pre,
   hr,
   table,
