@@ -12,17 +12,19 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
-import { CustomResizableImage } from '../RichTextEditor/extensions/image/customResizableImage';
-import { ResizableMedia } from '../RichTextEditor/extensions/resizableMedia';
-import { notitapEditorClass } from '../RichTextEditor/proseClassString';
-import useStyles from './ViewPreviewProjectContent.styles';
+// import { DBlock } from '../extensions/dBlock';
+import { CustomResizableImage } from '../../RichTextEditor/extensions/image/customResizableImage';
+import { ResizableMedia } from '../../RichTextEditor/extensions/resizableMedia';
+import { notitapEditorClass } from '../../RichTextEditor/proseClassString';
+import useStyles from './ViewProject.styles';
 
 type RichTextEditorVanillaProps = {
   repoId?: string;
   userId?: string;
   readme?: string;
   existingContent?: string | null | undefined;
-  updatedContent?: string | null | undefined;
+  textContent?: string | null | undefined;
+  otherProjectData?: any;
   onUpdateEditor?: (content: string) => void;
 };
 
@@ -32,19 +34,41 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-function ViewPreviewProjectEditor({
-  updatedContent,
-}:
+function ViewProject({
+  // existingContent,
+  // repoId,
+  // userId,
+  // readme,
+  textContent,
+  otherProjectData,
+}: // onUpdateEditor,
 RichTextEditorVanillaProps) {
-
+  // const [editorContent, setEditorContent] = useState('');
+  // const [content, setContent] = useState(textContent);
+  // const [newReadme, setNewReadme] = useState('');
+  // const [imgUrl, setImgUrl] = useState('');
+  // const [progresspercent, setProgresspercent] = useState(0);
   const [editable, setEditable] = useState(false);
   const { classes, theme } = useStyles();
 
+  // useEffect(() => {
+  //   if (readme && readme !== newReadme) {
+  //     setNewReadme(readme);
+  //     editor?.commands.setContent(readme);
+  //   }
+  // }, [readme]);
+
   useEffect(() => {
-    if (updatedContent && editor) {
-      editor?.commands.setContent(updatedContent);
+    if (textContent && editor) {
+      editor?.commands.setContent(textContent);
     }
-  }, [updatedContent]);
+  }, [textContent]);
+
+  // useEffect(() => {
+  //   if (existingContent && editor) {
+  //     editor?.commands.setContent(existingContent);
+  //   }
+  // }, [existingContent]);
 
   const editor = useEditor({
     editable,
@@ -77,16 +101,22 @@ RichTextEditorVanillaProps) {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: updatedContent,
+    content: textContent,
     editorProps: {
       attributes: {
         // class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
         // class: `${notitapEditorClass} focus:outline-none w-full view-only-mode`,
         class: `view-only-mode`,
+
         spellcheck: 'false',
         suppressContentEditableWarning: 'true',
       },
     },
+    // onUpdate({ editor }) {
+    // Update state every time the editor content changes
+    // setEditorContent(editor.getHTML());
+    // onUpdateEditor?.(editor.getHTML());
+    // },
   });
 
   useEffect(() => {
@@ -94,7 +124,7 @@ RichTextEditorVanillaProps) {
       return undefined;
     }
 
-    editor.setEditable(false);
+    editor.setEditable(editable);
   }, [editor, editable]);
 
   if (!editor) {
@@ -102,10 +132,13 @@ RichTextEditorVanillaProps) {
   }
 
   return (
+    // <Group w="100%" position='center'>
 
     <Container size='xl' px='xl' py="lg" className={classes.container}>
       <Card shadow="md" radius="md" p="xl" className={classes.card}>
+        {/* dangerouslySetInnerHTML={{ __html: content }} */}
         <RichTextEditor
+          // mt={40}
           editor={editor}
           w="100%"
           styles={(theme) => ({
@@ -124,6 +157,20 @@ RichTextEditorVanillaProps) {
       </Card>
     </Container>
   );
+  // <RichTextEditor
+  //   mt={40}
+  //   editor={editor}
+  //   w="100%"
+  //   styles={(theme) => ({
+  //     root: {
+  //       // backgroundColor: '#00acee',
+  //       border: 0,
+  //     },
+  //   })}
+  // >
+  //   <RichTextEditor.Content />
+  // </RichTextEditor>
+  // </Group>
 }
 
-export default ViewPreviewProjectEditor;
+export default ViewProject;
