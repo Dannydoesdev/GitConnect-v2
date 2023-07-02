@@ -10,7 +10,7 @@ import {
   getAllCustomProjectData,
 } from '@/lib/projects';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import EditPortfolioProject from '../../../components/Portfolio/EditProject';
+import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
 import { AuthContext } from '../../../context/AuthContext';
 
 export async function getStaticProps({ params }: any) {

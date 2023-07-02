@@ -6,18 +6,21 @@ import { HeroLanding } from '../components/HomePage/HomePageHero/HomePageHero'
 import UploadFile from '../components/UploadFile'
 import HomePageProjectGrid from '../components/HomePage/HomePageProjects/HomePageProjectGrid'
 import { getAllPublicProjectsAndSort } from '../lib/sortProjects'
+import { getAllPublicProjectsAndSortWithTimeStamp } from '@/lib/sortProjectsWithTimestamp'
 
 export const getStaticProps: GetStaticProps = async () => {
 
+  const sortedProjects = await getAllPublicProjectsAndSortWithTimeStamp();
+  // const sortedProjects = await getAllPublicProjectsAndSort();
 
-  const sortedProjects = await getAllPublicProjectsAndSort();
+  // console.log(sortedProjectWithTimestamp)
 
   return {
     props: {
       // projects,
       sortedProjects
     },
-    revalidate: 5,
+    revalidate: 1,
   };
 };
 

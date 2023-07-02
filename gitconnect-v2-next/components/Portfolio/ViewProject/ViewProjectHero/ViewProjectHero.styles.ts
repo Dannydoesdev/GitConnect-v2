@@ -5,13 +5,14 @@ export default createStyles((theme) => ({
     position: 'relative',
     backgroundSize: 'contain',
     backgroundPosition: 'center',
-    marginTop: 55,
+    marginTop: -20,
+    // marginTop: 55,
     // height: '60vh',
     // height: '400',
   },
 
   container: {
-    height: '80vh',
+    height: '60vh',
     marginLeft: 200,
     display: 'flex',
     flexDirection: 'column',
@@ -57,15 +58,15 @@ export default createStyles((theme) => ({
     },
   },
 
-  // group: {
-  //   width: '100%',
-  // },
+  group: {
+    width: '100%',
+  },
 
   githubOnly: {
     // marginTop: theme.spacing.xl * 1,
     marginTop: `calc(${theme.spacing.xl} * 1)`,
     fontSize: 16,
-    width: 260,
+    width: 220,
     // width: '80%',
     height: 52,
     borderRadius: 10,

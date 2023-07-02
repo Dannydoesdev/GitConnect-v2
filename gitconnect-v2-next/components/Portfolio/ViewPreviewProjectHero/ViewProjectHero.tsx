@@ -2,13 +2,24 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Overlay, Container, Title, Text, Button, Group, Box } from '@mantine/core';
 import { correctImageGetter } from '../../../lib/correctImageGetter';
-import useStyles from './ProjectPageDynamicHero.styles';
+import useStyles from './ViewProjectHero.styles';
 
-export function ProjectPageDynamicHero(props: any) {
+interface ViewProjectHeroProps {
+  coverImage?: string;
+  repoUrl: string;
+  liveUrl?: string;
+  name: string;
+}
+
+export function ViewProjectHero({
+  coverImage,
+  repoUrl,
+  liveUrl,
+  name,
+}: ViewProjectHeroProps) {
   const { classes } = useStyles();
 
-  const project = props.props[0];
-  const image = project.coverImage;
+  const image = coverImage;
 
   const imageUrl =
     typeof image === 'string' && image
@@ -16,13 +27,7 @@ export function ProjectPageDynamicHero(props: any) {
       : '/img/gitconnect.webp';
 
   return (
-    // <Group className={classes.hero} sx={{ backgroundImage: project.coverImage ? `url(${project.coverImage})` : '' }}>
-    <Group
-      className={classes.hero}
-      // sx={{
-      //   backgroundImage: `url(${imageUrl})`,
-      // }}
-    >
+    <Group className={classes.hero}>
       <Box
         // h='100%'
         sx={(theme) => ({
@@ -36,18 +41,14 @@ export function ProjectPageDynamicHero(props: any) {
         })}
       >
         <Image
-          // src={image ? image : '/img/gitconnect.jpg'}
           src={imageUrl}
           className="image"
           style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
           sizes="100vw"
-          // height={500}
-          // width={2000}
           fill={true}
           quality={100}
           alt=""
           priority={true}
-          // priority = {imageUrl.includes('.gif') ? true : false}
         />
       </Box>
       <Overlay
@@ -57,19 +58,16 @@ export function ProjectPageDynamicHero(props: any) {
       />
 
       <Container className={classes.container}>
-        <Title className={classes.title}>{project.name}</Title>
+        <Title className={classes.title}>{name}</Title>
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}
         </Text>
-        {/* <Group className={classes.group} grow> */}
-          <Group>
-          {(project.live_url || project.liveUrl) && (
-            <Link href={project.live_url || project.liveUrl || ''} passHref legacyBehavior>
+        <Group className={classes.group} grow>
+          {liveUrl && (
+            <Link href={liveUrl ? liveUrl : ''} passHref legacyBehavior>
               <Button
                 component="a"
                 target="_blank"
-                // size='xl'
-                // radius='xl'
                 className={classes.liveAndGithub}
                 sx={(theme) => ({
                   // subscribe to color scheme changes
@@ -82,16 +80,14 @@ export function ProjectPageDynamicHero(props: any) {
                 Live site
               </Button>
             </Link>
-          )
-            // : null
-        }
-          <Link href={project.repoUrl || project.html_url || ''} passHref legacyBehavior>
+          )}
+          <Link href={repoUrl} passHref legacyBehavior>
             <Button
               component="a"
               target="_blank"
               // size='xl'
               // radius='xl'
-              className={(project.live_url || project.liveUrl) ? classes.liveAndGithub : classes.githubOnly}
+              className={repoUrl ? classes.liveAndGithub : classes.githubOnly}
               sx={(theme) => ({
                 // subscribe to color scheme changes
                 backgroundColor:
@@ -104,9 +100,6 @@ export function ProjectPageDynamicHero(props: any) {
             </Button>
           </Link>
         </Group>
-        {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
-        Check it out!
-      </Button> */}
       </Container>
     </Group>
   );

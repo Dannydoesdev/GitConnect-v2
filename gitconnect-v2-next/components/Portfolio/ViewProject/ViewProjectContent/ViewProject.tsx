@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { Button, Card, Center, Container, Group, Paper } from '@mantine/core';
+import { Button, Card, Center, Container, Group } from '@mantine/core';
 import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
@@ -12,14 +12,20 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
-import { CustomResizableImage } from '../../Portfolio/RichTextEditor/extensions/image/customResizableImage';
-import { ResizableMedia } from '../../Portfolio/RichTextEditor/extensions/resizableMedia';
-// import { notitapEditorClass } from '../../Portfolio/RichTextEditor/proseClassString';
-// import useStyles from './ViewPreviewProjectContent.styles';
-import useStyles from './RichTextEditorDisplay.styles';
+// import { DBlock } from '../extensions/dBlock';
+import { CustomResizableImage } from '../../RichTextEditor/extensions/image/customResizableImage';
+import { ResizableMedia } from '../../RichTextEditor/extensions/resizableMedia';
+import { notitapEditorClass } from '../../RichTextEditor/proseClassString';
+import useStyles from './ViewProject.styles';
 
 type RichTextEditorVanillaProps = {
-  content?: string | null | undefined;
+  repoId?: string;
+  userId?: string;
+  readme?: string;
+  existingContent?: string | null | undefined;
+  textContent?: string | null | undefined;
+  otherProjectData?: any;
+  onUpdateEditor?: (content: string) => void;
 };
 
 // lowlight.registerLanguage('ts', tsLanguageSyntax);
@@ -28,15 +34,41 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-export default function RichTextEditorDisplay({ content }: RichTextEditorVanillaProps) {
+function ViewProject({
+  // existingContent,
+  // repoId,
+  // userId,
+  // readme,
+  textContent,
+  otherProjectData,
+}: // onUpdateEditor,
+RichTextEditorVanillaProps) {
+  // const [editorContent, setEditorContent] = useState('');
+  // const [content, setContent] = useState(textContent);
+  // const [newReadme, setNewReadme] = useState('');
+  // const [imgUrl, setImgUrl] = useState('');
+  // const [progresspercent, setProgresspercent] = useState(0);
   const [editable, setEditable] = useState(false);
   const { classes, theme } = useStyles();
 
+  // useEffect(() => {
+  //   if (readme && readme !== newReadme) {
+  //     setNewReadme(readme);
+  //     editor?.commands.setContent(readme);
+  //   }
+  // }, [readme]);
+
   useEffect(() => {
-    if (content && editor) {
-      editor?.commands.setContent(content);
+    if (textContent && editor) {
+      editor?.commands.setContent(textContent);
     }
-  }, [content]);
+  }, [textContent]);
+
+  // useEffect(() => {
+  //   if (existingContent && editor) {
+  //     editor?.commands.setContent(existingContent);
+  //   }
+  // }, [existingContent]);
 
   const editor = useEditor({
     editable,
@@ -69,16 +101,22 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: content,
+    content: textContent,
     editorProps: {
       attributes: {
         // class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
         // class: `${notitapEditorClass} focus:outline-none w-full view-only-mode`,
         class: `view-only-mode`,
+
         spellcheck: 'false',
         suppressContentEditableWarning: 'true',
       },
     },
+    // onUpdate({ editor }) {
+    // Update state every time the editor content changes
+    // setEditorContent(editor.getHTML());
+    // onUpdateEditor?.(editor.getHTML());
+    // },
   });
 
   useEffect(() => {
@@ -86,7 +124,7 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
       return undefined;
     }
 
-    editor.setEditable(false);
+    editor.setEditable(editable);
   }, [editor, editable]);
 
   if (!editor) {
@@ -94,12 +132,13 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
   }
 
   return (
-    <Container size="lg" px="lg" py="lg" className={classes.container}>
-      {/* <Paper shadow="xl" p="xl"> */}
-      <Card shadow="md" radius="md" p="xl">
-        {/* // className={classes.card}> */}
+    // <Group w="100%" position='center'>
+
+    <Container size='xl' px='xl' py="lg" className={classes.container}>
+      <Card shadow="md" radius="md" p="xl" className={classes.card}>
+        {/* dangerouslySetInnerHTML={{ __html: content }} */}
         <RichTextEditor
-          // withTypographyStyles={false}
+          // mt={40}
           editor={editor}
           w="100%"
           styles={(theme) => ({
@@ -110,47 +149,28 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
             content: {
               backgroundColor: '#00000000',
               border: 0,
-            },
+            }
           })}
         >
           <RichTextEditor.Content />
         </RichTextEditor>
-        </Card>
-      {/* </Paper> */}
-     </Container>
+      </Card>
+    </Container>
   );
+  // <RichTextEditor
+  //   mt={40}
+  //   editor={editor}
+  //   w="100%"
+  //   styles={(theme) => ({
+  //     root: {
+  //       // backgroundColor: '#00acee',
+  //       border: 0,
+  //     },
+  //   })}
+  // >
+  //   <RichTextEditor.Content />
+  // </RichTextEditor>
+  // </Group>
 }
 
-type TipTapDisplayProps = {
-  content: string;
-};
-
-// function RichTextEditorDisplay({ content }: TipTapDisplayProps) {
-
-//   const { classes, theme } = useStyles();
-
-//   return (
-//     <Container
-//       id='second-section'
-//       py="xl"
-//       className={classes.container}
-//     >
-
-//       <Card
-//         shadow="md"
-//         radius="md"
-//         p="xl"
-//         className={classes.card}
-
-//         >
-//           {/* dangerouslySetInnerHTML={{ __html: content }} */}
-//       <div dangerouslySetInnerHTML={{ __html: content }} />
-
-//       </Card>
-//     </Container>
-
-//   )
-
-// }
-
-// export default RichTextEditorDisplay;
+export default ViewProject;
