@@ -42,7 +42,8 @@ const HomePageProjectGrid = ({ projects }: any) => {
                 <HomePageProjectCard
                   image={project.coverImage}
                   // image={`../../../img/${project.id}.jpg`  ? `../../../img/${project.id}.jpg` : placeholderImg}
-                  title={project.name}
+                  githubTitle={project.name}
+                  customTitle={project.projectTitle}
                   index={index}
                   author={project.owner.login}
                   views={project.views}

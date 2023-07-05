@@ -38,7 +38,7 @@ export async function getStaticProps({ params }: any) {
       projects: projectData || null,
       textContent: textEditorContent || null,
     },
-    revalidate: 5,
+    revalidate: 1,
   };
 }
 
@@ -282,7 +282,7 @@ export default function Project({ projects, textContent }: any) {
                   Edit your project
                 </Button>
               </Link>
-              {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && (
+              {/* {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && ( */}
                 <Link
                 href={`/portfolio/edit/${projects[0].id}`}
                   passHref legacyBehavior>
@@ -329,7 +329,7 @@ export default function Project({ projects, textContent }: any) {
                     Edit Project [new]
                   </Button>
                 </Link>
-              )}
+              {/* )} */}
 
               {/* </Center> */}
             </Stack>
