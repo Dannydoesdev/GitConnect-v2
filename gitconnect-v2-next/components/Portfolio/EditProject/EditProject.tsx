@@ -156,6 +156,53 @@ export default function EditPortfolioProject({
 
   }
 
+  async function handleSaveAndFinish(formData: any) {
+    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Saving your draft',
+        message: 'Project is being saved to the database',
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await setDoc(
+        docRef,
+        { ...formData, userId: userid, repoId: repoid },
+        { merge: true }
+      );
+      await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
+      // console.log(formData)
+      // console.log('publishing');
+      // close();
+    } catch (error) {
+      console.log(error);
+      notifications.update({
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        title: 'Project was saved',
+        message: 'Your updates have been saved',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
+      close();
+    }
+    // TODO: New project view page
+    // router.push(`/profiles/projects/${repoid}`);
+
+  }
+
   // When continuing - save the data to Firebase and set the hidden status to false
   async function handleSaveAndContinue() {
     const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
@@ -216,7 +263,6 @@ export default function EditPortfolioProject({
         autoClose: 2000,
       });
       close();
-    
     }
   }
 
@@ -313,7 +359,6 @@ export default function EditPortfolioProject({
           autoClose: 2000,
         });
       })
-      
   }
 
   function handlePreview() {
@@ -390,7 +435,8 @@ export default function EditPortfolioProject({
             handleNewCoverImage={handleNewCoverImage}
             repoId={repoid}
             handlePublish={handlePublish}
-            handleSaveAsDraft={handleSaveAsDraft}
+            handleSaveAsDraft={handleSaveAndFinish}
+            // handleSaveAsDraft={handleSaveAsDraft}
             opened={opened}
             open={open}
             close={close}
@@ -424,7 +470,7 @@ export default function EditPortfolioProject({
               base: 'calc(63%)',
             }}
           >
-            <Title mx="auto">Editing {repoName}</Title>
+            <Title mx="auto">Editing {otherProjectData.projectTitle || repoName}</Title>
             {/* <Text>{description}</Text>
           <Text>{url}</Text> */}
 
