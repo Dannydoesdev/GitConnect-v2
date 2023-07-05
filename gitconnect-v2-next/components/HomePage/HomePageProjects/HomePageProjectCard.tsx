@@ -16,7 +16,8 @@ import { correctImageGetter } from '../../../lib/correctImageGetter';
 export function HomePageProjectCard({
   image,
   profileUrl,
-  title,
+  customTitle,
+  githubTitle,
   author,
   avatar,
   views,
@@ -27,6 +28,11 @@ export function HomePageProjectCard({
   const { classes, theme } = useStyles();
 
   const imageUrl = image && typeof image === 'string' ? correctImageGetter(image, 2000) : '/img/gc-sml.webp';
+
+  function replaceUnderscoresAndDashes(input: string): string {
+    return input.replace(/[_-]/g, ' ');
+  } 
+  const githubTitleFormatted = githubTitle ? replaceUnderscoresAndDashes(githubTitle) : '';
   
   return (
     <>
@@ -75,7 +81,7 @@ export function HomePageProjectCard({
                 className={classes.title}
                 weight={600}
               >
-                {title}
+                {customTitle || githubTitleFormatted}
               </Text>
             </div>
           </div>
@@ -138,7 +144,8 @@ interface ImageCardProps {
   link: string;
   image: string;
   profileUrl: string;
-  title: string;
+  githubTitle: string;
+  customTitle?: string;
   author: string;
   avatar: string;
   stars: number;

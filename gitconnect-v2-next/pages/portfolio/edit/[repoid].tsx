@@ -44,7 +44,7 @@ export async function getStaticProps({ params }: any) {
       textContent: textEditorContent || null,
       // customProjectData: customProjectData || null,
     },
-    revalidate: 5,
+    revalidate: 1,
   };
 }
 

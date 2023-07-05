@@ -30,6 +30,7 @@ import ProjectSettingsModal from './EditProjectSettings';
 import RichTextEditorVanilla from '../RichTextEditor/RichTextEditorVanilla';
 import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
 import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
+import { modals } from '@mantine/modals';
 
 type EditPortfolioProps = {
   repoName: string;
@@ -250,8 +251,35 @@ export default function EditPortfolioProject({
   //   }
   // }, [data]);
 
+  const confirmImportReadme = () => {
+    modals.openConfirmModal({
+      title: 'Confirm Import Readme - Will replace editor content',
+      children: (
+        <Text size="sm">
+          Importing the readme from GitHub will replace the current content in the editor.
+          Continue?
+        </Text>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      // onCancel: () => console.log('Cancel'),
+      onCancel: () =>  console.log('Cancel'),
+      onConfirm: () => handleImportReadme(),
+    });
+  };
+
+
   function handleImportReadme() {
-    const readmeUrl = `/api/profiles/projects/edit/readme`;
+   
+    setReadme('');
+      notifications.show({
+        id: 'fetch-readme',
+        loading: true,
+        title: 'Fetching Readme',
+        message: 'Please wait',
+        autoClose: false,
+        withCloseButton: false,
+      });
+      const readmeUrl = `/api/profiles/projects/edit/readme`;
     axios
       .get(readmeUrl, {
         params: {
@@ -262,9 +290,30 @@ export default function EditPortfolioProject({
       .then((response) => {
         const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
         // console.log(sanitizedHTML);
+        console.log(textContent)
         setReadme(sanitizedHTML);
         handleEditorChange(sanitizedHTML);
-      });
+        notifications.update({
+          id: 'fetch-readme',
+          color: 'teal',
+          title: 'Readme fetched',
+          message: 'Your readme has been fetched and imported',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 2000,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        notifications.update({
+          id: 'fetch-readme',
+          color: 'red',
+          title: 'Something went wrong, please try again',
+          message: `Error: ${error}`,
+          icon: <IconCross size="1rem" />,
+          autoClose: 2000,
+        });
+      })
+      
   }
 
   function handlePreview() {
@@ -368,31 +417,10 @@ export default function EditPortfolioProject({
               xxs: 0,
               xs: 0,
               md: 'calc(14%)',
-              // lg: 'calc(15%)',
-              // xl: 'calc(15%)',
-              // base: 'calc(10%)',
             }}
-            // mx='auto'
-            // ml={-25}
-            // ml={80}
-            // ml = 'calc(6%)'
-            // position='center'
+
             w={{
-              // xs: 'calc(100% - 180px)',
-              // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
-              // sm: 'calc(100% - 240px)',
-
-              // md: 'calc(100% - 280px)',
-              // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
-              // lg: 'calc(100% - 255px)',
-
-              // xl: 'calc(100% - 250px)',
-              // xl: 'calc(70%)',
-
-              // xxl: 'calc(100% - 100px)',
-
-              // When other breakpoints do not match base width is used, defaults to 100%
-              // base: 'calc(100% - 120px)',
+  
               base: 'calc(63%)',
             }}
           >
@@ -457,7 +485,8 @@ export default function EditPortfolioProject({
             <Flex direction="column" align="center">
               <Button
                 component="a"
-                onClick={handleImportReadme}
+                onClick={confirmImportReadme}
+                // onClick={handleImportReadme}
                 // onClick={handleImportReadmeSWR}
                 radius="md"
                 w={{

@@ -97,11 +97,11 @@ export default function ProjectPageDynamicContent(props: any) {
       </Group>
 
       <Title order={2} className={classes.title} align="center" mt="sm">
-        {project.name}
+        {project.projectTitle || project.name || ''}
       </Title>
 
       <Text color="dimmed" className={classes.description} align="center" mt="md">
-        {project.description}
+        {project.projectDescription || project.description || ''}
       </Text>
 
       <Group mt="lg" position="center" spacing="lg">

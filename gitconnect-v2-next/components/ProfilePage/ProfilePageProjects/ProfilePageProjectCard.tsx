@@ -18,7 +18,8 @@ export function ProfilePageProjectCard({
   hidden,
   image,
   profileUrl,
-  title,
+  githubTitle,
+  customTitle,
   author,
   avatar,
   views,
@@ -29,6 +30,11 @@ export function ProfilePageProjectCard({
   const { classes, theme } = useStyles();
 
   const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 768) : '/img/gitconnect.webp';
+
+  function replaceUnderscoresAndDashes(input: string): string {
+    return input.replace(/[_-]/g, ' ');
+  }
+  const githubTitleFormatted = githubTitle ? replaceUnderscoresAndDashes(githubTitle) : '';
 
   // console.log(image)
   // const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
@@ -88,7 +94,7 @@ export function ProfilePageProjectCard({
           <div className={classes.content}>
             <div>
               <Text size='lg' pb='md' className={classes.title} weight={500}>
-                {title}
+                {customTitle || githubTitleFormatted}
               </Text>
             </div>
           </div>
@@ -131,7 +137,8 @@ interface ProfilePageProjectCardProps {
   link: string;
   image: string;
   profileUrl: string;
-  title: string;
+  githubTitle: string;
+  customTitle?: string;
   author: string;
   avatar: string;
   views: number;

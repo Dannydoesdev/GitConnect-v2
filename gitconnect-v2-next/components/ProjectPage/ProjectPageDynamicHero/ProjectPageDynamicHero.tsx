@@ -55,9 +55,11 @@ export function ProjectPageDynamicHero(props: any) {
         opacity={1}
         zIndex={0}
       />
-
+      
       <Container className={classes.container}>
-        <Title className={classes.title}>{project.name}</Title>
+        <Title className={classes.title}>
+        {project.projectTitle || project.name || ''}
+        </Title>
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}
         </Text>
