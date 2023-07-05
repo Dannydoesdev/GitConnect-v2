@@ -138,69 +138,6 @@ export default function Project({ projects, textContent }: any) {
     }
   };
 
-  // TODO: Test if seperate useEffects are more efficient on page load - then cleanup
-  // useEffect(() => {
-
-  //   const URL = `/api/profiles/projects/${id}`;
-  //   axios.get(URL).then((response) => {
-
-  //     setProjects(response.data);
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-
-  //   if (id && projects) {
-  //     const userId = projects[0].userId;
-  //     const repoId = id;
-
-  //     axios.post('/api/projects/incrementView', {
-  //       userId: userId,
-  //       repoId: repoId
-  //     });
-
-  //   }
-
-  //   // incrementViewCount(id as string);
-  // }, [id, projects])
-
-  // Load any existing data from Firestore & put in state
-  // Will need to update page content with the data returned
-
-  // useEffect(() => {
-  //   if (projects) {
-  //     // console.log(starCount)
-  //     const userId = projects[0].userId;
-  //     const repoId = id;
-
-  //     const getFirebaseData = async () => {
-  //       const docRef = doc(
-  //         db,
-  //         `users/${userId}/repos/${repoId}/projectData/mainContent`
-  //       );
-  //       const docSnap = await getDoc(docRef);
-
-  //       if (docSnap.exists()) {
-  //         const mainContent = docSnap.data();
-  //         const htmlOutput = mainContent.htmlOutput;
-  //         // console.log(htmlOutput)
-  //         if (htmlOutput.length > 0) {
-  //           // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
-  //           const sanitizedHTML = DOMPurify.sanitize(htmlOutput, {
-  //             ADD_ATTR: ['target'],
-  //           });
-
-  //           setFirebaseData(sanitizedHTML);
-  //         }
-  //       }
-  //     };
-  //     getFirebaseData();
-  //   }
-  // }, [projects]);
-
-  // Check if projects are returned && if logged in user is owner - show edit button
-
-  //Need to call firestore and display the tiptap editor content
 
   if (projects) {
     return (

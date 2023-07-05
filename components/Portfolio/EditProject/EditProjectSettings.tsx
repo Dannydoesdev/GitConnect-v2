@@ -41,7 +41,7 @@ interface ProjectSettingsProps {
   open: () => void;
   close: () => void;
   handlePublish: (formData: any) => void;
-  handleSaveAsDraft?: () => void;
+  handleSaveAsDraft: (formData: any) => void;
   handleNewCoverImage: (newCoverImage: string) => void;
   projectTitle?: string;
   techStack?: string[];
@@ -328,7 +328,8 @@ function ProjectSettingsModal({
                     radius="lg"
                     size="sm"
                     px={30}
-                    onClick={handleSaveAsDraft}
+                    onClick={() => handleSaveAsDraft(form.values)}
+                    // onClick={handleSaveAsDraft}
                     // className="mx-auto"
                     variant="outline"
                     // onClick={handleSave}
