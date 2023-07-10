@@ -1,4 +1,4 @@
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore"; 
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore"; 
 import { db } from '../firebase/clientApp';
 
 // Need to add paramater for user who is starring - as well as user who's repo it is
@@ -11,12 +11,24 @@ export async function starProject(userWhoStarredId: string, repoOwnerId: string,
   });
 }
 
-export async function unstarProject(userWhoStarredId: string, repoOwnerId: string, repoId: string) {
+export async function unstarProject(userWhoStarredId: string, repoOwnerId: string, repoId: string | number) {
   const projectRef = doc(db, `users/${repoOwnerId}/repos/${repoId}`);
+  // console.log(userWhoStarredId)
+  // console.log(repoOwnerId)
+  // console.log(repoId)
+  // console.log(projectRef)
+  try {
+    await getDoc(projectRef)
 
-  await updateDoc(projectRef, {
-    stars: arrayRemove(userWhoStarredId)
-  });
+    await updateDoc(projectRef, {
+      stars: arrayRemove(userWhoStarredId)
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  // await updateDoc(projectRef, {
+  //   stars: arrayRemove(userWhoStarredId)
+  // });
 }
 
 // export async function starProject(userId: string, projectId: string) {

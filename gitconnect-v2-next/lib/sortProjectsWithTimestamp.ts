@@ -57,9 +57,9 @@ export async function getAllPublicProjectsAndSortWithTimeStamp() {
     };
   });
 
-  const starWeight = 1; // Assign a weight to stars
+  const starWeight = 2; // Assign a weight to stars
   const viewWeight = 0.2; // Assign a weight to views
-  const timeWeight = 5; // Assign a high weight to time
+  const timeWeight = 1; // Assign a high weight to time
 
   // Get the minimum and maximum unix timestamps from the projects
   const minUnixTimestamp = Math.min(...projects.map(project => project.gitconnect_created_at_unix || Infinity));
