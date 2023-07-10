@@ -128,11 +128,11 @@ export default function Project({ projects, textContent }: any) {
     const repoId = projects[0].id;
 
     if (userHasStarred) {
-      await unstarProject(userId, ownerId, repoId);
+      await unstarProject(userId as string, ownerId as string, repoId);
       setUserHasStarred(false);
       setStarCount(starCount - 1);
     } else {
-      await starProject(userId, ownerId, repoId);
+      await starProject(userId as string, ownerId as string, repoId);
       setUserHasStarred(true);
       setStarCount(starCount + 1);
     }
@@ -255,13 +255,6 @@ export default function Project({ projects, textContent }: any) {
                         },
                       },
                     })}
-                    // sx={(theme) => ({
-                    //   fontSize: '16px',
-                    //   color:
-                    //     theme.colorScheme === 'dark'
-                    //       ? theme.colors.white
-                    //       : theme.colors.dark,
-                    // })}
                   >
                     Edit Project [new]
                   </Button>
