@@ -1,3 +1,7 @@
+import { useState, useContext } from 'react';
+import Link from 'next/link';
+import Router from 'next/router';
+import { useRouter } from 'next/router';
 import {
   AppShell,
   Footer,
@@ -7,18 +11,107 @@ import {
   Button,
   createStyles,
   Avatar,
+  rem,
+  Burger,
+  Menu,
+  Transition,
+  Paper,
 } from '@mantine/core';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { useState, useContext } from 'react';
-import Link from 'next/link';
-import Router from 'next/router';
-import { AuthContext } from '../context/AuthContext';
-import { useRouter } from 'next/router';
-import { auth } from '../firebase/clientApp';
+import { useDisclosure } from '@mantine/hooks';
 import { signOut } from 'firebase/auth';
+import { AuthContext } from '../context/AuthContext';
+import { auth } from '../firebase/clientApp';
+import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { ColorSchemeToggle } from './ColorSchemeToggle/ColorSchemeToggle';
 
+const HEADER_HEIGHT = 70;
+
 const useStyles = createStyles((theme) => ({
+  // Adding Burger
+  burger: {
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+  root: {
+    position: 'relative',
+    zIndex: 1,
+  },
+
+  dropdown: {
+    position: 'absolute',
+    top: HEADER_HEIGHT,
+    left: 0,
+    right: 0,
+    zIndex: 0,
+    borderTopRightRadius: 0,
+    borderTopLeftRadius: 0,
+    borderTopWidth: 0,
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    gap: theme.spacing.xs,
+    paddingTop: theme.spacing.sm,
+    paddingBottom: theme.spacing.sm,
+    // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+    marginRight: theme.spacing.lg,
+    marginLeft: theme.spacing.lg,
+
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  links: {
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+    // [theme.fn.smallerThan('sm')]: {
+    //   display: 'none',
+    // },
+  },
+
+  link: {
+    display: 'block',
+    lineHeight: 1,
+    padding: `${rem(8)} ${rem(12)}`,
+    borderRadius: theme.radius.sm,
+    textDecoration: 'none',
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+    fontSize: theme.fontSizes.sm,
+    fontWeight: 500,
+
+    '&:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    },
+
+    [theme.fn.smallerThan('sm')]: {
+      borderRadius: 0,
+      padding: theme.spacing.md,
+    },
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  linkActive: {
+    '&, &:hover': {
+      backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
+        .background,
+      color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+    },
+  },
+  linkButtons: {
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  // Burger finish
+
   card: {
     height: 440,
     display: 'flex',
@@ -36,7 +129,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   responsiveHide: {
-    [theme.fn.smallerThan('sm')]: {
+    [theme.fn.smallerThan('md')]: {
       display: 'none',
     },
   },
@@ -70,9 +163,11 @@ const useStyles = createStyles((theme) => ({
 
 export const AppContainer = ({ children }, props) => {
   const { userData, currentUser } = useContext(AuthContext);
-  const { classes, theme } = useStyles();
+  const { classes, cx, theme } = useStyles();
+
   // const { currentUser } = useContext(AuthContext)
   const Router = useRouter();
+  const [opened, { toggle, close }] = useDisclosure(false);
 
   const signOutHandler = async (e) => {
     e.preventDefault();
@@ -91,6 +186,48 @@ export const AppContainer = ({ children }, props) => {
     e.preventDefault();
     Router.push('/signup');
   };
+
+  const links = [
+    { label: 'Home', link: '/' },
+    { label: 'About', link: '/landing' },
+    { label: 'Add Project', link: '/getrepos' },
+    { label: 'Add Project[new]', link: `/profiles/${userData.userId}` },
+    { label: 'Profile', link: `/profiles/${userData.userId}` },
+    // { label: 'Sign Out', link: '/login' },
+  ];
+
+  const [active, setActive] = useState(links[0].link);
+
+  const items = links.map((link) => (
+    <Link
+      passHref
+      legacyBehavior
+      key={link.label}
+      href={link.link}
+      className={cx(classes.link, { [classes.linkActive]: active === link.link })}
+      onClick={(event) => {
+        event.preventDefault();
+        setActive(link.link);
+        close();
+      }}
+    >
+      <Button
+        component="a"
+        size="xs"
+        color="gray"
+        variant="subtle"
+        // className={cx(classes.link, { [classes.linkActive]: active === link.link })}
+        className={classes.linkButtons}
+        // className={cx(classes.link, { [classes.linkActive]: active === link.link })
+        sx={(theme) => ({
+          fontSize: '16px',
+          color: theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+        })}
+      >
+        {link.label}
+      </Button>
+    </Link>
+  ));
 
   return (
     <AppShell
@@ -113,15 +250,15 @@ export const AppContainer = ({ children }, props) => {
         // p = padding size
         // <Header height={70} padding={20}>
         <Header className={classes.header}>
-          <Group position='apart' align='center' height='100%'>
+          <Group position="apart" align="center" height="100%">
             <Group>
               {/* <div style={{ display: 'flex', alignItems: 'center', height:"100%" }}> */}
-              <Link href='/' passHref legacyBehavior>
+              <Link href="/" passHref legacyBehavior>
                 <Text
-                  component='a'
+                  component="a"
                   // color={theme.colorScheme === 'dark' ? 'dark' : 'gray'}
-                  size='xl'
-                  weight='bolder'
+                  size="xl"
+                  weight="bolder"
                   className={classes.navBrand}
                 >
                   GitConnect;
@@ -147,13 +284,13 @@ export const AppContainer = ({ children }, props) => {
                       User
                     </Text>
                   </Link> */}
-                <Group className={classes.responsiveHide} position='center'>
-                  <Link href='/landing' passHref legacyBehavior>
+                <Group className={classes.responsiveHide} position="center">
+                  <Link href="/landing" passHref legacyBehavior>
                     <Button
-                      component='a'
-                      size='xs'
-                      color='gray'
-                      variant='subtle'
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
@@ -165,12 +302,12 @@ export const AppContainer = ({ children }, props) => {
                       About
                     </Button>
                   </Link>
-                  <Link href='/getrepos' passHref legacyBehavior>
+                  <Link href="/getrepos" passHref legacyBehavior>
                     <Button
-                      component='a'
-                      size='xs'
-                      color='gray'
-                      variant='subtle'
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
@@ -181,28 +318,28 @@ export const AppContainer = ({ children }, props) => {
                     >
                       Add Project
                     </Button>
-                    </Link>
-                    {/* {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && */}
-                     <Link href='/addproject' passHref legacyBehavior>
-                     <Button
-                       component='a'
-                       size='xs'
-                       color='gray'
-                       variant='subtle'
-                       sx={(theme) => ({
-                         fontSize: '16px',
-                         color:
-                           theme.colorScheme === 'dark'
-                             ? theme.colors.white
-                             : theme.colors.dark,
-                       })}
-                     >
-                       Add Project [new]
-                     </Button>
-                     </Link>
-                    
-                    {/* } */}
-                    {/* <Text
+                  </Link>
+                  {/* {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && */}
+                  <Link href="/addproject" passHref legacyBehavior>
+                    <Button
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
+                    >
+                      Add Project [new]
+                    </Button>
+                  </Link>
+
+                  {/* } */}
+                  {/* <Text
                       component='a'
                       className='dark:text-white'
                       size='md'
@@ -210,17 +347,13 @@ export const AppContainer = ({ children }, props) => {
                     >
                       Add a Project
                     </Text> */}
-                
-                  <Link
-                    href={`/profiles/${userData.userId}`}
-                    passHref
-                    legacyBehavior
-                  >
+
+                  <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior>
                     <Button
-                      component='a'
-                      size='xs'
-                      color='gray'
-                      variant='subtle'
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
@@ -233,26 +366,36 @@ export const AppContainer = ({ children }, props) => {
                     </Button>
                   </Link>
                 </Group>
-
+               
                 <Group>
+                <Burger
+                  opened={opened}
+                  onClick={toggle}
+                  className={classes.burger}
+                  size="sm"
+                />
+
+                <Transition transition="pop-top-right" duration={200} mounted={opened}>
+                  {(styles) => (
+                    <Paper className={classes.dropdown} withBorder style={styles}>
+                      {items}
+                    </Paper>
+                  )}
+                </Transition>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
-                  <Link
-                    href={`/profiles/${userData.userId}`}
-                    passHref
-                    legacyBehavior
-                  >
+                  <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior>
                     <Avatar
-                      component='a'
-                      radius='xl'
-                      size='md'
+                      component="a"
+                      radius="xl"
+                      size="md"
                       src={userData.userPhotoLink}
                     />
                   </Link>
 
-                  <Link href='#' passHref legacyBehavior>
+                  <Link href="#" passHref legacyBehavior>
                     <Button
-                      component='a'
-                      size='xs'
+                      component="a"
+                      size="xs"
                       onClick={(e) => signOutHandler(e)}
                       // className='mx-auto'
                       sx={(theme) => ({
@@ -266,17 +409,19 @@ export const AppContainer = ({ children }, props) => {
                       Sign out
                     </Button>
                   </Link>
+      
                 </Group>
+               
               </>
             ) : (
               <>
-                <Group className={classes.responsiveHide} position='center'>
-                  <Link href='/landing' passHref legacyBehavior>
+                <Group className={classes.responsiveHide} position="center">
+                  <Link href="/landing" passHref legacyBehavior>
                     <Button
-                      component='a'
-                      size='xs'
-                      color='gray'
-                      variant='subtle'
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
                       // color='indigo'
                       // onClick={(e) => signInHandler(e)}
                       // onClick={signInHandler}
@@ -309,10 +454,10 @@ export const AppContainer = ({ children }, props) => {
                 </Group>
 
                 <Group>
-                  <Link href='#' passHref legacyBehavior>
+                  <Link href="#" passHref legacyBehavior>
                     <Button
-                      component='a'
-                      size='xs'
+                      component="a"
+                      size="xs"
                       onClick={(e) => signInHandler(e)}
                       // onClick={signInHandler}
                       // className='mx-auto'
@@ -327,10 +472,10 @@ export const AppContainer = ({ children }, props) => {
                       Sign in
                     </Button>
                   </Link>
-                  <Link href='#' passHref legacyBehavior>
+                  <Link href="#" passHref legacyBehavior>
                     <Button
-                      component='a'
-                      size='xs'
+                      component="a"
+                      size="xs"
                       onClick={(e) => registerHandler(e)}
                       // onClick={registerHandler}
                       // className='mx-auto'
