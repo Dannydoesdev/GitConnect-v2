@@ -203,7 +203,7 @@ export const AppContainer = ({ children }, props) => {
     { label: 'Home', link: '/' },
     { label: 'About', link: '/landing' },
     { label: 'Add Project', link: '/getrepos' },
-    { label: 'Add Project[new]', link: `/profiles/${userData.userId}` },
+    { label: 'Add Project[new]', link: `/addproject` },
     { label: 'Profile', link: `/profiles/${userData.userId}` },
     // { label: 'Sign Out', link: '/login' },
   ];
@@ -397,7 +397,14 @@ export const AppContainer = ({ children }, props) => {
                   size="sm"
                 />
 
-                <Transition transition="pop-top-right" duration={200} mounted={opened}>
+                  <Transition
+                    // transition="pop-top-right"
+                    transition='slide-left'
+                    // transition='scale'
+                    duration={600}
+                    mounted={opened}
+                    timingFunction='ease-in-out'
+                  >
                   {(styles) => (
                     <Paper className={classes.dropdown} withBorder style={styles}>
                       {items}
