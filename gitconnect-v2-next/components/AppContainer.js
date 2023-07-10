@@ -21,7 +21,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { signOut } from 'firebase/auth';
 import { AuthContext } from '../context/AuthContext';
 import { auth } from '../firebase/clientApp';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
+// import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { ColorSchemeToggle } from './ColorSchemeToggle/ColorSchemeToggle';
 
 const HEADER_HEIGHT = 70;
@@ -29,10 +29,11 @@ const HEADER_HEIGHT = 70;
 const useStyles = createStyles((theme) => ({
   // Adding Burger
   burger: {
-    [theme.fn.largerThan('sm')]: {
+    [theme.fn.largerThan('md')]: {
       display: 'none',
     },
   },
+
   root: {
     position: 'relative',
     zIndex: 1,
@@ -56,16 +57,18 @@ const useStyles = createStyles((theme) => ({
     paddingTop: theme.spacing.sm,
     paddingBottom: theme.spacing.sm,
     // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-    marginRight: theme.spacing.lg,
-    marginLeft: theme.spacing.lg,
+    // marginRight: theme.spacing.xs,
+    // marginLeft: theme.spacing.xs,
+    // marginRight: theme.spacing.lg,
+    // marginLeft: theme.spacing.lg,
 
-    [theme.fn.largerThan('sm')]: {
+    [theme.fn.largerThan('md')]: {
       display: 'none',
     },
   },
 
   links: {
-    [theme.fn.largerThan('sm')]: {
+    [theme.fn.largerThan('md')]: {
       display: 'none',
     },
     // [theme.fn.smallerThan('sm')]: {
@@ -92,7 +95,7 @@ const useStyles = createStyles((theme) => ({
       borderRadius: 0,
       padding: theme.spacing.md,
     },
-    [theme.fn.largerThan('sm')]: {
+    [theme.fn.largerThan('md')]: {
       display: 'none',
     },
   },
@@ -105,8 +108,12 @@ const useStyles = createStyles((theme) => ({
     },
   },
   linkButtons: {
-    [theme.fn.largerThan('sm')]: {
+    [theme.fn.largerThan('md')]: {
       display: 'none',
+    },
+    '&:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[0],
     },
   },
 
@@ -159,6 +166,11 @@ const useStyles = createStyles((theme) => ({
     flexWrap: 'no-wrap',
     // <Group position="apart" align="center" height="100%">
   },
+
+  colorToggle: {
+    marginTop: 4,
+  },
+
 }));
 
 export const AppContainer = ({ children }, props) => {
@@ -196,6 +208,8 @@ export const AppContainer = ({ children }, props) => {
     // { label: 'Sign Out', link: '/login' },
   ];
 
+  // console.log(opened)
+
   const [active, setActive] = useState(links[0].link);
 
   const items = links.map((link) => (
@@ -205,17 +219,24 @@ export const AppContainer = ({ children }, props) => {
       key={link.label}
       href={link.link}
       className={cx(classes.link, { [classes.linkActive]: active === link.link })}
-      onClick={(event) => {
-        event.preventDefault();
-        setActive(link.link);
-        close();
-      }}
+      // onClick={(event) => {
+      //   event.preventDefault();
+      //   setActive(link.link);
+      //   // toggle();
+      //   close();
+      // }}
     >
       <Button
         component="a"
         size="xs"
         color="gray"
         variant="subtle"
+        onClick={(event) => {
+          // event.preventDefault();
+          setActive(link.link);
+          // toggle();
+          close();
+        }}
         // className={cx(classes.link, { [classes.linkActive]: active === link.link })}
         className={classes.linkButtons}
         // className={cx(classes.link, { [classes.linkActive]: active === link.link })
@@ -371,6 +392,7 @@ export const AppContainer = ({ children }, props) => {
                 <Burger
                   opened={opened}
                   onClick={toggle}
+                  onClose={close}
                   className={classes.burger}
                   size="sm"
                 />
