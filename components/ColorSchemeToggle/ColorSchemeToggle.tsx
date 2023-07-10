@@ -20,24 +20,29 @@ export function ColorSchemeToggle() {
   useHotkeys([['mod+J', () => setThemes()]]);
 
   return (
-    <Group position="center">
+    <Group mt={5} position="center">
       <ActionIcon
-         aria-label="light or dark mode toggle"
+        aria-label="light or dark mode toggle"
         onClick={() => setThemes()}
         size="sm"
         sx={(theme) => ({
-          backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+          backgroundColor: '#FFFFFF00',
+          // backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
           color: theme.colorScheme === "dark" ? theme.colors.yellow[4] : theme.colors.blue[6],
+
+          '&:hover': {
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[0],
+          },
         })}
         // color={dark ? 'yellow' : 'blue'}
         // css={[dark ? tw`bg-gray-700/30` : tw`bg-gray-300/30`]}
       >
         {dark ? (
           // <IconSun size={15} />
-          <Sun size={15} />
+          <Sun size={15} strokeWidth={2} />
         ) : (
           // <IconMoon size={15} />
-          <Moon size={15} />
+          <Moon size={15} strokeWidth={2} />
         )}
       </ActionIcon>
     </Group>
