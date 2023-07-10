@@ -88,6 +88,13 @@ export default function ProjectPageDynamicContent(props: any) {
     </Card>
   ));
 
+
+  function replaceUnderscoresAndDashes(input: string): string {
+    return input.replace(/[_-]/g, ' ');
+  } 
+  const githubTitleFormatted = project.name ? replaceUnderscoresAndDashes(project.name) : '';
+
+
   return (
     <Container size="lg" mt="lg" py="xs">
       <Group position="center">
@@ -97,11 +104,11 @@ export default function ProjectPageDynamicContent(props: any) {
       </Group>
 
       <Title order={2} className={classes.title} align="center" mt="sm">
-        {project.name}
+        {project.projectTitle || githubTitleFormatted || project.name || ''}
       </Title>
 
       <Text color="dimmed" className={classes.description} align="center" mt="md">
-        {project.description}
+        {project.projectDescription || project.description || ''}
       </Text>
 
       <Group mt="lg" position="center" spacing="lg">

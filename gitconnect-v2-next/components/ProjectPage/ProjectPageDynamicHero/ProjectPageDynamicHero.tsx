@@ -14,6 +14,11 @@ export function ProjectPageDynamicHero(props: any) {
     typeof image === 'string' && image
       ? correctImageGetter(image, 2000)
       : '/img/gitconnect.webp';
+  
+    function replaceUnderscoresAndDashes(input: string): string {
+      return input.replace(/[_-]/g, ' ');
+    } 
+    const githubTitleFormatted = project.name ? replaceUnderscoresAndDashes(project.name) : '';
 
   return (
     // <Group className={classes.hero} sx={{ backgroundImage: project.coverImage ? `url(${project.coverImage})` : '' }}>
@@ -57,7 +62,9 @@ export function ProjectPageDynamicHero(props: any) {
       />
 
       <Container className={classes.container}>
-        <Title className={classes.title}>{project.name}</Title>
+        <Title className={classes.title}>
+        {project.projectTitle || githubTitleFormatted || project.name || ''}
+        </Title>
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}
         </Text>

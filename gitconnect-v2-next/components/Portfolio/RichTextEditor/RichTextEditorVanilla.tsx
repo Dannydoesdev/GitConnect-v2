@@ -119,11 +119,14 @@ function RichTextEditorVanilla({
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
 
+
+  
   useEffect(() => {
-    if (readme && readme !== newReadme) {
-      setNewReadme(readme);
-      // if (readme) {
-      editor?.commands.setContent(readme);
+    // if (readme && readme !== newReadme) {
+      // setNewReadme(readme);
+      if (readme) {
+        editor?.commands.setContent(readme);
+        // editor?.commands.insertContent(readme);
     }
   }, [readme]);
 
@@ -185,7 +188,7 @@ function RichTextEditorVanilla({
     },
     onUpdate({ editor }) {
       // Update state every time the editor content changes
-      // setEditorContent(editor.getHTML());
+      setEditorContent(editor.getHTML());
       onUpdateEditor?.(editor.getHTML());
     },
   });

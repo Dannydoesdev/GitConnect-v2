@@ -44,7 +44,8 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
                 hidden={project.docData.hidden}
                 image={project.docData.coverImage}
                 index={index}
-                title={project.docData.name}
+                githubTitle={project.docData.name}
+                customTitle={project.docData.projectTitle}
                 avatar={project.docData.owner.avatar_url}
                 author={project.docData.owner.login}
                 views={1}
