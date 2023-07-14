@@ -63,7 +63,7 @@ export function ProjectPageDynamicHero(props: any) {
 
       <Container className={classes.container}>
         <Title className={classes.title}>
-        {project.projectTitle || githubTitleFormatted || project.name || ''}
+        {project?.projectTitle || githubTitleFormatted || project.name || ''}
         </Title>
         <Text className={classes.description} size="xl" mt="xl">
           {/* {project.name} */}

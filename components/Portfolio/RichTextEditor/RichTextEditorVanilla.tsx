@@ -124,8 +124,10 @@ function RichTextEditorVanilla({
   useEffect(() => {
     // if (readme && readme !== newReadme) {
       // setNewReadme(readme);
-      if (readme) {
-        editor?.commands.setContent(readme);
+    if (readme) {
+        setTimeout(() => {
+          editor?.commands.setContent(readme);
+        });
         // editor?.commands.insertContent(readme);
     }
   }, [readme]);
@@ -138,8 +140,10 @@ function RichTextEditorVanilla({
 
   useEffect(() => {
     if (updatedContent && editor) {
+      setTimeout(() => {
       editor?.commands.setContent(updatedContent);
-    }
+    });
+      }
   }, []);
 
   const editor = useEditor({

@@ -14,17 +14,26 @@ export async function getSingleProjectByName(repoName: string) {
 
   const querySnapshot = await getDocs(q);
 
-  const projectData: any = querySnapshot.docs.map((doc: any) => {
-    const data = doc.data();
-    if (!data) {
-      return null;
-    }
+  return querySnapshot.docs.map((detail: any) => {
+    const docData = { ...detail.data() };
 
     return {
-      ...data,
+      // id,
+      docData,
     };
   });
-  return projectData;
+
+  // const projectData: any = querySnapshot.docs.map((doc: any) => {
+  //   const data = doc.data();
+  //   if (!data) {
+  //     return null;
+  //   }
+
+  //   return {
+  //     ...data,
+  //   };
+  // });
+  // return projectData;
 }
 
 export async function getSingleProjectById(repoId: string) {
@@ -56,7 +65,8 @@ export async function getSingleProjectByUserAndName(userName: string, repoName: 
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    console.log('Document data:', docSnap.data());
+    // console.log('Document data:', docSnap.data());
+    
     return docSnap.data();
     // console.log('Document data:', docSnap.data());
   } else {
@@ -106,7 +116,8 @@ export async function getAllProjectIds() {
 
   const projectIds: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
-    if (!data) {
+    // console.log(typeof data.id)
+    if (!data || !data.id) {
       return null;
     }
     return {
@@ -122,9 +133,9 @@ export async function getProjectTextEditorContent(userId: string, repoId: string
 
   if (docSnap.exists()) {
     const mainContent = docSnap.data();
-    const htmlOutput = mainContent.htmlOutput;
+    const htmlOutput = mainContent?.htmlOutput;
     // console.log(htmlOutput)
-    if (htmlOutput.length > 0) {
+    if (htmlOutput?.length > 0) {
       // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
       // const sanitizedHTML = DOMPurify.sanitize(htmlOutput, {
       //   ADD_ATTR: ['target'],

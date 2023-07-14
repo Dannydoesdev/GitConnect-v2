@@ -17,13 +17,13 @@ import { starProject, unstarProject } from '../../../lib/stars';
 export async function getStaticProps({ params }: any) {
   // const sortedProjects = await getAllPublicProjectsAndSort();
   // console.log(params.id)
-  if (!params.id) return { props: { projects: null, textContent: null } };
-
+  // if (!params.id) return { props: { projects: null, textContent: null } };
+  // console.log(params.id)
   const projectData: any = await getSingleProjectById(params.id);
   // console.log(projectData[0].userId)
-
+  // console.log(projectData)
   let textEditorContent;
-  if (!projectData || !projectData[0] || !projectData[0].userId) {
+  if (!projectData || !projectData[0]?.userId) {
     textEditorContent = null;
   } else {
     textEditorContent = await getProjectTextEditorContent(
@@ -35,7 +35,7 @@ export async function getStaticProps({ params }: any) {
 
   return {
     props: {
-      projects: projectData || null,
+      projects: projectData,
       textContent: textEditorContent || null,
     },
     revalidate: 1,
@@ -48,6 +48,7 @@ export async function getStaticPaths() {
   // projectIds.map((id: any) => console.log(id.id));
   type ProjectId = { id?: string };
   const paths = projectIds.map((id: ProjectId) => ({
+    // const paths = projectIds.map((id: any) => ({
     params: { id: id.id },
   }));
   // console.log(paths)
@@ -75,7 +76,7 @@ export default function Project({ projects, textContent }: any) {
     }
     const project = projects[0] || null;
 
-    if (project && projects.length > 0 && userData) {
+    if (project && userData) {
       setUserHasStarred(project.stars ? project.stars.includes(userData.userId) : false);
 
       // Set star count to allow live dynamic update of count
@@ -85,7 +86,6 @@ export default function Project({ projects, textContent }: any) {
     // Don't increment view count if user is owner, unless project has no views
     if (
       project &&
-      projects.length > 0 &&
       projects[0].userId &&
       userData &&
       userData.userId &&
@@ -104,8 +104,7 @@ export default function Project({ projects, textContent }: any) {
       !userData ||
       !userData.userId ||
       !projects[0].userId ||
-      !projects ||
-      projects.length === 0
+      !projects
     )
       return;
 
@@ -120,7 +119,7 @@ export default function Project({ projects, textContent }: any) {
   };
 
   const handleStarClick = async () => {
-    if (!userData || !projects || projects.length === 0) return;
+    if (!userData || !projects || projects?.length === 0) return;
 
     const userId = userData.userId;
     // const ownerId = repoOwner;
