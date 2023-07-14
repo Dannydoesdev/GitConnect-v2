@@ -18,6 +18,9 @@ import { DBlock } from './extensions/dBlock';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
+import { useRouter } from 'next/router';
+import { db } from '@/firebase/clientApp';
+import { doc, getDoc } from 'firebase/firestore';
 
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
@@ -41,59 +44,11 @@ function InsertCodeControls() {
   );
 }
 
-// function InsertImageControl(userId: any, repoId: any) {
-//   const { editor } = useRichTextEditorContext();
-//   // if (!userId || !repoId) {
-//   //   return null;
-//   // }
-//   return (
-//     <RichTextEditor.Control
-//       onClick={() =>
-//         editor
-//           ?.chain()
-//           .focus()
-//           .insertResizableImage({
-//             userId: userId,
-//             repoId: repoId,
-//           })
-//           .run()
-//       }
-//       aria-label="Insert an image"
-//       title="Insert an image"
-//     >
-//       <IconPhotoPlus stroke={1.5} size="1rem" />
-//     </RichTextEditor.Control>
-//   );
-// }
-// function InsertImageControlNew(userId: any, repoId: any) {
-//   const { editor } = useRichTextEditorContext();
-//   // if (!userId || !repoId) {
-//   //   return null;
-//   // }
-//   return (
-//     <RichTextEditor.Control
-//       onClick={() =>
-//         editor
-//           ?.chain()
-//           .focus()
-//           .insertResizableImage({
-//             userId: userId,
-//             repoId: repoId,
-//           })
-//           .run()
-//       }
-//       aria-label="Insert an image"
-//       title="Insert an image"
-//     >
-//       <IconPhotoPlus stroke={1.5} size="1rem" />
-//     </RichTextEditor.Control>
-//   );
-// }
 
 type RichTextEditorVanillaProps = {
   repoId?: string;
   userId?: string;
-  readme?: string;
+  readme?: string | null;
   existingContent?: string | null | undefined;
   updatedContent?: string | null | undefined;
   onUpdateEditor?: (content: string) => void;
@@ -114,20 +69,21 @@ function RichTextEditorVanilla({
   onUpdateEditor,
 }: RichTextEditorVanillaProps) {
   const [editorContent, setEditorContent] = useState('');
-  const [content, setContent] = useState(existingContent);
+  const [content, setContent] = useState('');
   const [newReadme, setNewReadme] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
-
+  const [initialContent, setinitialContent] = useState(existingContent);
+  const router = useRouter();
 
   
   useEffect(() => {
     // if (readme && readme !== newReadme) {
       // setNewReadme(readme);
     if (readme) {
-        setTimeout(() => {
+        // setTimeout(() => {
           editor?.commands.setContent(readme);
-        });
+        // });
         // editor?.commands.insertContent(readme);
     }
   }, [readme]);
@@ -138,11 +94,40 @@ function RichTextEditorVanilla({
   //   }
   // }, []);
 
+
+  useEffect(() => {
+    const getFirebaseData = async () => {
+      const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const mainContent = docSnap.data();
+        const htmlOutput = mainContent.htmlOutput;
+        // handleSetTipTap(htmlOutput);
+        if (htmlOutput?.length > 0) {
+          // setinitialContent(htmlOutput);
+          // handleSetTipTap(htmlOutput);
+          editor?.commands.setContent(content);
+        }
+      }
+    };
+
+    getFirebaseData();
+  }, [router, repoId, userId]);
+
+  // function handleSetTipTap(content: any) {
+  //   editor?.commands.setContent(content);
+  // }
+
+  // useEffect(() => {
+  //   editor?.commands.setContent(initialContent);
+  // }, [initialContent]);
+
   useEffect(() => {
     if (updatedContent && editor) {
-      setTimeout(() => {
+      // setTimeout(() => {
       editor?.commands.setContent(updatedContent);
-    });
+    // });
       }
   }, []);
 
