@@ -109,6 +109,7 @@ export default function EditPortfolioProject({
   //! TODO - should this be duplicated to a shallower collection?
 
   async function handlePublish(formData: any) {
+    // if ( realtimeEditorContent !== '' ) {
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
     const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
     try {
@@ -157,6 +158,7 @@ export default function EditPortfolioProject({
   }
 
   async function handleSaveAndFinish(formData: any) {
+    // if (realtimeEditorContent === '') { return; }
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
     const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
     try {
@@ -205,14 +207,17 @@ export default function EditPortfolioProject({
 
   // When continuing - save the data to Firebase and set the hidden status to false
   async function handleSaveAndContinue() {
-    const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
-      ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
-    });
 
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    if (realtimeEditorContent !== '') {
+      const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
+        ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+      });
 
-    await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+      const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
 
+      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+
+    }
     const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
     await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
@@ -222,22 +227,24 @@ export default function EditPortfolioProject({
 
   // When saving as draft - save the data to Firebase and set the hidden status to true
   async function handleSaveAsDraft() {
+    if (realtimeEditorContent == '') { return }
     const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
 
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
-    try {
-      notifications.show({
-        id: 'load-data',
-        loading: true,
-        title: 'Saving draft',
-        message: 'Please wait',
-        autoClose: false,
-        withCloseButton: false,
-      });
-      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-      // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
+      try {
+        notifications.show({
+          id: 'load-data',
+          loading: true,
+          title: 'Saving draft',
+          message: 'Please wait',
+          autoClose: false,
+          withCloseButton: false,
+        });
+        await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+        // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
+      
 
       const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
@@ -336,7 +343,7 @@ export default function EditPortfolioProject({
       .then((response) => {
         const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
         // console.log(sanitizedHTML);
-        console.log(textContent)
+        // console.log(textContent)
         setReadme(sanitizedHTML);
         handleEditorChange(sanitizedHTML);
         notifications.update({
@@ -385,7 +392,7 @@ export default function EditPortfolioProject({
           // withCloseButton
           // onClose={close}
           withBorder
-          size="md"
+          size="lg"
           radius="md"
         >
           <Text size="sm" align="center" mb="xs" weight={500}>
@@ -407,12 +414,14 @@ export default function EditPortfolioProject({
         </Dialog>
 
         <ViewProjectHero
-          name={repoName}
+          name={otherProjectData?.projectTitle || repoName}
           // description={description}
-          repoUrl={url}
+          // repoUrl={url}
           // coverImage={otherProjectData.coverImage}
           coverImage={currentCoverImage}
-          liveUrl={otherProjectData?.liveUrl}
+          // liveUrl={otherProjectData?.liveUrl}
+          liveUrl={otherProjectData?.liveUrl || otherProjectData?.live_url}
+          repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url || url}
         />
 
         {/* <Container size="xl"> */}
@@ -441,7 +450,7 @@ export default function EditPortfolioProject({
             open={open}
             close={close}
             techStack={otherProjectData?.techStack}
-            liveUrl={otherProjectData?.liveUrl ||otherProjectData?.live_url}
+            liveUrl={otherProjectData?.liveUrl || otherProjectData?.live_url}
             repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url}
             // coverImage={otherProjectData.coverImage}
             coverImage={currentCoverImage}
@@ -470,7 +479,7 @@ export default function EditPortfolioProject({
               base: 'calc(63%)',
             }}
           >
-            <Title mx="auto">Editing {otherProjectData.projectTitle || repoName}</Title>
+            <Title mx="auto">Editing {otherProjectData?.projectTitle || repoName}</Title>
             {/* <Text>{description}</Text>
           <Text>{url}</Text> */}
 
