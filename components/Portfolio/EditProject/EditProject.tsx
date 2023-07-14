@@ -488,7 +488,7 @@ export default function EditPortfolioProject({
               updatedContent={realtimeEditorContent}
               userId={userid}
               repoId={repoid}
-              readme={readme}
+              readme={readme || null}
               onUpdateEditor={handleEditorChange}
             />
           </Group>
