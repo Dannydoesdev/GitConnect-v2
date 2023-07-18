@@ -110,7 +110,7 @@ any) {
   // console.log(projectData.userID, userData.userId, existingProject?.userId)
   // console.log(userId)
 
-  console.log(projectData[0])
+  // console.log(projectData[0])
 
   if (editRepoParam && userData.userName) {
     // useEffect(() => {
@@ -124,6 +124,9 @@ any) {
     // }, []);
     const { name, description, html_url } = projectData[0];
 
+    const githubDescription = projectData[0].description;
+    const githubName = projectData[0].name;
+    const githubUrl = projectData[0].html_url;
     
     return (
       <>
@@ -143,7 +146,7 @@ any) {
   }
 
   if ((projectData && userData.userName) || (newRepoParam && userData.userName)) {
-    const { name, description, html_url } = projectData[0];
+    // const { name, description, html_url } = projectData[0];
 
     if ((projectData[0].userId || userId) == userData.userId) {
       return (

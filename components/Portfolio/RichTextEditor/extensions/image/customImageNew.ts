@@ -36,8 +36,8 @@ export const CustomImage = TiptapImage.extend({
               let file = fileInput.files[0]; // the dropped file
               // let file = event.dataTransfer.files[0]; // the dropped file
               let filesize: any = (file.size / 1024 / 1024).toFixed(4); // get the filesize in MB
-              console.log(filesize);
-              console.log(file.type);
+              // console.log(filesize);
+              // console.log(file.type);
               if (file.type.startsWith('image/') && filesize < 15) {
                 // const reader = new FileReader();
                 // reader.onload = (e) => {
