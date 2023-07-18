@@ -80,7 +80,7 @@ export function UploadProjectCoverImage(
     // console.log(file);
     // Get the file extension
     const extension = file.name.split('.').pop();
-    console.log(extension);
+    // console.log(extension);
 
     const storageRef = ref(
       storage,
