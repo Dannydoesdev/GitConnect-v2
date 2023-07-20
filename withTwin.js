@@ -29,6 +29,7 @@ module.exports = function withTwin(nextConfig) {
                 [
                   '@babel/preset-react',
                   { runtime: 'automatic', importSource: '@emotion/react' },
+                  'next/babel',
                 ],
               ],
               plugins: [
@@ -36,6 +37,7 @@ module.exports = function withTwin(nextConfig) {
                 require.resolve('babel-plugin-macros'),
                 require.resolve('@emotion/babel-plugin'),
                 [require.resolve('@babel/plugin-syntax-typescript'), { isTSX: true }],
+                require.resolve('jotai/babel/plugin-react-refresh'),
                 // require.resolve('@unocss/webpack'),
               ],
             },
