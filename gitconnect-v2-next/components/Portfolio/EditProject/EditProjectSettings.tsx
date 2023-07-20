@@ -77,6 +77,10 @@ function ProjectSettingsModal({
 }: ProjectSettingsProps) {
   const [projectCategoriesValue, setProjectCategoriesValue] = useState<string[]>([]);
 
+  console.log('desciption:', projectDescription);
+  console.log('repourl', repoUrl);
+
+
   useEffect(() => {
     if (
       projectCategories &&

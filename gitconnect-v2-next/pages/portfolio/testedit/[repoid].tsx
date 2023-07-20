@@ -2,8 +2,11 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { textEditorAtom, projectDataAtom } from '@/atoms/jotaiAtoms';
 import { Group, ScrollArea, Space, Title } from '@mantine/core';
 import axios from 'axios';
+import { Provider, useAtom } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import {
   getSingleProjectById,
   getProjectTextEditorContent,
@@ -14,14 +17,10 @@ import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
 import { AuthContext } from '../../../context/AuthContext';
 
-// import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-
 export async function getStaticProps({ params }: any) {
-  // console.log(params.id)
   if (!params.repoid) return { props: { projectData: null, textContent: null } };
 
   const projectData: any = await getSingleProjectById(params.repoid);
-  // console.log(projectData[0].userId);
   // let customProjectData;
   let textEditorContent;
   if (!projectData || !projectData[0] || !projectData[0].userId) {
@@ -38,9 +37,6 @@ export async function getStaticProps({ params }: any) {
     //   params.repoid
     // );
   }
-  // TODO - make the 'has starred' calculation on server side & send in props
-
-  // console.log(customProjectData)
   return {
     props: {
       projectData: projectData || null,
@@ -61,11 +57,10 @@ export async function getStaticPaths() {
   }));
   return {
     paths,
-    fallback: true,
+    fallback: 'blocking',
   };
 }
 
-// import { RepoData } from '../../../types/repos';
 // const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export default function UpdatePortfolioProject({
@@ -75,23 +70,16 @@ export default function UpdatePortfolioProject({
 any) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
-  const { repoid, name, description, url, userId, newRepoParam, editRepoParam } =
-    router.query;
+  // const { repoid, name, description, url, userId, newRepoParam, editRepoParam } =
+  // router.query;
+  const { repoid } = router.query;
 
-  // const [existingProject, setExistingProject] = useState<any>();
-  // const [editProject, setEditProject] = useState<any>();
+  useHydrateAtoms([[projectDataAtom, projectData], [textEditorAtom, textContent]]);
+
+  // useHydrateAtoms([projectDataAtom, projectData]);
+  // useHydrateAtoms([textEditorAtom, textContent]);
 
   const loggedInUserId = userData ? userData.userId : null;
-  // const existingProject = projectData[0];
-
-  // useEffect(() => {
-  // if (!repoid || !projectData[0]) {
-  // return;
-  // }
-  // setExistingProject(projectData[0]);
-
-  // const existingProject = projectData[0] || null;
-  // }, [projectData, repoid, router]);
 
   if (router.isFallback) {
     return <LoadingPage />;
@@ -99,36 +87,18 @@ any) {
 
   //TODO - check if the user is logged in and if the user is the owner of the repo
   //TODO - if the user is not logged in, redirect to login page
-  // useEffect(() => {
-  // if (!loggedInUserId && !existingProject.userId) {
-  //  return
-  // }
-  //   if (loggedInUserId != existingProject.userId) {
-  //     return <LoadingPage />
-  //   }
-  // }, [userData.userId, id, router]);
-  // console.log(projectData.userID, userData.userId, existingProject?.userId)
-  // console.log(userId)
 
+  // const githubDescription = projectData[0].description;
+  // const githubName = projectData[0].name;
+  // const githubUrl = projectData[0].html_url;
   // console.log(projectData[0])
 
-  if (editRepoParam && userData.userName) {
-    // useEffect(() => {
-    //   // TODO - implement Vercel SWR on front end
+  // if (editRepoParam && userData.userName) {
 
-    //   const URL = `/api/profiles/projects/${repoid}`;
-    //   axios.get(URL).then((response) => {
-    //     // console.log(response.data)
-    //     // setEditProject(response.data);
-    //   });
-    // }, []);
-    const { name, description, html_url } = projectData[0];
+  const { name, description, html_url } = projectData[0];
 
-    const githubDescription = projectData[0].description;
-    const githubName = projectData[0].name;
-    const githubUrl = projectData[0].html_url;
-    
-    return (
+  return (
+    // <Provider>
       <>
         <Space h={70} />
         <EditPortfolioProject
@@ -142,56 +112,57 @@ any) {
           otherProjectData={projectData[0]}
         />
       </>
-    );
-  }
-
-  if ((projectData && userData.userName) || (newRepoParam && userData.userName)) {
-    // const { name, description, html_url } = projectData[0];
-
-    if ((projectData[0].userId || userId) == userData.userId) {
-      return (
-        <>
-          {/* <ScrollArea type="always"> */}
-          <Space h={70} />
-          {newRepoParam && userData.userName && JSON.parse(newRepoParam as string) ? (
-            <>
-              <EditPortfolioProject
-                repoName={name as string}
-                description={description as string}
-                url={url as string}
-                repoid={repoid as string}
-                userid={userId as string}
-                userName={userData.userName}
-                otherProjectData={projectData[0]}
-              />
-            </>
-          ) : (
-            <>
-              <EditPortfolioProject
-                repoName={name}
-                description={description}
-                url={html_url}
-                repoid={repoid as string}
-                userid={loggedInUserId as string}
-                textContent={textContent}
-                userName={userData.userName}
-                otherProjectData={projectData[0]}
-              />
-            </>
-          )}
-          {/* </ScrollArea> */}
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Group w="100%" mt={200}>
-            <Title order={1} mx="auto" mt="sm">
-              Sorry, only the project owner is allowed to edit this page
-            </Title>
-          </Group>
-        </>
-      );
-    }
-  }
+    // {/* </Provider> */}
+  );
 }
+
+// if ((projectData && userData.userName) || (newRepoParam && userData.userName)) {
+//   // const { name, description, html_url } = projectData[0];
+
+//   if ((projectData[0].userId || userId) == userData.userId) {
+//     return (
+//       <>
+//         {/* <ScrollArea type="always"> */}
+//         <Space h={70} />
+//         {newRepoParam && userData.userName && JSON.parse(newRepoParam as string) ? (
+//           <>
+//             <EditPortfolioProject
+//               repoName={name as string}
+//               description={description as string}
+//               url={url as string}
+//               repoid={repoid as string}
+//               userid={userId as string}
+//               userName={userData.userName}
+//               otherProjectData={projectData[0]}
+//             />
+//           </>
+//         ) : (
+//           <>
+//             <EditPortfolioProject
+//               repoName={githubName}
+//               description={githubDescription}
+//               url={githubUrl}
+//               repoid={repoid as string}
+//               userid={loggedInUserId as string}
+//               textContent={textContent}
+//               userName={userData.userName}
+//               otherProjectData={projectData[0]}
+//             />
+//           </>
+//         )}
+//         {/* </ScrollArea> */}
+//       </>
+//     );
+// } else {
+// return (
+// <>
+//   <Group w="100%" mt={200}>
+//     <Title order={1} mx="auto" mt="sm">
+//       Sorry, only the project owner is allowed to edit this page
+//     </Title>
+//   </Group>
+// </>
+// );
+// }
+// }
+// }

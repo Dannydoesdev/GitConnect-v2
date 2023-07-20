@@ -6,6 +6,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { Analytics } from '@vercel/analytics/react';
 import { getCookie, setCookie } from 'cookies-next';
+import { Provider } from 'jotai';
 import { ThemeProvider } from 'next-themes';
 import '../styles/globals.css';
 import '../styles/tiptap.scss';
@@ -63,32 +64,33 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         />
         <link rel="icon" href="/img/favicon/gclogo.png" />
       </Head>
-
-      <ThemeProvider attribute="class">
-        <ColorSchemeProvider
-          colorScheme={colorScheme}
-          toggleColorScheme={toggleColorScheme}
-        >
-          <MantineProvider
-            theme={{
-              colorScheme,
-              // primaryColor: 'green',
-            }}
-            withGlobalStyles
-            withNormalizeCSS
+      <Provider>
+        <ThemeProvider attribute="class">
+          <ColorSchemeProvider
+            colorScheme={colorScheme}
+            toggleColorScheme={toggleColorScheme}
           >
-            <ModalsProvider>
-              <Notifications />
-              <AuthProvider>
-                <AppContainer>
-                  <Component {...pageProps} />
-                  <Analytics />
-                </AppContainer>
-              </AuthProvider>
-            </ModalsProvider>
-          </MantineProvider>
-        </ColorSchemeProvider>
-      </ThemeProvider>
+            <MantineProvider
+              theme={{
+                colorScheme,
+                // primaryColor: 'green',
+              }}
+              withGlobalStyles
+              withNormalizeCSS
+            >
+              <ModalsProvider>
+                <Notifications />
+                <AuthProvider>
+                  <AppContainer>
+                    <Component {...pageProps} />
+                    <Analytics />
+                  </AppContainer>
+                </AuthProvider>
+              </ModalsProvider>
+            </MantineProvider>
+          </ColorSchemeProvider>
+        </ThemeProvider>
+      </Provider>
     </>
   );
 }

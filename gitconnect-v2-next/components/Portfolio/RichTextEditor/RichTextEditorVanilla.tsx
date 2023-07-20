@@ -21,6 +21,10 @@ import { notitapEditorClass } from './proseClassString';
 import { useRouter } from 'next/router';
 import { db } from '@/firebase/clientApp';
 import { doc, getDoc } from 'firebase/firestore';
+import { textEditorAtom } from '@/atoms/jotaiAtoms';
+import { useAtom } from 'jotai';
+
+
 
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
@@ -74,6 +78,7 @@ function RichTextEditorVanilla({
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
   const [initialContent, setinitialContent] = useState(existingContent);
+  const [textContentState, setTextContent] = useAtom(textEditorAtom);
   const router = useRouter();
 
   
