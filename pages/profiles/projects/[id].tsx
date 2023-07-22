@@ -295,8 +295,43 @@ export default function Project({ projects, textContent }: any) {
                 Edit Project [new][new]
               </Button>
               {/* )} */}
+              <Link
+                href={`/portfolio/testedit/${projects[0].id}`}
+                passHref
+                legacyBehavior
+                prefetch={false}
+              >
+                <Button
+                  component="a"
+                  size="lg"
+                  radius="md"
+                  className="mx-auto"
+                  color="gray"
+                  mt="xs"
+                  variant="outline"
+                  styles={(theme) => ({
+                    root: {
+                      border:
+                        theme.colorScheme === 'dark'
+                          ? 'white solid 1px'
+                          : 'darkblue solid 3px',
 
-              {/* </Center> */}
+                      width: '100%',
+                      [theme.fn.smallerThan('sm')]: {
+                        width: '100%',
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.dark[4]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                >
+                  Edit Project [new][urlonly]
+                </Button>
+              </Link>
             </Stack>
           </Group>
         )}
