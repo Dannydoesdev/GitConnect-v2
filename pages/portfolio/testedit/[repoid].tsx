@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { textEditorAtom, projectDataAtom } from '@/atoms/jotaiAtoms';
 import { Group, ScrollArea, Space, Title } from '@mantine/core';
 import axios from 'axios';
-import { Provider, useAtom } from 'jotai';
+import { Provider, useAtom, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import {
   getSingleProjectById,
@@ -13,6 +13,7 @@ import {
   getAllProjectIds,
   getAllCustomProjectData,
 } from '@/lib/projects';
+import TestingEditPortfolioProject from '@/components/Portfolio/EditProject/TestingEditProject';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
 import { AuthContext } from '../../../context/AuthContext';
@@ -74,20 +75,24 @@ any) {
   // router.query;
   const { repoid } = router.query;
 
-  useHydrateAtoms([[projectDataAtom, projectData], [textEditorAtom, textContent]]);
+  useHydrateAtoms([
+    [projectDataAtom, projectData],
+    [textEditorAtom, textContent],
+  ]);
 
-  
-    // Get state and setter functions for atoms
-    const [, setProjectData] = useAtom(projectDataAtom);
-    const [, setTextContent] = useAtom(textEditorAtom);
+  // Get state and setter functions for atoms
+  // const setTextContent = useSetAtom(textEditorAtom);
+  const [projectDataState, setProjectData] = useAtom(projectDataAtom);
+  const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
 
-    // Update atoms when repoid changes
-    useEffect(() => {
-      setProjectData(projectData);
-      setTextContent(textContent);
-    }, [repoid]);
+  // Update atoms when repoid changes
+  useEffect(() => {
+    // const setTextContent = useSetAtom(textEditorAtom);
+    setProjectData(projectData);
+    setTextEditor(textContent);
+  }, [repoid]);
 
-  console.log(textEditorAtom)
+  console.log(textEditorAtom);
   // useHydrateAtoms([projectDataAtom, projectData]);
   // useHydrateAtoms([textEditorAtom, textContent]);
 
@@ -107,25 +112,28 @@ any) {
 
   // if (editRepoParam && userData.userName) {
 
-  const { name, description, html_url } = projectData[0];
+  if (textEditorState && projectDataState && userData.userName) {
+    // const { name, description, html_url } = projectData[0];
+    const { name, description, html_url } = projectDataState;
 
-  return (
-    // <Provider>
-      <>
-        <Space h={70} />
-        <EditPortfolioProject
-          repoName={name}
-          description={description}
-          url={html_url}
-          repoid={repoid as string}
-          userid={loggedInUserId as string}
-          textContent={textContent}
-          userName={userData.userName}
-          otherProjectData={projectData[0]}
-        />
-      </>
-    // {/* </Provider> */}
-  );
+    return (
+      <Provider>
+        <>
+          <Space h={70} />
+          <TestingEditPortfolioProject
+            repoName={name}
+            description={description}
+            url={html_url}
+            repoid={repoid as string}
+            userid={loggedInUserId as string}
+            // textContent={textEditorState}
+            userName={userData.userName}
+            otherProjectData={projectData[0]}
+          />
+        </>
+      </Provider>
+    );
+  }
 }
 
 // if ((projectData && userData.userName) || (newRepoParam && userData.userName)) {
