@@ -23,6 +23,7 @@ import { db } from '@/firebase/clientApp';
 import { doc, getDoc } from 'firebase/firestore';
 import { textEditorAtom } from '@/atoms/jotaiAtoms';
 import { useAtom } from 'jotai';
+import { text } from 'stream/consumers';
 
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
@@ -62,24 +63,25 @@ lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
 function TestingRichTextEditor({
-  existingContent,
-  updatedContent,
+  // existingContent,
+  // updatedContent,
   repoId,
   userId,
-  readme,
-  onUpdateEditor,
+  // readme,
+  // onUpdateEditor,
 }: RichTextEditorVanillaProps) {
-  const [editorContent, setEditorContent] = useState('');
-  const [content, setContent] = useState('');
-  const [newReadme, setNewReadme] = useState('');
-  const [imgUrl, setImgUrl] = useState('');
-  const [progresspercent, setProgresspercent] = useState(0);
-  const [initialContent, setinitialContent] = useState(existingContent);
+  // const [editorContent, setEditorContent] = useState('');
+  // const [content, setContent] = useState('');
+  // const [newReadme, setNewReadme] = useState('');
+  // const [imgUrl, setImgUrl] = useState('');
+  // const [progresspercent, setProgresspercent] = useState(0);
+  // const [initialContent, setinitialContent] = useState(existingContent);
   const router = useRouter();
 
   
   const [textContentState, setTextContentState] = useAtom(textEditorAtom);
 
+  console.log('Initial TextEditorState inside editor')
   console.log(textContentState)
  
 
@@ -120,12 +122,12 @@ function TestingRichTextEditor({
   // }, []);
 
   useEffect(() => {
-    console.log('textContentState', textContentState)
+    console.log('preuseEffect textContentState inside editor', textContentState)
 
     if (textContentState && (textContentState !== editor?.getHTML())) {
       editor?.commands.setContent(textContentState);
     }
-    console.log('textContentState', textContentState)
+    console.log('postuseEffect textContentState inside editor', textContentState)
   }, [textContentState]);
 
   const editor = useEditor({
@@ -175,7 +177,10 @@ function TestingRichTextEditor({
     },
     onUpdate({ editor }) {
       // const htmlOutput = editor.getHTML();
-      setTextContentState(editor.getHTML());
+      console.log('updating state')
+      if (textContentState && (textContentState !== editor.getHTML())) {
+        setTextContentState(editor.getHTML());
+      }
       // Update state every time the editor content changes
       // setEditorContent(editor.getHTML());
       // onUpdateEditor?.(editor.getHTML());
