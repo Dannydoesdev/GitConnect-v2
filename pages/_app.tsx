@@ -64,33 +64,33 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         />
         <link rel="icon" href="/img/favicon/gclogo.png" />
       </Head>
-      <Provider>
-        <ThemeProvider attribute="class">
-          <ColorSchemeProvider
-            colorScheme={colorScheme}
-            toggleColorScheme={toggleColorScheme}
+      <ThemeProvider attribute="class">
+        <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={toggleColorScheme}
+        >
+          <MantineProvider
+            theme={{
+              colorScheme,
+              // primaryColor: 'green',
+            }}
+            withGlobalStyles
+            withNormalizeCSS
           >
-            <MantineProvider
-              theme={{
-                colorScheme,
-                // primaryColor: 'green',
-              }}
-              withGlobalStyles
-              withNormalizeCSS
-            >
-              <ModalsProvider>
-                <Notifications />
-                <AuthProvider>
+            <ModalsProvider>
+              <Notifications />
+              <AuthProvider>
+                <Provider>
                   <AppContainer>
                     <Component {...pageProps} />
                     <Analytics />
                   </AppContainer>
-                </AuthProvider>
-              </ModalsProvider>
-            </MantineProvider>
-          </ColorSchemeProvider>
-        </ThemeProvider>
-      </Provider>
+                </Provider>
+              </AuthProvider>
+            </ModalsProvider>
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </ThemeProvider>
     </>
   );
 }

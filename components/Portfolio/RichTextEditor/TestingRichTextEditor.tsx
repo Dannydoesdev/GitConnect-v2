@@ -24,8 +24,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { textEditorAtom } from '@/atoms/jotaiAtoms';
 import { useAtom } from 'jotai';
 
-
-
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
   return (
@@ -48,7 +46,6 @@ function InsertCodeControls() {
   );
 }
 
-
 type RichTextEditorVanillaProps = {
   repoId?: string;
   userId?: string;
@@ -64,7 +61,7 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-function RichTextEditorVanilla({
+function TestingRichTextEditor({
   existingContent,
   updatedContent,
   repoId,
@@ -86,16 +83,16 @@ function RichTextEditorVanilla({
 
   
   console.log(textContentState)
-  useEffect(() => {
+  // useEffect(() => {
     // if (readme && readme !== newReadme) {
       // setNewReadme(readme);
-    if (readme) {
+    // if (readme) {
         // setTimeout(() => {
-          editor?.commands.setContent(readme);
+          // editor?.commands.setContent(readme);
         // });
         // editor?.commands.insertContent(readme);
-    }
-  }, [readme]);
+    // }
+  // }, [readme]);
 
   // useEffect(() => {
   //   if (existingContent && editor) {
@@ -104,25 +101,25 @@ function RichTextEditorVanilla({
   // }, []);
 
 
-  useEffect(() => {
-    const getFirebaseData = async () => {
-      const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
-      const docSnap = await getDoc(docRef);
+  // useEffect(() => {
+  //   const getFirebaseData = async () => {
+  //     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
+  //     const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        const mainContent = docSnap.data();
-        const htmlOutput = mainContent.htmlOutput;
-        // handleSetTipTap(htmlOutput);
-        if (htmlOutput?.length > 0) {
-          // setinitialContent(htmlOutput);
-          // handleSetTipTap(htmlOutput);
-          editor?.commands.setContent(content);
-        }
-      }
-    };
+  //     if (docSnap.exists()) {
+  //       const mainContent = docSnap.data();
+  //       const htmlOutput = mainContent.htmlOutput;
+  //       // handleSetTipTap(htmlOutput);
+  //       if (htmlOutput?.length > 0) {
+  //         // setinitialContent(htmlOutput);
+  //         // handleSetTipTap(htmlOutput);
+  //         editor?.commands.setContent(content);
+  //       }
+  //     }
+  //   };
 
-    getFirebaseData();
-  }, [router, repoId, userId]);
+  //   getFirebaseData();
+  // }, [router, repoId, userId]);
 
   // function handleSetTipTap(content: any) {
   //   editor?.commands.setContent(content);
@@ -176,8 +173,8 @@ function RichTextEditorVanilla({
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    // content: textContentState,
-    content: updatedContent || existingContent,
+    content: textContentState,
+    // content: updatedContent || existingContent,
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
@@ -189,8 +186,8 @@ function RichTextEditorVanilla({
       const htmlOutput = editor.getHTML();
       setTextContentState(htmlOutput);
       // Update state every time the editor content changes
-      setEditorContent(editor.getHTML());
-      onUpdateEditor?.(editor.getHTML());
+      // setEditorContent(editor.getHTML());
+      // onUpdateEditor?.(editor.getHTML());
      
     },
   });
@@ -349,4 +346,4 @@ function RichTextEditorVanilla({
   );
 }
 
-export default RichTextEditorVanilla;
+export default TestingRichTextEditor;
