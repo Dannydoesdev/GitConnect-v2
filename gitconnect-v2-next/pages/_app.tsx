@@ -13,6 +13,7 @@ import '../styles/tiptap.scss';
 import { AppContainer } from '../components/AppContainer';
 import { AuthProvider } from '../context/AuthContext';
 import { mantineCache } from '../mantine/cache';
+import { useRouter } from 'next/router';
 
 // MAY CAUSE ISSUES - just for icons for notitap
 // import '@unocss/reset/tailwind.css'
@@ -20,6 +21,8 @@ import { mantineCache } from '../mantine/cache';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
+  const router = useRouter()
+ 
   const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
 
   const toggleColorScheme = (value?: ColorScheme) => {
@@ -82,7 +85,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
               <AuthProvider>
                 <Provider>
                   <AppContainer>
-                    <Component {...pageProps} />
+                    <Component key={router.asPath} {...pageProps} />
                     <Analytics />
                   </AppContainer>
                 </Provider>

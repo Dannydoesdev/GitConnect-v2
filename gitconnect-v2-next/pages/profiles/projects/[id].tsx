@@ -265,7 +265,8 @@ export default function Project({ projects, textContent }: any) {
                 component="a"
                 size="lg"
                 radius="md"
-                onClick={handleNewAddProjectFlow}
+                // onClick={handleNewAddProjectFlow}
+                onClick={() => router.push(`/portfolio/testedit/${projects[0].id}`)}
                 // mt={10}
                 className="mx-auto"
                 // size="md"

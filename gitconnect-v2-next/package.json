@@ -60,6 +60,7 @@
     "firebase-admin": "^11.10.0",
     "fuzzysort": "^2.0.4",
     "jotai": "^2.2.2",
+    "jotai-location": "^0.5.1",
     "lodash": "^4.17.21",
     "lowlight": "^2.9.0",
     "mixpanel": "^0.17.0",

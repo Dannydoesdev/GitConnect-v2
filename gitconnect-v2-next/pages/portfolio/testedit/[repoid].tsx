@@ -91,6 +91,7 @@ any) {
 
   // Update atoms when repoid changes
   useEffect(() => {
+       // TODO - Figure out why this is up to date but does not update the atom
     console.log('TextEditorState preuseEffect [repoid]')
     console.log(textEditorState);
     // const setTextContent = useSetAtom(textEditorAtom);
@@ -99,10 +100,10 @@ any) {
     console.log('TextEditorState postuseEffect [repoid]')
     console.log(textEditorState);
 
-  }, [repoid]);
+  }, [repoid, router]);
 
   // console.log(textEditorAtom);
-  console.log('TextEditorStateOutsideuseeffect')
+  console.log('TextEditorStateOutsideuseeffect [repoid]')
   console.log(textEditorState);
   // useHydrateAtoms([projectDataAtom, projectData]);
   // useHydrateAtoms([textEditorAtom, textContent]);
@@ -124,8 +125,11 @@ any) {
   // if (editRepoParam && userData.userName) {
 
   if (projectDataState && userData.userName) {
-    console.log('Project Data State');
+ 
+    console.log('Project Data State inside [repoid] return');
     console.log(projectDataState);
+    console.log('TextEditorState inside [repoid] return');
+    console.log(textEditorState);
     // const { name, description, html_url } = projectData[0];
     const { name, description, html_url } = projectDataState;
 
