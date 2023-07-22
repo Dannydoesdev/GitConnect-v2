@@ -10,9 +10,9 @@ import {
   getAllProjectIds,
   getAllCustomProjectData,
 } from '@/lib/projects';
-import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
-import { AuthContext } from '../../../context/AuthContext';
+import LoadingPage from '../../../../components/LoadingPage/LoadingPage';
+import EditPortfolioProject from '../../../../components/Portfolio/EditProject/EditProject';
+import { AuthContext } from '../../../../context/AuthContext';
 
 // import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 
