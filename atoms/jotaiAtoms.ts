@@ -1,12 +1,14 @@
 import { atom } from 'jotai'
-// import { atomWithHash } from 'jotai-location'
+import { atomWithHash } from 'jotai-location'
 import { RepoDataFull } from '../types/repos'
+import Router from 'next/router'
 
 export const projectDataAtom = atom<RepoDataFull>({} as RepoDataFull)
 export const textEditorAtom = atom<string | undefined>('');
 
 const pageAtom = atomWithHash('page', 1, {
-  replaceState: true,
+  // replaceState: true,
+  setHash: 'replaceState',
   subscribe: (callback) => {
     Router.events.on('routeChangeComplete', callback)
     window.addEventListener('hashchange', callback)
