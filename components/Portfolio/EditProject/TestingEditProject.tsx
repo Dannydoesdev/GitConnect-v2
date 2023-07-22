@@ -71,11 +71,11 @@ export default function TestingEditPortfolioProject({
   otherProjectData,
 }: EditPortfolioProps) {
   // const [shouldFetch, setShouldFetch] = useState(false);
-  const [readme, setReadme] = useState('');
+  // const [readme, setReadme] = useState('');
   // const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
   const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
   const [currentCoverImage, setcurrentCoverImage] = useState('');
-  const [projectDataState, setProjectData] = useAtom(projectDataAtom);
+  // const [projectDataState, setProjectData] = useAtom(projectDataAtom);
   const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
 
   const router = useRouter();
@@ -230,10 +230,9 @@ export default function TestingEditPortfolioProject({
     // console.log('saved and continue')
   }
 
-  // When saving as draft - save the data to Firebase and set the hidden status to true
   async function handleSaveAsDraft() {
-    if (realtimeEditorContent == '') { return }
-    const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
+    if (!textEditorState || textEditorState == '') { return }
+    const sanitizedHTML = DOMPurify.sanitize(textEditorState, {
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
 
@@ -247,7 +246,7 @@ export default function TestingEditPortfolioProject({
           autoClose: false,
           withCloseButton: false,
         });
-        await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+        await setDoc(docRef, { htmlOutput: textEditorState }, { merge: true });
         // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
       
 
@@ -277,6 +276,54 @@ export default function TestingEditPortfolioProject({
       close();
     }
   }
+
+  // When saving as draft - save the data to Firebase and set the hidden status to true
+  // async function handleSaveAsDraft() {
+  //   if (realtimeEditorContent == '') { return }
+  //   const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
+  //     ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+  //   });
+
+  //   const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+  //     try {
+  //       notifications.show({
+  //         id: 'load-data',
+  //         loading: true,
+  //         title: 'Saving draft',
+  //         message: 'Please wait',
+  //         autoClose: false,
+  //         withCloseButton: false,
+  //       });
+  //       await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+  //       // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
+      
+
+  //     const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+
+  //     await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
+  //     // close();
+  //   } catch (error) {
+  //     console.log(error);
+  //     notifications.update({
+  //       id: 'load-data',
+  //       color: 'red',
+  //       title: 'Something went wrong',
+  //       message: 'Something went wrong, please try again',
+  //       icon: <IconCross size="1rem" />,
+  //       autoClose: 2000,
+  //     });
+  //   } finally {
+  //     notifications.update({
+  //       id: 'load-data',
+  //       color: 'teal',
+  //       title: 'Draft was saved',
+  //       message: 'Your updates were saved to the database',
+  //       icon: <IconCheck size="1rem" />,
+  //       autoClose: 2000,
+  //     });
+  //     close();
+  //   }
+  // }
 
   // const params = {
   //   owner: userName,
@@ -328,7 +375,7 @@ export default function TestingEditPortfolioProject({
 
   function handleImportReadme() {
    
-    setReadme('');
+    // setReadme('');
       notifications.show({
         id: 'fetch-readme',
         loading: true,
@@ -347,9 +394,7 @@ export default function TestingEditPortfolioProject({
       })
       .then((response) => {
         const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
-        // console.log(sanitizedHTML);
-        // console.log(textContent)
-        setReadme(sanitizedHTML);
+        // setReadme(sanitizedHTML);
         // handleEditorChange(sanitizedHTML);
         setTextEditor(sanitizedHTML);
         notifications.update({
@@ -381,22 +426,9 @@ export default function TestingEditPortfolioProject({
   if (preview) {
     return (
       <>
-        {/* <Group position="left">
-          <Button
-            component="a"
-            // onClick={handleImportReadme}
-            onClick={handlePreview}
-            radius="md"
-            variant="outline"
-          >
-            {preview ? 'Back to editing' : 'View a Preview'}
-          </Button> */}
-        {/* </Group> */}
         <Dialog
           shadow="xl"
           opened={preview}
-          // withCloseButton
-          // onClose={close}
           withBorder
           size="lg"
           radius="md"
@@ -406,10 +438,8 @@ export default function TestingEditPortfolioProject({
           </Text>
 
           <Group position="center">
-            {/* <TextInput placeholder="hello@gluesticker.com" sx={{ flex: 1 }} /> */}
             <Button
               component="a"
-              // onClick={handleImportReadme}
               onClick={handlePreview}
               radius="md"
               variant="filled"
@@ -421,11 +451,7 @@ export default function TestingEditPortfolioProject({
 
         <ViewProjectHero
           name={otherProjectData?.projectTitle || repoName}
-          // description={description}
-          // repoUrl={url}
-          // coverImage={otherProjectData.coverImage}
           coverImage={currentCoverImage}
-          // liveUrl={otherProjectData?.liveUrl}
           liveUrl={otherProjectData?.liveUrl || otherProjectData?.live_url}
           repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url || url}
         />
@@ -433,7 +459,10 @@ export default function TestingEditPortfolioProject({
         {/* <Container size="xl"> */}
 
         <ViewPreviewProjectEditor
-          updatedContent={realtimeEditorContent}
+          // updatedContent={realtimeEditorContent}
+          updatedContent={textEditorState}
+
+
           // existingContent={textContent}
           // userId={userid}
           // repoId={repoid}
@@ -468,13 +497,10 @@ export default function TestingEditPortfolioProject({
             openToCollaboration={otherProjectData?.openToCollaboration}
             visibleToPublic={otherProjectData?.visibleToPublic}
           />
-          {/* <> */}
           <Group
             mt={40}
             // ml={300}
             ml={{
-              // xxs: 'calc(5%)',
-              // xs: 'calc(10%)',
               xxs: 0,
               xs: 0,
               md: 'calc(14%)',
@@ -490,11 +516,11 @@ export default function TestingEditPortfolioProject({
           <Text>{url}</Text> */}
 
             <TestingRichTextEditor
-              existingContent={textContent}
+              // existingContent={textContent}
               // updatedContent={realtimeEditorContent}
               userId={userid}
               repoId={repoid}
-              readme={readme || null}
+              // readme={readme || null}
               // onUpdateEditor={handleEditorChange}
             />
           </Group>
@@ -547,8 +573,6 @@ export default function TestingEditPortfolioProject({
               <Button
                 component="a"
                 onClick={confirmImportReadme}
-                // onClick={handleImportReadme}
-                // onClick={handleImportReadmeSWR}
                 radius="md"
                 w={{
                   base: '95%',
@@ -557,11 +581,6 @@ export default function TestingEditPortfolioProject({
                   sm: '90%',
                 }}
                 mt={40}
-                // size={{
-                //   base: 'md',
-                //   sm: 'sm',
-                //   xs: 'xs',
-                // }}
                 className="mx-auto"
                 // onClick={handleSave}
                 styles={(theme) => ({
@@ -597,7 +616,6 @@ export default function TestingEditPortfolioProject({
                 }}
                 mt={40}
                 className="mx-auto"
-                // onClick={handleSave}
                 styles={(theme) => ({
                   root: {
                     backgroundColor: theme.colors.blue[7],
@@ -632,19 +650,12 @@ export default function TestingEditPortfolioProject({
                 }}
                 styles={(theme) => ({
                   root: {
-                    // backgroundColor: theme.colors.blue[7],
-                    // width: '40%',
                     [theme.fn.smallerThan('sm')]: {
                       // size: 'xs' ,
                       padding: 0,
                       fontSize: 12,
                     },
-                    // '&:hover': {
-                    //   backgroundColor:
-                    //     theme.colorScheme === 'dark'
-                    //       ? theme.colors.blue[9]
-                    //       : theme.colors.blue[9],
-                    // },
+
                   },
                 })}
                 mt={20}
@@ -690,10 +701,7 @@ export default function TestingEditPortfolioProject({
               </Button>
               <Button
                 component="a"
-                // size={{
-                //   md: 'lg',
-                //   sm: 'sm',
-                // }}
+
                 radius="lg"
                 w={{
                   base: '95%',

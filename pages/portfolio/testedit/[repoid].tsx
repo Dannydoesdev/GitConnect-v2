@@ -38,6 +38,10 @@ export async function getStaticProps({ params }: any) {
     //   params.repoid
     // );
   }
+
+  console.log('static Props text content')
+  console.log(textEditorContent)
+
   return {
     props: {
       projectData: projectData || null,
@@ -76,7 +80,7 @@ any) {
   const { repoid } = router.query;
 
   useHydrateAtoms([
-    [projectDataAtom, projectData],
+    [projectDataAtom, projectData[0]],
     [textEditorAtom, textContent],
   ]);
 
@@ -87,12 +91,19 @@ any) {
 
   // Update atoms when repoid changes
   useEffect(() => {
+    console.log('TextEditorState preuseEffect [repoid]')
+    console.log(textEditorState);
     // const setTextContent = useSetAtom(textEditorAtom);
-    setProjectData(projectData);
+    setProjectData(projectData[0]);
     setTextEditor(textContent);
+    console.log('TextEditorState postuseEffect [repoid]')
+    console.log(textEditorState);
+
   }, [repoid]);
 
-  console.log(textEditorAtom);
+  // console.log(textEditorAtom);
+  console.log('TextEditorStateOutsideuseeffect')
+  console.log(textEditorState);
   // useHydrateAtoms([projectDataAtom, projectData]);
   // useHydrateAtoms([textEditorAtom, textContent]);
 
@@ -112,12 +123,14 @@ any) {
 
   // if (editRepoParam && userData.userName) {
 
-  if (textEditorState && projectDataState && userData.userName) {
+  if (projectDataState && userData.userName) {
+    console.log('Project Data State');
+    console.log(projectDataState);
     // const { name, description, html_url } = projectData[0];
     const { name, description, html_url } = projectDataState;
 
     return (
-      <Provider>
+      // <Provider>
         <>
           <Space h={70} />
           <TestingEditPortfolioProject
@@ -128,10 +141,10 @@ any) {
             userid={loggedInUserId as string}
             // textContent={textEditorState}
             userName={userData.userName}
-            otherProjectData={projectData[0]}
+            otherProjectData={projectDataState}
           />
         </>
-      </Provider>
+      // </Provider>
     );
   }
 }

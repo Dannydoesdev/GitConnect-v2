@@ -80,26 +80,8 @@ function TestingRichTextEditor({
   
   const [textContentState, setTextContentState] = useAtom(textEditorAtom);
 
-
-  
   console.log(textContentState)
-  // useEffect(() => {
-    // if (readme && readme !== newReadme) {
-      // setNewReadme(readme);
-    // if (readme) {
-        // setTimeout(() => {
-          // editor?.commands.setContent(readme);
-        // });
-        // editor?.commands.insertContent(readme);
-    // }
-  // }, [readme]);
-
-  // useEffect(() => {
-  //   if (existingContent && editor) {
-  //     editor?.commands.setContent(existingContent);
-  //   }
-  // }, []);
-
+ 
 
   // useEffect(() => {
   //   const getFirebaseData = async () => {
@@ -136,6 +118,15 @@ function TestingRichTextEditor({
   //   // });
   //     }
   // }, []);
+
+  useEffect(() => {
+    console.log('textContentState', textContentState)
+
+    if (textContentState && (textContentState !== editor?.getHTML())) {
+      editor?.commands.setContent(textContentState);
+    }
+    console.log('textContentState', textContentState)
+  }, [textContentState]);
 
   const editor = useEditor({
     extensions: [
@@ -183,12 +174,11 @@ function TestingRichTextEditor({
       },
     },
     onUpdate({ editor }) {
-      const htmlOutput = editor.getHTML();
-      setTextContentState(htmlOutput);
+      // const htmlOutput = editor.getHTML();
+      setTextContentState(editor.getHTML());
       // Update state every time the editor content changes
       // setEditorContent(editor.getHTML());
       // onUpdateEditor?.(editor.getHTML());
-     
     },
   });
 
