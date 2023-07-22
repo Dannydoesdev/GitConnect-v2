@@ -76,6 +76,18 @@ any) {
 
   useHydrateAtoms([[projectDataAtom, projectData], [textEditorAtom, textContent]]);
 
+  
+    // Get state and setter functions for atoms
+    const [, setProjectData] = useAtom(projectDataAtom);
+    const [, setTextContent] = useAtom(textEditorAtom);
+
+    // Update atoms when repoid changes
+    useEffect(() => {
+      setProjectData(projectData);
+      setTextContent(textContent);
+    }, [repoid]);
+
+  console.log(textEditorAtom)
   // useHydrateAtoms([projectDataAtom, projectData]);
   // useHydrateAtoms([textEditorAtom, textContent]);
 

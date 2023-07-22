@@ -78,10 +78,14 @@ function RichTextEditorVanilla({
   const [imgUrl, setImgUrl] = useState('');
   const [progresspercent, setProgresspercent] = useState(0);
   const [initialContent, setinitialContent] = useState(existingContent);
-  const [textContentState, setTextContent] = useAtom(textEditorAtom);
   const router = useRouter();
 
   
+  const [textContentState, setTextContentState] = useAtom(textEditorAtom);
+
+
+  
+  console.log(textContentState)
   useEffect(() => {
     // if (readme && readme !== newReadme) {
       // setNewReadme(readme);
@@ -100,25 +104,25 @@ function RichTextEditorVanilla({
   // }, []);
 
 
-  useEffect(() => {
-    const getFirebaseData = async () => {
-      const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
-      const docSnap = await getDoc(docRef);
+  // useEffect(() => {
+  //   const getFirebaseData = async () => {
+  //     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
+  //     const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        const mainContent = docSnap.data();
-        const htmlOutput = mainContent.htmlOutput;
-        // handleSetTipTap(htmlOutput);
-        if (htmlOutput?.length > 0) {
-          // setinitialContent(htmlOutput);
-          // handleSetTipTap(htmlOutput);
-          editor?.commands.setContent(content);
-        }
-      }
-    };
+  //     if (docSnap.exists()) {
+  //       const mainContent = docSnap.data();
+  //       const htmlOutput = mainContent.htmlOutput;
+  //       // handleSetTipTap(htmlOutput);
+  //       if (htmlOutput?.length > 0) {
+  //         // setinitialContent(htmlOutput);
+  //         // handleSetTipTap(htmlOutput);
+  //         editor?.commands.setContent(content);
+  //       }
+  //     }
+  //   };
 
-    getFirebaseData();
-  }, [router, repoId, userId]);
+  //   getFirebaseData();
+  // }, [router, repoId, userId]);
 
   // function handleSetTipTap(content: any) {
   //   editor?.commands.setContent(content);
@@ -128,13 +132,13 @@ function RichTextEditorVanilla({
   //   editor?.commands.setContent(initialContent);
   // }, [initialContent]);
 
-  useEffect(() => {
-    if (updatedContent && editor) {
-      // setTimeout(() => {
-      editor?.commands.setContent(updatedContent);
-    // });
-      }
-  }, []);
+  // useEffect(() => {
+  //   if (updatedContent && editor) {
+  //     // setTimeout(() => {
+  //     editor?.commands.setContent(updatedContent);
+  //   // });
+  //     }
+  // }, []);
 
   const editor = useEditor({
     extensions: [
@@ -172,7 +176,8 @@ function RichTextEditorVanilla({
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: updatedContent || existingContent,
+    content: textContentState,
+    // content: updatedContent || existingContent,
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
@@ -181,9 +186,12 @@ function RichTextEditorVanilla({
       },
     },
     onUpdate({ editor }) {
+      const htmlOutput = editor.getHTML();
+      setTextContentState(htmlOutput);
       // Update state every time the editor content changes
       setEditorContent(editor.getHTML());
       onUpdateEditor?.(editor.getHTML());
+     
     },
   });
 
@@ -212,34 +220,15 @@ function RichTextEditorVanilla({
     );
   }
 
-  // const shouldShow = ({ editor, view, state, oldState, from, to }) => { return editor.isActive('image') || editor.isActive('link') }
-
   return (
     <Group w="100%">
-      {/* <Button onClick={() => editor?.chain().focus()?.insertImage()?.run()}>
-        Insert Image
-      </Button>
-      <Button onClick={() => editor?.commands.insertImage()}>
-        Insert Image single cmd
-      </Button> */}
 
       <RichTextEditor
         mt={40}
         editor={editor}
         w="100%"
-        styles={(theme) => ({
-          control: {
-            // backgroundColor: '#00acee',
-            // border: 0,
-          },
-          // content: {
-          //   backgroundColor: '#00000000',
-          //   border: 0,
-          // }
-        })}
       >
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
-          {/* <InsertImageControl /> */}
 
           {userId && repoId && (
             <RichTextEditor.Control
@@ -259,9 +248,6 @@ function RichTextEditorVanilla({
               <IconPhotoPlus stroke={1.5} size="1rem" />
             </RichTextEditor.Control>
           )}
-          {/* <InsertImageControl userId={userId} repoId={repoId} /> */}
-
-          {/* <InsertImageControlNew userId={userId as string} repoId={repoId as string} /> */}
 
           <InsertCodeControls />
 
@@ -304,9 +290,7 @@ function RichTextEditorVanilla({
           <BubbleMenu
             editor={editor}
             shouldShow={({ editor, view, state, oldState, from, to }) => {
-              // console.log(from)
-              // console.log(to)
-              // don't show bubble menu on resizable images due to custom menu showing
+
               return (
                 from !== to &&
                 (editor.isActive('text') ||
@@ -334,10 +318,6 @@ function RichTextEditorVanilla({
         {editor && (
           <FloatingMenu editor={editor}>
             <RichTextEditor.ControlsGroup>
-              {/* <RichTextEditor.H1 />
-              <RichTextEditor.H2 />
-              <RichTextEditor.H3 /> */}
-              {/* <InsertImageControl /> */}
               {userId && repoId && (
                 <RichTextEditor.Control
                   onClick={() =>
