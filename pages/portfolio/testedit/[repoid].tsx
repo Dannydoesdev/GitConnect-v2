@@ -100,7 +100,7 @@ any) {
     console.log('TextEditorState postuseEffect [repoid]')
     console.log(textEditorState);
 
-  }, [repoid, router]);
+  }, [repoid]);
 
   // console.log(textEditorAtom);
   console.log('TextEditorStateOutsideuseeffect [repoid]')
