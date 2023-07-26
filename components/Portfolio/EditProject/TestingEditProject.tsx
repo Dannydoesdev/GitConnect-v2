@@ -2,6 +2,7 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { Router, useRouter } from 'next/router';
+import { projectDataAtom, textEditorAtom } from '@/atoms';
 import { db } from '@/firebase/clientApp';
 import {
   Aside,
@@ -19,21 +20,20 @@ import {
 // import { RepoData } from '../../../types/repos';
 import { createStyles } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconCross } from '@tabler/icons-react';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useAtom } from 'jotai';
 import useSWR from 'swr';
 import LoadingPage from '../../LoadingPage/LoadingPage';
-import ProjectSettingsModal from './EditProjectSettings';
 import RichTextEditorVanilla from '../RichTextEditor/RichTextEditorVanilla';
-import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
-import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
-import { modals } from '@mantine/modals';
 import TestingRichTextEditor from '../RichTextEditor/TestingRichTextEditor';
-import { projectDataAtom, textEditorAtom } from '@/atoms';
-import { useAtom } from 'jotai';
+import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
+import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
+import ProjectSettingsModal from './EditProjectSettings';
 
 type EditPortfolioProps = {
   repoName: string;
@@ -88,9 +88,9 @@ export default function TestingEditPortfolioProject({
 
   // Hoist the editor state up to this component
   // const handleEditorChange = (value: string) => {
-    // setRealtimeEditorContent(value);
-    // console.log(value);
-    // console.log('editor changed');
+  // setRealtimeEditorContent(value);
+  // console.log(value);
+  // console.log('editor changed');
   // };
 
   // useEffect(() => {
@@ -104,11 +104,14 @@ export default function TestingEditPortfolioProject({
   };
 
   useEffect(() => {
-    if (currentCoverImage === '' && otherProjectData && otherProjectData.coverImage !== '') {
-      setcurrentCoverImage(otherProjectData.coverImage)
+    if (
+      currentCoverImage === '' &&
+      otherProjectData &&
+      otherProjectData.coverImage !== ''
+    ) {
+      setcurrentCoverImage(otherProjectData.coverImage);
     }
   }, []);
-
 
   // Publish the data from the editor settings modal to Firebase
   //! TODO - should this be duplicated to a shallower collection?
@@ -159,7 +162,6 @@ export default function TestingEditPortfolioProject({
 
     // TODO: New project view page
     // router.push(`/profiles/projects/${repoid}`);
-
   }
 
   async function handleSaveAndFinish(formData: any) {
@@ -207,12 +209,10 @@ export default function TestingEditPortfolioProject({
     }
     // TODO: New project view page
     // router.push(`/profiles/projects/${repoid}`);
-
   }
 
   // When continuing - save the data to Firebase and set the hidden status to false
   async function handleSaveAndContinue() {
-
     if (realtimeEditorContent !== '') {
       const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
         ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
@@ -221,7 +221,6 @@ export default function TestingEditPortfolioProject({
       const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
 
       await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-
     }
     const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
@@ -231,24 +230,25 @@ export default function TestingEditPortfolioProject({
   }
 
   async function handleSaveAsDraft() {
-    if (!textEditorState || textEditorState == '') { return }
+    if (!textEditorState || textEditorState == '') {
+      return;
+    }
     const sanitizedHTML = DOMPurify.sanitize(textEditorState, {
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
 
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
-      try {
-        notifications.show({
-          id: 'load-data',
-          loading: true,
-          title: 'Saving draft',
-          message: 'Please wait',
-          autoClose: false,
-          withCloseButton: false,
-        });
-        await setDoc(docRef, { htmlOutput: textEditorState }, { merge: true });
-        // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
-      
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Saving draft',
+        message: 'Please wait',
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await setDoc(docRef, { htmlOutput: textEditorState }, { merge: true });
+      // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
 
       const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
@@ -296,7 +296,6 @@ export default function TestingEditPortfolioProject({
   //       });
   //       await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
   //       // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
-      
 
   //     const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
@@ -367,24 +366,22 @@ export default function TestingEditPortfolioProject({
       ),
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       // onCancel: () => console.log('Cancel'),
-      onCancel: () =>  console.log('Cancel'),
+      onCancel: () => console.log('Cancel'),
       onConfirm: () => handleImportReadme(),
     });
   };
 
-
   function handleImportReadme() {
-   
     // setReadme('');
-      notifications.show({
-        id: 'fetch-readme',
-        loading: true,
-        title: 'Fetching Readme',
-        message: 'Please wait',
-        autoClose: false,
-        withCloseButton: false,
-      });
-      const readmeUrl = `/api/profiles/projects/edit/readme`;
+    notifications.show({
+      id: 'fetch-readme',
+      loading: true,
+      title: 'Fetching Readme',
+      message: 'Please wait',
+      autoClose: false,
+      withCloseButton: false,
+    });
+    const readmeUrl = `/api/profiles/projects/edit/readme`;
     axios
       .get(readmeUrl, {
         params: {
@@ -416,7 +413,7 @@ export default function TestingEditPortfolioProject({
           icon: <IconCross size="1rem" />,
           autoClose: 2000,
         });
-      })
+      });
   }
 
   function handlePreview() {
@@ -426,24 +423,13 @@ export default function TestingEditPortfolioProject({
   if (preview) {
     return (
       <>
-        <Dialog
-          shadow="xl"
-          opened={preview}
-          withBorder
-          size="lg"
-          radius="md"
-        >
+        <Dialog shadow="xl" opened={preview} withBorder size="lg" radius="md">
           <Text size="sm" align="center" mb="xs" weight={500}>
             Back to Editing
           </Text>
 
           <Group position="center">
-            <Button
-              component="a"
-              onClick={handlePreview}
-              radius="md"
-              variant="filled"
-            >
+            <Button component="a" onClick={handlePreview} radius="md" variant="filled">
               {preview ? 'Close Preview' : 'View a Preview'}
             </Button>
           </Group>
@@ -461,7 +447,6 @@ export default function TestingEditPortfolioProject({
         <ViewPreviewProjectEditor
           // updatedContent={realtimeEditorContent}
           updatedContent={textEditorState}
-
 
           // existingContent={textContent}
           // userId={userid}
@@ -491,7 +476,9 @@ export default function TestingEditPortfolioProject({
             coverImage={currentCoverImage}
             projectCategories={otherProjectData?.projectCategories}
             projectTags={otherProjectData?.projectTags}
-            projectDescription={otherProjectData?.projectDescription || otherProjectData?.description}
+            projectDescription={
+              otherProjectData?.projectDescription || otherProjectData?.description
+            }
             projectTitle={otherProjectData?.projectTitle || otherProjectData?.name}
             repoName={repoName}
             openToCollaboration={otherProjectData?.openToCollaboration}
@@ -505,9 +492,7 @@ export default function TestingEditPortfolioProject({
               xs: 0,
               md: 'calc(14%)',
             }}
-
             w={{
-  
               base: 'calc(63%)',
             }}
           >
@@ -655,7 +640,6 @@ export default function TestingEditPortfolioProject({
                       padding: 0,
                       fontSize: 12,
                     },
-
                   },
                 })}
                 mt={20}
@@ -701,7 +685,6 @@ export default function TestingEditPortfolioProject({
               </Button>
               <Button
                 component="a"
-
                 radius="lg"
                 w={{
                   base: '95%',
