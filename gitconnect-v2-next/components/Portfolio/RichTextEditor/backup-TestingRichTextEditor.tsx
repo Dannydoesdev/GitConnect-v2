@@ -1,7 +1,4 @@
 import { useState, useEffect, useContext } from 'react';
-import { useRouter } from 'next/router';
-import { textEditorAtom } from '@/atoms/jotaiAtoms';
-import { db } from '@/firebase/clientApp';
 import { Button, Center, Container, Group } from '@mantine/core';
 import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
 import { IconCode, IconPhoto, IconPhotoPlus, IconSourceCode } from '@tabler/icons-react';
@@ -11,17 +8,21 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor, FloatingMenu, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { doc, getDoc } from 'firebase/firestore';
 import js from 'highlight.js/lib/languages/javascript';
+import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
 import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
-import { useAtom } from 'jotai';
 import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
 import { DBlock } from './extensions/dBlock';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
+import { useRouter } from 'next/router';
+import { db } from '@/firebase/clientApp';
+import { doc, getDoc } from 'firebase/firestore';
+import { textEditorAtom } from '@/atoms/jotaiAtoms';
+import { useAtom } from 'jotai';
 import { text } from 'stream/consumers';
 
 function InsertCodeControls() {
@@ -66,62 +67,52 @@ function TestingRichTextEditor({
   // updatedContent,
   repoId,
   userId,
-}: // readme,
-// onUpdateEditor,
-RichTextEditorVanillaProps) {
+  // readme,
+  // onUpdateEditor,
+}: RichTextEditorVanillaProps) {
   // const [editorContent, setEditorContent] = useState('');
   // const [content, setContent] = useState('');
   // const [newReadme, setNewReadme] = useState('');
+  // const [imgUrl, setImgUrl] = useState('');
+  // const [progresspercent, setProgresspercent] = useState(0);
   // const [initialContent, setinitialContent] = useState(existingContent);
   const router = useRouter();
 
+  
   const [textContentState, setTextContentState] = useAtom(textEditorAtom);
-  const [initialContent, setInitialContent] = useState('');
-  // const [editorContent, setEditorContent] = useState('');
 
-  console.log('Initial TextEditorState inside editor');
-  console.log(textContentState);
-
+  console.log('Initial TextEditorState inside editor')
+  console.log(textContentState)
+ 
   const [content, setContent] = useState(textContentState);
 
-  useEffect(() => {
-    const getFirebaseData = async () => {
-      const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
-      const docSnap = await getDoc(docRef);
+  // useEffect(() => {
+  //   const getFirebaseData = async () => {
+  //     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
+  //     const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        const mainContent = docSnap.data();
-        const htmlOutput = mainContent.htmlOutput;
-        handleSetTipTap(htmlOutput);
-        if (htmlOutput?.length > 0) {
-          console.log('returned htmlOutput from firebase')
-          console.log(htmlOutput)
-          setInitialContent(htmlOutput);
-          // handleSetTipTap(htmlOutput);
-          // setTextContentState(htmlOutput);
-          // setInitial
-          editor?.commands.setContent(htmlOutput);
-        }
-      }
-    };
+  //     if (docSnap.exists()) {
+  //       const mainContent = docSnap.data();
+  //       const htmlOutput = mainContent.htmlOutput;
+  //       // handleSetTipTap(htmlOutput);
+  //       if (htmlOutput?.length > 0) {
+  //         // setinitialContent(htmlOutput);
+  //         // handleSetTipTap(htmlOutput);
+  //         editor?.commands.setContent(content);
+  //       }
+  //     }
+  //   };
 
-    getFirebaseData();
-  // }, [repoId, router, userId]);
-}, [router.query, repoId, userId]);
+  //   getFirebaseData();
+  // }, [router, repoId, userId]);
 
-  function handleSetTipTap(content: any) {
-    editor?.commands.setContent(content);
-  }
+  // function handleSetTipTap(content: any) {
+  //   editor?.commands.setContent(content);
+  // }
 
   // useEffect(() => {
-  //   if (!textContentState) return;
-  //   editor?.commands?.setContent(textContentState);
-  // }, [textContentState]);
-
-
-  useEffect(() => {
-    editor?.commands.setContent(initialContent);
-  }, [initialContent]);
+  //   editor?.commands.setContent(initialContent);
+  // }, [initialContent]);
 
   // useEffect(() => {
   //   if (updatedContent && editor) {
@@ -131,19 +122,22 @@ RichTextEditorVanillaProps) {
   //     }
   // }, []);
 
-  useEffect(() => {
-    console.log('preuseEffect textContentState inside editor', textContentState);
+    useEffect(() => {
+    console.log('preuseEffect textContentState inside editor', textContentState)
     // if (!editor || !textContentState) return;
-    if (textContentState && textContentState !== editor?.getHTML()) {
+    if (textContentState && (textContentState !== editor?.getHTML())) {
       editor?.commands.setContent(textContentState);
     }
-    console.log('postuseEffect textContentState inside editor', textContentState);
+    console.log('postuseEffect textContentState inside editor', textContentState)
   }, [textContentState]);
 
   // useEffect(() => {
-
-  //   console.log('useEffecttextContentState inside editor', textContentState);
-
+  //   console.log('preuseEffect textContentState inside editor', textContentState)
+  //   // if (!editor || !textContentState) return;
+  //   if (textContentState && (textContentState !== editor?.getHTML())) {
+  //     editor?.commands.setContent(textContentState);
+  //   }
+  //   console.log('postuseEffect textContentState inside editor', textContentState)
   // }, [textContentState]);
 
   const editor = useEditor({
@@ -151,8 +145,16 @@ RichTextEditorVanillaProps) {
       StarterKit.configure({
         codeBlock: false,
       }),
+      // BubbleMenu.configure({
+      //   shouldShow: ({ editor, view, state, oldState, from, to }) => {
+      //     // only show the bubble menu for images and links
+      //     return editor.isActive('image') || editor.isActive('link')
+      //   },
+      // }),
       ResizableMedia.configure({
         uploadFn: async (file: File): Promise<string> => {
+          // Optional Logic to handle pasting images into editor
+          // This should return a Promise that resolves with the URL of the uploaded file.
           return '';
         },
       }),
@@ -174,7 +176,7 @@ RichTextEditorVanillaProps) {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    // content: initialContent,
+    // content: textContentState,
     content,
     // content: updatedContent || existingContent,
     editorProps: {
@@ -186,10 +188,9 @@ RichTextEditorVanillaProps) {
     },
     onUpdate({ editor }) {
       // const htmlOutput = editor.getHTML();
-      console.log('updating state');
+      console.log('updating state')
       // if (textContentState && (textContentState !== editor.getHTML())) {
-      // setEditorContent(editor.getHTML());
-      setTextContentState(editor.getHTML());
+        setTextContentState(editor.getHTML());
       // }
       // Update state every time the editor content changes
       // setEditorContent(editor.getHTML());
@@ -197,10 +198,41 @@ RichTextEditorVanillaProps) {
     },
   });
 
+  function InsertImageControl() {
+    // const { editor } = useRichTextEditorContext();
+    if (!userId || !repoId) {
+      return null;
+    }
+    return (
+      <RichTextEditor.Control
+        onClick={() =>
+          editor
+            ?.chain()
+            .focus()
+            .insertResizableImage({
+              userId: userId,
+              repoId: repoId,
+            })
+            .run()
+        }
+        aria-label="Insert an image"
+        title="Insert an image"
+      >
+        <IconPhotoPlus stroke={1.5} size="1rem" />
+      </RichTextEditor.Control>
+    );
+  }
+
   return (
     <Group w="100%">
-      <RichTextEditor mt={40} editor={editor} w="100%">
+
+      <RichTextEditor
+        mt={40}
+        editor={editor}
+        w="100%"
+      >
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
+
           {userId && repoId && (
             <RichTextEditor.Control
               onClick={() =>
@@ -261,6 +293,7 @@ RichTextEditorVanillaProps) {
           <BubbleMenu
             editor={editor}
             shouldShow={({ editor, view, state, oldState, from, to }) => {
+
               return (
                 from !== to &&
                 (editor.isActive('text') ||
