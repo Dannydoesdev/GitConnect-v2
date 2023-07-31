@@ -17,12 +17,12 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 import { useAtom } from 'jotai';
 import { lowlight } from 'lowlight/lib/core';
+import { text } from 'stream/consumers';
 import css from 'highlight.js/lib/languages/css';
 import { DBlock } from './extensions/dBlock';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
-import { text } from 'stream/consumers';
 
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
@@ -79,8 +79,8 @@ RichTextEditorVanillaProps) {
   const [initialContent, setInitialContent] = useState('');
   // const [editorContent, setEditorContent] = useState('');
 
-  console.log('Initial TextEditorState inside editor');
-  console.log(textContentState);
+  // console.log('Initial TextEditorState inside editor');
+  // console.log(textContentState);
 
   const [content, setContent] = useState(textContentState);
 
@@ -94,8 +94,8 @@ RichTextEditorVanillaProps) {
         const htmlOutput = mainContent.htmlOutput;
         handleSetTipTap(htmlOutput);
         if (htmlOutput?.length > 0) {
-          console.log('returned htmlOutput from firebase')
-          console.log(htmlOutput)
+          // console.log('returned htmlOutput from firebase')
+          // console.log(htmlOutput)
           setInitialContent(htmlOutput);
           // handleSetTipTap(htmlOutput);
           setTextContentState(htmlOutput);
@@ -106,8 +106,8 @@ RichTextEditorVanillaProps) {
     };
 
     getFirebaseData();
-  // }, [repoId, router, userId]);
-}, [router, repoId, userId]);
+    // }, [repoId, router, userId]);
+  }, [router, repoId, userId]);
 
   function handleSetTipTap(content: any) {
     editor?.commands.setContent(content);
@@ -117,7 +117,6 @@ RichTextEditorVanillaProps) {
   //   if (!textContentState) return;
   //   editor?.commands?.setContent(textContentState);
   // }, [textContentState]);
-
 
   useEffect(() => {
     editor?.commands.setContent(initialContent);
@@ -132,12 +131,12 @@ RichTextEditorVanillaProps) {
   // }, []);
 
   useEffect(() => {
-    console.log('preuseEffect textContentState inside editor', textContentState);
+    // console.log('preuseEffect textContentState inside editor', textContentState);
     // if (!editor || !textContentState) return;
     if (textContentState && textContentState !== editor?.getHTML()) {
       editor?.commands.setContent(textContentState);
     }
-    console.log('postuseEffect textContentState inside editor', textContentState);
+    // console.log('postuseEffect textContentState inside editor', textContentState);
   }, [textContentState]);
 
   // useEffect(() => {
@@ -186,7 +185,7 @@ RichTextEditorVanillaProps) {
     },
     onUpdate({ editor }) {
       // const htmlOutput = editor.getHTML();
-      console.log('updating state');
+      // console.log('updating state');
       // if (textContentState && (textContentState !== editor.getHTML())) {
       // setEditorContent(editor.getHTML());
       setTextContentState(editor.getHTML());

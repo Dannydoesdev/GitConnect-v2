@@ -170,7 +170,6 @@ const useStyles = createStyles((theme) => ({
   colorToggle: {
     marginTop: 4,
   },
-
 }));
 
 export const AppContainer = ({ children }, props) => {
@@ -323,7 +322,24 @@ export const AppContainer = ({ children }, props) => {
                       About
                     </Button>
                   </Link>
-                  <Link href="/getrepos" passHref legacyBehavior>
+                  {/* <Link href="/getrepos" passHref legacyBehavior>
+                    <Button
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
+                    >
+                      Add Project
+                    </Button>
+                  </Link> */}
+                  <Link href="/addproject" passHref legacyBehavior>
                     <Button
                       component="a"
                       size="xs"
@@ -340,26 +356,6 @@ export const AppContainer = ({ children }, props) => {
                       Add Project
                     </Button>
                   </Link>
-                  {/* {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && */}
-                  <Link href="/addproject" passHref legacyBehavior>
-                    <Button
-                      component="a"
-                      size="xs"
-                      color="gray"
-                      variant="subtle"
-                      sx={(theme) => ({
-                        fontSize: '16px',
-                        color:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.white
-                            : theme.colors.dark,
-                      })}
-                    >
-                      Add Project [new]
-                    </Button>
-                  </Link>
-
-                  {/* } */}
                   {/* <Text
                       component='a'
                       className='dark:text-white'
@@ -387,30 +383,30 @@ export const AppContainer = ({ children }, props) => {
                     </Button>
                   </Link>
                 </Group>
-               
+
                 <Group>
-                <Burger
-                  opened={opened}
-                  onClick={toggle}
-                  onClose={close}
-                  className={classes.burger}
-                  size="sm"
-                />
+                  <Burger
+                    opened={opened}
+                    onClick={toggle}
+                    onClose={close}
+                    className={classes.burger}
+                    size="sm"
+                  />
 
                   <Transition
                     // transition="pop-top-right"
-                    transition='slide-left'
+                    transition="slide-left"
                     // transition='scale'
                     duration={600}
                     mounted={opened}
-                    timingFunction='ease-in-out'
+                    timingFunction="ease-in-out"
                   >
-                  {(styles) => (
-                    <Paper className={classes.dropdown} withBorder style={styles}>
-                      {items}
-                    </Paper>
-                  )}
-                </Transition>
+                    {(styles) => (
+                      <Paper className={classes.dropdown} withBorder style={styles}>
+                        {items}
+                      </Paper>
+                    )}
+                  </Transition>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
                   <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior>
                     <Avatar
@@ -438,9 +434,7 @@ export const AppContainer = ({ children }, props) => {
                       Sign out
                     </Button>
                   </Link>
-      
                 </Group>
-               
               </>
             ) : (
               <>

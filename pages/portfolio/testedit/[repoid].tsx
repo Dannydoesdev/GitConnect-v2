@@ -1,6 +1,7 @@
 // import type { NextPage } from 'next';
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { textEditorAtom, projectDataAtom } from '@/atoms/jotaiAtoms';
 import { Group, ScrollArea, Space, Title } from '@mantine/core';
@@ -17,8 +18,6 @@ import TestingEditPortfolioProject from '@/components/Portfolio/EditProject/Test
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
 import { AuthContext } from '../../../context/AuthContext';
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
@@ -35,11 +34,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       projectData[0].userId,
       params.repoid as string
     );
-
   }
 
-  console.log('server side props text content')
-  console.log(textEditorContent)
+  // console.log('server side props text content')
+  // console.log(textEditorContent)
 
   return {
     props: {
@@ -48,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       // customProjectData: customProjectData || null,
     },
   };
-}
+};
 
 //   if (!params.repoid) return { props: { projectData: null, textContent: null } };
 
@@ -103,7 +101,7 @@ export default function UpdatePortfolioProject({
   projectData,
   textContent,
 }: // customProjectData,
-  InferGetServerSidePropsType<typeof getServerSideProps>) {
+InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const { repoid } = router.query;
@@ -138,7 +136,7 @@ export default function UpdatePortfolioProject({
 
     const URL = `/api/profiles/projects/${repoid}`;
     axios.get(URL).then((response) => {
-      console.log(response.data[0])
+      // console.log(response.data[0])
       setProject(response.data[0]);
       setProjectDataState(response.data[0]);
     });
@@ -169,32 +167,32 @@ export default function UpdatePortfolioProject({
   if (projectData && project && userData.userName) {
     // if (projectData.userId == userData.userId) {
 
-      // console.log('Project Data State inside [repoid] return');
-      // console.log(projectDataState);
-      // console.log('TextEditorState inside [repoid] return');
-      // console.log(textEditorState);
-      // const { name, description, html_url } = projectData[0];
-      // const { name, description, html_url } = projectData;
-      const { name, description, html_url } = project;
+    // console.log('Project Data State inside [repoid] return');
+    // console.log(projectDataState);
+    // console.log('TextEditorState inside [repoid] return');
+    // console.log(textEditorState);
+    // const { name, description, html_url } = projectData[0];
+    // const { name, description, html_url } = projectData;
+    const { name, description, html_url } = project;
 
-      return (
-        // <Provider>
-        <>
-          <Space h={70} />
-          <TestingEditPortfolioProject
-            repoName={name}
-            description={description}
-            url={html_url}
-            repoid={repoid as string}
-            userid={loggedInUserId as string}
-            // textContent={textEditorState}
-            userName={userData.userName}
-            // otherProjectData={projectData}
-            otherProjectData={project}
-          />
-        </>
-        // </Provider>
-      );
+    return (
+      // <Provider>
+      <>
+        <Space h={70} />
+        <TestingEditPortfolioProject
+          repoName={name}
+          description={description}
+          url={html_url}
+          repoid={repoid as string}
+          userid={loggedInUserId as string}
+          // textContent={textEditorState}
+          userName={userData.userName}
+          // otherProjectData={projectData}
+          otherProjectData={project}
+        />
+      </>
+      // </Provider>
+    );
     // } else {
     //   return (
     //     <>
@@ -207,8 +205,7 @@ export default function UpdatePortfolioProject({
     //   );
     // }
   }
-};
-
+}
 
 // if ((projectData && userData.userName) || (newRepoParam && userData.userName)) {
 //   // const { name, description, html_url } = projectData[0];
