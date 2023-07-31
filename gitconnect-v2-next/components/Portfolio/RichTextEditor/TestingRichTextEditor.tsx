@@ -98,7 +98,7 @@ RichTextEditorVanillaProps) {
           console.log(htmlOutput)
           setInitialContent(htmlOutput);
           // handleSetTipTap(htmlOutput);
-          // setTextContentState(htmlOutput);
+          setTextContentState(htmlOutput);
           // setInitial
           editor?.commands.setContent(htmlOutput);
         }
@@ -107,7 +107,7 @@ RichTextEditorVanillaProps) {
 
     getFirebaseData();
   // }, [repoId, router, userId]);
-}, [router.query, repoId, userId]);
+}, [router, repoId, userId]);
 
   function handleSetTipTap(content: any) {
     editor?.commands.setContent(content);
@@ -174,8 +174,8 @@ RichTextEditorVanillaProps) {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    // content: initialContent,
-    content,
+    content: initialContent,
+    // content,
     // content: updatedContent || existingContent,
     editorProps: {
       attributes: {
