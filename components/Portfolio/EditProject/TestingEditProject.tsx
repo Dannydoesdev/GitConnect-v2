@@ -445,13 +445,7 @@ export default function TestingEditPortfolioProject({
         {/* <Container size="xl"> */}
 
         <ViewPreviewProjectEditor
-          // updatedContent={realtimeEditorContent}
           updatedContent={textEditorState}
-
-          // existingContent={textContent}
-          // userId={userid}
-          // repoId={repoid}
-          // readme={readme}
         />
         {/* </Container> */}
       </>
@@ -477,7 +471,9 @@ export default function TestingEditPortfolioProject({
             projectCategories={otherProjectData?.projectCategories}
             projectTags={otherProjectData?.projectTags}
             projectDescription={
-              otherProjectData?.projectDescription || otherProjectData?.description
+              otherProjectData?.projectDescription ||
+              description ||
+              otherProjectData?.description
             }
             projectTitle={otherProjectData?.projectTitle || otherProjectData?.name}
             repoName={repoName}

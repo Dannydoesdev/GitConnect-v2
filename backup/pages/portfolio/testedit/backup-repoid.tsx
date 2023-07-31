@@ -14,18 +14,14 @@ import {
   getAllCustomProjectData,
 } from '@/lib/projects';
 import TestingEditPortfolioProject from '@/components/Portfolio/EditProject/TestingEditProject';
-import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
-import { AuthContext } from '../../../context/AuthContext';
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import LoadingPage from '../../../../components/LoadingPage/LoadingPage';
+import EditPortfolioProject from '../../../../components/Portfolio/EditProject/EditProject';
+import { AuthContext } from '../../../../context/AuthContext';
 
+export async function getStaticProps({ params }: any) {
+  if (!params.repoid) return { props: { projectData: null, textContent: null } };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { params } = context;
-
-  if (!params?.repoid) return { props: { projectData: null, textContent: null } };
-
-  const projectData: any = await getSingleProjectById(params.repoid as string);
+  const projectData: any = await getSingleProjectById(params.repoid);
   // let customProjectData;
   let textEditorContent;
   if (!projectData || !projectData[0] || !projectData[0].userId) {
@@ -33,12 +29,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   } else {
     textEditorContent = await getProjectTextEditorContent(
       projectData[0].userId,
-      params.repoid as string
+      params.repoid
     );
 
+    // Handle new custom data added to project settings modal
+    // customProjectData = await getAllCustomProjectData(
+    //   projectData[0].userId,
+    //   params.repoid
+    // );
   }
 
-  console.log('server side props text content')
+  console.log('static Props text content')
   console.log(textEditorContent)
 
   return {
@@ -47,55 +48,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       textContent: textEditorContent || null,
       // customProjectData: customProjectData || null,
     },
+    revalidate: 1,
   };
 }
 
-//   if (!params.repoid) return { props: { projectData: null, textContent: null } };
+export async function getStaticPaths() {
+  const projectIds = await getAllProjectIds();
 
-//   const projectData: any = await getSingleProjectById(params.repoid);
-//   // let customProjectData;
-//   let textEditorContent;
-//   if (!projectData || !projectData[0] || !projectData[0].userId) {
-//     textEditorContent = null;
-//   } else {
-//     textEditorContent = await getProjectTextEditorContent(
-//       projectData[0].userId,
-//       params.repoid
-//     );
-
-//     // Handle new custom data added to project settings modal
-//     // customProjectData = await getAllCustomProjectData(
-//     //   projectData[0].userId,
-//     //   params.repoid
-//     // );
-//   }
-
-//   console.log('static Props text content')
-//   console.log(textEditorContent)
-
-//   return {
-//     props: {
-//       projectData: projectData || null,
-//       textContent: textEditorContent || null,
-//       // customProjectData: customProjectData || null,
-//     },
-//     revalidate: 1,
-//   };
-// }
-
-// export async function getStaticPaths() {
-//   const projectIds = await getAllProjectIds();
-
-//   // projectIds.map((id: any) => console.log(id.id));
-//   type ProjectId = { id?: string };
-//   const paths = projectIds.map((id: ProjectId) => ({
-//     params: { repoid: id.id },
-//   }));
-//   return {
-//     paths,
-//     fallback: 'true',
-//   };
-// }
+  // projectIds.map((id: any) => console.log(id.id));
+  type ProjectId = { id?: string };
+  const paths = projectIds.map((id: ProjectId) => ({
+    params: { repoid: id.id },
+  }));
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+}
 
 // const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -103,50 +72,39 @@ export default function UpdatePortfolioProject({
   projectData,
   textContent,
 }: // customProjectData,
-  InferGetServerSidePropsType<typeof getServerSideProps>) {
+any) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
+  // const { repoid, name, description, url, userId, newRepoParam, editRepoParam } =
+  // router.query;
   const { repoid } = router.query;
 
-  // useHydrateAtoms([
-  //   [projectDataAtom, projectData[0]],
-  //   // [textEditorAtom, textContent],
-  // ]);
-  const [project, setProject] = useState<any>(null);
+  useHydrateAtoms([
+    [projectDataAtom, projectData[0]],
+    [textEditorAtom, textContent],
+  ]);
 
   // Get state and setter functions for atoms
   // const setTextContent = useSetAtom(textEditorAtom);
-  const [projectDataState, setProjectDataState] = useAtom(projectDataAtom);
-  // const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
+  const [projectDataState, setProjectData] = useAtom(projectDataAtom);
+  const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
 
   // Update atoms when repoid changes
-
-  // useEffect(() => {
-  //   // TODO - Figure out why this is up to date but does not update the atom
-  //   // console.log('TextEditorState preuseEffect [repoid]')
-  //   // console.log(textEditorState);
-  //   // const setTextContent = useSetAtom(textEditorAtom);
-  //   setProjectData(projectData[0]);
-  //   // setTextEditor(textContent);
-  //   // console.log('TextEditorState postuseEffect [repoid]')
-  //   // console.log(textEditorState);
-
-  // }, [repoid, projectData[0]]);
-
   useEffect(() => {
-    // TODO - implement Vercel SWR on front end
+       // TODO - Figure out why this is up to date but does not update the atom
+    console.log('TextEditorState preuseEffect [repoid]')
+    console.log(textEditorState);
+    // const setTextContent = useSetAtom(textEditorAtom);
+    setProjectData(projectData[0]);
+    setTextEditor(textContent);
+    console.log('TextEditorState postuseEffect [repoid]')
+    console.log(textEditorState);
 
-    const URL = `/api/profiles/projects/${repoid}`;
-    axios.get(URL).then((response) => {
-      console.log(response.data[0])
-      setProject(response.data[0]);
-      setProjectDataState(response.data[0]);
-    });
   }, [repoid]);
 
   // console.log(textEditorAtom);
-  // console.log('TextEditorStateOutsideuseeffect [repoid]')
-  // console.log(textEditorState);
+  console.log('TextEditorStateOutsideuseeffect [repoid]')
+  console.log(textEditorState);
   // useHydrateAtoms([projectDataAtom, projectData]);
   // useHydrateAtoms([textEditorAtom, textContent]);
 
@@ -166,19 +124,17 @@ export default function UpdatePortfolioProject({
 
   // if (editRepoParam && userData.userName) {
 
-  if (projectData && project && userData.userName) {
-    // if (projectData.userId == userData.userId) {
+  if (projectDataState && userData.userName) {
+ 
+    console.log('Project Data State inside [repoid] return');
+    console.log(projectDataState);
+    console.log('TextEditorState inside [repoid] return');
+    console.log(textEditorState);
+    // const { name, description, html_url } = projectData[0];
+    const { name, description, html_url } = projectDataState;
 
-      // console.log('Project Data State inside [repoid] return');
-      // console.log(projectDataState);
-      // console.log('TextEditorState inside [repoid] return');
-      // console.log(textEditorState);
-      // const { name, description, html_url } = projectData[0];
-      // const { name, description, html_url } = projectData;
-      const { name, description, html_url } = project;
-
-      return (
-        // <Provider>
+    return (
+      // <Provider>
         <>
           <Space h={70} />
           <TestingEditPortfolioProject
@@ -189,26 +145,13 @@ export default function UpdatePortfolioProject({
             userid={loggedInUserId as string}
             // textContent={textEditorState}
             userName={userData.userName}
-            // otherProjectData={projectData}
-            otherProjectData={project}
+            otherProjectData={projectDataState}
           />
         </>
-        // </Provider>
-      );
-    // } else {
-    //   return (
-    //     <>
-    //       <Group w="100%" mt={200}>
-    //         <Title order={1} mx="auto" mt="sm">
-    //           Sorry, only the project owner is allowed to edit this page
-    //         </Title>
-    //       </Group>
-    //     </>
-    //   );
-    // }
+      // </Provider>
+    );
   }
-};
-
+}
 
 // if ((projectData && userData.userName) || (newRepoParam && userData.userName)) {
 //   // const { name, description, html_url } = projectData[0];
