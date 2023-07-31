@@ -139,10 +139,10 @@ const GetRepos = () => {
         setProjectData(repo);
 
       }).then(() => {
-        console.log('Project Data Atom');
-        console.log(projectDataState);
-        console.log('Repo Data');
-        console.log(repo);
+        // console.log('Project Data Atom');
+        // console.log(projectDataState);
+        // console.log('Repo Data');
+        // console.log(repo);
 
         router.push(
           {

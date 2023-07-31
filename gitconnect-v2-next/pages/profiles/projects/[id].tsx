@@ -175,12 +175,10 @@ export default function Project({ projects, textContent }: any) {
                   >
                     Draft Project - Edit to publish
                   </Chip>
-                  {/* <Title>Note - project is currently draft</Title> */}
                 </>
               )}
               <br />
-              {/* <Center> */}
-              <Link
+              {/* <Link
                 href={`/profiles/projects/edit/${projects[0].id}`}
                 passHref
                 legacyBehavior
@@ -217,9 +215,9 @@ export default function Project({ projects, textContent }: any) {
                 >
                   Edit your project
                 </Button>
-              </Link>
+              </Link> */}
               {/* {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && ( */}
-              <Link
+              {/* <Link
                 href={`/portfolio/edit/${projects[0].id}`}
                 passHref
                 legacyBehavior
@@ -260,7 +258,7 @@ export default function Project({ projects, textContent }: any) {
                 >
                   Edit Project [new]
                 </Button>
-              </Link>
+              </Link> */}
               <Button
                 component="a"
                 size="lg"
@@ -295,8 +293,7 @@ export default function Project({ projects, textContent }: any) {
               >
                 Edit Project [new][new]
               </Button>
-              {/* )} */}
-              <Link
+              {/* <Link
                 href={`/portfolio/testedit/${projects[0].id}`}
                 passHref
                 legacyBehavior
@@ -332,7 +329,7 @@ export default function Project({ projects, textContent }: any) {
                 >
                   Edit Project [new][urlonly]
                 </Button>
-              </Link>
+              </Link> */}
             </Stack>
           </Group>
         )}
@@ -363,10 +360,8 @@ export default function Project({ projects, textContent }: any) {
 
         {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
 
-        {/* HIDING TOP HEADINGS */}
         <ProjectPageDynamicContent props={projects} stars={starCount} />
 
-        {/* {firebaseData && <RichTextEditorDisplay content={firebaseData} />} */}
         {textContent && <RichTextEditorDisplay content={textContent} />}
       </>
     );
