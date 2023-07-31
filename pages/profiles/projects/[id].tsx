@@ -291,7 +291,7 @@ export default function Project({ projects, textContent }: any) {
                   },
                 })}
               >
-                Edit Project [new][new]
+                Edit Project
               </Button>
               {/* <Link
                 href={`/portfolio/testedit/${projects[0].id}`}
