@@ -42,7 +42,7 @@ interface ProjectSettingsProps {
   close: () => void;
   handlePublish: (formData: any) => void;
   handleSaveAsDraft: (formData: any) => void;
-  handleSaveSettings: (formData: any) => void;
+  handleSaveSettings?: (formData: any) => void;
   handleNewCoverImage: (newCoverImage: string) => void;
   projectTitle?: string;
   techStack?: string[];
@@ -330,7 +330,7 @@ function ProjectSettingsModal({
                   // }
                   {...form.getInputProps('openToCollaboration', { type: 'checkbox' })}
                 />
-                {settingsOnly ? (
+                {settingsOnly && handleSaveSettings ? (
                   <Group position="right" mt="lg" mr="md">
                     <Button
                       component="a"
