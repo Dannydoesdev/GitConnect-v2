@@ -137,7 +137,11 @@ export default function TestingEditPortfolioProject({
         { ...formData, userId: userid, repoId: repoid },
         { merge: true }
       );
-      await setDoc(parentDocRef, { ...formData }, { merge: true });
+      // 
+      await setDoc(parentDocRef, { ...formData, hidden: false, visibleToPublic: true }, { merge: true });
+       // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+
+    // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
       // console.log(formData)
       // console.log('publishing');
       // close();
@@ -586,24 +590,12 @@ export default function TestingEditPortfolioProject({
           zIndex={1}
           mt={80}
           width={{
-            // base: 'calc(20%)',
             xxs: 'calc(30%)',
             xs: 'calc(25%)',
-            // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
-            // sm: 200,
             sm: 'calc(22%)',
-
-            // md: 230,
             md: 'calc(20%)',
-            // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
-            // lg: 260,
-
-            // xl: 280,
             xl: 'calc(18%)',
             xxl: 'calc(15%)',
-            // xxl: 400,
-            // When other breakpoints do not match base width is used, defaults to 100%
-            // base: 120,
             base: 'calc(30%)',
           }}
         >
