@@ -27,6 +27,7 @@ import axios from 'axios';
 import DOMPurify from 'dompurify';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAtom } from 'jotai';
+import { set } from 'lodash';
 import useSWR from 'swr';
 import LoadingPage from '../../LoadingPage/LoadingPage';
 import RichTextEditorVanilla from '../RichTextEditor/RichTextEditorVanilla';
@@ -34,7 +35,6 @@ import TestingRichTextEditor from '../RichTextEditor/TestingRichTextEditor';
 import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal from './EditProjectSettings';
-import { set } from 'lodash';
 
 type EditPortfolioProps = {
   repoName: string;
@@ -82,7 +82,7 @@ export default function TestingEditPortfolioProject({
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   // const [previewOpened, { open, close }] = useDisclosure(false);
-  
+
   const [settingsOnly, setSettingsOnly] = useState(false);
 
   const [preview, setPreview] = useState(false);
@@ -137,11 +137,15 @@ export default function TestingEditPortfolioProject({
         { ...formData, userId: userid, repoId: repoid },
         { merge: true }
       );
-      // 
-      await setDoc(parentDocRef, { ...formData, hidden: false, visibleToPublic: true }, { merge: true });
-       // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+      //
+      await setDoc(
+        parentDocRef,
+        { ...formData, hidden: false, visibleToPublic: true },
+        { merge: true }
+      );
+      // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
-    // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
+      // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
       // console.log(formData)
       // console.log('publishing');
       // close();
@@ -165,6 +169,52 @@ export default function TestingEditPortfolioProject({
         autoClose: 2000,
       });
       close();
+    }
+
+    // TODO: New project view page
+    // router.push(`/profiles/projects/${repoid}`);
+  }
+
+  async function handleUpdateProject() {
+    // if ( realtimeEditorContent !== '' ) {
+
+    if (!textEditorState || textEditorState == '') {
+      return;
+    }
+    const sanitizedHTML = DOMPurify.sanitize(textEditorState, {
+      ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+    });
+
+    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Saving updates',
+        message: 'Updated project is being saved to the database',
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+    } catch (error) {
+      console.log(error);
+      notifications.update({
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        title: 'Updates were saved',
+        message: 'Your updates have been saved',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
     }
 
     // TODO: New project view page
@@ -236,17 +286,16 @@ export default function TestingEditPortfolioProject({
     //     ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     //   });
 
-      const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
 
-      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-    
+    await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+
     // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
     // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
     open();
     // console.log('saved and continue')
-}
-
+  }
 
   async function handleSaveAsDraft() {
     if (!textEditorState || textEditorState == '') {
@@ -262,7 +311,7 @@ export default function TestingEditPortfolioProject({
         id: 'load-data',
         loading: true,
         title: 'Saving draft',
-        message: 'Please wait',
+        message: 'Saving project as a draft',
         autoClose: false,
         withCloseButton: false,
       });
@@ -288,7 +337,7 @@ export default function TestingEditPortfolioProject({
         id: 'load-data',
         color: 'teal',
         title: 'Draft was saved',
-        message: 'Your updates were saved to the database',
+        message: 'Your project was saved as a draft',
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
@@ -297,7 +346,7 @@ export default function TestingEditPortfolioProject({
   }
 
   async function handleSaveSettings(formData: any) {
-  // async function handlePublish(formData: any) {
+    // async function handlePublish(formData: any) {
     // if ( realtimeEditorContent !== '' ) {
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
     const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
@@ -415,15 +464,6 @@ export default function TestingEditPortfolioProject({
   //   }, 2000);
   // }
 
-  // useEffect(() => {
-  //   if (data) {
-  //     const sanitizedHTML = DOMPurify.sanitize(data, { ADD_ATTR: ['target'] });
-  //     if (data !== sanitizedHTML) {
-  //       setReadme(sanitizedHTML);
-  //     }
-  //   }
-  // }, [data]);
-
   const confirmImportReadme = () => {
     modals.openConfirmModal({
       title: 'Confirm Import Readme - Will replace editor content',
@@ -513,9 +553,7 @@ export default function TestingEditPortfolioProject({
 
         {/* <Container size="xl"> */}
 
-        <ViewPreviewProjectEditor
-          updatedContent={textEditorState}
-        />
+        <ViewPreviewProjectEditor updatedContent={textEditorState} />
         {/* </Container> */}
       </>
     );
@@ -578,9 +616,6 @@ export default function TestingEditPortfolioProject({
           </Group>
           {/* </> */}
         </Container>
-        {/* )} */}
-        {/* </ScrollArea> */}
-        {/* {!preview && ( */}
         <Aside
           styles={(theme) => ({
             root: {
@@ -647,8 +682,8 @@ export default function TestingEditPortfolioProject({
                 component="a"
                 // onClick={handleImportReadme}
                 onClick={() => {
-                  setSettingsOnly(true)
-                  open()
+                  setSettingsOnly(true);
+                  open();
                 }}
                 radius="md"
                 w={{
@@ -707,78 +742,150 @@ export default function TestingEditPortfolioProject({
           </Aside.Section>
           {/* Last section with normal height (depends on section content) */}
           <Aside.Section>
-            <Flex direction="column" align="center">
-              <Button
-                component="a"
-                radius="lg"
-                w={{
-                  base: '95%',
-                  md: '80%',
-                  lg: '60%',
-                  sm: '90%',
-                }}
-                mt={40}
-                onClick={handleSaveAndContinue}
-                className="mx-auto"
-                // onClick={handleSave}
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor: theme.colors.green[8],
-                    // width: '40%',
-                    [theme.fn.smallerThan('sm')]: {
-                      // width: '70%',
+            {otherProjectData?.hidden ? (
+              <Flex direction="column" align="center">
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  onClick={handleSaveAndContinue}
+                  className="mx-auto"
+                  // onClick={handleSave}
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.green[8],
+                      // width: '40%',
+                      [theme.fn.smallerThan('sm')]: {
+                        // width: '70%',
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.green[9]
+                            : theme.colors.green[9],
+                      },
                     },
-                    '&:hover': {
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.green[9]
-                          : theme.colors.green[9],
+                  })}
+                >
+                  Continue
+                </Button>
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={12}
+                  mb={30}
+                  onClick={handleSaveAsDraft}
+                  className="mx-auto"
+                  variant="outline"
+                  // onClick={handleSave}
+                  styles={(theme) => ({
+                    root: {
+                      // backgroundColor: theme.colors.green[8],
+                      // width: '40%',
+                      [theme.fn.smallerThan('sm')]: {
+                        // width: '70%',
+                      },
+                      '&:hover': {
+                        // color: theme.colors.white,
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[0]
+                            : theme.colors.blue[0],
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[7],
+                      },
                     },
-                  },
-                })}
-              >
-                Continue
-              </Button>
-              <Button
-                component="a"
-                radius="lg"
-                w={{
-                  base: '95%',
-                  md: '80%',
-                  lg: '60%',
-                  sm: '90%',
-                }}
-                mt={12}
-                mb={30}
-                onClick={handleSaveAsDraft}
-                className="mx-auto"
-                variant="outline"
-                // onClick={handleSave}
-                styles={(theme) => ({
-                  root: {
-                    // backgroundColor: theme.colors.green[8],
-                    // width: '40%',
-                    [theme.fn.smallerThan('sm')]: {
-                      // width: '70%',
+                  })}
+                >
+                  Save Draft
+                </Button>
+              </Flex>
+            ) : (
+              <Flex direction="column" align="center">
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  onClick={handleUpdateProject}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.green[8],
+                      [theme.fn.smallerThan('sm')]: {},
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.green[9]
+                            : theme.colors.green[9],
+                      },
                     },
-                    '&:hover': {
-                      // color: theme.colors.white,
-                      color:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.blue[0]
-                          : theme.colors.blue[0],
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.blue[9]
-                          : theme.colors.blue[7],
+                  })}
+                >
+                  Update Project
+                </Button>
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={12}
+                  mb={30}
+                  onClick={handleSaveAsDraft}
+                  className="mx-auto"
+                  variant="outline"
+                  // onClick={handleSave}
+                  styles={(theme) => ({
+                    root: {
+                      // backgroundColor: theme.colors.green[8],
+                      // width: '40%',
+                      [theme.fn.smallerThan('sm')]: {
+                        // width: '70%',
+                      },
+                      '&:hover': {
+                        // color: theme.colors.white,
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[0]
+                            : theme.colors.blue[0],
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[7],
+                      },
                     },
-                  },
-                })}
-              >
-                Save Draft
-              </Button>
-              {/* </Center> */}
-            </Flex>
+                  })}
+                >
+                  Revert to Draft
+                </Button>
+              </Flex>
+            )}
+
+            {/* </Center> */}
+
             {/* Last section */}
           </Aside.Section>
         </Aside>
