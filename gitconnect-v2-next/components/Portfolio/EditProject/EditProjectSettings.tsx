@@ -16,15 +16,15 @@ import {
   MultiSelect,
   Spoiler,
   Text,
-  Space
+  Space,
 } from '@mantine/core';
 // import '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
-// import { useDisclosure } from '@mantine/hooks';
-import UploadProjectCoverImage from './UploadProjectCoverImage';
 import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
+// import { useDisclosure } from '@mantine/hooks';
+import UploadProjectCoverImage from './UploadProjectCoverImage';
 
 interface ProjectSettingsSimpleProps {
   repoId?: string;
@@ -42,6 +42,7 @@ interface ProjectSettingsProps {
   close: () => void;
   handlePublish: (formData: any) => void;
   handleSaveAsDraft: (formData: any) => void;
+  handleSaveSettings?: (formData: any) => void;
   handleNewCoverImage: (newCoverImage: string) => void;
   projectTitle?: string;
   techStack?: string[];
@@ -53,6 +54,7 @@ interface ProjectSettingsProps {
   openToCollaboration?: boolean;
   coverImage?: string;
   projectDescription?: string;
+  settingsOnly?: boolean;
 }
 
 function ProjectSettingsModal({
@@ -64,6 +66,7 @@ function ProjectSettingsModal({
   handlePublish,
   handleSaveAsDraft,
   handleNewCoverImage,
+  handleSaveSettings,
   techStack,
   projectTags,
   liveUrl,
@@ -74,12 +77,12 @@ function ProjectSettingsModal({
   coverImage,
   projectTitle,
   projectDescription,
+  settingsOnly,
 }: ProjectSettingsProps) {
   const [projectCategoriesValue, setProjectCategoriesValue] = useState<string[]>([]);
 
-  console.log('desciption:', projectDescription);
-  console.log('repourl', repoUrl);
-
+  // console.log('desciption:', projectDescription);
+  // console.log('repourl', repoUrl);
 
   useEffect(() => {
     if (
@@ -147,16 +150,18 @@ function ProjectSettingsModal({
       title: 'Cover image is required',
       children: (
         <>
-          <Group position="center">  
-          <Text fw='bold' size="lg" >Please upload a cover image for your project.</Text>
-          <Space h='md' />
-          <Text size="md" >Click anywhere outside of this modal to close it.</Text>
-          {/* <Button onClick={() => modals.close('coverImage')} mt="md">Close</Button> */}
-          {/* <TextInput label="Your email" placeholder="Your email" data-autofocus /> */}
-          {/* <Button onClick={() => modals.close('coverImage')} mt="md">
+          <Group position="center">
+            <Text fw="bold" size="lg">
+              Please upload a cover image for your project.
+            </Text>
+            <Space h="md" />
+            <Text size="md">Click anywhere outside of this modal to close it.</Text>
+            {/* <Button onClick={() => modals.close('coverImage')} mt="md">Close</Button> */}
+            {/* <TextInput label="Your email" placeholder="Your email" data-autofocus /> */}
+            {/* <Button onClick={() => modals.close('coverImage')} mt="md">
             Close
           </Button> */}
-            </Group>
+          </Group>
         </>
       ),
       // centered: true,
@@ -307,14 +312,16 @@ function ProjectSettingsModal({
                   </Spoiler>
                 </Checkbox.Group>
 
-                <Checkbox
+                {/* FIXME: Nuanced options for visibility to public */}
+                
+                {/* <Checkbox
                   mb="sm"
                   label="Visible to Public"
                   description="Make your project visible on the homepage"
                   // checked={visibleToPublicValue}
                   // onChange={(event) => setVisibleToPublicValue(event.currentTarget.checked)}
                   {...form.getInputProps('visibleToPublic', { type: 'checkbox' })}
-                />
+                /> */}
 
                 <Checkbox
                   label="Open to Collaboration"
@@ -325,125 +332,129 @@ function ProjectSettingsModal({
                   // }
                   {...form.getInputProps('openToCollaboration', { type: 'checkbox' })}
                 />
-
-                <Group position="right" mt="lg" mr="md">
-                  <Button
-                    component="a"
-                    radius="lg"
-                    size="sm"
-                    px={30}
-                    onClick={() => handleSaveAsDraft(form.values)}
-                    // onClick={handleSaveAsDraft}
-                    // className="mx-auto"
-                    variant="outline"
-                    // onClick={handleSave}
-                    styles={(theme) => ({
-                      root: {
-                        // backgroundColor: theme.colors.green[8],
-                        // width: '40%',
-                        [theme.fn.smallerThan('sm')]: {
-                          // width: '70%',
-                        },
-                        '&:hover': {
-                          // color: theme.colors.white,
-                          color:
-                            theme.colorScheme === 'dark'
-                              ? theme.colors.blue[0]
-                              : theme.colors.blue[0],
-                          backgroundColor:
-                            theme.colorScheme === 'dark'
-                              ? theme.colors.blue[9]
-                              : theme.colors.blue[7],
-                        },
-                      },
-                    })}
-                  >
-                    Save Draft
-                  </Button>
-                  {/* {
-                    coverImage ?  */}
+                {settingsOnly && handleSaveSettings ? (
+                  <Group position="right" mt="lg" mr="md">
                     <Button
-                    component="a"
-                    radius="lg"
-                    size="sm"
-                    px={40}
-             
+                      component="a"
+                      radius="lg"
+                      size="sm"
+                      px={30}
+                      onClick={() => handleSaveSettings(form.values)}
+                      variant="filled"
+                      // onClick={handleSave}
+                      styles={(theme) => ({
+                        root: {
+                          // backgroundColor: theme.colors.green[8],
+                          // width: '40%',
+                          [theme.fn.smallerThan('sm')]: {
+                            // width: '70%',
+                          },
+                          '&:hover': {
+                            // color: theme.colors.white,
+                            color:
+                              theme.colorScheme === 'dark'
+                                ? theme.colors.blue[0]
+                                : theme.colors.blue[0],
+                            backgroundColor:
+                              theme.colorScheme === 'dark'
+                                ? theme.colors.blue[9]
+                                : theme.colors.blue[7],
+                          },
+                        },
+                      })}
+                    >
+                      Save Settings
+                    </Button>
+                  </Group>
+                ) : (
+                  <Group position="right" mt="lg" mr="md">
+                    <Button
+                      component="a"
+                      radius="lg"
+                      size="sm"
+                      px={30}
+                      onClick={() => handleSaveAsDraft(form.values)}
+                      // onClick={handleSaveAsDraft}
+                      // className="mx-auto"
+                      variant="outline"
+                      // onClick={handleSave}
+                      styles={(theme) => ({
+                        root: {
+                          // backgroundColor: theme.colors.green[8],
+                          // width: '40%',
+                          [theme.fn.smallerThan('sm')]: {
+                            // width: '70%',
+                          },
+                          '&:hover': {
+                            // color: theme.colors.white,
+                            color:
+                              theme.colorScheme === 'dark'
+                                ? theme.colors.blue[0]
+                                : theme.colors.blue[0],
+                            backgroundColor:
+                              theme.colorScheme === 'dark'
+                                ? theme.colors.blue[9]
+                                : theme.colors.blue[7],
+                          },
+                        },
+                      })}
+                    >
+                      Save Draft
+                    </Button>
+
+                    <Button
+                      component="a"
+                      radius="lg"
+                      size="sm"
+                      px={40}
                       // onClick = {() => handlePublish(form.values)}
                       // onClick={coverImage ? () => handlePublish(form.values) : openCoverImageRequiredModal}
 
-                    onClick={coverImage ? () => handlePublish(form.values) :
-                      () => notifications.show({
-                        id: 'hello-there',
-                        withCloseButton: true,
-                        // onClose: () => console.log('unmounted'),
-                        // onOpen: () => console.log('mounted'),
-                        autoClose: 5000,
-                        title: "Cover Image is required",
-                        message: 'Please upload a cover image before publishing',
-                        color: 'red',
-                        withBorder: true,
-                        icon: <IconX />,
-                        className: 'my-notification-class',
-                        style: { borderWidth: 0.5, borderColor: 'red' },
-                        // sx: { borderColor: 'red' },
-                        loading: false,
-                      })
-                    }
-                    // onClick={() => handlePublish(form.values)}
-                    // onClick={logFormValues}
-                    styles={(theme) => ({
-                      root: {
-                        backgroundColor: theme.colors.green[7],
-                        // width: '40%',
-                        [theme.fn.smallerThan('sm')]: {
-                          // width: '70%',
+                      onClick={
+                        coverImage
+                          ? () => handlePublish(form.values)
+                          : () =>
+                              notifications.show({
+                                id: 'hello-there',
+                                withCloseButton: true,
+                                // onClose: () => console.log('unmounted'),
+                                // onOpen: () => console.log('mounted'),
+                                autoClose: 5000,
+                                title: 'Cover Image is required',
+                                message: 'Please upload a cover image before publishing',
+                                color: 'red',
+                                withBorder: true,
+                                icon: <IconX />,
+                                className: 'my-notification-class',
+                                style: { borderWidth: 0.5, borderColor: 'red' },
+                                // sx: { borderColor: 'red' },
+                                loading: false,
+                              })
+                      }
+                      // onClick={() => handlePublish(form.values)}
+                      // onClick={logFormValues}
+                      styles={(theme) => ({
+                        root: {
+                          backgroundColor: theme.colors.green[7],
+                          // width: '40%',
+                          [theme.fn.smallerThan('sm')]: {
+                            // width: '70%',
+                          },
+                          '&:hover': {
+                            backgroundColor:
+                              theme.colorScheme === 'dark'
+                                ? theme.colors.green[9]
+                                : theme.colors.green[9],
+                          },
                         },
-                        '&:hover': {
-                          backgroundColor:
-                            theme.colorScheme === 'dark'
-                              ? theme.colors.green[9]
-                              : theme.colors.green[9],
-                        },
-                      },
-                    })}
-                  >
-                    Publish
-                  </Button>
-                      {/* :
-                      <Button
-                    component="a"
-                    radius="lg"
-                    size="sm"
-                    px={40}
-                    // {coverImage ? 
-                      // onClick = {() => handlePublish(form.values)}
-                // :
-                  onClick={coverImage ? () => handlePublish(form.values) : openCoverImageRequiredModal}
-                    // }
-                    // onClick={() => handlePublish(form.values)}
-                    // onClick={logFormValues}
-                    styles={(theme) => ({
-                      root: {
-                        backgroundColor: theme.colors.green[7],
-                        // width: '40%',
-                        [theme.fn.smallerThan('sm')]: {
-                          // width: '70%',
-                        },
-                        '&:hover': {
-                          backgroundColor:
-                            theme.colorScheme === 'dark'
-                              ? theme.colors.green[9]
-                              : theme.colors.green[9],
-                        },
-                      },
-                    })}
-                  >
-                    Publish
-                  </Button>
-                  } */}
-                  
-                  {/* <Button onClick={open}>Publish</Button> */}
-                </Group>
+                      })}
+                    >
+                      Publish
+                    </Button>
+                  </Group>
+                )}
+
+                {/* </Group> */}
               </Stack>
             </form>
           </Grid.Col>

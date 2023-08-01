@@ -34,6 +34,7 @@ import TestingRichTextEditor from '../RichTextEditor/TestingRichTextEditor';
 import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal from './EditProjectSettings';
+import { set } from 'lodash';
 
 type EditPortfolioProps = {
   repoName: string;
@@ -81,6 +82,8 @@ export default function TestingEditPortfolioProject({
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   // const [previewOpened, { open, close }] = useDisclosure(false);
+  
+  const [settingsOnly, setSettingsOnly] = useState(false);
 
   const [preview, setPreview] = useState(false);
 
@@ -134,7 +137,11 @@ export default function TestingEditPortfolioProject({
         { ...formData, userId: userid, repoId: repoid },
         { merge: true }
       );
-      await setDoc(parentDocRef, { ...formData }, { merge: true });
+      // 
+      await setDoc(parentDocRef, { ...formData, hidden: false, visibleToPublic: true }, { merge: true });
+       // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+
+    // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
       // console.log(formData)
       // console.log('publishing');
       // close();
@@ -166,6 +173,8 @@ export default function TestingEditPortfolioProject({
 
   async function handleSaveAndFinish(formData: any) {
     // if (realtimeEditorContent === '') { return; }
+    setSettingsOnly(false);
+
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
     const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
     try {
@@ -213,21 +222,31 @@ export default function TestingEditPortfolioProject({
 
   // When continuing - save the data to Firebase and set the hidden status to false
   async function handleSaveAndContinue() {
-    if (realtimeEditorContent !== '') {
-      const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
-        ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
-      });
+    setSettingsOnly(false);
+
+    if (!textEditorState || textEditorState == '') {
+      return;
+    }
+    const sanitizedHTML = DOMPurify.sanitize(textEditorState, {
+      ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+    });
+
+    // if (realtimeEditorContent !== '') {
+    //   const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
+    //     ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+    //   });
 
       const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
 
       await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-    }
-    const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+    
+    // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
-    await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
+    // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
     open();
     // console.log('saved and continue')
-  }
+}
+
 
   async function handleSaveAsDraft() {
     if (!textEditorState || textEditorState == '') {
@@ -247,7 +266,7 @@ export default function TestingEditPortfolioProject({
         autoClose: false,
         withCloseButton: false,
       });
-      await setDoc(docRef, { htmlOutput: textEditorState }, { merge: true });
+      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
       // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
 
       const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
@@ -275,6 +294,56 @@ export default function TestingEditPortfolioProject({
       });
       close();
     }
+  }
+
+  async function handleSaveSettings(formData: any) {
+  // async function handlePublish(formData: any) {
+    // if ( realtimeEditorContent !== '' ) {
+    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
+    try {
+      notifications.show({
+        id: 'load-data',
+        loading: true,
+        title: 'Saving Settings',
+        message: 'Please wait',
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await setDoc(
+        docRef,
+        { ...formData, userId: userid, repoId: repoid },
+        { merge: true }
+      );
+      await setDoc(parentDocRef, { ...formData }, { merge: true });
+      // console.log(formData)
+      // console.log('publishing');
+      // close();
+    } catch (error) {
+      console.log(error);
+      notifications.update({
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        title: 'Settings Saved',
+        message: 'Your updates have been saved',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
+      setSettingsOnly(false);
+      close();
+    }
+
+    // TODO: New project view page
+    // router.push(`/profiles/projects/${repoid}`);
   }
 
   // When saving as draft - save the data to Firebase and set the hidden status to true
@@ -455,10 +524,12 @@ export default function TestingEditPortfolioProject({
       <>
         <Container fluid>
           <ProjectSettingsModal
+            settingsOnly={settingsOnly}
             handleNewCoverImage={handleNewCoverImage}
             repoId={repoid}
             handlePublish={handlePublish}
             handleSaveAsDraft={handleSaveAndFinish}
+            handleSaveSettings={handleSaveSettings}
             // handleSaveAsDraft={handleSaveAsDraft}
             opened={opened}
             open={open}
@@ -519,24 +590,12 @@ export default function TestingEditPortfolioProject({
           zIndex={1}
           mt={80}
           width={{
-            // base: 'calc(20%)',
             xxs: 'calc(30%)',
             xs: 'calc(25%)',
-            // When viewport is larger than theme.breakpoints.sm, Navbar width will be 300
-            // sm: 200,
             sm: 'calc(22%)',
-
-            // md: 230,
             md: 'calc(20%)',
-            // When viewport is larger than theme.breakpoints.lg, Navbar width will be 400
-            // lg: 260,
-
-            // xl: 280,
             xl: 'calc(18%)',
             xxl: 'calc(15%)',
-            // xxl: 400,
-            // When other breakpoints do not match base width is used, defaults to 100%
-            // base: 120,
             base: 'calc(30%)',
           }}
         >
@@ -587,7 +646,10 @@ export default function TestingEditPortfolioProject({
               <Button
                 component="a"
                 // onClick={handleImportReadme}
-                onClick={open}
+                onClick={() => {
+                  setSettingsOnly(true)
+                  open()
+                }}
                 radius="md"
                 w={{
                   base: '95%',
@@ -617,9 +679,8 @@ export default function TestingEditPortfolioProject({
               >
                 Settings{' '}
               </Button>
-              <Button
+              {/* <Button
                 component="a"
-                // onClick={handleImportReadme}
                 onClick={handlePreview}
                 radius="md"
                 variant="outline"
@@ -632,7 +693,6 @@ export default function TestingEditPortfolioProject({
                 styles={(theme) => ({
                   root: {
                     [theme.fn.smallerThan('sm')]: {
-                      // size: 'xs' ,
                       padding: 0,
                       fontSize: 12,
                     },
@@ -642,7 +702,7 @@ export default function TestingEditPortfolioProject({
                 className="mx-auto"
               >
                 {preview ? 'Back to editing' : 'View a Preview'}
-              </Button>
+              </Button> */}
             </Flex>
           </Aside.Section>
           {/* Last section with normal height (depends on section content) */}
