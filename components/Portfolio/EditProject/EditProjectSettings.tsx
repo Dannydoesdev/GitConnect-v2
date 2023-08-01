@@ -312,14 +312,16 @@ function ProjectSettingsModal({
                   </Spoiler>
                 </Checkbox.Group>
 
-                <Checkbox
+                {/* FIXME: Nuanced options for visibility to public */}
+                
+                {/* <Checkbox
                   mb="sm"
                   label="Visible to Public"
                   description="Make your project visible on the homepage"
                   // checked={visibleToPublicValue}
                   // onChange={(event) => setVisibleToPublicValue(event.currentTarget.checked)}
                   {...form.getInputProps('visibleToPublic', { type: 'checkbox' })}
-                />
+                /> */}
 
                 <Checkbox
                   label="Open to Collaboration"
