@@ -6,12 +6,14 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { Analytics } from '@vercel/analytics/react';
 import { getCookie, setCookie } from 'cookies-next';
+import { Provider } from 'jotai';
 import { ThemeProvider } from 'next-themes';
 import '../styles/globals.css';
 import '../styles/tiptap.scss';
 import { AppContainer } from '../components/AppContainer';
 import { AuthProvider } from '../context/AuthContext';
 import { mantineCache } from '../mantine/cache';
+import { useRouter } from 'next/router';
 
 // MAY CAUSE ISSUES - just for icons for notitap
 // import '@unocss/reset/tailwind.css'
@@ -19,6 +21,8 @@ import { mantineCache } from '../mantine/cache';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
+  const router = useRouter()
+ 
   const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
 
   const toggleColorScheme = (value?: ColorScheme) => {
@@ -63,7 +67,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         />
         <link rel="icon" href="/img/favicon/gclogo.png" />
       </Head>
-
       <ThemeProvider attribute="class">
         <ColorSchemeProvider
           colorScheme={colorScheme}
@@ -80,10 +83,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             <ModalsProvider>
               <Notifications />
               <AuthProvider>
-                <AppContainer>
-                  <Component {...pageProps} />
-                  <Analytics />
-                </AppContainer>
+                <Provider>
+                  <AppContainer>
+                    <Component key={router.asPath} {...pageProps} />
+                    <Analytics />
+                  </AppContainer>
+                </Provider>
               </AuthProvider>
             </ModalsProvider>
           </MantineProvider>

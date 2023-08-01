@@ -23,8 +23,7 @@ import { db } from '@/firebase/clientApp';
 import { doc, getDoc } from 'firebase/firestore';
 import { textEditorAtom } from '@/atoms/jotaiAtoms';
 import { useAtom } from 'jotai';
-
-
+import { text } from 'stream/consumers';
 
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
@@ -48,7 +47,6 @@ function InsertCodeControls() {
   );
 }
 
-
 type RichTextEditorVanillaProps = {
   repoId?: string;
   userId?: string;
@@ -64,65 +62,49 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-function RichTextEditorVanilla({
-  existingContent,
-  updatedContent,
+function TestingRichTextEditor({
+  // existingContent,
+  // updatedContent,
   repoId,
   userId,
-  readme,
-  onUpdateEditor,
+  // readme,
+  // onUpdateEditor,
 }: RichTextEditorVanillaProps) {
-  const [editorContent, setEditorContent] = useState('');
-  const [content, setContent] = useState('');
-  const [newReadme, setNewReadme] = useState('');
-  const [imgUrl, setImgUrl] = useState('');
-  const [progresspercent, setProgresspercent] = useState(0);
-  const [initialContent, setinitialContent] = useState(existingContent);
+  // const [editorContent, setEditorContent] = useState('');
+  // const [content, setContent] = useState('');
+  // const [newReadme, setNewReadme] = useState('');
+  // const [imgUrl, setImgUrl] = useState('');
+  // const [progresspercent, setProgresspercent] = useState(0);
+  // const [initialContent, setinitialContent] = useState(existingContent);
   const router = useRouter();
 
   
   const [textContentState, setTextContentState] = useAtom(textEditorAtom);
 
-
-  
+  console.log('Initial TextEditorState inside editor')
   console.log(textContentState)
-  useEffect(() => {
-    // if (readme && readme !== newReadme) {
-      // setNewReadme(readme);
-    if (readme) {
-        // setTimeout(() => {
-          editor?.commands.setContent(readme);
-        // });
-        // editor?.commands.insertContent(readme);
-    }
-  }, [readme]);
+ 
+  const [content, setContent] = useState(textContentState);
 
   // useEffect(() => {
-  //   if (existingContent && editor) {
-  //     editor?.commands.setContent(existingContent);
-  //   }
-  // }, []);
+  //   const getFirebaseData = async () => {
+  //     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
+  //     const docSnap = await getDoc(docRef);
 
+  //     if (docSnap.exists()) {
+  //       const mainContent = docSnap.data();
+  //       const htmlOutput = mainContent.htmlOutput;
+  //       // handleSetTipTap(htmlOutput);
+  //       if (htmlOutput?.length > 0) {
+  //         // setinitialContent(htmlOutput);
+  //         // handleSetTipTap(htmlOutput);
+  //         editor?.commands.setContent(content);
+  //       }
+  //     }
+  //   };
 
-  useEffect(() => {
-    const getFirebaseData = async () => {
-      const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const mainContent = docSnap.data();
-        const htmlOutput = mainContent.htmlOutput;
-        // handleSetTipTap(htmlOutput);
-        if (htmlOutput?.length > 0) {
-          // setinitialContent(htmlOutput);
-          // handleSetTipTap(htmlOutput);
-          editor?.commands.setContent(content);
-        }
-      }
-    };
-
-    getFirebaseData();
-  }, [router, repoId, userId]);
+  //   getFirebaseData();
+  // }, [router, repoId, userId]);
 
   // function handleSetTipTap(content: any) {
   //   editor?.commands.setContent(content);
@@ -139,6 +121,24 @@ function RichTextEditorVanilla({
   //   // });
   //     }
   // }, []);
+
+    useEffect(() => {
+    console.log('preuseEffect textContentState inside editor', textContentState)
+    // if (!editor || !textContentState) return;
+    if (textContentState && (textContentState !== editor?.getHTML())) {
+      editor?.commands.setContent(textContentState);
+    }
+    console.log('postuseEffect textContentState inside editor', textContentState)
+  }, [textContentState]);
+
+  // useEffect(() => {
+  //   console.log('preuseEffect textContentState inside editor', textContentState)
+  //   // if (!editor || !textContentState) return;
+  //   if (textContentState && (textContentState !== editor?.getHTML())) {
+  //     editor?.commands.setContent(textContentState);
+  //   }
+  //   console.log('postuseEffect textContentState inside editor', textContentState)
+  // }, [textContentState]);
 
   const editor = useEditor({
     extensions: [
@@ -177,7 +177,8 @@ function RichTextEditorVanilla({
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     // content: textContentState,
-    content: updatedContent || existingContent,
+    content,
+    // content: updatedContent || existingContent,
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
@@ -186,12 +187,14 @@ function RichTextEditorVanilla({
       },
     },
     onUpdate({ editor }) {
-      const htmlOutput = editor.getHTML();
-      setTextContentState(htmlOutput);
+      // const htmlOutput = editor.getHTML();
+      console.log('updating state')
+      // if (textContentState && (textContentState !== editor.getHTML())) {
+        setTextContentState(editor.getHTML());
+      // }
       // Update state every time the editor content changes
-      setEditorContent(editor.getHTML());
-      onUpdateEditor?.(editor.getHTML());
-     
+      // setEditorContent(editor.getHTML());
+      // onUpdateEditor?.(editor.getHTML());
     },
   });
 
@@ -349,4 +352,4 @@ function RichTextEditorVanilla({
   );
 }
 
-export default RichTextEditorVanilla;
+export default TestingRichTextEditor;

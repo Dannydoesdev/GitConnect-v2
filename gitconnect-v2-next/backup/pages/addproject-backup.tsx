@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
+import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { projectDataAtom } from '@/atoms';
+import { AuthContext } from '../../context/AuthContext';
 import {
   Avatar,
   Card,
@@ -15,13 +15,17 @@ import {
   Stack,
   Blockquote,
 } from '@mantine/core';
-import { collection, setDoc, query, doc, getDocs } from 'firebase/firestore';
-import { useAtom } from 'jotai';
+import { db } from '../../firebase/clientApp';
+import {
+  collection,
+  setDoc,
+  query,
+  doc,
+  getDocs,
+} from 'firebase/firestore';
+import { RepoDataFull } from '../../types/repos';
+import { getGithubReposWithUsername } from '../../lib/github';
 import { InfoCircle } from 'tabler-icons-react';
-import { AuthContext } from '../context/AuthContext';
-import { db } from '../firebase/clientApp';
-import { getGithubReposWithUsername } from '../lib/github';
-import { RepoDataFull } from '../types/repos';
 
 interface ShowRepoProps {
   repo: RepoDataFull;
@@ -29,7 +33,11 @@ interface ShowRepoProps {
   addRepo: (repo: RepoDataFull) => void;
 }
 
-const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo }) => {
+const ShowRepo: React.FC<ShowRepoProps> = ({
+  repo,
+  existingRepos,
+  addRepo,
+}) => {
   const {
     name: repoName,
     fork: isForked,
@@ -42,42 +50,44 @@ const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo }) => 
 
   return (
     <div>
-      <Card shadow="sm" p="lg" radius="md" withBorder>
+      <Card shadow='sm' p='lg' radius='md' withBorder>
         <Card.Section></Card.Section>
 
-        <Group display="flex" noWrap position="apart" mt="md" mb="xs">
+        <Group display='flex' noWrap position='apart' mt='md' mb='xs'>
           <Link href={repoUrl} passHref legacyBehavior>
-            <Text underline component="a" target="_blank" weight={500}>
+            <Text underline component='a' target='_blank' weight={500}>
               {repoName}
             </Text>
           </Link>
 
           {isForked ? (
-            <Badge size="xs" color="grape" variant="light">
+            <Badge size='xs' color='grape' variant='light'>
               Forked
             </Badge>
           ) : (
-            <Badge size="xs" color="green" variant="light">
+            <Badge size='xs' color='green' variant='light'>
               Not forked
             </Badge>
           )}
         </Group>
-        <Text truncate size="sm" color="dimmed">
+        <Text truncate size='sm' color='dimmed'>
           {repoDesc
             ? repoDesc
             : 'No description found - you can add a custom description with GitConnect once you add this repo'}
         </Text>
-        <Space h="xs" />
-        <Text size="xs" color="dimmed">
-          {repoLicense ? repoLicense.name : 'No license found from this Github Repo'}
+        <Space h='xs' />
+        <Text size='xs' color='dimmed'>
+          {repoLicense
+            ? repoLicense.name
+            : 'No license found from this Github Repo'}
         </Text>
 
         {repoAlreadyAdded ? (
-          <Group position="center">
+          <Group position='center'>
             <Badge
-              mt="lg"
-              color="gray"
-              variant="light"
+              mt='lg'
+              color='gray'
+              variant='light'
               styles={(theme) => ({
                 root: {
                   cursor: 'not-allowed',
@@ -88,15 +98,15 @@ const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo }) => 
             </Badge>
           </Group>
         ) : (
-          <Group position="center">
-            <Link href="#" passHref legacyBehavior>
+          <Group position='center'>
+            <Link href='#' passHref legacyBehavior>
               <Button
-                component="a"
-                mt="xl"
-                size="xs"
+                component='a'
+                mt='xl'
+                size='xs'
                 // size='l'
-                radius="lg"
-                color="teal"
+                radius='lg'
+                color='teal'
                 onClick={() => {
                   addRepo(repo);
                 }}
@@ -118,8 +128,6 @@ const GetRepos = () => {
   const [existingRepos, setExistingRepos] = useState<string[]>([]);
   const router = useRouter();
 
-  const [projectDataState, setProjectData] = useAtom(projectDataAtom);
-
   const addRepo = async (repo: RepoDataFull) => {
     try {
       await setDoc(
@@ -134,31 +142,8 @@ const GetRepos = () => {
           gitconnect_updated_at_unix: Date.now(),
         },
         { merge: true }
-      ).then(() => {
-        // ADDING BELOW FOR JOTAI TEST
-        setProjectData(repo);
+      );
 
-      }).then(() => {
-        // console.log('Project Data Atom');
-        // console.log(projectDataState);
-        // console.log('Repo Data');
-        // console.log(repo);
-
-        router.push(
-          {
-            pathname: `/portfolio/testedit/${repo.id}`,
-            query: {
-              name: repo.name,
-              description: repo.description,
-              url: repo.html_url,
-              userId: userId,
-              newRepoParam: JSON.stringify(true),
-            },
-          },
-          `/portfolio/testedit/${repo.id}`
-        );
-      });
-        
       // router.push(
       //   {
       //     pathname: `/portfolio/new/${repo.id}`,
@@ -172,12 +157,26 @@ const GetRepos = () => {
       //   },
       //   `/portfolio/new/${repo.id}`
       // );
+      router.push(
+        {
+          pathname: `/portfolio/edit/${repo.id}`,
+          query: {
+            name: repo.name,
+            description: repo.description,
+            url: repo.html_url,
+            userId: userId,
+            newRepoParam: JSON.stringify(true),
+          },
+        },
+        `/portfolio/edit/${repo.id}`
+      );
     } catch (err) {
       console.error(err);
-    } 
+    }
   };
 
   useEffect(() => {
+
     const fetchData = async () => {
       try {
         const returnedRepoData = await getGithubReposWithUsername(userName);
@@ -204,27 +203,32 @@ const GetRepos = () => {
 
   return (
     <>
-      <Stack align="center" mt={90} spacing="lg">
-        <Avatar className="mx-auto" radius="xl" size="xl" src={userData.userPhotoLink} />
-        <Text size="lg" weight="bolder" className="mx-auto">
+      <Stack align='center' mt={90} spacing='lg'>
+        <Avatar
+          className='mx-auto'
+          radius='xl'
+          size='xl'
+          src={userData.userPhotoLink}
+        />
+        <Text size='lg' weight='bolder' className='mx-auto'>
           {userName}'s public repos
         </Text>
-        <Text size="lg" className="mx-auto"></Text>
+        <Text size='lg' className='mx-auto'></Text>
         <Blockquote
-          cite="- GitConnect tips"
-          color="indigo"
-          icon={<InfoCircle size="1.5rem" />}
+          cite='- GitConnect tips'
+          color='indigo'
+          icon={<InfoCircle size='1.5rem' />}
         >
-          Choose which project you want to add to your portfolio <br /> You will be able
-          to customise the project details in the next step
+          Choose which project you want to add to your portfolio <br /> You will
+          be able to customise the project details in the next step
         </Blockquote>
       </Stack>
-      <Space h="xl" />
-      <Space h="xl" />
-      <Group mx="md">
+      <Space h='xl' />
+      <Space h='xl' />
+      <Group mx='md'>
         <SimpleGrid
           cols={4}
-          spacing="xl"
+          spacing='xl'
           breakpoints={[
             { maxWidth: 980, cols: 3, spacing: 'md' },
             { maxWidth: 755, cols: 2, spacing: 'sm' },
@@ -244,7 +248,7 @@ const GetRepos = () => {
             })}
         </SimpleGrid>
       </Group>
-      <Space h="xl" />
+      <Space h='xl' />
     </>
   );
 };

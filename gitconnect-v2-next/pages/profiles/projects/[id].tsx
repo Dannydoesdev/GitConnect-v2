@@ -84,13 +84,7 @@ export default function Project({ projects, textContent }: any) {
     }
 
     // Don't increment view count if user is owner, unless project has no views
-    if (
-      project &&
-      projects[0].userId &&
-      userData &&
-      userData.userId &&
-      id
-    ) {
+    if (project && projects[0].userId && userData && userData.userId && id) {
       const userId = project.userId;
       const repoId = id as string;
       setRepoOwner(userId);
@@ -100,13 +94,7 @@ export default function Project({ projects, textContent }: any) {
   }, [id, userData, projects]);
 
   const handleIncrementView = async (userId: string, repoId: string) => {
-    if (
-      !userData ||
-      !userData.userId ||
-      !projects[0].userId ||
-      !projects
-    )
-      return;
+    if (!userData || !userData.userId || !projects[0].userId || !projects) return;
 
     const project = projects[0] || null;
 
@@ -137,6 +125,18 @@ export default function Project({ projects, textContent }: any) {
     }
   };
 
+  const handleNewAddProjectFlow = () => {
+    router.push(
+      {
+        pathname: `/portfolio/testedit/${projects[0].id}`,
+        query: {
+          repoid: projects[0].id,
+          editRepoParam: JSON.stringify(true),
+        },
+      },
+      `/portfolio/testedit/${projects[0].id}`
+    );
+  };
 
   if (projects) {
     return (
@@ -175,12 +175,10 @@ export default function Project({ projects, textContent }: any) {
                   >
                     Draft Project - Edit to publish
                   </Chip>
-                  {/* <Title>Note - project is currently draft</Title> */}
                 </>
               )}
               <br />
-              {/* <Center> */}
-              <Link
+              {/* <Link
                 href={`/profiles/projects/edit/${projects[0].id}`}
                 passHref
                 legacyBehavior
@@ -217,50 +215,121 @@ export default function Project({ projects, textContent }: any) {
                 >
                   Edit your project
                 </Button>
-              </Link>
+              </Link> */}
               {/* {userData.userId == 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' && ( */}
-                <Link
+              {/* <Link
                 href={`/portfolio/edit/${projects[0].id}`}
-                  passHref legacyBehavior>
-                  <Button
-                    component="a"
-                    size="lg"
-                    radius="md"
-                    // mt={10}
-                    className="mx-auto"
-                    // size="md"
-                    color="gray"
-                    mt='xs'
-                    variant="outline"
-                    styles={(theme) => ({
-                      root: {
-                        border:
-                          theme.colorScheme === 'dark'
-                            ? 'white solid 1px'
-                            : 'darkblue solid 3px',
-                        // backgroundColor:
-                        //   theme.colorScheme === 'dark'
-                        //     ? theme.colors.dark[3]
-                        //     : theme.colors.blue[8],
+                passHref
+                legacyBehavior
+                prefetch={false}
+              >
+                <Button
+                  component="a"
+                  size="lg"
+                  radius="md"
+                  // mt={10}
+                  className="mx-auto"
+                  // size="md"
+                  color="gray"
+                  mt="xs"
+                  variant="outline"
+                  styles={(theme) => ({
+                    root: {
+                      border:
+                        theme.colorScheme === 'dark'
+                          ? 'white solid 1px'
+                          : 'darkblue solid 3px',
+                      // backgroundColor:
+                      //   theme.colorScheme === 'dark'
+                      //     ? theme.colors.dark[3]
+                      //     : theme.colors.blue[8],
+                      width: '100%',
+                      [theme.fn.smallerThan('sm')]: {
                         width: '100%',
-                        [theme.fn.smallerThan('sm')]: {
-                          width: '100%',
-                        },
-                        '&:hover': {
-                          backgroundColor:
-                            theme.colorScheme === 'dark'
-                              ? theme.colors.dark[4]
-                              : theme.colors.blue[9],
-                        },
                       },
-                    })}
-                  >
-                    Edit Project [new]
-                  </Button>
-                </Link>
-              {/* )} */}
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.dark[4]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                >
+                  Edit Project [new]
+                </Button>
+              </Link> */}
+              <Button
+                component="a"
+                size="lg"
+                radius="md"
+                // onClick={handleNewAddProjectFlow}
+                onClick={() => router.push(`/portfolio/testedit/${projects[0].id}`)}
+                // mt={10}
+                className="mx-auto"
+                // size="md"
+                color="gray"
+                mt="xs"
+                variant="outline"
+                styles={(theme) => ({
+                  root: {
+                    border:
+                      theme.colorScheme === 'dark'
+                        ? 'white solid 1px'
+                        : 'darkblue solid 3px',
 
-              {/* </Center> */}
+                    width: '100%',
+                    [theme.fn.smallerThan('sm')]: {
+                      width: '100%',
+                    },
+                    '&:hover': {
+                      backgroundColor:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.dark[4]
+                          : theme.colors.blue[9],
+                    },
+                  },
+                })}
+              >
+                Edit Project [new][new]
+              </Button>
+              {/* <Link
+                href={`/portfolio/testedit/${projects[0].id}`}
+                passHref
+                legacyBehavior
+                prefetch={false}
+              >
+                <Button
+                  component="a"
+                  size="lg"
+                  radius="md"
+                  className="mx-auto"
+                  color="gray"
+                  mt="xs"
+                  variant="outline"
+                  styles={(theme) => ({
+                    root: {
+                      border:
+                        theme.colorScheme === 'dark'
+                          ? 'white solid 1px'
+                          : 'darkblue solid 3px',
+
+                      width: '100%',
+                      [theme.fn.smallerThan('sm')]: {
+                        width: '100%',
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.dark[4]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                >
+                  Edit Project [new][urlonly]
+                </Button>
+              </Link> */}
             </Stack>
           </Group>
         )}
@@ -291,10 +360,8 @@ export default function Project({ projects, textContent }: any) {
 
         {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
 
-        {/* HIDING TOP HEADINGS */}
         <ProjectPageDynamicContent props={projects} stars={starCount} />
 
-        {/* {firebaseData && <RichTextEditorDisplay content={firebaseData} />} */}
         {textContent && <RichTextEditorDisplay content={textContent} />}
       </>
     );

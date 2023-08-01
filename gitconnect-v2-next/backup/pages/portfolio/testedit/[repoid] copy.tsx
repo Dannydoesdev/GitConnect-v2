@@ -10,9 +10,11 @@ import {
   getAllProjectIds,
   getAllCustomProjectData,
 } from '@/lib/projects';
-import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
-import { AuthContext } from '../../../context/AuthContext';
+import LoadingPage from '../../../../components/LoadingPage/LoadingPage';
+import EditPortfolioProject from '../../../../components/Portfolio/EditProject/EditProject';
+import { AuthContext } from '../../../../context/AuthContext';
+
+// import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 
 export async function getStaticProps({ params }: any) {
   // console.log(params.id)
@@ -76,23 +78,23 @@ any) {
   const { repoid, name, description, url, userId, newRepoParam, editRepoParam } =
     router.query;
 
-  const [existingProject, setExistingProject] = useState<any>();
-  const [editProject, setEditProject] = useState<any>();
+  // const [existingProject, setExistingProject] = useState<any>();
+  // const [editProject, setEditProject] = useState<any>();
 
   const loggedInUserId = userData ? userData.userId : null;
   // const existingProject = projectData[0];
 
-  useEffect(() => {
-    if (!repoid || !projectData[0]) {
-      return;
-    }
-    setExistingProject(projectData[0]);
+  // useEffect(() => {
+  // if (!repoid || !projectData[0]) {
+  // return;
+  // }
+  // setExistingProject(projectData[0]);
 
-    // const existingProject = projectData[0] || null;
-  }, [projectData, repoid, router]);
+  // const existingProject = projectData[0] || null;
+  // }, [projectData, repoid, router]);
 
-  if (router.isFallback || !projectData[0] || !userData.userId) {
-    // return <LoadingPage />;
+  if (router.isFallback) {
+    return <LoadingPage />;
   }
 
   //TODO - check if the user is logged in and if the user is the owner of the repo
@@ -107,37 +109,44 @@ any) {
   // }, [userData.userId, id, router]);
   // console.log(projectData.userID, userData.userId, existingProject?.userId)
   // console.log(userId)
+  const githubDescription = projectData[0].description;
+  const githubName = projectData[0].name;
+  const githubUrl = projectData[0].html_url;
+  // console.log(projectData[0])
 
-  // if (editRepoParam && userData.userName) {
-  //   useEffect(() => {
-  //     // TODO - implement Vercel SWR on front end
+  if (editRepoParam && userData.userName) {
+    // useEffect(() => {
+    //   // TODO - implement Vercel SWR on front end
 
-  //     const URL = `/api/profiles/projects/${repoid}`;
-  //     axios.get(URL).then((response) => {
-  //       // console.log(response.data)
-  //       setEditProject(response.data);
-  //     });
-  //   }, []);
+    //   const URL = `/api/profiles/projects/${repoid}`;
+    //   axios.get(URL).then((response) => {
+    //     // console.log(response.data)
+    //     // setEditProject(response.data);
+    //   });
+    // }, []);
+    const { name, description, html_url } = projectData[0];
 
-  //   return (
-  //     <>
-  //       <EditPortfolioProject
-  //         repoName={name as string}
-  //         description={description as string}
-  //         url={url as string}
-  //         repoid={repoid as string}
-  //         userid={userId as string}
-  //         userName={userData.userName}
-  //         otherProjectData={existingProject}
-  //       />
-  //     </>
-  //   );
-  // }
+    
+    return (
+      <>
+        <Space h={70} />
+        <EditPortfolioProject
+          repoName={name}
+          description={description}
+          url={html_url}
+          repoid={repoid as string}
+          userid={loggedInUserId as string}
+          textContent={textContent}
+          userName={userData.userName}
+          otherProjectData={projectData[0]}
+        />
+      </>
+    );
+  }
 
-  if (
-    (projectData && existingProject && userData.userName) ||
-    (newRepoParam && userData.userName)
-  ) {
+  if ((projectData && userData.userName) || (newRepoParam && userData.userName)) {
+    // const { name, description, html_url } = projectData[0];
+
     if ((projectData[0].userId || userId) == userData.userId) {
       return (
         <>
@@ -152,23 +161,21 @@ any) {
                 repoid={repoid as string}
                 userid={userId as string}
                 userName={userData.userName}
-                otherProjectData={existingProject}
+                otherProjectData={projectData[0]}
               />
             </>
           ) : (
             <>
-              {existingProject && loggedInUserId && (
-                <EditPortfolioProject
-                  repoName={existingProject.name}
-                  description={existingProject.description}
-                  url={existingProject.html_url}
-                  repoid={repoid as string}
-                  userid={loggedInUserId as string}
-                  textContent={textContent}
-                  userName={userData.userName}
-                  otherProjectData={existingProject}
-                />
-              )}
+              <EditPortfolioProject
+                repoName={githubName}
+                description={githubDescription}
+                url={githubUrl}
+                repoid={repoid as string}
+                userid={loggedInUserId as string}
+                textContent={textContent}
+                userName={userData.userName}
+                otherProjectData={projectData[0]}
+              />
             </>
           )}
           {/* </ScrollArea> */}
