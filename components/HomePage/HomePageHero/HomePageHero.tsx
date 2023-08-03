@@ -1,18 +1,10 @@
-import {
-  Overlay,
-  Container,
-  Title,
-  Button,
-  Text,
-  Group,
-  Box,
-} from '@mantine/core';
-import Link from 'next/link';
 import { useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
-import useStyles from './HomePageHero.styles';
-import { correctImageGetter } from '../../../lib/correctImageGetter';
 import Image from 'next/image';
+import Link from 'next/link';
+import { Overlay, Container, Title, Button, Text, Group, Box } from '@mantine/core';
+import { AuthContext } from '../../../context/AuthContext';
+import { correctImageGetter } from '../../../lib/correctImageGetter';
+import useStyles from './HomePageHero.styles';
 
 export function HeroLanding() {
   const { classes } = useStyles();
@@ -21,7 +13,7 @@ export function HeroLanding() {
   const { userData, currentUser } = useContext(AuthContext);
   return (
     <div className={classes.hero}>
-       <Box
+      <Box
         sx={() => ({
           position: 'absolute',
           top: 0,
@@ -34,25 +26,27 @@ export function HeroLanding() {
       >
         <Image
           // src={image ? image : '/img/gitconnect.jpg'}
-          src='/img/gitconnect.webp'
-          className='image'
+          src="/img/gitconnect.webp"
+          className="image"
           style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
-          sizes='100vw'
+          sizes="100vw"
           fill={true}
           quality={100}
-          alt=''
+          alt=""
           priority={true}
           // priority = {imageUrl.includes('.gif') ? true : false}
         />
       </Box>
       <Overlay
-        gradient='linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)'
+        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
         opacity={1}
         zIndex={0}
       />
       <Container className={classes.container}>
-        <Title className={classes.title}>GitConnect; <span className={classes.beta}>[beta]</span></Title>
-        <Text className={classes.description} size='xl' mt='xs'>
+        <Title className={classes.title}>
+          GitConnect; <span className={classes.beta}>[beta]</span>
+        </Title>
+        <Text className={classes.description} size="xl" mt="xs">
           Create. Share. Collaborate. Inspire.
         </Text>
 
@@ -68,61 +62,53 @@ export function HeroLanding() {
 
         {currentUser ? (
           <>
-            <Link href='/getrepos' passHref legacyBehavior>
+            {/* <Link href='/getrepos' passHref legacyBehavior> */}
+            <Link href="/addproject" passHref legacyBehavior>
               <Button
-                component='a'
-                size='lg'
-                radius='md'
+                component="a"
+                size="lg"
+                radius="md"
                 mt={60}
                 className={classes.control}
               >
                 Add a project
               </Button>
             </Link>
-            <Text
-              className={classes.description}
-              italic={true}
-              size='xs'
-              mt='xl'
-            >
+            <Text className={classes.description} italic={true} size="xs" mt="xl">
               Note: This site is actively under construction
             </Text>
 
-            <Group mt='md' spacing='xl'>
+            <Group mt="md" spacing="xl">
               <Link
                 // href="https://git--connect.herokuapp.com/"
-                href='/landing'
+                href="/landing"
                 passHref
                 legacyBehavior
               >
                 <Text
-                  component='a'
+                  component="a"
                   // target='_blank'
                   className={classes.description}
                   // underline={true}
                   // italic={true}
                   weight={500}
-                  size='xs'
-                  mt='sm'
+                  size="xs"
+                  mt="sm"
                 >
                   Learn more
                 </Text>
               </Link>
-              <Link
-                href='https://discord.gg/hkajEH6WkW'
-                passHref
-                legacyBehavior
-              >
+              <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
                 <Text
-                  component='a'
-                  target='_blank'
+                  component="a"
+                  target="_blank"
                   className={classes.description}
                   weight={500}
                   // underline={true}
                   // italic={true}
-                  size='xs'
+                  size="xs"
                   underline={false}
-                  mt='sm'
+                  mt="sm"
                 >
                   Join the Discord
                 </Text>
@@ -131,60 +117,47 @@ export function HeroLanding() {
           </>
         ) : (
           <>
-            <Link href='/signup' passHref legacyBehavior>
+            <Link href="/signup" passHref legacyBehavior>
               <Button
-                component='a'
-                size='lg'
-                radius='md'
+                component="a"
+                size="lg"
+                radius="md"
                 mt={40}
                 className={classes.control}
               >
                 Get started
               </Button>
             </Link>
-            <Text
-              className={classes.description}
-              italic={true}
-              size='xs'
-              mt='xl'
-            >
+            <Text className={classes.description} italic={true} size="xs" mt="xl">
               Note: This site is actively under construction
             </Text>
 
-            <Group mt='md' spacing='xl'>
-              <Link
-                href='/landing'
-                passHref
-                legacyBehavior
-              >
+            <Group mt="md" spacing="xl">
+              <Link href="/landing" passHref legacyBehavior>
                 <Text
-                  component='a'
+                  component="a"
                   // target='_blank'
                   className={classes.description}
                   // underline={true}
                   // italic={true}
                   weight={500}
-                  size='xs'
-                  mt='sm'
+                  size="xs"
+                  mt="sm"
                 >
                   Learn more
                 </Text>
               </Link>
-              <Link
-                href='https://discord.gg/hkajEH6WkW'
-                passHref
-                legacyBehavior
-              >
+              <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
                 <Text
-                  component='a'
-                  target='_blank'
+                  component="a"
+                  target="_blank"
                   className={classes.description}
                   weight={500}
                   // underline={true}
                   // italic={true}
-                  size='xs'
+                  size="xs"
                   underline={false}
-                  mt='sm'
+                  mt="sm"
                 >
                   Join the Discord
                 </Text>
