@@ -37,6 +37,8 @@ export async function getStaticProps({ params }: any) {
   //   };
   // }
 
+// FIXME: if user is coming from editing or adding a project - we should trigger a revalidation
+  
   return {
     props: {
       projects: projectData,
@@ -95,15 +97,16 @@ export default function Profile({ projects, profilePanel }: any) {
     // setGitHubProfileData(profilePanel ? profilePanel : backupData);
     // console.log('profilePanel', profilePanel);
 
+// FIXME: No longer using newRepoParam - fix with revalidation or send newRepoParam through
     // TODO: SET NOTIFCATION THAT PAGE IS BEING REFRESHED
     if (newRepoParam && JSON.parse(newRepoParam as string)) {
       // FIXME: Couldn't resolve getting the new repo to show up on the page after adding it instantly - forcing a reload for now
+
     setTimeout(() => {
       router.reload()
         // newRepoParam && JSON.parse(newRepoParam as string) ? router.reload() : null;
       }, 2000);
     }
-
 
   }, [userData.userId, id, newRepoParam, router]);
 
