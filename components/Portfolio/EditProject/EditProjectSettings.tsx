@@ -131,17 +131,7 @@ function ProjectSettingsModal({
       // coverImage: coverImage || '',
       projectDescription: projectDescription || '',
     },
-    // `${repoName}`,
-    // techStack: `${techStack}`,
-    // projectTags: `${projectTags}`,
-    //   liveUrl: `${liveUrl}`,
-    //   repoUrl: `${repoUrl}`,
-    //   projectCategories: `${projectCategories}`,
-    //   visibleToPublic: `${visibleToPublic}`,
-    //   openToCollaboration: `${openToCollaboration}`,
-    //   coverImage: `${coverImage}`,
-    //   projectDescription: `${projectDescription}`,
-    // },
+
   });
 
   const openCoverImageRequiredModal = () =>
