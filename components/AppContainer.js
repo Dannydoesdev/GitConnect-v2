@@ -201,8 +201,8 @@ export const AppContainer = ({ children }, props) => {
   const links = [
     { label: 'Home', link: '/' },
     { label: 'About', link: '/landing' },
-    { label: 'Add Project', link: '/getrepos' },
-    { label: 'Add Project[new]', link: `/addproject` },
+    // { label: 'Add Project', link: '/getrepos' },
+    { label: 'Add Project', link: `/addproject` },
     { label: 'Profile', link: `/profiles/${userData.userId}` },
     // { label: 'Sign Out', link: '/login' },
   ];
