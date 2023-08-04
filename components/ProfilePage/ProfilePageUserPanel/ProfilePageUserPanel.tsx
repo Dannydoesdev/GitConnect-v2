@@ -96,26 +96,6 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
 
   const [opened, { open, close }] = useDisclosure(false);
 
-  // const [data, setData] = useState([
-  //   { value: 'react', label: 'React', group: 'Frontend' },
-  //   { value: 'javascript', label: 'Javascript', group: 'Frontend' },
-  //   { value: 'typescript', label: 'TypeScript', group: 'Frontend' },
-  //   { value: 'nextjs', label: 'Next.js', group: 'Backend' },
-  //   { value: 'nodejs', label: 'Node.js', group: 'Backend' },
-  //   { value: 'firebase', label: 'Firebase', group: 'Backend' },
-  //   { value: 'python', label: 'Python', group: 'Backend' },
-  //   { value: 'flask', label: 'Flask', group: 'Frontend' },
-  //   { value: 'sql', label: 'SQL', group: 'Database' },
-  //   { value: 'firestore', label: 'Firestore', group: 'Database' },
-  //   { value: 'mongodb', label: 'MongoDB', group: 'Database' },
-  //   { value: 'html', label: 'HTML', group: 'Frontend' },
-  //   { value: 'css', label: 'CSS', group: 'Frontend' },
-  //   { value: 'tailwindcss', label: 'Tailwind CSS', group: 'Styling + Components' },
-  //   { value: 'bootstrap', label: 'Bootstrap', group: 'Styling + Components' },
-  //   { value: 'materialui', label: 'Material UI', group: 'Styling + Components' },
-  //   { value: 'chakraui', label: 'Chakra UI', group: 'Styling + Components' },
-  // ]);
-
   const {
     bio,
     html_url,
@@ -200,12 +180,16 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
       visibleToPublic,
     } = formData;
 
+    console.log(formData);
+    console.log('formData in parent component')
     // console.log(bio)
 
     // Send data to Firebase, maps into DB & update state to show new static values instantly
 
-    await updateProfileDataGithub(userId, formData).then(() => {
+    // TODO: Re-enable upload to firebase when ready
+    // await updateProfileDataGithub(userId, formData).then(() => {
       // console.log('Added to DB');
+    
       setUpdatedBio(bio);
       setUpdatedLocation(location);
       setUpdatedName(name);
@@ -236,41 +220,11 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
       setUpdatedSkills(skills);
 
       setEditMode(!editMode);
-    });
-  }
+    
+    // close();
+      // });
 
-  // const form = useForm({
-  //   initialValues: {
-  //     name: `${name}`,
-  //     headline: `${headline}`,
-  //     location: `${location}`,
-  //     bio: `${bio}`,
-  //     company: `${company}`,
-  //     position: `${position}`,
-  //     techStack: techStack || [],
-  //     skills: skills || [],
-  //     website: website || '',
-  //     profileTags: profileTags || [],
-  //     githubUrl: githubUrl || '',
-  //     gitlabUrl: gitlabUrl || '',
-  //     linkedinUrl: linkedinUrl || '',
-  //     twitterUrl: twitterUrl || '',
-  //     mediumUrl: mediumUrl || '',
-  //     hashnodeUrl: hashnodeUrl || '',
-  //     codepenUrl: codepenUrl || '',
-  //     dribbbleUrl: dribbbleUrl || '',
-  //     behanceUrl: behanceUrl || '',
-  //     devToUrl: devToUrl || '',
-  //     youtubeUrl: youtubeUrl || '',
-  //     twitchUrl: twitchUrl || '',
-  //     discordUrl: discordUrl || '',
-  //     stackoverflowUrl: stackoverflowUrl || '',
-  //     facebookUrl: facebookUrl || '',
-  //     instagramUrl: instagramUrl || '',
-  //     openToWork: openToWork || false,
-  //     visibleToPublic: visibleToPublic || false,
-  //   },
-  // });
+  }
 
   return (
     <>
@@ -341,6 +295,10 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
     </>
   );
 }
+
+
+
+
 
 // {editMode && currentUser ? (
 //   // If current user editing profile - show forms to update content in place of static content
