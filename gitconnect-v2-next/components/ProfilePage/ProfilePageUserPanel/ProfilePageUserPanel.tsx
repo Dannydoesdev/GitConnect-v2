@@ -225,6 +225,7 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
       // });
 
   }
+  // console.log(html_url)
 
   return (
     <>
@@ -255,7 +256,6 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
           {login}
           {location && ' • '} {updatedLocation ? updatedLocation : location}
         </Text>
-
         <Link href={html_url} passHref legacyBehavior>
           <Button component="a" target="_blank" variant="default" fullWidth mt="md">
             GitHub Page
