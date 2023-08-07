@@ -31,6 +31,8 @@ export function ProfilePageProjectCard({
 
   const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 768) : '/img/gitconnect.webp';
 
+  // console.log(imageUrl)
+  // console.log(link)
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
   }
@@ -104,7 +106,7 @@ export function ProfilePageProjectCard({
         <Center>
           {/* Note - positioning hack to resolve nested link issues (temporary) */}
 
-          <Link href={profileUrl} passHref legacyBehavior>
+          {/* <Link href={profileUrl} passHref legacyBehavior> */}
             <Avatar
               component='a'
               radius='xl'
@@ -119,12 +121,12 @@ export function ProfilePageProjectCard({
                 },
               })}
             />
-          </Link>
-          <Link href={profileUrl} passHref legacyBehavior>
+          {/* </Link> */}
+          {/* <Link href={profileUrl} passHref legacyBehavior> */}
             <Text component='a' size='sm' inline className={classes.author}>
               {author}
             </Text>
-          </Link>
+          {/* </Link> */}
         </Center>
       </Group>
     </>

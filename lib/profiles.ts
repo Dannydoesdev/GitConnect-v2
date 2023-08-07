@@ -30,6 +30,23 @@ export async function getAllProfileIds() {
   return profileIds;
 }
 
+export async function getAllProfileUsernames() {
+  // const profiles = [];
+  const q = query(collection(db, 'users'));
+  const querySnapshot = await getDocs(q);
+
+  const profileIds: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    // console.log(data);
+    return {
+      // ...data,
+      username: data.userName,
+    };
+  });
+
+  return profileIds;
+}
+
 // export async function getAllProfileIds() {
 
 // const q = query(collection(db, 'users'));
