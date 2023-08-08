@@ -15,15 +15,29 @@ export async function getSingleProjectByName(repoName: string) {
   const q = query(collectionGroup(db, 'repos'), where('name', '==', repoName));
 
   const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((detail: any) => {
-    const docData = { ...detail.data() };
+  const projectData: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    if (!data) {
+      return null;
+    }
 
     return {
-      // id,
-      docData,
+      ...data,
+      // id: doc.id,
+      // stars: data.stars?.length ?? 0,
+      // views: data.views ?? 0,
     };
   });
+  return projectData;
+  // return querySnapshot.docs.map((detail: any) => {
+  //   const docData = { ...detail.data() };
+  //   console.log('docData')
+  //   console.log(docData)
+  //   return {
+  //     // id,
+  //     docData,
+  //   };
+  // });
 
   // const projectData: any = querySnapshot.docs.map((doc: any) => {
   //   const data = doc.data();
@@ -89,8 +103,10 @@ export async function getAllUserAndProjectNameCombinations() {
       return null;
     }
     return {
-      projectName: data.name.toString(),
-      userName: data.owner?.login?.toString(),
+      projectname: data.name.toString(),
+      username: data.owner?.login?.toString(),
+      // projectname: data.name.toString().toLowerCase(),
+      // username: data.owner?.login?.toString().toLowerCase(),
     };
   });
   return paths;
