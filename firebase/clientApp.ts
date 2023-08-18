@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage, ref } from 'firebase/storage';
 import { getAnalytics, isSupported, logEvent } from 'firebase/analytics';
 
@@ -28,6 +28,10 @@ export const auth = getAuth(app);
 
 // init firestore
 export const db = getFirestore(firebaseApp);
+
+if (process.env.FIRESTORE_EMULATOR_HOST) {
+  connectFirestoreEmulator(db, 'localhost', 8080);
+}
 
 export const storage = getStorage(app);
 

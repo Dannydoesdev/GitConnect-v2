@@ -1,16 +1,19 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-#firebase
+# firebase
 firestore.rules
 firestore.indexes.json
 **/functions_new
-**/functions
+# **/functions
 /functions_new
-/functions
+# /functions
 storage.rules
 firebase-debug.log
 firebase.json
 ui-debug.log
+
+# backup
+/backup
 
 # dependencies
 /node_modules
