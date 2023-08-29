@@ -45,10 +45,10 @@ exports.makeUsernameLowercase = onDocumentCreated('/users/{userId}', (event: any
 export const updateExistingUsers = onRequest(async (req, res) => {
   const db = getFirestore();
   const usersRef = db.collection('users');
-  const snapshot = await usersRef.get();
+  const eventshot = await usersRef.get();
 
   // Check if there are any documents in the collection
-  if (snapshot.empty) {
+  if (eventshot.empty) {
     logger.info('No matching documents.');
     res.status(200).send('No documents found.'); // Must return Void or Promise<Void>
     return;
@@ -56,7 +56,7 @@ export const updateExistingUsers = onRequest(async (req, res) => {
 
   const batch = db.batch();
 
-  snapshot.forEach((doc) => {
+  eventshot.forEach((doc) => {
     const userName = doc.data().userName;
 
     // Check if userName exists and is a string
@@ -138,10 +138,10 @@ exports.makeuppercase = onDocumentCreated('/messages/{documentId}', (event: any)
 // export const makeUsernameLowercaseInUsersCollection = onRequest(async (req, res) => {
 //   const db = getFirestore();
 //   const usersRef = db.collection('users');
-//   const snapshot = await usersRef.get();
+//   const eventshot = await usersRef.get();
 
 //   const batch = db.batch();
-//   snapshot.forEach((doc) => {
+//   eventshot.forEach((doc) => {
 //     const userName = doc.data().userName;
 //     if (typeof userName === 'string') {
 //       const username_lowercase = userName.toLowerCase();
@@ -163,10 +163,10 @@ export const makeUsernameLowercaseInUsersCollectionAndPublicDataCollection = onR
   const db = getFirestore();
 
   const usersRef = db.collection('users');
-  const snapshot = await usersRef.get();
+  const eventshot = await usersRef.get();
 
   const batch = db.batch();
-  for (const userDoc of snapshot.docs) {
+  for (const userDoc of eventshot.docs) {
     const userName = userDoc.data().userName;
     if (typeof userName === 'string') {
       const username_lowercase = userName.toLowerCase();
@@ -189,10 +189,10 @@ export const makeUsernameLowercaseInUsersCollectionAndPublicDataCollection = onR
 export const duplicateToDeprecateGithubDataCollection = onRequest(async (req, res) => {
   const db = getFirestore();
   const usersRef = db.collection('users');
-  const snapshot = await usersRef.get();
+  const eventshot = await usersRef.get();
 
   const batch = db.batch();
-  for (const userDoc of snapshot.docs) {
+  for (const userDoc of eventshot.docs) {
     const userId = userDoc.id;
     logger.log('trying userId', userId);
     const profileDataRef = usersRef.doc(userId).collection('profileData');
@@ -265,6 +265,199 @@ export const addLowercaseUsernameAndReponameInReposAndMainContentCollections = o
   }
 );
 
+// Corresponding Functions for New Documents:
+// makeUsernameLowercaseInUsersCollectionAndPublicDataCollection:
+// This function can be triggered when a new document is created in the 'users' collection.
+
+// export const onUserCreated = onDocumentCreated('users/{userId}', async (event, context) => {
+  // export const onUserCreated = onDocumentCreated('users/{userId}', async (event: FirestoreEvent<QueryDocumentSnapshot | undefined, { userId: string; }>, context: EventContext) => {
+//     export const onUserCreated = onDocumentCreated('users/{userId}', async (event: FirestoreEvent<QueryDocumentSnapshot | undefined, { userId: string; }>) => {
+
+//   const db = getFirestore();
+//   const batch = db.batch();
+//   const userName = event.data()?.userName;
+//   if (typeof userName === 'string') {
+//     const username_lowercase = userName.toLowerCase();
+//     batch.update(event.ref, { username_lowercase });
+//     const profileDataRef = event.ref.collection('profileData');
+//     const profileDataSnapshot = await profileDataRef.get();
+//     for (const profileDataDoc of profileDataSnapshot.docs) {
+//       batch.update(profileDataDoc.ref, { username_lowercase });
+//     }
+//   }
+//   await batch.commit();
+// });
+
+
+// NOTE: The below is a test implementation of the cloud functions that run when a new document is added into the relevant collections
+
+export const onUserCreated = onDocumentCreated('users/{userId}', async (event: any) => {
+  const db = getFirestore();
+  const batch = db.batch();
+  const data = event.data();
+  if (data) {
+    const userName = data.get('userName');
+    if (typeof userName === 'string') {
+      const username_lowercase = userName.toLowerCase();
+      batch.update(event.ref, { username_lowercase });
+      const profileDataRef = db.collection('users').doc(event.params.userId).collection('profileData');
+      const profileDataSnapshot = await profileDataRef.get();
+      for (const profileDataDoc of profileDataSnapshot.docs) {
+        batch.update(profileDataDoc.ref, { username_lowercase });
+      }
+    }
+  }
+  await batch.commit();
+});
+
+
+
+
+// export const onGithubDataCreated = onDocumentCreated('users/{userId}/profileData/githubData', async (event: FirestoreEvent<DocumentSnapshot<DocumentData> | undefined, { userId: string }>) => {
+
+export const onGithubDataCreated = onDocumentCreated('users/{userId}/profileData/githubData', async (event: any) => {
+  const db = getFirestore();
+  const batch = db.batch();
+  const publicDataRef = db.doc(`users/${event.params.userId}/publicData`);
+  const eventData = event?.data();
+  if (eventData && eventData.exists && typeof eventData.data === 'function') {
+    batch.set(publicDataRef, { ...(eventData.data() as any) }, { merge: true });
+    await batch.commit();
+  }
+});
+
+
+// async (event: FirestoreEvent<DocumentSnapshot<DocumentData> | undefined, { userId: string, repoId: string }>) => {
+export const onRepoCreated = onDocumentCreated('users/{userId}/repos/{repoId}', async (event: any) => {
+  const db = getFirestore();
+  const batch = db.batch();
+  const userRef = db.collection('users').doc(event.params.userId);
+  const userSnap = await userRef.get();
+  const userName = userSnap.data()?.userName;
+  if (typeof userName === 'string') {
+    const username_lowercase = userName.toLowerCase();
+    const eventData = event?.data();
+    if (eventData && eventData.exists && typeof eventData.data === 'function') {
+      const repoName = eventData.data()?.name;
+      if (typeof repoName === 'string') {
+        const reponame_lowercase = repoName.toLowerCase();
+        batch.update(eventData.ref, { username_lowercase, reponame_lowercase });
+        const projectDataRef = db.doc(`users/${event.params.userId}/repos/${event.params.repoId}/projectData/mainContent`);
+        batch.update(projectDataRef, { username_lowercase, reponame_lowercase });
+      }
+    }
+  }
+  await batch.commit();
+});
+
+
+// NOTE: End of test implementation of the cloud functions that run when a new document is added into the relevant collections
+/////////////////////////////////////////////////
+
+
+
+// export const onUserCreated = onDocumentCreated('users/{userId}', async (event: FirestoreEvent<QueryDocumentSnapshot | undefined, { userId: string; }>) => {
+//   const db = getFirestore();
+//   const batch = db.batch();
+//   const data = event.data();
+//   if (data) {
+//     const userName = data.get('userName');
+//     if (typeof userName === 'string') {
+//       const username_lowercase = userName.toLowerCase();
+//       batch.update(event.ref, { username_lowercase });
+//       const profileDataRef = event.ref.collection('profileData');
+//       const profileDataSnapshot = await profileDataRef.get();
+//       for (const profileDataDoc of profileDataSnapshot.docs) {
+//         batch.update(profileDataDoc.ref, { username_lowercase });
+//       }
+//     }
+//   }
+//   await batch.commit();
+// });
+
+// export const onUserCreated = onDocumentCreated('users/{userId}', async (event: FirestoreEvent<QueryDocumentSnapshot | undefined, { userId: string; }>) => {
+//   const db = getFirestore();
+//   const batch = db.batch();
+//   const data = event.data();
+//   if (data) {
+//     const userName = data.userName;
+//     if (typeof userName === 'string') {
+//       const username_lowercase = userName.toLowerCase();
+//       batch.update(event.ref, { username_lowercase });
+//       const profileDataRef = event.ref.collection('profileData');
+//       const profileDataSnapshot = await profileDataRef.get();
+//       for (const profileDataDoc of profileDataSnapshot.docs) {
+//         batch.update(profileDataDoc.ref, { username_lowercase });
+//       }
+//     }
+//   }
+//   await batch.commit();
+// });
+
+// duplicateToDeprecateGithubDataCollection:
+// This function can be triggered when the 'githubData' document is created inside the 'profileData' collection group.
+
+// export const onGithubDataCreated = onDocumentCreated('users/{userId}/profileData/githubData', async (event, context) => {
+//   const db = getFirestore();
+//   const batch = db.batch();
+//   const publicDataRef = event.ref.parent.doc('publicData');
+//   batch.set(publicDataRef, { ...event.data() }, { merge: true });
+//   await batch.commit();
+// });
+
+// addLowercaseUsernameAndReponameInReposAndMainContentCollections:
+// This function can be triggered when a new document is created in the 'repos' collection.
+
+
+
+// export const onRepoCreated = onDocumentCreated('users/{userId}/repos/{repoId}', async (event: FirestoreEvent<DocumentSnapshot<DocumentData> | undefined, { userId: string, repoId: string }>) => {
+//   const db = getFirestore();
+//   const batch = db.batch();
+//   const userRef = db.collection('users').doc(event.params.userId);
+//   const userSnap = await userRef.get();
+//   const userName = userSnap.data()?.userName;
+//   if (typeof userName === 'string') {
+//     const username_lowercase = userName.toLowerCase();
+//     const repoName = event.data()?.get('name');
+//     if (typeof repoName === 'string') {
+//       const reponame_lowercase = repoName.toLowerCase();
+//       batch.update(event.ref, { username_lowercase, reponame_lowercase });
+//       const projectDataRef = db.doc(`users/${event.params.userId}/repos/${event.params.repoId}/projectData/mainContent`);
+//       batch.update(projectDataRef, { username_lowercase, reponame_lowercase });
+//     }
+//   }
+//   await batch.commit();
+// });
+
+
+// const reponame_lowercase = repoName.toLowerCase();
+// batch.set(event.ref, { username_lowercase, reponame_lowercase }, { merge: true });
+// const projectDataRef = event.ref.collection('projectData').doc('mainContent');
+// batch.set(projectDataRef, { username_lowercase, reponame_lowercase }, { merge: true });
+// }
+// }
+// await batch.commit();
+// });
+// export const onRepoCreated = onDocumentCreated('users/{userId}/repos/{repoId}', async (event, context) => {
+//   const db = getFirestore();
+//   const batch = db.batch();
+//   const userRef = db.collection('users').doc(context.params.userId);
+//   const userSnap = await userRef.get();
+//   const userName = userSnap.data().userName;
+//   if (typeof userName === 'string') {
+//     const username_lowercase = userName.toLowerCase();
+//     const repoName = event.data().name;
+//     if (typeof repoName === 'string') {
+//       const reponame_lowercase = repoName.toLowerCase();
+//       batch.set(event.ref, { username_lowercase, reponame_lowercase }, { merge: true });
+//       const projectDataRef = event.ref.collection('projectData').doc('mainContent');
+//       batch.set(projectDataRef, { username_lowercase, reponame_lowercase }, { merge: true });
+//     }
+//   }
+//   await batch.commit();
+// });
+
+
 // makeReponameLowercaseInReposCollection
 // - In every document inside the 'repos' collection - Copy ‘name’ field to ‘reponame_lowercase’ as lowercase
 
@@ -273,10 +466,10 @@ export const addLowercaseUsernameAndReponameInReposAndMainContentCollections = o
 // export const makeReponameLowercaseInReposCollection = onRequest(async (req, res) => {
 //   const db = getFirestore();
 //   const reposRef = db.collection('repos');
-//   const snapshot = await reposRef.get();
+//   const eventshot = await reposRef.get();
 
 //   const batch = db.batch();
-//   snapshot.forEach((doc) => {
+//   eventshot.forEach((doc) => {
 //     const name = doc.data().name;
 //     if (typeof name === 'string') {
 //       const reponame_lowercase = name.toLowerCase();
@@ -295,25 +488,25 @@ export const addLowercaseUsernameAndReponameInReposAndMainContentCollections = o
 
 // NOTE: outcome created in addLowercaseUsernameAndReponameInReposAndMainContentCollections
 
-export const makeUsernameLowercaseInReposCollection = onRequest(async (req, res) => {
-  const db = getFirestore();
-  const reposRef = db.collection('repos');
-  const snapshot = await reposRef.get();
+// export const makeUsernameLowercaseInReposCollection = onRequest(async (req, res) => {
+//   const db = getFirestore();
+//   const reposRef = db.collection('repos');
+//   const eventshot = await reposRef.get();
 
-  const batch = db.batch();
-  snapshot.forEach((doc) => {
-    const login = doc.data().owner?.login;
-    if (typeof login === 'string') {
-      const username_lowercase = login.toLowerCase();
-      batch.update(reposRef.doc(doc.id), {
-        'owner.lowercase_username': username_lowercase,
-      });
-    }
-  });
+//   const batch = db.batch();
+//   eventshot.forEach((doc) => {
+//     const login = doc.data().owner?.login;
+//     if (typeof login === 'string') {
+//       const username_lowercase = login.toLowerCase();
+//       batch.update(reposRef.doc(doc.id), {
+//         'owner.lowercase_username': username_lowercase,
+//       });
+//     }
+//   });
 
-  await batch.commit();
-  res.status(200).send('Updated usernames in repos collection.');
-});
+//   await batch.commit();
+//   res.status(200).send('Updated usernames in repos collection.');
+// });
 
 // addLowercaseUsernameInMainContentCollection
 // Create new lowercase_username field in the mainContent document inside the ‘projectData’ collection group
@@ -358,10 +551,10 @@ export const makeUsernameLowercaseInReposCollection = onRequest(async (req, res)
 // export const duplicateToDeprecateGithubDataCollection = onRequest(async (req, res) => {
 //   const db = getFirestore();
 //   const usersRef = db.collection('users');
-//   const snapshot = await usersRef.get();
+//   const eventshot = await usersRef.get();
 
 //   const batch = db.batch();
-//   snapshot.forEach((userDoc) => {
+//   eventshot.forEach((userDoc) => {
 //     const userId = userDoc.id;
 //     logger.log('trying userId', userId);
 //     const profileDataRef = usersRef.doc(userId).collection('profileData');
@@ -384,12 +577,12 @@ export const makeUsernameLowercaseInReposCollection = onRequest(async (req, res)
 // export const duplicateToDeprecateGithubDataCollectionTwo = onRequest(async (req, res) => {
 //   const db = getFirestore();
 //   const usersRef = db.collection('users');
-//   const snapshot = await usersRef.get();
+//   const eventshot = await usersRef.get();
 
 //   const batch = db.batch();
 //   let setBatch = false;
 //   let committed = false; // initialize committed variable to false
-//   snapshot.forEach(async (userDoc) => {
+//   eventshot.forEach(async (userDoc) => {
 //    setBatch = false
 
 //     const userId = userDoc.id;
@@ -427,10 +620,10 @@ export const makeUsernameLowercaseInReposCollection = onRequest(async (req, res)
 // export const duplicateToDeprecateGithubDataCollection = onRequest(async (req, res) => {
 //   const db = getFirestore();
 //   const profileDataRef = db.collectionGroup('profileData');
-//   const snapshot = await profileDataRef.get();
+//   const eventshot = await profileDataRef.get();
 
 //   const batch = db.batch();
-//   snapshot.forEach(doc => {
+//   eventshot.forEach(doc => {
 //     const githubData = doc.data().githubData;
 //     if (githubData) {
 //             const publicDataRef = profileDataRef.collection('publicData');
