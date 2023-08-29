@@ -11,6 +11,7 @@ storage.rules
 firebase-debug.log
 firebase.json
 ui-debug.log
+**/.runtimeconfig.json
 
 # backup
 /backup
