@@ -1,22 +1,23 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { getCookie, setCookie } from 'cookies-next';
+import { auth, db } from '../firebase/clientApp';
 import { Auth, onAuthStateChanged } from 'firebase/auth';
+import { AuthData } from '../types';
+import { getCookie, setCookie } from 'cookies-next';
 import {
-  addDoc,
   collection,
   doc,
-  getDoc,
-  serverTimestamp,
   setDoc,
+  getDoc,
+  addDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
-import { auth, db } from '../firebase/clientApp';
-import { getGithubProfileData } from '../lib/github';
 import {
   getGithubDataFromFirebase,
   getProfileDataGithub,
   setGitHubProfileDataInFirebase,
 } from '../lib/profiles';
-import { AuthData } from '../types';
+import { getGithubProfileData } from '../lib/github';
+
 
 // Add a new document with a generated id.
 // Create the context to store user data
@@ -40,7 +41,6 @@ export const AuthProvider = ({ children }: Props) => {
     userProviderId: '',
     userId: '',
     userName: '',
-    username_lowercase: '',
     githubId: '',
     displayName: '',
     userEmail: '',
@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }: Props) => {
           userProviderId: user.providerData[0].providerId,
           userId: user.uid,
           userName: user.reloadUserInfo.screenName,
-          username_lowercase: user.reloadUserInfo.screenName.toLowerCase(),
           githubId: user.providerData[0].uid,
           displayName: user.displayName,
           userEmail: user.email,
@@ -88,32 +87,30 @@ export const AuthProvider = ({ children }: Props) => {
           // use the firebase auth provided uid as id for new user
           await setDoc(doc(colRef, user.uid), newUserData)
             .then(async (cred) => {
-              // Get full github profile data
-              const githubPublicProfileData = await getGithubProfileData(
-                requiredData.userName
-              );
+              // TODO: All of the data duplication on register can be moved to cloud functions
 
               // add the public profile data to the database
-              const githubProfileDataForFirestore = {
+              const duplicateUserData = {
                 ...requiredData,
-                ...githubPublicProfileData,
                 gitconnect_created_at: new Date().toISOString(),
                 gitconnect_updated_at: new Date().toISOString(),
                 gitconnect_created_at_unix: Date.now(),
                 gitconnect_updated_at_unix: Date.now(),
               };
-              const docRef = doc(db, `users/${user.uid}/profileData/publicData`);
 
               await setDoc(
-                docRef,
-                {
-                  ...githubProfileDataForFirestore,
-                },
-                { merge: true }
+                doc(db, `users/${user.uid}/profileData/publicData`),
+                duplicateUserData
               ).then(async () => {
+                // add the github data to the database
+                const githubPublicProfileData = await getGithubProfileData(
+                  duplicateUserData.userName
+                );
 
-                // TODO: Remove the below code once githubdata is deprecated
-                const docRef = doc(db, `users/${user.uid}/profileData/githubData`);
+                const docRef = doc(
+                  db,
+                  `users/${user.uid}/profileData/githubData`
+                );
 
                 await setDoc(
                   docRef,
@@ -127,41 +124,6 @@ export const AuthProvider = ({ children }: Props) => {
                   { merge: true }
                 );
               });
-
-              // TODO: All of the data duplication on register can be moved to cloud functions
-
-              // // add the public profile data to the database
-              // const duplicateUserData = {
-              //   ...requiredData,
-              //   gitconnect_created_at: new Date().toISOString(),
-              //   gitconnect_updated_at: new Date().toISOString(),
-              //   gitconnect_created_at_unix: Date.now(),
-              //   gitconnect_updated_at_unix: Date.now(),
-              // };
-
-              // await setDoc(
-              //   doc(db, `users/${user.uid}/profileData/publicData`),
-              //   duplicateUserData
-              // ).then(async () => {
-              //   // add the github data to the database
-              //   const githubPublicProfileData = await getGithubProfileData(
-              //     duplicateUserData.userName
-              //   );
-
-              //   const docRef = doc(db, `users/${user.uid}/profileData/githubData`);
-
-              //   await setDoc(
-              //     docRef,
-              //     {
-              //       ...githubPublicProfileData,
-              //       gitconnect_created_at: new Date().toISOString(),
-              //       gitconnect_updated_at: new Date().toISOString(),
-              //       gitconnect_created_at_unix: Date.now(),
-              //       gitconnect_updated_at_unix: Date.now(),
-              //     },
-              //     { merge: true }
-              //   );
-              // });
             })
             .catch((error) => {
               console.log('Error adding document: ', error);

@@ -126,7 +126,7 @@ function ProjectSettingsModal({
       liveUrl: liveUrl || '',
       repoUrl: repoUrl || '',
       projectCategories: projectCategories || [],
-      visibleToPublic: visibleToPublic || false,
+      // visibleToPublic: visibleToPublic || false,
       openToCollaboration: openToCollaboration || false,
       // coverImage: coverImage || '',
       projectDescription: projectDescription || '',

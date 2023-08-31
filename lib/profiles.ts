@@ -84,6 +84,8 @@ export async function getProfileData(id: string) {
 
 // GETTING DATA - DOES NOT SET
 
+// FIXME: Delete this function
+
 export async function getGithubDataFromFirebase(
   firebaseId: string,
   gitHubUserName: string
@@ -141,6 +143,8 @@ export async function getGithubDataFromFirebaseIdOnly(
 // NOTE - checks if data in firebase, if not, gets from github and sets in firebase
 // Not in use anymore
 
+// FIXME: Delete this function
+
 export async function getProfileDataGithub(id: string, userName: string) {
   // console.log(
   //   `Getting Github Data for user ID ${id} with username ${userName}`
@@ -171,6 +175,8 @@ export async function getProfileDataGithub(id: string, userName: string) {
 }
 
 // Gets and sets github data in firebase - data must be sent to function seperately from github.ts util
+
+// FIXME: Delete this function - not used anywhere
 
 export async function setGitHubProfileDataInFirebase(
   firebaseId: string,
@@ -205,6 +211,8 @@ export async function setGitHubProfileDataInFirebase(
       });
   }
 }
+
+// FIXME: Delete this function - not used anywhere
 
 // NOT IN USE
 export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(
@@ -258,6 +266,8 @@ export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(
 
 // NOTE: This is a get OR set function - if data hasn't been added all when 'getting' - the default data from github will be set
 // NOT IN USE
+// FIXME: Delete this function - not used anywhere
+
 export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(
   id: string,
   userName: string
@@ -317,11 +327,22 @@ export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(
 // TODO: secure the data paramater with validation of types and data
 
 export async function updateProfileDataGithub(id: string, data: any) {
-  const docRef = doc(db, `users/${id}/profileData/githubData`);
-  const docSnap = await getDoc(docRef);
 
-  await setDoc(docRef, { ...data }, { merge: true }).then(() => {
-    // console.log(`successfully added the following to database:`)
+  // NOTE - this is the function for updating profile changes to firestore
+  // I am duplicating this logic to publicData and githubData while we deprecate githubData
+  // TODO - remove this logic once githubData is deprecated
+
+  const githubDataDocRef = doc(db, `users/${id}/profileData/githubData`);
+  const docSnap = await getDoc(githubDataDocRef);
+
+  const publicDataDocRef = doc(db, `users/${id}/profileData/publicData`);
+
+  await setDoc(githubDataDocRef, { ...data }, { merge: true }).then(async () => {
+
+    // const publicDataDocSnap = await getDoc(publicDataDocRef);
+    await setDoc(publicDataDocRef, { ...data }, { merge: true })
+
+    console.log(`successfully added updated profile data to BOTH githubdata and publicData:`)
     // console.log(data)
   });
 }
