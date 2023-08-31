@@ -58,6 +58,7 @@ export async function getStaticProps({ params }: any) {
 
   // console.log('projectData', projectData)
 
+  // TODO: Deprecate githubdata dependency
   const githubProfileData: any = await getGithubDataFromFirebaseIdOnly(
     projectData.id
   );
