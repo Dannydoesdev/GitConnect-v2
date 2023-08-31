@@ -66,9 +66,9 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
 
   const form = useForm({
     initialValues: {
-      name: `${name}`,
-      location: `${location}`,
-      bio: `${bio}`,
+      name: name ? `${name}` : ``,
+      location: location ? `${location}` : ``,
+      bio: bio ? `${bio}` : ``,
     },
   });
 
@@ -115,7 +115,7 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
         </Button>
       }
         {/* Check if any bio exists */}
-      { bio &&
+      {/* { bio && */}
         <Paper
           radius="md"
           withBorder
@@ -124,7 +124,7 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
           })}
         >
-
+      {/* } */}
           {editMode && currentUser ?
             // If current user editing profile - show forms to update content in place of static content
             <>
@@ -180,8 +180,8 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
 
           }
         </Paper>
-        // End bio exists check
-      }
+       {/* // End bio exists check */}
+     {/* } */}
     </>
   );
 

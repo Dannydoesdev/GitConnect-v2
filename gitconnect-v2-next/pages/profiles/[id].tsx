@@ -10,7 +10,8 @@ import { Space, Container, Grid } from '@mantine/core';
 import { AuthContext } from '../../context/AuthContext';
 // import AuthRoute from "../../HoC/authRoute"
 import React, { useContext, useEffect, useState } from 'react';
-import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
+// import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
+import { ProfilePageUserPanel } from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelBackup';
 import { useRouter } from 'next/router';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
 
