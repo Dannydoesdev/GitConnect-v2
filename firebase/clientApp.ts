@@ -29,9 +29,10 @@ export const auth = getAuth(app);
 // init firestore
 export const db = getFirestore(firebaseApp);
 
-if (process.env.FIRESTORE_EMULATOR_HOST) {
-  connectFirestoreEmulator(db, 'localhost', 8080);
-}
+// NOTE - firestore won't work with this setup unless you configure and run the emulator
+// if (process.env.FIRESTORE_EMULATOR_HOST) {
+//   connectFirestoreEmulator(db, 'localhost', 8080);
+// }
 
 export const storage = getStorage(app);
 

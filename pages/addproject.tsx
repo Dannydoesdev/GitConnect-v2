@@ -128,6 +128,9 @@ const GetRepos = () => {
           ...repo,
           userId,
           hidden: true,
+          userName: userName,
+          username_lowercase: userName.toLowerCase(),
+          reponame_lowercase: repo.name.toLowerCase(),
           gitconnect_created_at: new Date().toISOString(),
           gitconnect_updated_at: new Date().toISOString(),
           gitconnect_created_at_unix: Date.now(),
@@ -149,6 +152,8 @@ const GetRepos = () => {
             pathname: `/portfolio/testedit/${repo.id}`,
             query: {
               name: repo.name,
+              username_lowercase: userName.toLowerCase(),
+              reponame_lowercase: repo.name.toLowerCase(),
               description: repo.description,
               url: repo.html_url,
               userId: userId,

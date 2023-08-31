@@ -8,6 +8,11 @@ typings/
 # Node.js dependency directory
 node_modules/
 
+# log files
+**/.log
+.log
+*.log
+
 # sensitive info
 .env
 .runtimeconfig.json
