@@ -121,6 +121,8 @@ const GetRepos = () => {
   const [projectDataState, setProjectData] = useAtom(projectDataAtom);
 
   const addRepo = async (repo: RepoDataFull) => {
+    const reponame_lowercase = repo.name.toLowerCase();
+    console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
     try {
       await setDoc(
         doc(db, `users/${userId}/repos/${repo.id}`),
@@ -149,7 +151,7 @@ const GetRepos = () => {
 
         router.push(
           {
-            pathname: `/portfolio/testedit/${repo.id}`,
+            pathname: `/portfolio/edit/${reponame_lowercase}`,
             query: {
               name: repo.name,
               username_lowercase: userName.toLowerCase(),
@@ -160,8 +162,24 @@ const GetRepos = () => {
               newRepoParam: JSON.stringify(true),
             },
           },
-          `/portfolio/testedit/${repo.id}`
+          `/portfolio/edit/${reponame_lowercase}`,
         );
+
+        // router.push(
+        //   {
+        //     pathname: `/portfolio/testedit/${repo.id}`,
+        //     query: {
+        //       name: repo.name,
+        //       username_lowercase: userName.toLowerCase(),
+        //       reponame_lowercase: repo.name.toLowerCase(),
+        //       description: repo.description,
+        //       url: repo.html_url,
+        //       userId: userId,
+        //       newRepoParam: JSON.stringify(true),
+        //     },
+        //   },
+        //   `/portfolio/testedit/${repo.id}`
+        // );
       });
         
       // router.push(

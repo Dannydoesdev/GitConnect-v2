@@ -9,7 +9,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "emulatedata": "firebase emulators:start --import ../backup/database_backup_180823"
+    "emulatedata": "firebase emulators:start --import ../backup/database_backup_180823",
+    "emulatedatanew": "firebase emulators:start --import ../backup/database_backup_local"
   },
   "engines": {
     "node": "18"
