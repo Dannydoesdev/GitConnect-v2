@@ -1,49 +1,14 @@
-// export async function getStaticProps({ params }) {
-//   const { username } = params;
-
-//   // Fetch the data for the specific user
-//   // You might need to create a function to do this
-//   const userData = await getUserData(username);
-
-//   return {
-//     props: {
-//       userData,
-//     },
-//     revalidate: 5,
-//   };
-// }
-
-// export async function getStaticPaths() {
-//   const usernames = await getAllUsernames();
-
-//   const paths = usernames.map((username) => ({
-//     params: { username },
-//   }));
-
-//   return {
-//     paths,
-//     fallback: true,
-//   };
-// }
-
-// export default function UserPage({ userData }) {
-//   // Render the user's data
-//   return (
-//     <div>
-//       <h1>{userData.username}'s Portfolio</h1>
-//       {/* Rest of your component */}
-//     </div>
-//   );
-// }
-
 import {
   getAllProfileIds,
   getAllProfileUsernames,
+  getAllProfileUsernamesLowercase,
   getGithubDataFromFirebaseIdOnly,
   getProfileDataPublic,
+  getProfileDataWithFirebaseIdNew,
+  getProfileDataWithUsernameLowercase,
 } from '../../lib/profiles';
 import { getGithubProfileData } from '../../lib/github';
-import { getAllProjectDataFromProfile, getAllUserProjectsWithUsername } from '../../lib/projects';
+import { getAllProjectDataFromProfile, getAllUserProjectsWithUsername, getAllUserProjectsWithUsernameLowercase } from '../../lib/projects';
 import ProfilePageProjectGrid from '../../components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 import { Space, Container, Grid } from '@mantine/core';
 import { AuthContext } from '../../context/AuthContext';
@@ -52,37 +17,139 @@ import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUs
 import { useRouter } from 'next/router';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
 
+
+
 export async function getStaticProps({ params }: any) {
-  // console.log(params)
-  const projectData: any = await getAllUserProjectsWithUsername(params.username);
+  // try {
+    const projectData: any = await getAllUserProjectsWithUsernameLowercase(params.username);
+    // const profileData: any = await getProfileDataWithUsernameLowercase(params.username);
+    // console.log('static props user id')
+    // console.log(projectData[0]?.docData.userId)
+    const userId = projectData[0]?.docData.userId;
+    const profileData: any = await getProfileDataWithFirebaseIdNew(userId);
 
-  // console.log('projectData', projectData)
+    const checkForUndefined = (obj: any) => {
+      // console.log('checking for undefined')
+      for (const key in obj) {
+        if (obj[key] === undefined) {
+          console.log(`Undefined found in key: ${key}`);
+        } else if (typeof obj[key] === 'object') {
+          checkForUndefined(obj[key]);
+        }
+      }
+    };
 
-  // TODO: Deprecate githubdata dependency
-  const githubProfileData: any = await getGithubDataFromFirebaseIdOnly(
-    projectData.id
-  );
+    const checkForNonSerializable = (obj: any) => {
+      // console.log('checking for non-serializable')
+      for (const key in obj) {
+        if (typeof obj[key] === 'function' || typeof obj[key] === 'symbol') {
+          console.log(`Non-serializable type found in key: ${key}`);
+        } else if (typeof obj[key] === 'object') {
+          checkForNonSerializable(obj[key]);
+        }
+      }
+    };
 
-  // console.log('githubProfileData', githubProfileData)
-// FIXME: if user is coming from editing or adding a project - we should trigger a revalidation
-  
-  return {
-    props: {
-      projects: projectData?.projectData,
-      profilePanel: githubProfileData?.docData,
-    },
-    revalidate: 5,
-  };
+    const logTypeOfEachField = (obj: any) => {
+      for (const key in obj) {
+        console.log(`Type of ${key}: ${typeof obj[key]}`);
+        if (typeof obj[key] === 'object') {
+          logTypeOfEachField(obj[key]);
+        }
+      }
+    };
+    // Existing function where you fetch projectData
+// const fetchProjectData = async () => {
+  // ... Your existing code to fetch data
+
+  // Check for undefined values before returning
+    checkForUndefined(projectData);
+    checkForNonSerializable(projectData);
+    // logTypeOfEachField(projectData);
+
+
+  // return projectData;
+// };
+
+    
+    // console.log("Project Data:", projectData);
+    console.log("First few Project Data:", projectData.slice(0, 2));
+    console.log("Profile Data:", profileData);
+
+    // if (!projectData || !profileData || projectData.includes(undefined) || profileData.includes(undefined)) {
+    //   console.error("Data contains undefined values");
+    //   // throw new Error("Data contains undefined values");
+    // }
+    // if (!projectData || !profileData) {
+    //   console.error("Data is undefined");
+    //   throw new Error("Data is undefined");
+    // }
+
+    // if (!projectData?.docData || !profileData?.docData) {
+    //   throw new Error("Data is undefined");
+    // }
+
+    return {
+      props: {
+        projects: projectData ?? null,
+        profilePanel: profileData.docData ?? null,
+      },
+      revalidate: 5,
+    };
+  // }
+  // catch (error) {
+  //   console.error("Error in getStaticProps:", error);
+  //   // return {
+  //   //   notFound: true,
+  //   // };
+  // }
 }
 
-export async function getStaticPaths() {
-  const usernames = await getAllProfileUsernames();
 
-  const paths = usernames.map((username: any) => ({
-    params: { username: username.username.toLowerCase() },
+// export async function getStaticProps({ params }: any) {
+//   console.log(params)
+//   // const projectData: any = await getAllUserProjectsWithUsername(params.username);
+//   const projectData: any = await getAllUserProjectsWithUsernameLowercase(params.username);
+// // console.log(projectData.id)
+//   // console.log('projectData', projectData)
+//   // const profileData: any = await getProfileDataWithFirebaseIdNew(projectData.id);
+
+//   // TODO: Test performance of using username instead of firebaseId:
+//   const profileData: any = await getProfileDataWithUsernameLowercase(params.username);
+
+//   // TODO: Deprecate githubdata dependency
+//   // const githubProfileData: any = await getGithubDataFromFirebaseIdOnly(
+//   //   projectData.id
+//   // );
+//   console.log('projectData in staticprops', projectData[0].docData)
+//   console.log('profileData in staticprops', profileData)
+
+//   // console.log('githubProfileData', githubProfileData)
+// // FIXME: if user is coming from editing or adding a project - we should trigger a revalidation
+  
+//   return {
+//     props: {
+//       projects: projectData?.docData,
+//       profilePanel: profileData?.docData,
+//     },
+//     revalidate: 5,
+//   };
+// }
+
+export async function getStaticPaths() {
+  const usernamesLowercaseArr = await getAllProfileUsernamesLowercase();
+  
+  const paths = usernamesLowercaseArr.map((username: any) => ({
+    params: { username: username.usernameLowercase },
   }));
 
-  // console.log('paths', paths)
+  // NOTE: OLD method for paths
+  // const usernames = await getAllProfileUsernames();
+  // const paths = usernames.map((username: any) => ({
+  //   params: { username: username.username.toLowerCase() },
+  // }));
+
+  console.log('paths', paths)
 
   return {
     paths,
@@ -101,6 +168,9 @@ export default function Portfolio({ projects, profilePanel }: any) {
     );
   }
 
+  console.log('hit profile page')
+  // console.log(projects)
+  console.log(profilePanel)
 
   // useEffect(() => {
 

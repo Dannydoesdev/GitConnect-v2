@@ -10,6 +10,7 @@ import {
   getDocs,
   doc,
   serverTimestamp,
+  collectionGroup,
 } from 'firebase/firestore';
 import { getGithubProfileData } from './github';
 
@@ -24,6 +25,23 @@ export async function getAllProfileIds() {
     return {
       // ...data,
       id: data.userId,
+    };
+  });
+
+  return profileIds;
+}
+
+export async function getAllProfileUsernamesLowercase() {
+  // const profiles = [];
+  const q = query(collection(db, 'users'));
+  const querySnapshot = await getDocs(q);
+
+  const profileIds: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    // console.log(data);
+    return {
+      // ...data,
+      usernameLowercase: data.username_lowercase,
     };
   });
 
@@ -103,6 +121,99 @@ export async function getGithubDataFromFirebase(
     const docData = docSnap.data();
     return {
       id: firebaseId,
+      docData,
+    };
+  }
+}
+
+export async function getProfileDataWithUsernameLowercase(
+  usernameLowercase: string
+) {
+
+  usernameLowercase = usernameLowercase.toLowerCase();
+
+  const profileQuery = query(collectionGroup(db, 'profileData'), where('username_lowercase', '==', usernameLowercase));
+  const profileQuerySnapshot = await getDocs(profileQuery);
+  // console.log("Query Snapshot for Profile:", profileQuerySnapshot);
+
+  // console.log('returned from getProfileDataWithUsernameLowercase query:')
+// console.log(profileQuerySnapshot.docs)
+  
+
+  return profileQuerySnapshot.docs
+    .map((doc: any) => {
+      // if (doc.id === 'githubData') { return null; }
+      const docData = { ...doc.data() };
+      return {
+        docData,
+      };
+    })
+    // .filter(Boolean); // Remove null or undefined values
+}
+  // console.log('returned from getProfileDataWithUsernameLowercase query:')
+  // return profileQuerySnapshot.docs.map((doc: any) => {
+  //   if (doc.id === 'githubData') { return }
+  //   // console.log(doc.data())
+  //   const docData = { ...doc.data() };
+  //   // console.log(doc.id, ' => ', doc.data());
+
+  //   return {
+  //     // id: docData.userId,
+  //     docData,
+  //   };
+  // });
+
+  // const querySnapshot = await getDocs(projectQuery);
+
+  // const q = query(collection(db, 'users'), where('username_lowercase', '==', usernameLowercase));
+  // const querySnapshot = await getDocs(q);
+
+  // console.log('returned from getProfileDataWithUsernameLowercase query:')
+  // return querySnapshot.docs.map((doc: any) => {
+  //   console.log(doc.id, ' => ', doc.data());
+  //   const docData = { ...doc.data() };
+
+  //   return {
+  //     // id,
+  //     docData,
+  //     id: docData.userId,
+  //   };
+  // });
+
+  //   const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
+  //   const docSnap = await getDoc(docRef);
+
+  // if (docSnap.exists()) {
+  //   // console.log('Github profile data retrieved')
+  //   const docData = docSnap.data();
+  //   return {
+  //     id: firebaseId,
+  //     docData,
+  //   };
+  // }
+// }
+
+
+export async function getProfileDataWithFirebaseIdNew(
+  firebaseId: string,
+  // gitHubUserName?: string
+  // usernameLowercase: string
+) {
+  console.log('firebase ID in getProfileDataWithFirebaseIdNew:')
+  console.log(firebaseId)
+  
+    const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
+    const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    // console.log('Github profile data retrieved')
+    const docData = { ...docSnap.data() };
+
+    console.log('returned from getProfileDataWithFirebaseIdNew query:')
+    console.log(docData)
+
+    return {
+      // id: firebaseId,
       docData,
     };
   }

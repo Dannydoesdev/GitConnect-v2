@@ -5,8 +5,6 @@ import {
   getProjectTextEditorContent,
   getSingleProjectByName,
   getAllUserAndProjectNameCombinations,
-  getAllUserAndProjectNameCombinationsLowercase,
-  getSingleProjectByNameLowercase,
 } from '@/lib/projects';
 import ViewProject from '@/components/Portfolio/ViewProject/ViewProjectContent/ViewProject';
 import { ViewProjectHero } from '@/components/Portfolio/ViewProject/ViewProjectHero/ViewProjectHero';
@@ -24,9 +22,7 @@ export async function getStaticProps({ params }: any) {
   // console.log(params.id)
   if (!projectname) return { props: { projectData: null, textContent: null } };
 
-  // const projectData: any = await getSingleProjectByName(projectname as string);
-  const projectData: any = await getSingleProjectByNameLowercase(projectname as string);
-
+  const projectData: any = await getSingleProjectByName(projectname as string);
   // const projectData: any = await getSingleProjectByUserAndName(username as string, projectname as string);
   // console.log('projectData', projectData)
   // console.log('userId static props')
@@ -52,9 +48,7 @@ export async function getStaticProps({ params }: any) {
 
 export async function getStaticPaths() {
   // const projectnames = await getAllProjectNames();
-  // const pathNames = await getAllUserAndProjectNameCombinations();
-  const pathNames = await getAllUserAndProjectNameCombinationsLowercase();
-
+  const pathNames = await getAllUserAndProjectNameCombinations();
 
   // projectIds.map((id: any) => console.log(id.id));
   type pathName = { username?: string; projectname?: string };

@@ -45,6 +45,13 @@ ui-debug.log
 **/.DS_Store
 *.pem
 
+# logs
+*.log
+**/*.log
+.log*
+.log
+functions/*.log
+
 # debug
 npm-debug.log*
 yarn-debug.log*
