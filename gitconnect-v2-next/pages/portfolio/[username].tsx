@@ -63,8 +63,8 @@ export async function getStaticProps({ params }: any) {
   // ... Your existing code to fetch data
 
   // Check for undefined values before returning
-    checkForUndefined(projectData);
-    checkForNonSerializable(projectData);
+    // checkForUndefined(projectData);
+    // checkForNonSerializable(projectData);
     // logTypeOfEachField(projectData);
 
 
@@ -73,8 +73,8 @@ export async function getStaticProps({ params }: any) {
 
     
     // console.log("Project Data:", projectData);
-    console.log("First few Project Data:", projectData.slice(0, 2));
-    console.log("Profile Data:", profileData);
+    // console.log("First few Project Data:", projectData.slice(0, 2));
+    // console.log("Profile Data:", profileData);
 
     // if (!projectData || !profileData || projectData.includes(undefined) || profileData.includes(undefined)) {
     //   console.error("Data contains undefined values");
@@ -149,7 +149,7 @@ export async function getStaticPaths() {
   //   params: { username: username.username.toLowerCase() },
   // }));
 
-  console.log('paths', paths)
+  // console.log('paths', paths)
 
   return {
     paths,
@@ -168,9 +168,9 @@ export default function Portfolio({ projects, profilePanel }: any) {
     );
   }
 
-  console.log('hit profile page')
+  // console.log('hit profile page')
   // console.log(projects)
-  console.log(profilePanel)
+  // console.log(profilePanel)
 
   // useEffect(() => {
 
