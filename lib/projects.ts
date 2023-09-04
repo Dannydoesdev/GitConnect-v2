@@ -287,7 +287,9 @@ export async function getAllUserProjectsWithUsernameLowercase(usernameLowercase:
   return querySnapshot.docs.map((detail: any) => {
     const docData  = { ...detail.data() };
     // const { docData } = { docData: { ...detail.data() } }; // Destructuring docData
-
+    if (!docData) {
+      return null;
+    }
     return {
       docData,
       

@@ -129,7 +129,7 @@ export async function getGithubDataFromFirebase(
 export async function getProfileDataWithUsernameLowercase(
   usernameLowercase: string
 ) {
-
+  console.log('usernameLowercase in getProfileDataWithUsernameLowercase:', usernameLowercase)
   usernameLowercase = usernameLowercase.toLowerCase();
 
   const profileQuery = query(collectionGroup(db, 'profileData'), where('username_lowercase', '==', usernameLowercase));
@@ -142,14 +142,47 @@ export async function getProfileDataWithUsernameLowercase(
 
   return profileQuerySnapshot.docs
     .map((doc: any) => {
+      console.log('data found')
+      console.log(doc.id, ' => ', doc.data());
+      if (!doc.exists()) {
+        console.log(`cant find doc with username_lowercase: ${usernameLowercase}`)
+        return null;
+      }
       // if (doc.id === 'githubData') { return null; }
-      const docData = { ...doc.data() };
+      const docData  = { ...doc.data() };
       return {
         docData,
+        // ...docData,
       };
     })
     // .filter(Boolean); // Remove null or undefined values
 }
+
+// export async function getProfileDataWithUsernameLowercaseTwo(
+//   firebaseId: string,
+//   // gitHubUserName?: string
+//   // usernameLowercase: string
+// ) {
+//   console.log('firebase ID in getProfileDataWithFirebaseIdNew:')
+//   console.log(firebaseId)
+  
+//     const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
+//     const docSnap = await getDoc(docRef);
+
+//   if (docSnap.exists()) {
+//     // console.log('Github profile data retrieved')
+//     const docData = { ...docSnap.data() };
+
+//     console.log('returned from getProfileDataWithFirebaseIdNew query:')
+//     console.log(docData)
+
+//     return {
+//       // id: firebaseId,
+//       docData,
+//     };
+//   }
+// }
+
   // console.log('returned from getProfileDataWithUsernameLowercase query:')
   // return profileQuerySnapshot.docs.map((doc: any) => {
   //   if (doc.id === 'githubData') { return }
@@ -192,6 +225,7 @@ export async function getProfileDataWithUsernameLowercase(
   //   };
   // }
 // }
+
 
 
 export async function getProfileDataWithFirebaseIdNew(

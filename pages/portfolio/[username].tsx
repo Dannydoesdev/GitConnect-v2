@@ -16,8 +16,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 import { useRouter } from 'next/router';
 import LoadingPage from '../../components/LoadingPage/LoadingPage';
-
-
+import { profile } from 'console';
 
 export async function getStaticProps({ params }: any) {
   // try {
@@ -25,9 +24,19 @@ export async function getStaticProps({ params }: any) {
     // const profileData: any = await getProfileDataWithUsernameLowercase(params.username);
     // console.log('static props user id')
     // console.log(projectData[0]?.docData.userId)
+    let profileData: any;
+  if (!projectData[0]) {
+    console.error("Data is undefined");
+    profileData = await getProfileDataWithUsernameLowercase(params.username);
+    console.log('profileData without projects', profileData)
+  } else {
     const userId = projectData[0]?.docData.userId;
-    const profileData: any = await getProfileDataWithFirebaseIdNew(userId);
+    profileData = await getProfileDataWithFirebaseIdNew(userId);
 
+    // FIXME: Return this if the above isn't working
+    // const profileData: any = await getProfileDataWithFirebaseIdNew(userId);
+
+  }
     const checkForUndefined = (obj: any) => {
       // console.log('checking for undefined')
       for (const key in obj) {
@@ -88,11 +97,11 @@ export async function getStaticProps({ params }: any) {
     // if (!projectData?.docData || !profileData?.docData) {
     //   throw new Error("Data is undefined");
     // }
-
+    console.log('profile panel in static props', profileData)
     return {
       props: {
         projects: projectData ?? null,
-        profilePanel: profileData.docData ?? null,
+        profilePanel: profileData?.docData ?? profileData[0]?.docData ?? null,
       },
       revalidate: 5,
     };
@@ -168,9 +177,13 @@ export default function Portfolio({ projects, profilePanel }: any) {
     );
   }
 
-  // console.log('hit profile page')
-  // console.log(projects)
-  // console.log(profilePanel)
+  
+
+  console.log('hit profile page')
+  console.log('username:', username)
+  console.log('isFallback:', router.isFallback) 
+  console.log('projects:', projects)
+  console.log('profilePanel', profilePanel)
 
   // useEffect(() => {
 
@@ -184,6 +197,8 @@ export default function Portfolio({ projects, profilePanel }: any) {
   //   }
 
   // }, [userData.userId, username, newRepoParam, router]);
+
+  if (!profilePanel) { return };
 
   return (
     <Container fluid mx='md' my='md'>
@@ -199,7 +214,7 @@ export default function Portfolio({ projects, profilePanel }: any) {
             />
           )}
         </Grid.Col>
-
+        {projects && (
         <Grid.Col md={9} lg={10}>
           <Grid gutter='md'>
 
@@ -209,7 +224,8 @@ export default function Portfolio({ projects, profilePanel }: any) {
               />
             </Grid.Col>
           </Grid>
-        </Grid.Col>
+          </Grid.Col>
+          ) }
       </Grid>
     </Container>
   );
