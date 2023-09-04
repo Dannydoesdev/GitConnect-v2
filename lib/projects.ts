@@ -13,6 +13,7 @@ import { profile } from 'console';
 
 export async function getSingleProjectByNameLowercase(repoNameLowercase: string) {
   repoNameLowercase = repoNameLowercase.toLowerCase();
+  console.log(`repoNameLowercase in getSingleProjectByNameLowercase: ${repoNameLowercase}`)
   const q = query(collectionGroup(db, 'repos'), where('reponame_lowercase', '==', repoNameLowercase));
 
   const querySnapshot = await getDocs(q);
@@ -25,6 +26,7 @@ export async function getSingleProjectByNameLowercase(repoNameLowercase: string)
       ...data,
     };
   });
+  console.log(`projectData in getSingleProjectByNameLowercase: ${projectData}`)
   return projectData;
 }
 

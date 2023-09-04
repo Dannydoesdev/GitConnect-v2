@@ -31,6 +31,8 @@ export async function getStaticProps({ params }: any) {
   // console.log('projectData', projectData)
   // console.log('userId static props')
   // console.log(projectData[0].userId);
+      console.log("First few Project Data:", projectData.slice(0, 2));
+    // console.log("Profile Data:", profileData);
   // console.log(projectData[0].id)
   let textEditorContent;
   if (!projectData || !projectData[0]?.userId) {
@@ -55,6 +57,8 @@ export async function getStaticPaths() {
   // const pathNames = await getAllUserAndProjectNameCombinations();
   const pathNames = await getAllUserAndProjectNameCombinationsLowercase();
 
+  // console.log("First few pathNames:", pathNames.slice(0, 10));
+  console.log('pathNames', pathNames)
 
   // projectIds.map((id: any) => console.log(id.id));
   type pathName = { username?: string; projectname?: string };
