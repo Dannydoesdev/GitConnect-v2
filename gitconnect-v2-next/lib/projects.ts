@@ -120,6 +120,7 @@ export async function getAllUserAndProjectNameCombinationsLowercase() {
     if (!data) {
       return null;
     }
+    console.log(data)
     return {
       projectname: data.reponame_lowercase.toString(),
       username: data.username_lowercase.toString(),

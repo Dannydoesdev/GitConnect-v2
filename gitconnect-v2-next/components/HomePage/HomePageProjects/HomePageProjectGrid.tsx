@@ -51,8 +51,10 @@ const HomePageProjectGrid = ({ projects }: any) => {
                   // views={project.views ? project.views : 0}
                   // stars={project.stars ? (project.stars).length : 0}
                   avatar={project.owner.avatar_url}
-                  profileUrl={`/profiles/${project.userId}`}
-                  link={`/profiles/projects/${project.id}`} />
+                  profileUrl={`/portfolio/${project.username_lowercase}`}
+                  link={`/portfolio/${project.username_lowercase}/${project.reponame_lowercase}`} />
+                  {/* // profileUrl={`/profiles/${project.userId}`}
+                  // link={`/profiles/projects/${project.id}`} /> */}
               </div>
             )
           })

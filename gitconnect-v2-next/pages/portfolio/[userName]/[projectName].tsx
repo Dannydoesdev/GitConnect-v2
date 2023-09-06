@@ -31,7 +31,7 @@ export async function getStaticProps({ params }: any) {
   // console.log('projectData', projectData)
   // console.log('userId static props')
   // console.log(projectData[0].userId);
-      console.log("First few Project Data:", projectData.slice(0, 2));
+      // console.log("First few Project Data:", projectData.slice(0, 2));
     // console.log("Profile Data:", profileData);
   // console.log(projectData[0].id)
   let textEditorContent;
@@ -58,7 +58,7 @@ export async function getStaticPaths() {
   const pathNames = await getAllUserAndProjectNameCombinationsLowercase();
 
   // console.log("First few pathNames:", pathNames.slice(0, 10));
-  console.log('pathNames', pathNames)
+  // console.log('pathNames', pathNames)
 
   // projectIds.map((id: any) => console.log(id.id));
   type pathName = { username?: string; projectname?: string };
@@ -109,18 +109,14 @@ export default function Project({ projects, textContent }: any) {
       const userId = project?.userId;
       const repoId = project?.id as string;
       setRepoOwner(userId);
-
       handleIncrementView(userId, repoId);
     }
   }, [projectname, userData, projects]);
 
   const handleIncrementView = async (userId: string, repoId: string) => {
     if (!userData || !userData.userId || !projects[0].userId || !projects) return;
-
     const project = projects[0] || null;
-
     if (project?.userId == userData.userId && project.views > 1) return;
-
     await axios.post('/api/projects/incrementView', {
       userId: userId,
       repoId: repoId,
@@ -153,8 +149,9 @@ export default function Project({ projects, textContent }: any) {
     return (
       <>
         <ProjectPageDynamicHero props={projects} />
+        {projects[0]?.username_lowercase === userData.username_lowercase && (
 
-        {projects[0]?.userId === userData.userId && (
+        // {/* {projects[0]?.userId === userData.userId && ( */}
           <Group position="center">
             <Stack>
               {projects[0].hidden === true && (
@@ -190,7 +187,9 @@ export default function Project({ projects, textContent }: any) {
                 component="a"
                 size="lg"
                 radius="md"
-                onClick={() => router.push(`/portfolio/testedit/${projects[0]?.id}`)}
+                onClick={() => router.push(`/portfolio/edit/${projects[0]?.reponame_lowercase}`)}
+
+                // onClick={() => router.push(`/portfolio/testedit/${projects[0]?.id}`)}
                 className="mx-auto"
                 color="gray"
                 mt="xs"
