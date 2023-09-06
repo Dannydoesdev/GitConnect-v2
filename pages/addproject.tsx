@@ -205,16 +205,21 @@ const GetRepos = () => {
       try {
         const returnedRepoData = await getGithubReposWithUsername(userName);
         setRepoData(returnedRepoData);
+        console.log('returned repo data');
+        console.log(returnedRepoData);
 
         const q = query(collection(db, `users/${userId}/repos`));
         const querySnapshot = await getDocs(q);
 
         const existingRepoArr: string[] = [];
         querySnapshot.forEach((doc) => {
+          console.log(doc.id, ' => ', doc.data());
           existingRepoArr.push(doc.id);
         });
 
         setExistingRepos(existingRepoArr);
+        console.log('existing repos');
+        console.log(existingRepoArr);
       } catch (error) {
         console.error('Error fetching data:', error);
       }

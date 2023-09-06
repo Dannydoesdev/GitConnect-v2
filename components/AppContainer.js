@@ -203,10 +203,12 @@ export const AppContainer = ({ children }, props) => {
     { label: 'About', link: '/landing' },
     // { label: 'Add Project', link: '/getrepos' },
     { label: 'Add Project', link: `/addproject` },
-    { label: 'Profile', link: `/profiles/${userData.userId}` },
+    { label: 'Profile', link: `/portfolio/${userData.username_lowercase}` },
+
+    // { label: 'Profile', link: `/profiles/${userData.userId}` },
     // { label: 'Sign Out', link: '/login' },
   ];
-
+  console.log(userData)
   // console.log(opened)
 
   const [active, setActive] = useState(links[0].link);
@@ -365,7 +367,8 @@ export const AppContainer = ({ children }, props) => {
                       Add a Project
                     </Text> */}
 
-                  <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior>
+                  {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
+                  <Link href={`/portfolio/${userData.username_lowercase}`} passHref legacyBehavior>
                     <Button
                       component="a"
                       size="xs"
@@ -408,7 +411,9 @@ export const AppContainer = ({ children }, props) => {
                     )}
                   </Transition>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
-                  <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior>
+                  {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
+                  <Link href={`/portfolio/${userData.username_lowercase}`} passHref legacyBehavior>
+
                     <Avatar
                       component="a"
                       radius="xl"

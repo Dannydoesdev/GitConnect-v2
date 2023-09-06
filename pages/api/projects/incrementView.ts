@@ -9,16 +9,23 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // NOTE: Getting issues in dev with this function - not sure why.  Works fine in prod.
   if (req.method === 'POST') {
+    if (process.env.NODE_ENV === 'development') {
+      return
+    }
     const adminDb = getAdminDb();
-
+// console.log("adminDb:", adminDb)
     const userId = req.body.userId;
+    // console.log("userId:", userId)
     const repoId = req.body.repoId;
+    // console.log("repoId:", repoId)
     const projectRef = adminDb
       .collection('users')
       .doc(userId)
       .collection('repos')
       .doc(repoId);
+    // console.log("projectRef:", projectRef)
 
     await projectRef.update({
       views: FieldValue.increment(1),
