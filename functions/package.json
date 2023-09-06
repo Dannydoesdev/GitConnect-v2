@@ -10,7 +10,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "emulatedata": "firebase emulators:start --import ../backup/database_backup_180823",
-    "emulatedatanew": "firebase emulators:start --import ../backup/database_backup_local"
+    "emulatedatanew": "firebase emulators:start --import ../backup/database_backup_cleanup_two_0609"
   },
   "engines": {
     "node": "18"

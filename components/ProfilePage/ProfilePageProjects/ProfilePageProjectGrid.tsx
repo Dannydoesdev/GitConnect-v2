@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { ProfilePageProjectCard } from './ProfilePageProjectCard';
 import { SimpleGrid } from '@mantine/core';
+import { ProfilePageProjectCard } from './ProfilePageProjectCard';
 
 const ProfilePageProjectGrid = ({ projects }: any) => {
   // const { classes, theme } = useStyles();
@@ -24,7 +24,7 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
   return (
     <SimpleGrid
       cols={4}
-      spacing='md'
+      spacing="md"
       breakpoints={[
         { maxWidth: 2000, cols: 3, spacing: 'sm' },
         { maxWidth: 1200, cols: 2, spacing: 'sm' },
@@ -50,8 +50,10 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
                 author={project.docData.owner.login}
                 views={1}
                 comments={2}
-                profileUrl={`/profiles/${project.docData.userId}`}
-                link={`/profiles/projects/${project.docData.id}`}
+                profileUrl={`/portfolio/${project.docData.username_lowercase}`}
+                link={`/portfolio/${project.docData.username_lowercase}/${project.docData.reponame_lowercase}`}
+                // {/* profileUrl={`/profiles/${project.docData.userId}`}
+                // link={`/profiles/projects/${project.docData.id}`} */}
               />
             </div>
           );
