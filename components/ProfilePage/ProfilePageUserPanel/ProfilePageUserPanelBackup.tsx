@@ -32,11 +32,17 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
 
 
   // console.log(`Current user in panel: ${currentUser}`)
-  // console.log(props)
+  console.log(`Profile page props: `)
+  console.log(props)
 
   // destructure profile data into variables
   const { bio, html_url, location, avatar_url, name, login, public_repos } = props;
 
+  // console.log(`Profile page bio: ${bio}`)
+  // console.log(`Profile page location: ${location}`)
+  // console.log(`Profile page name: ${name}`)
+  // console.log(`Profile page login: ${login}`)
+  // console.log(`Profile page html url: ${html_url}`)
 
   function handleEditMode() {
     // console.log('edit mode')
