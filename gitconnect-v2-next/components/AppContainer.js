@@ -208,7 +208,7 @@ export const AppContainer = ({ children }, props) => {
     // { label: 'Profile', link: `/profiles/${userData.userId}` },
     // { label: 'Sign Out', link: '/login' },
   ];
-  console.log(userData)
+  // console.log(userData)
   // console.log(opened)
 
   const [active, setActive] = useState(links[0].link);

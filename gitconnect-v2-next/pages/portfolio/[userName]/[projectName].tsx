@@ -90,6 +90,10 @@ export default function Project({ projects, textContent }: any) {
   // console.log(projects)
   // const project = projects[0]?.docData || null;
 
+  if (router.isFallback) {
+    return <LoadingPage />;
+  }
+
   useEffect(() => {
     if (!projectname) {
       return;

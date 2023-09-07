@@ -9,11 +9,10 @@ import {
   DocumentData, // serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase/clientApp';
-import { profile } from 'console';
 
 export async function getSingleProjectByNameLowercase(repoNameLowercase: string) {
   repoNameLowercase = repoNameLowercase.toLowerCase();
-  console.log(`repoNameLowercase in getSingleProjectByNameLowercase: ${repoNameLowercase}`)
+  // console.log(`repoNameLowercase in getSingleProjectByNameLowercase: ${repoNameLowercase}`)
   const q = query(collectionGroup(db, 'repos'), where('reponame_lowercase', '==', repoNameLowercase));
 
   const querySnapshot = await getDocs(q);
@@ -26,7 +25,7 @@ export async function getSingleProjectByNameLowercase(repoNameLowercase: string)
       ...data,
     };
   });
-  console.log(`projectData in getSingleProjectByNameLowercase: ${projectData}`)
+  // console.log(`projectData in getSingleProjectByNameLowercase: ${projectData}`)
   return projectData;
 }
 
@@ -120,7 +119,7 @@ export async function getAllUserAndProjectNameCombinationsLowercase() {
     if (!data) {
       return null;
     }
-    console.log(data)
+    // console.log(data)
     return {
       projectname: data.reponame_lowercase.toString(),
       username: data.username_lowercase.toString(),
