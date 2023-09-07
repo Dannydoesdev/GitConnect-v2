@@ -129,7 +129,7 @@ export async function getGithubDataFromFirebase(
 export async function getProfileDataWithUsernameLowercase(
   usernameLowercase: string
 ) {
-  console.log('usernameLowercase in getProfileDataWithUsernameLowercase:', usernameLowercase)
+  // console.log('usernameLowercase in getProfileDataWithUsernameLowercase:', usernameLowercase)
   usernameLowercase = usernameLowercase.toLowerCase();
 
   const profileQuery = query(collectionGroup(db, 'profileData'), where('username_lowercase', '==', usernameLowercase));
@@ -138,23 +138,38 @@ export async function getProfileDataWithUsernameLowercase(
 
   // console.log('returned from getProfileDataWithUsernameLowercase query:')
 // console.log(profileQuerySnapshot.docs)
-  
-
+  // Only return the data for the publicData doc id
   return profileQuerySnapshot.docs
+    .filter((doc: any) => doc.id === 'publicData')
     .map((doc: any) => {
-      console.log('data found')
-      console.log(doc.id, ' => ', doc.data());
       if (!doc.exists()) {
-        console.log(`cant find doc with username_lowercase: ${usernameLowercase}`)
         return null;
       }
-      // if (doc.id === 'githubData') { return null; }
-      const docData  = { ...doc.data() };
+      const docData = { ...doc.data() }; 
       return {
         docData,
         // ...docData,
       };
     })
+  
+
+
+
+  // return profileQuerySnapshot.docs
+  //   .map((doc: any) => {
+  //     // console.log('data found')
+  //     // console.log(doc.id, ' => ', doc.data());
+  //     if (!doc.exists()) {
+  //       console.log(`cant find doc with username_lowercase: ${usernameLowercase}`)
+  //       return null;
+  //     }
+  //     if (doc.id === 'githubData') { return null; }
+  //     const docData  = { ...doc.data() };
+  //     return {
+  //       docData,
+  //       // ...docData,
+  //     };
+  //   })
     // .filter(Boolean); // Remove null or undefined values
 }
 
@@ -233,8 +248,8 @@ export async function getProfileDataWithFirebaseIdNew(
   // gitHubUserName?: string
   // usernameLowercase: string
 ) {
-  console.log('firebase ID in getProfileDataWithFirebaseIdNew:')
-  console.log(firebaseId)
+  // console.log('firebase ID in getProfileDataWithFirebaseIdNew:')
+  // console.log(firebaseId)
   
     const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
     const docSnap = await getDoc(docRef);
@@ -243,8 +258,8 @@ export async function getProfileDataWithFirebaseIdNew(
     // console.log('Github profile data retrieved')
     const docData = { ...docSnap.data() };
 
-    console.log('returned from getProfileDataWithFirebaseIdNew query:')
-    console.log(docData)
+    // console.log('returned from getProfileDataWithFirebaseIdNew query:')
+    // console.log(docData)
 
     return {
       // id: firebaseId,
@@ -417,9 +432,9 @@ export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(
   id: string,
   userName: string
 ) {
-  console.log(
-    `Getting Github Data for user ID ${id} with username ${userName}`
-  );
+  // console.log(
+  //   `Getting Github Data for user ID ${id} with username ${userName}`
+  // );
 
   const docRef = doc(db, `users/${id}/profileData/githubData`);
   const docSnap = await getDoc(docRef);
@@ -487,7 +502,7 @@ export async function updateProfileDataGithub(id: string, data: any) {
     // const publicDataDocSnap = await getDoc(publicDataDocRef);
     await setDoc(publicDataDocRef, { ...data }, { merge: true })
 
-    console.log(`successfully added updated profile data to BOTH githubdata and publicData:`)
+    // console.log(`successfully added updated profile data to BOTH githubdata and publicData:`)
     // console.log(data)
   });
 }
