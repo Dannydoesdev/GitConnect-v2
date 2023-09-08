@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button, Center, Chip, Group, ScrollArea, Space, Stack, Title } from '@mantine/core';
-import useSWR from 'swr';
 import {
   getProjectTextEditorContent,
+  getSingleProjectByName,
+  getAllUserAndProjectNameCombinations,
   getAllUserAndProjectNameCombinationsLowercase,
   getSingleProjectByNameLowercase,
 } from '@/lib/projects';
+import ViewProject from '@/components/Portfolio/ViewProject/ViewProjectContent/ViewProject';
+import { ViewProjectHero } from '@/components/Portfolio/ViewProject/ViewProjectHero/ViewProjectHero';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../../context/AuthContext';
 import ProjectPageDynamicContent from '@/components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
@@ -15,13 +18,22 @@ import RichTextEditorDisplay from '@/components/ProjectPage/RichTextEditorDispla
 import { unstarProject, starProject } from '@/lib/stars';
 import axios from 'axios';
 
-
-
 export async function getStaticProps({ params }: any) {
   const { username, projectname } = params;
+  // console.log(params);
+  // console.log(params.id)
   if (!projectname) return { props: { projectData: null, textContent: null } };
+
+  // const projectData: any = await getSingleProjectByName(projectname as string);
   const projectData: any = await getSingleProjectByNameLowercase(projectname as string);
 
+  // const projectData: any = await getSingleProjectByUserAndName(username as string, projectname as string);
+  // console.log('projectData', projectData)
+  // console.log('userId static props')
+  // console.log(projectData[0].userId);
+      // console.log("First few Project Data:", projectData.slice(0, 2));
+    // console.log("Profile Data:", profileData);
+  // console.log(projectData[0].id)
   let textEditorContent;
   if (!projectData || !projectData[0]?.userId) {
     textEditorContent = null;
@@ -41,12 +53,19 @@ export async function getStaticProps({ params }: any) {
 }
 
 export async function getStaticPaths() {
+  // const projectnames = await getAllProjectNames();
+  // const pathNames = await getAllUserAndProjectNameCombinations();
   const pathNames = await getAllUserAndProjectNameCombinationsLowercase();
 
+  // console.log("First few pathNames:", pathNames.slice(0, 10));
+  // console.log('pathNames', pathNames)
+
+  // projectIds.map((id: any) => console.log(id.id));
   type pathName = { username?: string; projectname?: string };
   const paths = pathNames.map((path: pathName) => ({
     params: { username: path.username, projectname: path.projectname },
   }));
+
 
   return {
     paths,
@@ -55,65 +74,32 @@ export async function getStaticPaths() {
 }
 
 
-// export default function Project({ projects, textContent }: any) {
-//   const { userData } = useContext(AuthContext);
-//   const router = useRouter();
-//   const { projectname, username } = router.query;
-
-// Define your interfaces here
-interface ProjectProps {
-  projects: any;
-  textContent: any;
-}
-
-interface ProjectData {
-  // Define the properties of ProjectData here
-  [key: string]: any;
-}
-
-const fetcher = (url: string) => fetch(url).then(res => res.json());
-
-export default function Project({ projects: initialProjects, textContent: initialTextContent }: ProjectProps) {
+export default function Project({ projects, textContent }: any) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const { projectname, username } = router.query;
 
-  if (router.isFallback) {
-    return <LoadingPage />;
-  }
-
-  const { data: fetchProject, error: projectsError } = useSWR(`/api/projects/getProjectByName?projectname=${projectname}`, fetcher, initialProjects);
-
-  // FIXME: test both strategies below:
-
-  const { data: fetchTextContent, error: textContentError } = useSWR(`/api/projects/getProjectTextEditorContent?userId=${initialProjects[0]?.userId}&repoId=${initialProjects[0]?.id}`, fetcher, initialTextContent);
-
-  // const { data: fetchTextContent, error: textContentError } = useSWR(`/api/projects/getProjectTextEditorContent?userId=${fetchProject[0]?.userId}&repoId=${fetchProject[0]?.id}`, fetcher, initialTextContent);
-
-
-  // TODO: assess if this is a good idea or causes more loading time than needed
-  // if (!fetchProject && !fetchTextContent) {
-  //   return <LoadingPage />;
-  // }
-
-  if (projectsError) { console.log('SWR Failed to load projects') }
-  if (textContentError) { console.log('SWR Failed to load project text content') }
-
-  // if (projectsError) return <div>Failed to load projects</div>;
-  // if (textContentError) return <div>Failed to load project text content</div>;
-
-  const projects = fetchProject ?? initialProjects ?? null;
-  const textContent = fetchTextContent ?? initialTextContent ?? null;
-
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
   const [repoOwner, setRepoOwner] = useState<string>('');
   const [starCount, setStarCount] = useState(0);
+
+  // console.log(projects)
+  // API call allows server to run the admin SDK to allow incrementing as data can't be modified on firebase by users who are not owners
+  // Could be refactored to only run for unique users (currently increments on every refresh)
+
+  // console.log(projects)
+  // const project = projects[0]?.docData || null;
+
+  if (router.isFallback) {
+    return <LoadingPage />;
+  }
 
   useEffect(() => {
     if (!projectname) {
       return;
     }
     const project = projects[0] || null;
+    // console.log(project)
 
     if (project && userData) {
       setUserHasStarred(project.stars ? project.stars.includes(userData.userId) : false);
@@ -158,6 +144,8 @@ export default function Project({ projects: initialProjects, textContent: initia
       setStarCount(starCount + 1);
     }
   };
+
+
 
   if (projects) {
     const project = projects[0]|| null;
@@ -260,12 +248,14 @@ export default function Project({ projects: initialProjects, textContent: initia
           </Center>
         )}
 
+
         <ProjectPageDynamicContent props={projects} stars={starCount} />
 
         {textContent && <RichTextEditorDisplay content={textContent} />}
       </>
     );
   }
+
 }
 
 
