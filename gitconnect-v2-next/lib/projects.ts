@@ -1,19 +1,23 @@
 import {
   collection,
   collectionGroup,
-  where,
-  query,
-  getDoc,
-  getDocs,
   doc,
   DocumentData, // serverTimestamp,
+  getDoc,
+  getDocs,
+  query,
+  where,
 } from 'firebase/firestore';
 import { db } from '../firebase/clientApp';
 
+
+
 export async function getSingleProjectByNameLowercase(repoNameLowercase: string) {
   repoNameLowercase = repoNameLowercase.toLowerCase();
-  // console.log(`repoNameLowercase in getSingleProjectByNameLowercase: ${repoNameLowercase}`)
-  const q = query(collectionGroup(db, 'repos'), where('reponame_lowercase', '==', repoNameLowercase));
+  const q = query(
+    collectionGroup(db, 'repos'),
+    where('reponame_lowercase', '==', repoNameLowercase)
+  );
 
   const querySnapshot = await getDocs(q);
   const projectData: any = querySnapshot.docs.map((doc: any) => {
@@ -25,9 +29,34 @@ export async function getSingleProjectByNameLowercase(repoNameLowercase: string)
       ...data,
     };
   });
-  // console.log(`projectData in getSingleProjectByNameLowercase: ${projectData}`)
   return projectData;
 }
+
+interface ProjectData {
+  // Define the properties of ProjectData here
+  [key: string]: any;
+}
+
+export async function getSingleProjectByNameLowercaseTyped(repoNameLowercase: string): Promise<ProjectData[]> {
+  repoNameLowercase = repoNameLowercase.toLowerCase();
+  const q = query(
+    collectionGroup(db, 'repos'),
+    where('reponame_lowercase', '==', repoNameLowercase)
+  );
+
+  const querySnapshot = await getDocs(q);
+  const projectData: ProjectData[] = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    if (!data) {
+      return null;
+    }
+    return {
+      ...data,
+    };
+  });
+  return projectData;
+}
+
 
 export async function getSingleProjectByName(repoName: string) {
   const q = query(collectionGroup(db, 'repos'), where('name', '==', repoName));
@@ -94,13 +123,12 @@ export async function getSingleProjectById(repoId: string) {
 }
 
 export async function getSingleProjectByUserAndName(userName: string, repoName: string) {
-
   const docRef = doc(db, `users/${userName}/repos/${repoName}`);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
     // console.log('Document data:', docSnap.data());
-    
+
     return docSnap.data();
     // console.log('Document data:', docSnap.data());
   } else {
@@ -110,25 +138,24 @@ export async function getSingleProjectByUserAndName(userName: string, repoName: 
   }
 }
 
+// export async function getAllUserAndProjectNameCombinationsLowercase(): Promise<{ projectname: string, username: string }[]> {
 export async function getAllUserAndProjectNameCombinationsLowercase() {
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
 
+  // const paths: { projectname: string, username: string }[] = querySnapshot.docs.map((doc: any) => {
   const paths: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
     if (!data) {
       return null;
     }
-    // console.log(data)
     return {
       projectname: data.reponame_lowercase.toString(),
       username: data.username_lowercase.toString(),
-      // projectname: data.name.toString().toLowerCase(),
-      // username: data.owner?.login?.toString().toLowerCase(),
     };
   });
   return paths;
-};
+}
 
 export async function getAllUserAndProjectNameCombinations() {
   const q = query(collectionGroup(db, 'repos'));
@@ -147,7 +174,7 @@ export async function getAllUserAndProjectNameCombinations() {
     };
   });
   return paths;
-};
+}
 
 export async function getAllProjectNames() {
   const q = query(collectionGroup(db, 'repos'));
@@ -182,6 +209,8 @@ export async function getAllProjectIds() {
   return projectIds;
 }
 
+// export async function getProjectTextEditorContent(userId: string, repoId: string): Promise<string | null> {
+
 export async function getProjectTextEditorContent(userId: string, repoId: string) {
   const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
   const docSnap = await getDoc(docRef);
@@ -189,20 +218,17 @@ export async function getProjectTextEditorContent(userId: string, repoId: string
   if (docSnap.exists()) {
     const mainContent = docSnap.data();
     const htmlOutput = mainContent?.htmlOutput;
-    // console.log(htmlOutput)
     if (htmlOutput?.length > 0) {
-      // const sanitizedHTML = DOMPurify.sanitize(htmlOutput);
-      // const sanitizedHTML = DOMPurify.sanitize(htmlOutput, {
-      //   ADD_ATTR: ['target'],
-      // });
-
       return htmlOutput;
     } else return null;
   } else return null;
 }
 
+// export async function getAllCustomProjectData(userId: string, repoId: string): Promise<ProjectData[]> {
 export async function getAllCustomProjectData(userId: string, repoId: string) {
+
   const customProjectData: any = [];
+  // const customProjectData: ProjectData[] = [];
 
   const querySnapshot = await getDocs(
     collection(db, `users/${userId}/repos/${repoId}/projectData`)
@@ -210,7 +236,6 @@ export async function getAllCustomProjectData(userId: string, repoId: string) {
   querySnapshot.docs.forEach((doc: any) => {
     customProjectData.push({ ...doc.data() });
   });
-
   return customProjectData;
 }
 
@@ -276,47 +301,71 @@ export async function getAllProjectDataFromProfile(id: string) {
   });
 }
 
+// TODO: Update this type to match the actual data structure and implement in codebase
+interface ProjectData {
+  docData?: {
+    // Define the properties of docData here
+    [key: string]: any; // Replace with actual property types
+  };
+}
+
+export async function getAllUserProjectsWithUsernameLowercaseTyped(usernameLowercase: string): Promise<ProjectData[]> {
+  usernameLowercase = usernameLowercase.toLowerCase();
+
+  const projectQuery = query(
+    collectionGroup(db, 'repos'),
+    where('username_lowercase', '==', usernameLowercase)
+  );
+  const querySnapshot = await getDocs(projectQuery);
+  return querySnapshot.docs.map((detail: any) => {
+    const docData = { ...detail.data() };
+    if (!docData) {
+      return null;
+    }
+    return {
+      ...docData,
+    };
+  }).filter((projectData: ProjectData | null): projectData is ProjectData => projectData !== null);
+}
+
+// This function fetches all projects associated with a username from Firestore
 export async function getAllUserProjectsWithUsernameLowercase(usernameLowercase: string) {
   usernameLowercase = usernameLowercase.toLowerCase();
-  
-  // let projectData: DocumentData[] = []
 
-  const projectQuery = query(collectionGroup(db, 'repos'), where('username_lowercase', '==', usernameLowercase));
+  const projectQuery = query(
+    collectionGroup(db, 'repos'),
+    where('username_lowercase', '==', usernameLowercase)
+  );
   const querySnapshot = await getDocs(projectQuery);
-  // console.log("Query Snapshot for Projects:", querySnapshot);
   return querySnapshot.docs.map((detail: any) => {
-    const docData  = { ...detail.data() };
-    // const { docData } = { docData: { ...detail.data() } }; // Destructuring docData
+    const docData = { ...detail.data() };
     if (!docData) {
       return null;
     }
     return {
       docData,
-      
-    }  // Directly return the destructured docData
+    };
   });
-  // return querySnapshot.docs.map((detail: any) => {
-  //   const docData = { ...detail.data() };
+}
+// return querySnapshot.docs.map((detail: any) => {
+//   const docData = { ...detail.data() };
 
-  //   return {
-  //     // id,
-  //     docData,
-  //   };
-  // });
+//   return {
+//     // id,
+//     docData,
+//   };
+// });
 
-
-  // const projectData: any = querySnapshot.docs.map((doc: any) => {
-  //   const data = doc.data();
-  //   console.log(data.reponame_lowercase);
-  //   return {
-  //     ...data,
-  //     // username: data.userName,
-  //   };
-  // });
-  // console.log(projectData)
-  // return projectData;
-
-
+// const projectData: any = querySnapshot.docs.map((doc: any) => {
+//   const data = doc.data();
+//   console.log(data.reponame_lowercase);
+//   return {
+//     ...data,
+//     // username: data.userName,
+//   };
+// });
+// console.log(projectData)
+// return projectData;
 
 //   console.log('returned from getAllUserProjectsWithUsernameLowercase query:')
 //  querySnapshot.docs.map((doc: any) => {
@@ -324,134 +373,127 @@ export async function getAllUserProjectsWithUsernameLowercase(usernameLowercase:
 //     const docData = { ...doc.data() };
 //     projectData.push(docData)
 
-    // return {
-      // id,
-      // docData,
-      // id: docData.userId,
-    // };
-  // });
+// return {
+// id,
+// docData,
+// id: docData.userId,
+// };
+// });
 
-  // return projectData
-  // let profileId = ''
-  // let profileData: DocumentData[] = []
+// return projectData
+// let profileId = ''
+// let profileData: DocumentData[] = []
 
-  //   try {
-  //     const querySnapshot = await getDocs(collection(db, "users"));
-  //     const userQuery = query(collection(db, 'users'), where('username_lowercase', '==', usernameLowercase));
+//   try {
+//     const querySnapshot = await getDocs(collection(db, "users"));
+//     const userQuery = query(collection(db, 'users'), where('username_lowercase', '==', usernameLowercase));
 
-  //     const userQuerySnapshot = await getDocs(userQuery);
+//     const userQuerySnapshot = await getDocs(userQuery);
 
-  //     userQuerySnapshot.forEach((doc) => {
-  //       console.log(doc.id, ' => ', doc.data());
-  //     });
+//     userQuerySnapshot.forEach((doc) => {
+//       console.log(doc.id, ' => ', doc.data());
+//     });
 
-  //     // const docsArray = querySnapshot.docs;
-  //     // const filteredDocs = docsArray.filter((doc: any) => {
-  //     //   return doc.data().userName.toLowerCase() == username.toLowerCase()
-  //     // });
-      
-  //     // console.log(filteredDocs)
-  //     // const querySnapshot = await getDocs(collection(db, "users"));
-  //     // querySnapshot.filter((doc) => {
+//     // const docsArray = querySnapshot.docs;
+//     // const filteredDocs = docsArray.filter((doc: any) => {
+//     //   return doc.data().userName.toLowerCase() == username.toLowerCase()
+//     // });
 
-  //     //   doc.data().userName.toLowerCase() == username.toLowerCase()
-  //     // })
+//     // console.log(filteredDocs)
+//     // const querySnapshot = await getDocs(collection(db, "users"));
+//     // querySnapshot.filter((doc) => {
 
-  //     querySnapshot.forEach((doc) => {
-  //       if (doc.data().userName.toLowerCase() == username.toLowerCase()) {
-  //         profileData.push(doc.data())
-  //         profileId = doc.id
+//     //   doc.data().userName.toLowerCase() == username.toLowerCase()
+//     // })
 
-  //       }
-    
-  //     });
-  //   } catch (e) {
-  //     console.log("Error getting documents: ", e);
-  //   } finally {
-  //     const projectData = await getAllProjectDataFromProfile(profileId)
-  //     return {
-  //       projectData,
-  //       id: profileId,
-  //     }
-  //   }
-  }
+//     querySnapshot.forEach((doc) => {
+//       if (doc.data().userName.toLowerCase() == username.toLowerCase()) {
+//         profileData.push(doc.data())
+//         profileId = doc.id
+
+//       }
+
+//     });
+//   } catch (e) {
+//     console.log("Error getting documents: ", e);
+//   } finally {
+//     const projectData = await getAllProjectDataFromProfile(profileId)
+//     return {
+//       projectData,
+//       id: profileId,
+//     }
+//   }
+// }
 
 export async function getAllUserProjectsWithUsername(username: string) {
-
   // const idCollection = collection(db, 'users');
-  let profileId = ''
-  let profileData: DocumentData[] = []
-  // const 
+  let profileId = '';
+  let profileData: DocumentData[] = [];
+  // const
   // console.log('username', username)
 
+  try {
+    const querySnapshot = await getDocs(collection(db, 'users'));
+    // const docsArray = querySnapshot.docs;
+    // const filteredDocs = docsArray.filter((doc: any) => {
+    //   return doc.data().userName.toLowerCase() == username.toLowerCase()
+    // });
 
-  
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      // const docsArray = querySnapshot.docs;
-      // const filteredDocs = docsArray.filter((doc: any) => {
-      //   return doc.data().userName.toLowerCase() == username.toLowerCase()
-      // });
-      
-      // console.log(filteredDocs)
-      // const querySnapshot = await getDocs(collection(db, "users"));
-      // querySnapshot.filter((doc) => {
+    // console.log(filteredDocs)
+    // const querySnapshot = await getDocs(collection(db, "users"));
+    // querySnapshot.filter((doc) => {
 
-      //   doc.data().userName.toLowerCase() == username.toLowerCase()
-      // })
+    //   doc.data().userName.toLowerCase() == username.toLowerCase()
+    // })
 
-      querySnapshot.forEach((doc) => {
+    querySnapshot.forEach((doc) => {
+      // console.log(doc.data())
+      // doc.data() is never undefined for query doc snapshots
+      if (doc.data().userName.toLowerCase() == username.toLowerCase()) {
+        profileData.push(doc.data());
+        profileId = doc.id;
+        // console.log(doc.id)
         // console.log(doc.data())
-        // doc.data() is never undefined for query doc snapshots
-        if (doc.data().userName.toLowerCase() == username.toLowerCase()) {
-          profileData.push(doc.data())
-          profileId = doc.id
-          // console.log(doc.id)
-          // console.log(doc.data())
-          // console.log(doc.id, " => ", doc.data());
-        }
-    
-      });
-    } catch (e) {
-      console.log("Error getting documents: ", e);
-    } finally {
-      //  const projectData = getAllProjectDataFromProfile(profileData[0].id)
-      const projectData = await getAllProjectDataFromProfile(profileId)
-
-      // console.log('profileData', profileData)
-      // console.log('projectData', projectData)
-      return {
-        projectData,
-        id: profileId,
+        // console.log(doc.id, " => ", doc.data());
       }
-    }
+    });
+  } catch (e) {
+    console.log('Error getting documents: ', e);
+  } finally {
+    //  const projectData = getAllProjectDataFromProfile(profileData[0].id)
+    const projectData = await getAllProjectDataFromProfile(profileId);
 
-  
+    // console.log('profileData', profileData)
+    // console.log('projectData', projectData)
+    return {
+      projectData,
+      id: profileId,
+    };
   }
+}
 
-  // const idQuery = query(collection(db, 'users'), where('userName', '==', username));
+// const idQuery = query(collection(db, 'users'), where('userName', '==', username));
 
-  // const idQuerySnapshot = await getDocs(idQuery);
-  // idQuerySnapshot.forEach((doc) => {
-  //   console.log('doctime')
-  //   console.log(doc.id, ' => ', doc.data());
-  // });
-  // console.log('username', username)
+// const idQuerySnapshot = await getDocs(idQuery);
+// idQuerySnapshot.forEach((doc) => {
+//   console.log('doctime')
+//   console.log(doc.id, ' => ', doc.data());
+// });
+// console.log('username', username)
 
+// const projectQuery = query(collectionGroup(db, 'repos'), where('userName', '==', username));
+// const querySnapshot = await getDocs(projectQuery);
 
-  // const projectQuery = query(collectionGroup(db, 'repos'), where('userName', '==', username));
-  // const querySnapshot = await getDocs(projectQuery);
+// return querySnapshot.docs.map((detail: any) => {
+//   console.log(...detail.data())
+//   const docData = { ...detail.data() };
 
-  // return querySnapshot.docs.map((detail: any) => {
-  //   console.log(...detail.data())
-  //   const docData = { ...detail.data() };
-  
-  //   return {
-  //     // id,
-  //     id: docData.id,
-  //     docData,
-  //   };
-  // });
+//   return {
+//     // id,
+//     id: docData.id,
+//     docData,
+//   };
+// });
 // }
 
 // return the data of the profiles

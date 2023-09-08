@@ -129,15 +129,9 @@ export async function getGithubDataFromFirebase(
 export async function getProfileDataWithUsernameLowercase(
   usernameLowercase: string
 ) {
-  // console.log('usernameLowercase in getProfileDataWithUsernameLowercase:', usernameLowercase)
   usernameLowercase = usernameLowercase.toLowerCase();
-
   const profileQuery = query(collectionGroup(db, 'profileData'), where('username_lowercase', '==', usernameLowercase));
   const profileQuerySnapshot = await getDocs(profileQuery);
-  // console.log("Query Snapshot for Profile:", profileQuerySnapshot);
-
-  // console.log('returned from getProfileDataWithUsernameLowercase query:')
-// console.log(profileQuerySnapshot.docs)
   // Only return the data for the publicData doc id
   return profileQuerySnapshot.docs
     .filter((doc: any) => doc.id === 'publicData')
@@ -145,14 +139,12 @@ export async function getProfileDataWithUsernameLowercase(
       if (!doc.exists()) {
         return null;
       }
-      const docData = { ...doc.data() }; 
+      const docData = { ...doc.data() };
       return {
         docData,
-        // ...docData,
       };
     })
-  
-
+}
 
 
   // return profileQuerySnapshot.docs
@@ -171,7 +163,7 @@ export async function getProfileDataWithUsernameLowercase(
   //     };
   //   })
     // .filter(Boolean); // Remove null or undefined values
-}
+// }
 
 // export async function getProfileDataWithUsernameLowercaseTwo(
 //   firebaseId: string,
@@ -245,24 +237,13 @@ export async function getProfileDataWithUsernameLowercase(
 
 export async function getProfileDataWithFirebaseIdNew(
   firebaseId: string,
-  // gitHubUserName?: string
-  // usernameLowercase: string
 ) {
-  // console.log('firebase ID in getProfileDataWithFirebaseIdNew:')
-  // console.log(firebaseId)
-  
     const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
     const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    // console.log('Github profile data retrieved')
     const docData = { ...docSnap.data() };
-
-    // console.log('returned from getProfileDataWithFirebaseIdNew query:')
-    // console.log(docData)
-
     return {
-      // id: firebaseId,
       docData,
     };
   }
