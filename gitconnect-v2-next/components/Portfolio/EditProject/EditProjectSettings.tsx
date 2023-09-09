@@ -2,21 +2,21 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Check } from '@emotion-icons/boxicons-regular';
 import {
-  Modal, // Paper,
+  Button,
+  Checkbox,
+  Grid,
   // Textarea,
   // Space,
   // Container,
   Group,
-  Button,
-  TextInput,
-  ScrollArea,
-  Checkbox,
-  Stack,
-  Grid,
+  Modal, // Paper,
   MultiSelect,
-  Spoiler,
-  Text,
+  ScrollArea,
   Space,
+  Spoiler,
+  Stack,
+  Text,
+  TextInput,
 } from '@mantine/core';
 // import '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -131,7 +131,6 @@ function ProjectSettingsModal({
       // coverImage: coverImage || '',
       projectDescription: projectDescription || '',
     },
-
   });
 
   const openCoverImageRequiredModal = () =>
@@ -199,7 +198,8 @@ function ProjectSettingsModal({
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            {/* <form onSubmit={form.onSubmit((values) => console.log(values))}> */}
+            <form>
               <Stack spacing="lg" mr="lg" my="lg">
                 <TextInput
                   // data-autofocus
@@ -303,7 +303,7 @@ function ProjectSettingsModal({
                 </Checkbox.Group>
 
                 {/* FIXME: Nuanced options for visibility to public */}
-                
+
                 {/* <Checkbox
                   mb="sm"
                   label="Visible to Public"

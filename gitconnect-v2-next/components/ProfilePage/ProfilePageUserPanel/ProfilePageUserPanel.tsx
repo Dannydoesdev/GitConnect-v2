@@ -180,8 +180,8 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
       visibleToPublic,
     } = formData;
 
-    console.log(formData);
-    console.log('formData in parent component')
+    // console.log(formData);
+    // console.log('formData in parent component')
     // console.log(bio)
 
     // Send data to Firebase, maps into DB & update state to show new static values instantly

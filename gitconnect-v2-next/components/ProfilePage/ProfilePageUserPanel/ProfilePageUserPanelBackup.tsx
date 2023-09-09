@@ -32,8 +32,8 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
 
 
   // console.log(`Current user in panel: ${currentUser}`)
-  console.log(`Profile page props: `)
-  console.log(props)
+  // console.log(`Profile page props: `)
+  // console.log(props)
 
   // destructure profile data into variables
   const { bio, html_url, location, avatar_url, name, login, public_repos } = props;

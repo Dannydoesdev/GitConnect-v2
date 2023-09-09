@@ -122,7 +122,7 @@ const GetRepos = () => {
 
   const addRepo = async (repo: RepoDataFull) => {
     const reponame_lowercase = repo.name.toLowerCase();
-    console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
+    // console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
     try {
       await setDoc(
         doc(db, `users/${userId}/repos/${repo.id}`),
@@ -205,21 +205,21 @@ const GetRepos = () => {
       try {
         const returnedRepoData = await getGithubReposWithUsername(userName);
         setRepoData(returnedRepoData);
-        console.log('returned repo data');
-        console.log(returnedRepoData);
+        // console.log('returned repo data');
+        // console.log(returnedRepoData);
 
         const q = query(collection(db, `users/${userId}/repos`));
         const querySnapshot = await getDocs(q);
 
         const existingRepoArr: string[] = [];
         querySnapshot.forEach((doc) => {
-          console.log(doc.id, ' => ', doc.data());
+          // console.log(doc.id, ' => ', doc.data());
           existingRepoArr.push(doc.id);
         });
 
         setExistingRepos(existingRepoArr);
-        console.log('existing repos');
-        console.log(existingRepoArr);
+        // console.log('existing repos');
+        // console.log(existingRepoArr);
       } catch (error) {
         console.error('Error fetching data:', error);
       }

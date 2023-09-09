@@ -138,7 +138,7 @@ export function UploadProjectCoverImage(
             );
 
             setImgUrl(downloadURL);
-            console.log(`URL to stored img: ${downloadURL}`);
+            // console.log(`URL to stored img: ${downloadURL}`);
           })
           .then(() => {
             router.reload();
