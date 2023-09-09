@@ -22,15 +22,15 @@ import { AuthContext } from '../../../context/AuthContext';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
-  console.log('params in edit project', params)
-  console.log('firestore emulator host in serversideprops:', process.env.FIRESTORE_EMULATOR_HOST);
+  // console.log('params in edit project', params)
+  // console.log('firestore emulator host in serversideprops:', process.env.FIRESTORE_EMULATOR_HOST);
 
 
   if (!params?.projectname) return { props: { projectData: null, textContent: null } };
 
   // const projectData: any = await getSingleProjectById(params.repoid as string);
   const projectData: any = await getSingleProjectByNameLowercase(params.projectname as string);
-  console.log("First few Project Data - serversideprops in edit project:", projectData.slice(0, 2));
+  // console.log("First few Project Data - serversideprops in edit project:", projectData.slice(0, 2));
 
   // let customProjectData;
   let textEditorContent;
@@ -113,11 +113,11 @@ InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   // const { repoid } = router.query;
-  console.log(`projectData in edit project`, projectData)
+  // console.log(`projectData in edit project`, projectData)
   // NOTE: Updated to get repoid from projectData
   const repoid  = projectData[0]?.id;
   
-  console.log('repo id in edit project', repoid)
+  // console.log('repo id in edit project', repoid)
   // useHydrateAtoms([
   //   [projectDataAtom, projectData[0]],
   //   // [textEditorAtom, textContent],

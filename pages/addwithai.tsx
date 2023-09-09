@@ -115,7 +115,7 @@ const gptRequestPayload = {
       const completion = await openai.createCompletion(gptRequestPayload);
       const generatedStudy = completion.data.choices[0].text?.trim();
 
-      console.log(generatedStudy);
+      // console.log(generatedStudy);
       // const response = await openai.createCompletion(gptRequestPayload);
       // const generatedCaseStudy = response.choices[0].message.content.trim();
 

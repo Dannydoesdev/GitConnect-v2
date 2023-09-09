@@ -2,9 +2,9 @@ import { Configuration, OpenAIApi } from 'openai';
 
 export async function generateProjectWithSystemAndUserMessage( userMessage: string, systemMessage: string, model: string) {
 
-  console.log('userMessage', userMessage);
-  console.log('systemMessage', systemMessage);
-  console.log('model', model);
+  // console.log('userMessage', userMessage);
+  // console.log('systemMessage', systemMessage);
+  // console.log('model', model);
   
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,

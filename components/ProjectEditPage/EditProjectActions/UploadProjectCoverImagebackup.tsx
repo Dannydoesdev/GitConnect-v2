@@ -115,7 +115,7 @@ export function UploadProjectCoverImage(
             );
 
             setImgUrl(downloadURL);
-            console.log(`URL to stored img: ${downloadURL}}`);
+            // console.log(`URL to stored img: ${downloadURL}}`);
           })
           .then(() => {
             // TODO - less hacky way of refreshing to allow 'showing project'
