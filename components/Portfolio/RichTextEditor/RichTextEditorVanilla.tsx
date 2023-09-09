@@ -85,7 +85,7 @@ function RichTextEditorVanilla({
 
 
   
-  console.log(textContentState)
+  // console.log(textContentState)
   useEffect(() => {
     // if (readme && readme !== newReadme) {
       // setNewReadme(readme);

@@ -16,7 +16,6 @@ import { unstarProject, starProject } from '@/lib/stars';
 import axios from 'axios';
 
 
-
 export async function getStaticProps({ params }: any) {
   const { username, projectname } = params;
   if (!projectname) return { props: { projectData: null, textContent: null } };
@@ -82,11 +81,11 @@ export default function Project({ projects: initialProjects, textContent: initia
     return <LoadingPage />;
   }
 
-  const { data: fetchProject, error: projectsError } = useSWR(`/api/projects/getProjectByName?projectname=${projectname}`, fetcher, initialProjects);
+  const { data: fetchProject, error: projectsError } = useSWR(`/api/portfolio/getSingleProject?projectname=${projectname}`, fetcher, initialProjects);
 
   // FIXME: test both strategies below:
 
-  const { data: fetchTextContent, error: textContentError } = useSWR(`/api/projects/getProjectTextEditorContent?userId=${initialProjects[0]?.userId}&repoId=${initialProjects[0]?.id}`, fetcher, initialTextContent);
+  const { data: fetchTextContent, error: textContentError } = useSWR(`/api/portfolio/getTextEditorContent?userId=${initialProjects[0]?.userId}&repoId=${initialProjects[0]?.id}`, fetcher, initialTextContent);
 
   // const { data: fetchTextContent, error: textContentError } = useSWR(`/api/projects/getProjectTextEditorContent?userId=${fetchProject[0]?.userId}&repoId=${fetchProject[0]?.id}`, fetcher, initialTextContent);
 
@@ -96,14 +95,14 @@ export default function Project({ projects: initialProjects, textContent: initia
   //   return <LoadingPage />;
   // }
 
-  if (projectsError) { console.log('SWR Failed to load projects') }
-  if (textContentError) { console.log('SWR Failed to load project text content') }
+  // if (projectsError) { console.log('SWR Failed to load projects') }
+  // if (textContentError) { console.log('SWR Failed to load project text content') }
 
   // if (projectsError) return <div>Failed to load projects</div>;
   // if (textContentError) return <div>Failed to load project text content</div>;
 
   const projects = fetchProject ?? initialProjects ?? null;
-  const textContent = fetchTextContent ?? initialTextContent ?? null;
+  const textContent = fetchTextContent?.data ?? initialTextContent ?? null;
 
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
   const [repoOwner, setRepoOwner] = useState<string>('');

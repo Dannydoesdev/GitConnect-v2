@@ -80,8 +80,8 @@ function EditableCaseStudy({
     // await updateDoc(docRef, {
     //   caseStudy: editor?.getHTML(),
     // });
-    console.log('Saving changes...');
-    console.log('editorContent: ', editorContent);
+    // console.log('Saving changes...');
+    // console.log('editorContent: ', editorContent);
   };
 
   return (
