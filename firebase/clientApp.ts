@@ -1,8 +1,8 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
-import { getStorage, ref } from 'firebase/storage';
 import { getAnalytics, isSupported, logEvent } from 'firebase/analytics';
+import { getApp, getApps, initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import { getStorage, ref } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -34,27 +34,21 @@ export const auth = getAuth(app);
 const db = getFirestore(firebaseApp);
 
 // Check to stop emulator from re running constantly - from https://stackoverflow.com/a/74727587
-
 const dbhost = (db.toJSON() as { settings?: { host?: string } }).settings?.host ?? '';
 // console.log("dbhost:", dbhost);
 
-// console.log({ dbhost });
-
-
 // NOTE - firestore won't work with this setup on dev unless you configure and run the emulator
-if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST && !dbhost.startsWith('localhost')) {
-// FIXME: only testing this for now - change back to dev env only
-// if (process.env.NODE_ENV && process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST && !dbhost.startsWith('localhost')) {
-
+if (
+  process.env.NODE_ENV === 'development' &&
+  process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST &&
+  !dbhost.startsWith('localhost')
+) {
+  // Swap out line below to use emulator with prod builds:
+  // if (process.env.NODE_ENV && process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST && !dbhost.startsWith('localhost')) {
   connectFirestoreEmulator(db, 'localhost', 8080);
   // console.log("Connected to Firestore emulator");
   // console.log('After connecting to emulator, dbhost:', (db.toJSON() as { settings?: { host?: string } }).settings?.host);
-
-} 
-
-// if (process.env.NODE_ENV === 'development' && process.env.FIRESTORE_EMULATOR_HOST) {
-//   connectFirestoreEmulator(db, 'localhost', 8080);
-// }
+}
 
 export const storage = getStorage(app);
 
@@ -68,5 +62,4 @@ if (typeof window != undefined) {
 }
 
 export { analytics, db };
-// export db;
 // logEvent(analytics, 'notification_received');
