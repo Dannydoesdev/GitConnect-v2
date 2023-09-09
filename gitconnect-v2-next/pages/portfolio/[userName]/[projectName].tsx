@@ -17,7 +17,7 @@ import axios from 'axios';
 
 
 export async function getStaticProps({ params }: any) {
-  const { username, projectname } = params;
+  const { projectname } = params;
   if (!projectname) return { props: { projectData: null, textContent: null } };
   const projectData: any = await getSingleProjectByNameLowercase(projectname as string);
 
@@ -75,7 +75,7 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 export default function Project({ projects: initialProjects, textContent: initialTextContent }: ProjectProps) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
-  const { projectname, username } = router.query;
+  const { projectname } = router.query;
 
   if (router.isFallback) {
     return <LoadingPage />;
