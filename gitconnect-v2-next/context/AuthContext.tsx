@@ -11,11 +11,6 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../firebase/clientApp';
 import { getGithubProfileData } from '../lib/github';
-import {
-  getGithubDataFromFirebase,
-  getProfileDataGithub,
-  setGitHubProfileDataInFirebase,
-} from '../lib/profiles';
 import { AuthData } from '../types';
 
 // Add a new document with a generated id.
