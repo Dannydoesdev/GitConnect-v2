@@ -1,9 +1,9 @@
 import React, { useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
 import { useRouter } from "next/router"
-import GithubLogin from "../components//LoginPages/GithubLogin"
-import EmailLogin from "../components/LoginPages/EmailLogin"
-import GoogleLogin from "../components//LoginPages/GoogleLogin"
+// import GithubLogin from "../components//LoginPages/GithubLogin"
+// import EmailLogin from "../components/LoginPages/EmailLogin"
+// import GoogleLogin from "../components//LoginPages/GoogleLogin"
 import { LoginPage } from "../components/LoginPages/Login"
 // import Mixpanel from "mixpanel"
 
