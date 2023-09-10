@@ -126,7 +126,7 @@ export default function Project({ projects: initialProjects, textContent: initia
       const userId = project?.userId;
       const repoId = project?.id as string;
       setRepoOwner(userId);
-      handleIncrementView(userId, repoId);
+      // handleIncrementView(userId, repoId);
     }
   }, [projectname, userData, projects]);
 
