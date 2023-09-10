@@ -16,13 +16,13 @@ import { getAllUserProjectsWithUsernameLowercase } from '../../lib/projects';
 import Head from 'next/head';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { username } = params as { username: string };
+  const { username_lowercase } = params as { username_lowercase: string };
 
-  const projectData = await getAllUserProjectsWithUsernameLowercase(username);
+  const projectData = await getAllUserProjectsWithUsernameLowercase(username_lowercase);
 
   const profileData = projectData[0]
     ? await getProfileDataWithFirebaseIdNew(projectData[0]?.docData.userId)
-    : await getProfileDataWithUsernameLowercase(username);
+    : await getProfileDataWithUsernameLowercase(username_lowercase);
 
   const initialProjects = projectData ?? null;
   const initialProfile = Array.isArray(profileData)
@@ -40,8 +40,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   const usernamesLowercaseArr = await getAllProfileUsernamesLowercase();
 
-  const paths = usernamesLowercaseArr.map((username: any) => ({
-    params: { username: username.usernameLowercase },
+  const paths = usernamesLowercaseArr.map((username_lowercase: any) => ({
+    params: { username_lowercase: username_lowercase.usernameLowercase },
   }));
 
   return {
@@ -60,19 +60,19 @@ interface PortfolioProps {
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
   const { userData } = useContext(AuthContext);
   const router = useRouter();
-  const { username } = router.query;
+  const { username_lowercase } = router.query;
 
   if (router.isFallback) {
     return <LoadingPage />;
   }
   const { data: fetchProfile, error: profileError } = useSWR(
-    `/api/portfolio/getUserProfile?username=${username}`,
+    `/api/portfolio/getUserProfile?username=${username_lowercase}`,
     fetcher,
     initialProfile
   );
 
   const { data: fetchProjects, error: projectsError } = useSWR(
-    `/api/portfolio/getUserProjects?username=${username}`,
+    `/api/portfolio/getUserProjects?username=${username_lowercase}`,
     fetcher,
    initialProjects
   );
@@ -97,8 +97,8 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     <>
       <Head>
         {/* TODO: Test if this works */}
-        <title>{`${profile?.name ?? username ?? 'GitConnect'}'s Portfolio`}</title>
-      <meta name="description" content={`${profile?.name ?? username ?? 'GitConnect'}'s portfolio page`} />
+        <title>{`${profile?.name ?? username_lowercase ?? 'GitConnect'}'s Portfolio`}</title>
+      <meta name="description" content={`${profile?.name ?? username_lowercase ?? 'GitConnect'}'s portfolio page`} />
       {/* Add other SEO related tags here */}
       </Head>
       
@@ -110,8 +110,8 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
             <ProfilePageUserPanel
               props={profile}
               currentUser={
-                username &&
-                userData.userName.toLowerCase() === username.toString().toLowerCase()
+                username_lowercase &&
+                userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
                   ? true
                   : false
               }
