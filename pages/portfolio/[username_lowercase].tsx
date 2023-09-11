@@ -83,12 +83,12 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   // );
 
   // TODO: assess if this is a good idea or causes more loading time than needed
-  if (!fetchProfile && !fetchProjects) {
-    return <LoadingPage />; 
-  }
+  // if (!fetchProfile && !fetchProjects) {
+  //   return <LoadingPage />; 
+  // }
 
-  if (profileError) return <div>Failed to load profile</div>;
-  if (projectsError) return <div>Failed to load projects</div>;
+  // if (profileError) return <div>Failed to load profile</div>;
+  // if (projectsError) return <div>Failed to load projects</div>;
 
   const projects = fetchProjects ?? initialProjects ?? null;
   const profile = fetchProfile ?? initialProfile ?? null;
