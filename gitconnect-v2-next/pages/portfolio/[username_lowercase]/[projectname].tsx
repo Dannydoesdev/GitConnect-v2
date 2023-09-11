@@ -120,20 +120,33 @@ export default function Project({ projects: initialProjects, textContent: initia
       // Set star count to allow live dynamic update of count
       setStarCount(project.stars ? project.stars.length : 0);
     }
-
+    // console.log('useEffect hit')
     // Don't increment view count if user is owner, unless project has no views
-    if (project && projects[0].userId && userData && userData.userId && projectname) {
+    // console.log('project.userId and userData.userId: ', project?.userId, userData?.userId)
+    // console.log('project and projects[0].userId and userData and userData.userId and projectname: ', project, projects[0].userId, userData, userData.userId, projectname)
+    // NOTE: unlogged in version:
+    if (project && projects[0].userId && projectname) {
+    // if (project && projects[0].userId && userData && userData.userId && projectname) {
+      // console.log('useEffect hit 2')
       const userId = project?.userId;
       const repoId = project?.id as string;
+      // console.log('userId and repoId: ', userId, repoId)
       setRepoOwner(userId);
-      // handleIncrementView(userId, repoId);
+      handleIncrementView(userId, repoId);
     }
   }, [projectname, userData, projects]);
 
   const handleIncrementView = async (userId: string, repoId: string) => {
-    if (!userData || !userData.userId || !projects[0].userId || !projects) return;
+    // console.log('handleIncrementView hit')
+    // console.log('userId and repoId in handleIncrementView function: ', userId, repoId)
+    // NOTE: unlogged in version:
+    if (!projects || projects?.length === 0) return;
+    // if (!userData || !userData.userId || !projects[0].userId || !projects) return;
+
     const project = projects[0] || null;
-    if (project?.userId == userData.userId && project.views > 1) return;
+    if ((userId === userData.userId) && project?.views > 1) return;
+    // if ((project?.userId === userData.userId) && project.views > 1) return;
+    // console.log('handleIncrementView hit 2')
     await axios.post('/api/projects/incrementView', {
       userId: userId,
       repoId: repoId,
