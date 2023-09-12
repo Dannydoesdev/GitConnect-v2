@@ -132,7 +132,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
         ) {
           let file = event.dataTransfer.files[0]; // the dropped file
           let filesize: any = (file.size / 1024 / 1024).toFixed(4); // get the filesize in MB
-          console.log(filesize);
+          // console.log(filesize);
           // Check for accepted file types
           // if ((file.type === "image/jpeg" || file.type === "image/png") || file.type === "image/svg+xml" || file.type === "image/gif" || file.type === "image/webp" && filesize < 10) {
           if (file.type === 'image' && filesize < 15) {
@@ -263,7 +263,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
       })
       .then((response) => {
         const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
-        console.log(sanitizedHTML);
+        // console.log(sanitizedHTML);
         setReadme(sanitizedHTML);
         setContent(sanitizedHTML);
         setEditorContent(sanitizedHTML);
