@@ -53,12 +53,6 @@ export async function getStaticPaths() {
   };
 }
 
-
-// export default function Project({ projects, textContent }: any) {
-//   const { userData } = useContext(AuthContext);
-//   const router = useRouter();
-//   const { projectname, username } = router.query;
-
 // Define your interfaces here
 interface ProjectProps {
   projects: any;
@@ -73,7 +67,7 @@ interface ProjectData {
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function Project({ projects: initialProjects, textContent: initialTextContent }: ProjectProps) {
-  const { userData } = useContext(AuthContext);
+  const { currentUser, userData, loading } = useContext(AuthContext);
   const router = useRouter();
   const { projectname } = router.query;
 
@@ -108,37 +102,79 @@ export default function Project({ projects: initialProjects, textContent: initia
   const [repoOwner, setRepoOwner] = useState<string>('');
   const [starCount, setStarCount] = useState(0);
 
-  useEffect(() => {
-    if (!projectname) {
-      return;
-    }
-    const project = projects[0] || null;
+  const [isActiveTab, setIsActiveTab] = useState(true);
+  // const [lastUpdated, setLastUpdated] = useState(Date.now());
+  const [lastUpdated, setLastUpdated] = useState(0);
 
-    if (project && userData) {
-      setUserHasStarred(project.stars ? project.stars.includes(userData.userId) : false);
 
-      // Set star count to allow live dynamic update of count
-      setStarCount(project.stars ? project.stars.length : 0);
-    }
+useEffect(() => {
+  const handleVisibilityChange = () => {
+    setIsActiveTab(!document.hidden);
+  };
 
-    // Don't increment view count if user is owner, unless project has no views
-    if (project && projects[0].userId && userData && userData.userId && projectname) {
-      const userId = project?.userId;
-      const repoId = project?.id as string;
-      setRepoOwner(userId);
-      // handleIncrementView(userId, repoId);
-    }
-  }, [projectname, userData, projects]);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  return () => {
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}, []);
+
+useEffect(() => {
+  setLastUpdated(Date.now());
+  // setLastUpdated(0);
+}, [projectname]);
+
+useEffect(() => {
+  if (loading) {
+    // console.log('authcontext loading is true')
+    return; // If user data is still loading, exit early
+  }
+
+  if (!projectname || !isActiveTab || Date.now() - lastUpdated < 10000) {
+    return; // Exit early if conditions are not met
+  }
+
+  const project = projects[0] || null;
+
+  if (project && userData) {
+    setUserHasStarred(project.stars ? project.stars.includes(userData.userId) : false);
+    setStarCount(project.stars ? project.stars.length : 0);
+  }
 
   const handleIncrementView = async (userId: string, repoId: string) => {
-    if (!userData || !userData.userId || !projects[0].userId || !projects) return;
+    if (!projects || !userData || projects?.length === 0) return;
+
     const project = projects[0] || null;
-    if (project?.userId == userData.userId && project.views > 1) return;
-    await axios.post('/api/projects/incrementView', {
-      userId: userId,
-      repoId: repoId,
-    });
+    if (userId === userData.userId && project?.views > 1) return;
+
+    try {
+      const response = await axios.post('/api/projects/incrementView', { userId, repoId });
+    
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+      // console.log('incrementing view count')
+      // await axios.post('/api/projects/incrementView', {
+      //   userId: userId,
+      //   repoId: repoId,
+      // });
+      setLastUpdated(Date.now());
+    } catch (error: any) {
+      console.error('Error incrementing view count:', error.message);
+    }
   };
+
+  if (project && userData && projects[0].userId && projectname) {
+    const userId = project?.userId;
+    const repoId = project?.id as string;
+
+    if (!currentUser || currentUser.uid !== projects[0].userId) {
+      setRepoOwner(userId);
+      handleIncrementView(userId, repoId);
+    }
+  }
+}, [projectname, userData, projects, loading, isActiveTab, lastUpdated, currentUser]);
+
 
   const handleStarClick = async () => {
     if (!userData || !projects || projects?.length === 0) return;
@@ -267,43 +303,3 @@ export default function Project({ projects: initialProjects, textContent: initia
   }
 }
 
-
-// export default function UpdatePortfolioProject({
-//   projectData,
-//   textContent,
-// }: // customProjectData,
-// any) {
-//   const { userData } = useContext(AuthContext);
-//   const router = useRouter();
-//   const { projectname, username } = router.query;
-
-//   const [existingProject, setExistingProject] = useState<any>();
-
-//   const loggedInUserId = userData ? userData.userId : null;
-
-//   useEffect(() => {
-//     if (!projectname || !projectData[0]) {
-//       return;
-//     }
-//     setExistingProject(projectData[0]);
-//   }, [projectData, projectname, router]);
-
-//   if (router.isFallback) {
-//     return <LoadingPage />;
-//   }
-
-//   if (projectData[0] && existingProject) {
-//     return (
-//       <>
-//         <Space h={70} />
-//         <ViewProjectHero
-//           name={projectname as string}
-//           repoUrl={projectData[0]?.repoUrl || projectData[0]?.html_url || ''}
-//           coverImage={projectData[0]?.coverImage || ''}
-//           liveUrl={projectData[0]?.liveUrl || projectData[0]?.live_url || ''}
-//         />
-//         <ViewProject textContent={textContent} otherProjectData={existingProject} />
-//       </>
-//     );
-//   }
-// }
