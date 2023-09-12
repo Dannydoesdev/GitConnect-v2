@@ -151,7 +151,7 @@ export async function getAllUserAndProjectNameCombinationsLowercase() {
     }
     return {
       projectname: data.reponame_lowercase.toString(),
-      username: data.username_lowercase.toString(),
+      username_lowercase: data.username_lowercase.toString(),
     };
   });
   return paths;

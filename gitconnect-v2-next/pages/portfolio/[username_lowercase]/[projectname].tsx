@@ -42,9 +42,9 @@ export async function getStaticProps({ params }: any) {
 export async function getStaticPaths() {
   const pathNames = await getAllUserAndProjectNameCombinationsLowercase();
 
-  type pathName = { username?: string; projectname?: string };
+  type pathName = { username_lowercase?: string; projectname?: string };
   const paths = pathNames.map((path: pathName) => ({
-    params: { username: path.username, projectname: path.projectname },
+    params: { username_lowercase: path.username_lowercase, projectname: path.projectname },
   }));
 
   return {
@@ -126,7 +126,7 @@ export default function Project({ projects: initialProjects, textContent: initia
       const userId = project?.userId;
       const repoId = project?.id as string;
       setRepoOwner(userId);
-      handleIncrementView(userId, repoId);
+      // handleIncrementView(userId, repoId);
     }
   }, [projectname, userData, projects]);
 
