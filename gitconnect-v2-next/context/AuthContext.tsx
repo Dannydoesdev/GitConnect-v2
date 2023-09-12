@@ -183,6 +183,7 @@ export const AuthProvider = ({ children }: Props) => {
       value={{
         currentUser,
         userData,
+        loading
       }}
     >
       {children}
