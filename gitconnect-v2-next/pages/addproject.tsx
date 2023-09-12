@@ -121,6 +121,8 @@ const GetRepos = () => {
   const [projectDataState, setProjectData] = useAtom(projectDataAtom);
 
   const addRepo = async (repo: RepoDataFull) => {
+    const reponame_lowercase = repo.name.toLowerCase();
+    // console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
     try {
       await setDoc(
         doc(db, `users/${userId}/repos/${repo.id}`),
@@ -128,6 +130,9 @@ const GetRepos = () => {
           ...repo,
           userId,
           hidden: true,
+          userName: userName,
+          username_lowercase: userName.toLowerCase(),
+          reponame_lowercase: repo.name.toLowerCase(),
           gitconnect_created_at: new Date().toISOString(),
           gitconnect_updated_at: new Date().toISOString(),
           gitconnect_created_at_unix: Date.now(),
@@ -146,17 +151,35 @@ const GetRepos = () => {
 
         router.push(
           {
-            pathname: `/portfolio/testedit/${repo.id}`,
+            pathname: `/portfolio/edit/${reponame_lowercase}`,
             query: {
               name: repo.name,
+              username_lowercase: userName.toLowerCase(),
+              reponame_lowercase: repo.name.toLowerCase(),
               description: repo.description,
               url: repo.html_url,
               userId: userId,
               newRepoParam: JSON.stringify(true),
             },
           },
-          `/portfolio/testedit/${repo.id}`
+          `/portfolio/edit/${reponame_lowercase}`,
         );
+
+        // router.push(
+        //   {
+        //     pathname: `/portfolio/testedit/${repo.id}`,
+        //     query: {
+        //       name: repo.name,
+        //       username_lowercase: userName.toLowerCase(),
+        //       reponame_lowercase: repo.name.toLowerCase(),
+        //       description: repo.description,
+        //       url: repo.html_url,
+        //       userId: userId,
+        //       newRepoParam: JSON.stringify(true),
+        //     },
+        //   },
+        //   `/portfolio/testedit/${repo.id}`
+        // );
       });
         
       // router.push(
@@ -182,16 +205,21 @@ const GetRepos = () => {
       try {
         const returnedRepoData = await getGithubReposWithUsername(userName);
         setRepoData(returnedRepoData);
+        // console.log('returned repo data');
+        // console.log(returnedRepoData);
 
         const q = query(collection(db, `users/${userId}/repos`));
         const querySnapshot = await getDocs(q);
 
         const existingRepoArr: string[] = [];
         querySnapshot.forEach((doc) => {
+          // console.log(doc.id, ' => ', doc.data());
           existingRepoArr.push(doc.id);
         });
 
         setExistingRepos(existingRepoArr);
+        // console.log('existing repos');
+        // console.log(existingRepoArr);
       } catch (error) {
         console.error('Error fetching data:', error);
       }

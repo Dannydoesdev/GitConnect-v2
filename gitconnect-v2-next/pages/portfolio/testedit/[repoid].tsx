@@ -84,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 // export async function getStaticPaths() {
 //   const projectIds = await getAllProjectIds();
 
-//   // projectIds.map((id: any) => console.log(id.id));
+  // projectIds.map((id: any) => console.log(id.id));
 //   type ProjectId = { id?: string };
 //   const paths = projectIds.map((id: ProjectId) => ({
 //     params: { repoid: id.id },

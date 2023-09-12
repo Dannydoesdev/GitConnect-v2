@@ -10,6 +10,7 @@ import {
   getDocs,
   doc,
   serverTimestamp,
+  collectionGroup,
 } from 'firebase/firestore';
 import { getGithubProfileData } from './github';
 
@@ -24,6 +25,40 @@ export async function getAllProfileIds() {
     return {
       // ...data,
       id: data.userId,
+    };
+  });
+
+  return profileIds;
+}
+
+export async function getAllProfileUsernamesLowercase() {
+  // const profiles = [];
+  const q = query(collection(db, 'users'));
+  const querySnapshot = await getDocs(q);
+
+  const profileIds: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    // console.log(data);
+    return {
+      // ...data,
+      usernameLowercase: data.username_lowercase,
+    };
+  });
+
+  return profileIds;
+}
+
+export async function getAllProfileUsernames() {
+  // const profiles = [];
+  const q = query(collection(db, 'users'));
+  const querySnapshot = await getDocs(q);
+
+  const profileIds: any = querySnapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    // console.log(data);
+    return {
+      // ...data,
+      username: data.userName,
     };
   });
 
@@ -67,6 +102,8 @@ export async function getProfileData(id: string) {
 
 // GETTING DATA - DOES NOT SET
 
+// FIXME: Delete this function
+
 export async function getGithubDataFromFirebase(
   firebaseId: string,
   gitHubUserName: string
@@ -84,6 +121,129 @@ export async function getGithubDataFromFirebase(
     const docData = docSnap.data();
     return {
       id: firebaseId,
+      docData,
+    };
+  }
+}
+
+export async function getProfileDataWithUsernameLowercase(
+  usernameLowercase: string
+) {
+  usernameLowercase = usernameLowercase.toLowerCase();
+  const profileQuery = query(collectionGroup(db, 'profileData'), where('username_lowercase', '==', usernameLowercase));
+  const profileQuerySnapshot = await getDocs(profileQuery);
+  // Only return the data for the publicData doc id
+  return profileQuerySnapshot.docs
+    .filter((doc: any) => doc.id === 'publicData')
+    .map((doc: any) => {
+      if (!doc.exists()) {
+        return null;
+      }
+      const docData = { ...doc.data() };
+      return {
+        docData,
+      };
+    })
+}
+
+
+  // return profileQuerySnapshot.docs
+  //   .map((doc: any) => {
+  //     // console.log('data found')
+  //     // console.log(doc.id, ' => ', doc.data());
+  //     if (!doc.exists()) {
+  //       console.log(`cant find doc with username_lowercase: ${usernameLowercase}`)
+  //       return null;
+  //     }
+  //     if (doc.id === 'githubData') { return null; }
+  //     const docData  = { ...doc.data() };
+  //     return {
+  //       docData,
+  //       // ...docData,
+  //     };
+  //   })
+    // .filter(Boolean); // Remove null or undefined values
+// }
+
+// export async function getProfileDataWithUsernameLowercaseTwo(
+//   firebaseId: string,
+//   // gitHubUserName?: string
+//   // usernameLowercase: string
+// ) {
+//   console.log('firebase ID in getProfileDataWithFirebaseIdNew:')
+//   console.log(firebaseId)
+  
+//     const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
+//     const docSnap = await getDoc(docRef);
+
+//   if (docSnap.exists()) {
+//     // console.log('Github profile data retrieved')
+//     const docData = { ...docSnap.data() };
+
+//     console.log('returned from getProfileDataWithFirebaseIdNew query:')
+//     console.log(docData)
+
+//     return {
+//       // id: firebaseId,
+//       docData,
+//     };
+//   }
+// }
+
+  // console.log('returned from getProfileDataWithUsernameLowercase query:')
+  // return profileQuerySnapshot.docs.map((doc: any) => {
+  //   if (doc.id === 'githubData') { return }
+  //   // console.log(doc.data())
+  //   const docData = { ...doc.data() };
+  //   // console.log(doc.id, ' => ', doc.data());
+
+  //   return {
+  //     // id: docData.userId,
+  //     docData,
+  //   };
+  // });
+
+  // const querySnapshot = await getDocs(projectQuery);
+
+  // const q = query(collection(db, 'users'), where('username_lowercase', '==', usernameLowercase));
+  // const querySnapshot = await getDocs(q);
+
+  // console.log('returned from getProfileDataWithUsernameLowercase query:')
+  // return querySnapshot.docs.map((doc: any) => {
+  //   console.log(doc.id, ' => ', doc.data());
+  //   const docData = { ...doc.data() };
+
+  //   return {
+  //     // id,
+  //     docData,
+  //     id: docData.userId,
+  //   };
+  // });
+
+  //   const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
+  //   const docSnap = await getDoc(docRef);
+
+  // if (docSnap.exists()) {
+  //   // console.log('Github profile data retrieved')
+  //   const docData = docSnap.data();
+  //   return {
+  //     id: firebaseId,
+  //     docData,
+  //   };
+  // }
+// }
+
+
+
+export async function getProfileDataWithFirebaseIdNew(
+  firebaseId: string,
+) {
+    const docRef = doc(db, `users/${firebaseId}/profileData/publicData`);
+    const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const docData = { ...docSnap.data() };
+    return {
       docData,
     };
   }
@@ -124,6 +284,8 @@ export async function getGithubDataFromFirebaseIdOnly(
 // NOTE - checks if data in firebase, if not, gets from github and sets in firebase
 // Not in use anymore
 
+// FIXME: Delete this function
+
 export async function getProfileDataGithub(id: string, userName: string) {
   // console.log(
   //   `Getting Github Data for user ID ${id} with username ${userName}`
@@ -154,6 +316,8 @@ export async function getProfileDataGithub(id: string, userName: string) {
 }
 
 // Gets and sets github data in firebase - data must be sent to function seperately from github.ts util
+
+// FIXME: Delete this function - not used anywhere
 
 export async function setGitHubProfileDataInFirebase(
   firebaseId: string,
@@ -188,6 +352,8 @@ export async function setGitHubProfileDataInFirebase(
       });
   }
 }
+
+// FIXME: Delete this function - not used anywhere
 
 // NOT IN USE
 export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(
@@ -241,13 +407,15 @@ export async function setGithubProfileDataInFirebaseViaUtilWithIdAndUsername(
 
 // NOTE: This is a get OR set function - if data hasn't been added all when 'getting' - the default data from github will be set
 // NOT IN USE
+// FIXME: Delete this function - not used anywhere
+
 export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(
   id: string,
   userName: string
 ) {
-  console.log(
-    `Getting Github Data for user ID ${id} with username ${userName}`
-  );
+  // console.log(
+  //   `Getting Github Data for user ID ${id} with username ${userName}`
+  // );
 
   const docRef = doc(db, `users/${id}/profileData/githubData`);
   const docSnap = await getDoc(docRef);
@@ -300,11 +468,22 @@ export async function setGithubProfileDataInFirebaseViaApiWithIdAndUsername(
 // TODO: secure the data paramater with validation of types and data
 
 export async function updateProfileDataGithub(id: string, data: any) {
-  const docRef = doc(db, `users/${id}/profileData/githubData`);
-  const docSnap = await getDoc(docRef);
 
-  await setDoc(docRef, { ...data }, { merge: true }).then(() => {
-    // console.log(`successfully added the following to database:`)
+  // NOTE - this is the function for updating profile changes to firestore
+  // I am duplicating this logic to publicData and githubData while we deprecate githubData
+  // TODO - remove this logic once githubData is deprecated
+
+  const githubDataDocRef = doc(db, `users/${id}/profileData/githubData`);
+  const docSnap = await getDoc(githubDataDocRef);
+
+  const publicDataDocRef = doc(db, `users/${id}/profileData/publicData`);
+
+  await setDoc(githubDataDocRef, { ...data }, { merge: true }).then(async () => {
+
+    // const publicDataDocSnap = await getDoc(publicDataDocRef);
+    await setDoc(publicDataDocRef, { ...data }, { merge: true })
+
+    // console.log(`successfully added updated profile data to BOTH githubdata and publicData:`)
     // console.log(data)
   });
 }
