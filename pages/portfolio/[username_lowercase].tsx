@@ -11,7 +11,7 @@ import {
   getAllProfileUsernamesLowercase,
   getProfileDataWithFirebaseIdNew,
   getProfileDataWithUsernameLowercase,
-} from '../../lib/profiles';
+} from '@/lib/profiles';
 import { getAllUserProjectsWithUsernameLowercase } from '../../lib/projects';
 import Head from 'next/head';
 

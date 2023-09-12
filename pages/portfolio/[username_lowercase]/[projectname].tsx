@@ -144,8 +144,8 @@ useEffect(() => {
   const handleIncrementView = async (userId: string, repoId: string) => {
     if (!projects || !userData || projects?.length === 0) return;
 
-    const project = projects[0] || null;
-    if (userId === userData.userId && project?.views > 1) return;
+    // const project = projects[0] || null;
+    if (userId === userData.userId && projects[0].views && projects[0].views > 1) return;
 
     try {
       const response = await axios.post('/api/projects/incrementView', { userId, repoId });
@@ -160,7 +160,7 @@ useEffect(() => {
       // });
       setLastUpdated(Date.now());
     } catch (error: any) {
-      console.error('Error incrementing view count:', error.message);
+      // console.error('Error incrementing view count:', error.message);
     }
   };
 
@@ -195,7 +195,7 @@ useEffect(() => {
   };
 
   if (projects) {
-    const project = projects[0]|| null;
+    // const project = projects[0]|| null;
 
     return (
       <>
