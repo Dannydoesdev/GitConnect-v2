@@ -43,7 +43,7 @@ type EditPortfolioProps = {
   repoid: string;
   userid: string;
   textContent?: string;
-  userName: string;
+  userName?: string;
   otherProjectData?: any;
 };
 
@@ -134,7 +134,7 @@ export default function TestingEditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid, username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
+        { ...formData, userId: userid, repoId: repoid },
         { merge: true }
       );
       //
@@ -238,7 +238,7 @@ export default function TestingEditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
+        { ...formData, userId: userid, repoId: repoid },
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
@@ -315,7 +315,7 @@ export default function TestingEditPortfolioProject({
         autoClose: false,
         withCloseButton: false,
       });
-      await setDoc(docRef, { htmlOutput: sanitizedHTML, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() }, { merge: true });
+      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
       // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
 
       const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
@@ -361,7 +361,7 @@ export default function TestingEditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
+        { ...formData, userId: userid, repoId: repoid },
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData }, { merge: true });
