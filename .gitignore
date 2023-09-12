@@ -15,6 +15,7 @@ ui-debug.log
 
 # backup
 /backup
+**/backup
 
 # dependencies
 /node_modules
