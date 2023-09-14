@@ -14,9 +14,9 @@ import {
   getAllProjectIds,
   getAllCustomProjectData,
 } from '@/lib/projects';
-import TestingEditPortfolioProject from '@/components/Portfolio/EditProject/TestingEditProject';
+import TestingEditPortfolioProject from '@/components/Portfolio/EditProject/EditProject';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
+import EditPortfolioProject from '../../../components/Portfolio/EditProject/Old_EditProject';
 import { AuthContext } from '../../../context/AuthContext';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

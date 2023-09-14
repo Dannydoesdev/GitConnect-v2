@@ -5,6 +5,7 @@ import Router from 'next/router'
 
 export const projectDataAtom = atom<RepoDataFull>({} as RepoDataFull)
 export const textEditorAtom = atom<string | undefined>('');
+export const unsavedChangesAtom = atom<boolean>(false);
 
 const pageAtom = atomWithHash('page', 1, {
   // replaceState: true,
