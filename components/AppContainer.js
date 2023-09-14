@@ -1,21 +1,20 @@
-import { useState, useContext } from 'react';
+import { useContext, useState } from 'react';
 import Link from 'next/link';
-import Router from 'next/router';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
   AppShell,
+  Avatar,
+  Burger,
+  Button,
+  createStyles,
   Footer,
   Group,
   Header,
-  Text,
-  Button,
-  createStyles,
-  Avatar,
-  rem,
-  Burger,
   Menu,
-  Transition,
   Paper,
+  rem,
+  Text,
+  Transition,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { signOut } from 'firebase/auth';
@@ -368,7 +367,11 @@ export const AppContainer = ({ children }, props) => {
                     </Text> */}
 
                   {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
-                  <Link href={`/portfolio/${userData.username_lowercase}`} passHref legacyBehavior>
+                  <Link
+                    href={`/portfolio/${userData.username_lowercase}`}
+                    passHref
+                    legacyBehavior
+                  >
                     <Button
                       component="a"
                       size="xs"
@@ -412,8 +415,11 @@ export const AppContainer = ({ children }, props) => {
                   </Transition>
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
                   {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
-                  <Link href={`/portfolio/${userData.username_lowercase}`} passHref legacyBehavior>
-
+                  <Link
+                    href={`/portfolio/${userData.username_lowercase}`}
+                    passHref
+                    legacyBehavior
+                  >
                     <Avatar
                       component="a"
                       radius="xl"
@@ -468,7 +474,8 @@ export const AppContainer = ({ children }, props) => {
                       About
                     </Button>
                   </Link>
-                  {/* <Link href='/landing' passHref legacyBehavior>
+                </Group>
+                {/* <Link href='/landing' passHref legacyBehavior>
                     <Text
                       component='a'
                       className='dark:text-white'
@@ -479,7 +486,6 @@ export const AppContainer = ({ children }, props) => {
                       About
                     </Text>
                   </Link> */}
-                </Group>
 
                 <Group>
                   <Link href="#" passHref legacyBehavior>
