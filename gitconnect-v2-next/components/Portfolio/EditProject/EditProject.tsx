@@ -31,7 +31,7 @@ import { set } from 'lodash';
 import useSWR from 'swr';
 import LoadingPage from '../../LoadingPage/LoadingPage';
 import RichTextEditorVanilla from '../RichTextEditor/OldRichTextEditorVanilla';
-import TestingRichTextEditor from '../RichTextEditor/RichTextEditor';
+import ProjectRichTextEditor from '../RichTextEditor/RichTextEditor';
 import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal from './EditProjectSettings';
@@ -61,7 +61,7 @@ const useStyles = createStyles((theme) => ({
 //   return res.data;
 // }
 
-export default function TestingEditPortfolioProject({
+export default function EditPortfolioProject({
   repoName,
   description,
   url,
@@ -144,6 +144,7 @@ export default function TestingEditPortfolioProject({
         { ...formData, hidden: false, visibleToPublic: true },
         { merge: true }
       );
+      setUnsavedChanges(false);
       // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
       // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
@@ -164,12 +165,17 @@ export default function TestingEditPortfolioProject({
       notifications.update({
         id: 'load-data',
         color: 'teal',
-        title: 'Project was published',
-        message: 'Your updates have been saved and published',
+        title: 'Project published successfully',
+        message: 'Loading your project page',
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
       close();
+
+      setTimeout(() => {
+        router.push(`/portfolio/${userName}/${repoName}`);
+      }, 2000);
+      // router.push(`/portfolio/${userName}/${repoName}`);
     }
 
     // TODO: New project view page
@@ -208,6 +214,7 @@ export default function TestingEditPortfolioProject({
         autoClose: 2000,
       });
     } finally {
+      setUnsavedChanges(false);
       notifications.update({
         id: 'load-data',
         color: 'teal',
@@ -243,6 +250,7 @@ export default function TestingEditPortfolioProject({
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
+      setUnsavedChanges(false);
       // console.log(formData)
       // console.log('publishing');
       // close();
@@ -260,12 +268,19 @@ export default function TestingEditPortfolioProject({
       notifications.update({
         id: 'load-data',
         color: 'teal',
-        title: 'Project was saved',
-        message: 'Your updates have been saved',
+        title: 'Project saved successfully',
+        message: 'Loading your project page',
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
+      // Wait 2 seconds before redirecting to allow time for the database to update
       close();
+
+      setTimeout(() => {
+        router.push(`/portfolio/${userName}/${repoName}`);
+      }, 2000);
+
+      // router.push(`/portfolio/${userName}/${repoName}`);
     }
     // TODO: New project view page
     // router.push(`/profiles/projects/${repoid}`);
@@ -299,7 +314,7 @@ export default function TestingEditPortfolioProject({
     // console.log('saved and continue')
   }
 
-  async function handleSaveAsDraft() {
+  async function handleSaveAsDraft(revertToDraft: boolean) {
     if (!textEditorState || textEditorState == '') {
       return;
     }
@@ -336,15 +351,32 @@ export default function TestingEditPortfolioProject({
       });
     } finally {
       setUnsavedChanges(false);
-      notifications.update({
-        id: 'load-data',
-        color: 'teal',
-        title: 'Draft was saved',
-        message: 'Your project was saved as a draft',
-        icon: <IconCheck size="1rem" />,
-        autoClose: 2000,
-      });
+      {
+        revertToDraft ?
+          notifications.update({
+            id: 'load-data',
+            color: 'teal',
+            title: 'Reverted to draft',
+            message: 'Reloading page',
+            icon: <IconCheck size="1rem" />,
+            autoClose: 2000,
+          })
+        :
+        notifications.update({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Draft was saved',
+          message: 'Your project was saved as a draft',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 2000,
+        });
+      }
       close();
+      if (revertToDraft) {
+        setTimeout(() => {
+          router.reload();
+        }, 1500);
+      }      
     }
   }
 
@@ -608,7 +640,7 @@ export default function TestingEditPortfolioProject({
             {/* <Text>{description}</Text>
           <Text>{url}</Text> */}
 
-            <TestingRichTextEditor
+            <ProjectRichTextEditor
               // existingContent={textContent}
               // updatedContent={realtimeEditorContent}
               userId={userid}
@@ -717,6 +749,37 @@ export default function TestingEditPortfolioProject({
               >
                 Settings{' '}
               </Button>
+              <Button
+                component="a"
+                onClick={() => {router.push(`/portfolio/${userName}/${repoName}`)}}
+                radius="md"
+                w={{
+                  base: '95%',
+                  md: '80%',
+                  lg: '60%',
+                  sm: '90%',
+                }}
+                mt={40}
+                className="mx-auto"
+                styles={(theme) => ({
+                  root: {
+                    backgroundColor: theme.colors.blue[7],
+                    [theme.fn.smallerThan('sm')]: {
+                      // size: 'xs' ,
+                      padding: 0,
+                      fontSize: 12,
+                    },
+                    '&:hover': {
+                      backgroundColor:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.blue[9]
+                          : theme.colors.blue[9],
+                    },
+                  },
+                })}
+              >
+                Go to project page
+              </Button>
               {/* <Button
                 component="a"
                 onClick={handlePreview}
@@ -789,7 +852,7 @@ export default function TestingEditPortfolioProject({
                   }}
                   mt={12}
                   mb={30}
-                  onClick={handleSaveAsDraft}
+                  onClick={() => { handleSaveAsDraft(false) }}
                   className="mx-auto"
                   variant="outline"
                   // onClick={handleSave}
@@ -844,7 +907,7 @@ export default function TestingEditPortfolioProject({
                     },
                   })}
                 >
-                  Update Project
+                  Save Updates
                 </Button>
                 <Button
                   component="a"
@@ -856,8 +919,9 @@ export default function TestingEditPortfolioProject({
                     sm: '90%',
                   }}
                   mt={12}
-                  mb={30}
-                  onClick={handleSaveAsDraft}
+                    mb={30}
+                    onClick={() => { handleSaveAsDraft(true) }}
+                  // onClick={handleSaveAsDraft}
                   className="mx-auto"
                   variant="outline"
                   // onClick={handleSave}

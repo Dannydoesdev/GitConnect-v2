@@ -61,7 +61,7 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-function TestingRichTextEditor({
+function ProjectRichTextEditor({
   repoId,
   userId,
 }:
@@ -281,4 +281,4 @@ RichTextEditorVanillaProps) {
   );
 }
 
-export default TestingRichTextEditor;
+export default ProjectRichTextEditor;
