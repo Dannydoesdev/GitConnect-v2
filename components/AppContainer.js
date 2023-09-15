@@ -388,6 +388,33 @@ export const AppContainer = ({ children }, props) => {
                       Profile
                     </Button>
                   </Link>
+
+                  {/* TESTING ONLY */}
+                  {(userData.userId === 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' || process.env.NODE_ENV === 'development') && (
+                    <Link
+                    href={`/portfolio/test/${userData.username_lowercase}`}
+                    passHref
+                    legacyBehavior
+                  >
+                    <Button
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
+                    >
+                      TEST
+                    </Button>
+                  </Link>
+                  )}
+                  {/* TESTING ONLY */}
+
                 </Group>
 
                 <Group>

@@ -2,7 +2,7 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { Router, useRouter } from 'next/router';
-import { projectDataAtom, textEditorAtom } from '@/atoms';
+import { projectDataAtom, textEditorAtom, unsavedChangesAtom, unsavedChangesSettingsAtom } from '@/atoms';
 import { db } from '@/firebase/clientApp';
 import {
   Aside,
@@ -29,11 +29,11 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAtom } from 'jotai';
 import { set } from 'lodash';
 import useSWR from 'swr';
-import LoadingPage from '../../LoadingPage/LoadingPage';
-import RichTextEditorVanilla from '../RichTextEditor/OldRichTextEditorVanilla';
-import TestingRichTextEditor from '../RichTextEditor/RichTextEditor';
-import ViewPreviewProjectEditor from '../ViewPreviewProjectContent/ViewPreviewProjectContent';
-import { ViewProjectHero } from '../ViewPreviewProjectHero/ViewProjectHero';
+import LoadingPage from '../../../LoadingPage/LoadingPage';
+import RichTextEditorVanilla from './RichTextEditor/OldRichTextEditorVanilla';
+import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
+import ViewPreviewProjectEditor from '../ViewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
+import { ViewProjectHero } from '../ViewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal from './EditProjectSettings';
 
 type EditPortfolioProps = {
@@ -43,7 +43,7 @@ type EditPortfolioProps = {
   repoid: string;
   userid: string;
   textContent?: string;
-  userName?: string;
+  userName: string;
   otherProjectData?: any;
 };
 
@@ -61,7 +61,7 @@ const useStyles = createStyles((theme) => ({
 //   return res.data;
 // }
 
-export default function TestingEditPortfolioProject({
+export default function EditPortfolioProject({
   repoName,
   description,
   url,
@@ -78,6 +78,7 @@ export default function TestingEditPortfolioProject({
   const [currentCoverImage, setcurrentCoverImage] = useState('');
   // const [projectDataState, setProjectData] = useAtom(projectDataAtom);
   const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
+  const [unsavedChanges, setUnsavedChanges] = useAtom(unsavedChangesAtom);
 
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
@@ -86,6 +87,7 @@ export default function TestingEditPortfolioProject({
   const [settingsOnly, setSettingsOnly] = useState(false);
 
   const [preview, setPreview] = useState(false);
+  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(unsavedChangesSettingsAtom);
 
   const { classes, theme } = useStyles();
 
@@ -134,7 +136,7 @@ export default function TestingEditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid },
+        { ...formData, userId: userid, repoId: repoid, username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
         { merge: true }
       );
       //
@@ -143,6 +145,8 @@ export default function TestingEditPortfolioProject({
         { ...formData, hidden: false, visibleToPublic: true },
         { merge: true }
       );
+      setUnsavedChanges(false);
+      setUnsavedChangesSettings(false);
       // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
       // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
@@ -163,12 +167,17 @@ export default function TestingEditPortfolioProject({
       notifications.update({
         id: 'load-data',
         color: 'teal',
-        title: 'Project was published',
-        message: 'Your updates have been saved and published',
+        title: 'Project published successfully',
+        message: 'Loading your project page',
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
       close();
+
+      setTimeout(() => {
+        router.push(`/portfolio/${userName}/${repoName}`);
+      }, 2000);
+      // router.push(`/portfolio/${userName}/${repoName}`);
     }
 
     // TODO: New project view page
@@ -207,6 +216,7 @@ export default function TestingEditPortfolioProject({
         autoClose: 2000,
       });
     } finally {
+      setUnsavedChanges(false);
       notifications.update({
         id: 'load-data',
         color: 'teal',
@@ -238,10 +248,12 @@ export default function TestingEditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid },
+        { ...formData, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
+      setUnsavedChanges(false);
+      setUnsavedChangesSettings(false);
       // console.log(formData)
       // console.log('publishing');
       // close();
@@ -259,12 +271,19 @@ export default function TestingEditPortfolioProject({
       notifications.update({
         id: 'load-data',
         color: 'teal',
-        title: 'Project was saved',
-        message: 'Your updates have been saved',
+        title: 'Project saved successfully',
+        message: 'Loading your project page',
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
+      // Wait 2 seconds before redirecting to allow time for the database to update
       close();
+
+      setTimeout(() => {
+        router.push(`/portfolio/${userName}/${repoName}`);
+      }, 2000);
+
+      // router.push(`/portfolio/${userName}/${repoName}`);
     }
     // TODO: New project view page
     // router.push(`/profiles/projects/${repoid}`);
@@ -289,6 +308,7 @@ export default function TestingEditPortfolioProject({
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
 
     await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+    setUnsavedChanges(false);
 
     // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
@@ -297,7 +317,7 @@ export default function TestingEditPortfolioProject({
     // console.log('saved and continue')
   }
 
-  async function handleSaveAsDraft() {
+  async function handleSaveAsDraft(revertToDraft: boolean) {
     if (!textEditorState || textEditorState == '') {
       return;
     }
@@ -315,7 +335,7 @@ export default function TestingEditPortfolioProject({
         autoClose: false,
         withCloseButton: false,
       });
-      await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+      await setDoc(docRef, { htmlOutput: sanitizedHTML, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() }, { merge: true });
       // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
 
       const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
@@ -333,15 +353,34 @@ export default function TestingEditPortfolioProject({
         autoClose: 2000,
       });
     } finally {
-      notifications.update({
-        id: 'load-data',
-        color: 'teal',
-        title: 'Draft was saved',
-        message: 'Your project was saved as a draft',
-        icon: <IconCheck size="1rem" />,
-        autoClose: 2000,
-      });
+      setUnsavedChanges(false);
+    setUnsavedChangesSettings(false);
+      {
+        revertToDraft ?
+          notifications.update({
+            id: 'load-data',
+            color: 'teal',
+            title: 'Reverted to draft',
+            message: 'Reloading page',
+            icon: <IconCheck size="1rem" />,
+            autoClose: 2000,
+          })
+        :
+        notifications.update({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Draft was saved',
+          message: 'Your project was saved as a draft',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 2000,
+        });
+      }
       close();
+      if (revertToDraft) {
+        setTimeout(() => {
+          router.reload();
+        }, 1500);
+      }      
     }
   }
 
@@ -361,7 +400,7 @@ export default function TestingEditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid },
+        { ...formData, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData }, { merge: true });
@@ -387,6 +426,7 @@ export default function TestingEditPortfolioProject({
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
+      setUnsavedChangesSettings(false);
       setSettingsOnly(false);
       close();
     }
@@ -499,10 +539,12 @@ export default function TestingEditPortfolioProject({
         },
       })
       .then((response) => {
+        setTextEditor('');
         const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
         // setReadme(sanitizedHTML);
         // handleEditorChange(sanitizedHTML);
         setTextEditor(sanitizedHTML);
+        setUnsavedChanges(true);
         notifications.update({
           id: 'fetch-readme',
           color: 'teal',
@@ -527,6 +569,31 @@ export default function TestingEditPortfolioProject({
 
   function handlePreview() {
     setPreview(!preview);
+  }
+  const settingsModalCloseCheck = () => {
+    if (unsavedChangesSettings) {
+      modals.openConfirmModal({
+        title: 'Unsaved changes',
+        centered: true,
+        children: (
+          <Text size="sm">
+            You have unsaved changes. Are you sure you want to close this window?
+          </Text>
+        ),
+        labels: { confirm: 'Close without saving', cancel: 'Cancel' },
+        onCancel: () => {
+          // console.log('Cancel');
+          // router.events.on('routeChangeStart', handleRouteChange);
+        },
+        onConfirm: () => {
+          // console.log('Confirmed');
+          setUnsavedChangesSettings(false);
+          close();
+        },
+      });
+    } else {
+      close();
+    }
   }
 
   if (preview) {
@@ -571,7 +638,8 @@ export default function TestingEditPortfolioProject({
             // handleSaveAsDraft={handleSaveAsDraft}
             opened={opened}
             open={open}
-            close={close}
+            close={settingsModalCloseCheck}
+            // close={close}
             techStack={otherProjectData?.techStack}
             liveUrl={otherProjectData?.liveUrl || otherProjectData?.live_url}
             repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url}
@@ -605,7 +673,7 @@ export default function TestingEditPortfolioProject({
             {/* <Text>{description}</Text>
           <Text>{url}</Text> */}
 
-            <TestingRichTextEditor
+            <ProjectRichTextEditor
               // existingContent={textContent}
               // updatedContent={realtimeEditorContent}
               userId={userid}
@@ -714,6 +782,37 @@ export default function TestingEditPortfolioProject({
               >
                 Settings{' '}
               </Button>
+              <Button
+                component="a"
+                onClick={() => {router.push(`/portfolio/${userName}/${repoName}`)}}
+                radius="md"
+                w={{
+                  base: '95%',
+                  md: '80%',
+                  lg: '60%',
+                  sm: '90%',
+                }}
+                mt={40}
+                className="mx-auto"
+                styles={(theme) => ({
+                  root: {
+                    backgroundColor: theme.colors.blue[7],
+                    [theme.fn.smallerThan('sm')]: {
+                      // size: 'xs' ,
+                      padding: 0,
+                      fontSize: 12,
+                    },
+                    '&:hover': {
+                      backgroundColor:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.blue[9]
+                          : theme.colors.blue[9],
+                    },
+                  },
+                })}
+              >
+                Go to project page
+              </Button>
               {/* <Button
                 component="a"
                 onClick={handlePreview}
@@ -786,7 +885,7 @@ export default function TestingEditPortfolioProject({
                   }}
                   mt={12}
                   mb={30}
-                  onClick={handleSaveAsDraft}
+                  onClick={() => { handleSaveAsDraft(false) }}
                   className="mx-auto"
                   variant="outline"
                   // onClick={handleSave}
@@ -841,7 +940,7 @@ export default function TestingEditPortfolioProject({
                     },
                   })}
                 >
-                  Update Project
+                  Save Updates
                 </Button>
                 <Button
                   component="a"
@@ -853,8 +952,9 @@ export default function TestingEditPortfolioProject({
                     sm: '90%',
                   }}
                   mt={12}
-                  mb={30}
-                  onClick={handleSaveAsDraft}
+                    mb={30}
+                    onClick={() => { handleSaveAsDraft(true) }}
+                  // onClick={handleSaveAsDraft}
                   className="mx-auto"
                   variant="outline"
                   // onClick={handleSave}
