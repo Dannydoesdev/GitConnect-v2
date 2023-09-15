@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { textEditorAtom } from '@/atoms/jotaiAtoms';
 import { db } from '@/firebase/clientApp';
 import { Button, Center, Container, Group } from '@mantine/core';
 import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
@@ -15,14 +14,15 @@ import { doc, getDoc } from 'firebase/firestore';
 import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
-import { useAtom } from 'jotai';
-import { lowlight } from 'lowlight/lib/core';
-import { text } from 'stream/consumers';
 import css from 'highlight.js/lib/languages/css';
+import { useAtom } from 'jotai';
+import { textEditorAtom, unsavedChangesAtom } from '@/atoms/jotaiAtoms';
+import { lowlight } from 'lowlight/lib/core';
 import { DBlock } from './extensions/dBlock';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
+import { set } from 'lodash';
 
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
@@ -61,26 +61,16 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-function TestingRichTextEditor({
-  // existingContent,
-  // updatedContent,
+function ProjectRichTextEditor({
   repoId,
   userId,
-}: // readme,
-// onUpdateEditor,
+}:
 RichTextEditorVanillaProps) {
-  // const [editorContent, setEditorContent] = useState('');
-  // const [content, setContent] = useState('');
-  // const [newReadme, setNewReadme] = useState('');
-  // const [initialContent, setinitialContent] = useState(existingContent);
   const router = useRouter();
 
   const [textContentState, setTextContentState] = useAtom(textEditorAtom);
   const [initialContent, setInitialContent] = useState('');
-  // const [editorContent, setEditorContent] = useState('');
-
-  // console.log('Initial TextEditorState inside editor');
-  // console.log(textContentState);
+  const [unsavedChanges, setUnsavedChanges] = useAtom(unsavedChangesAtom);
 
   const [content, setContent] = useState(textContentState);
 
@@ -94,56 +84,30 @@ RichTextEditorVanillaProps) {
         const htmlOutput = mainContent.htmlOutput;
         handleSetTipTap(htmlOutput);
         if (htmlOutput?.length > 0) {
-          // console.log('returned htmlOutput from firebase')
-          // console.log(htmlOutput)
           setInitialContent(htmlOutput);
-          // handleSetTipTap(htmlOutput);
           setTextContentState(htmlOutput);
-          // setInitial
           editor?.commands.setContent(htmlOutput);
         }
       }
     };
 
     getFirebaseData();
-    // }, [repoId, router, userId]);
   }, [router, repoId, userId]);
 
   function handleSetTipTap(content: any) {
     editor?.commands.setContent(content);
   }
 
-  // useEffect(() => {
-  //   if (!textContentState) return;
-  //   editor?.commands?.setContent(textContentState);
-  // }, [textContentState]);
-
   useEffect(() => {
     editor?.commands.setContent(initialContent);
   }, [initialContent]);
 
-  // useEffect(() => {
-  //   if (updatedContent && editor) {
-  //     // setTimeout(() => {
-  //     editor?.commands.setContent(updatedContent);
-  //   // });
-  //     }
-  // }, []);
 
   useEffect(() => {
-    // console.log('preuseEffect textContentState inside editor', textContentState);
-    // if (!editor || !textContentState) return;
     if (textContentState && textContentState !== editor?.getHTML()) {
       editor?.commands.setContent(textContentState);
     }
-    // console.log('postuseEffect textContentState inside editor', textContentState);
   }, [textContentState]);
-
-  // useEffect(() => {
-
-  //   console.log('useEffecttextContentState inside editor', textContentState);
-
-  // }, [textContentState]);
 
   const editor = useEditor({
     extensions: [
@@ -174,8 +138,6 @@ RichTextEditorVanillaProps) {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content: initialContent,
-    // content,
-    // content: updatedContent || existingContent,
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
@@ -189,6 +151,7 @@ RichTextEditorVanillaProps) {
       // if (textContentState && (textContentState !== editor.getHTML())) {
       // setEditorContent(editor.getHTML());
       setTextContentState(editor.getHTML());
+      setUnsavedChanges(true);
       // }
       // Update state every time the editor content changes
       // setEditorContent(editor.getHTML());
@@ -318,4 +281,4 @@ RichTextEditorVanillaProps) {
   );
 }
 
-export default TestingRichTextEditor;
+export default ProjectRichTextEditor;

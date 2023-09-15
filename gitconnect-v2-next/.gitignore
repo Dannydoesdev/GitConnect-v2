@@ -52,6 +52,9 @@ ui-debug.log
 .log*
 .log
 functions/*.log
+/functions/firestore-debug.log
+/functions/ui-debug.log
+/functions/pubsub-debug.log
 
 # debug
 npm-debug.log*

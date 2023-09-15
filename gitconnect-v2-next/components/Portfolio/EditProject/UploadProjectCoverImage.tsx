@@ -1,15 +1,15 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Router, useRouter } from 'next/router';
 import {
-  Group,
-  Text,
-  useMantineTheme,
-  Image,
-  SimpleGrid,
   Button,
   Center,
   Container,
+  Group,
+  Image,
+  SimpleGrid,
   Space,
+  Text,
+  useMantineTheme,
 } from '@mantine/core';
 import {
   Dropzone,
@@ -18,7 +18,7 @@ import {
   IMAGE_MIME_TYPE,
 } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
-import { IconUpload, IconPhoto, IconX, IconCheck, IconCross } from '@tabler/icons-react';
+import { IconCheck, IconCross, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import {
   collection,
   doc,
@@ -28,10 +28,11 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
-import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { AuthContext } from '../../../context/AuthContext';
-import { db } from '../../../firebase/clientApp';
-import { storage } from '../../../firebase/clientApp';
+import { db, storage } from '../../../firebase/clientApp';
+import { useAtom } from 'jotai';
+import { unsavedChangesSettingsAtom } from '@/atoms';
 
 type RepoProps = {
   repoId: string | number;
@@ -56,6 +57,7 @@ export function UploadProjectCoverImage(
   const [progresspercent, setProgresspercent] = useState(0);
   const [imgCheck, setImgCheck] = useState(false);
   const [files, setFiles] = useState<FileWithPath[]>([]);
+  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(unsavedChangesSettingsAtom);
 
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
@@ -71,6 +73,7 @@ export function UploadProjectCoverImage(
   const handleFileCancel = (file: any) => {
     setFiles([]);
     setImgCheck(false);
+    setUnsavedChangesSettings(false);
     // URL.revokeObjectURL(file)
     // file.map((file) => URL.revokeObjectURL(file));
   };
@@ -82,6 +85,7 @@ export function UploadProjectCoverImage(
     // console.log('droptime')
     setFiles(file);
     setImgCheck(true);
+    setUnsavedChangesSettings(true);
   };
 
   async function sendImageToFirebase(file: any) {
@@ -165,6 +169,7 @@ export function UploadProjectCoverImage(
         autoClose: 2000,
       });
     } finally {
+      setUnsavedChangesSettings(false);
       notifications.update({
         id: 'load-data',
         color: 'teal',
@@ -231,9 +236,8 @@ export function UploadProjectCoverImage(
               />
             ) : imgUrl ? (
               <Image
-                  mb="xs"
-                  height={100}
-
+                mb="xs"
+                height={100}
                 src={imgUrl}
                 alt="Current cover image"
                 // sx={{ width: '100%' }}
@@ -247,8 +251,7 @@ export function UploadProjectCoverImage(
         </Group>
       </Dropzone>
 
-
-      {imgCheck && !imgUrl &&(
+      {imgCheck && !imgUrl && (
         <>
           <Group position="center">
             {/* <Space h="xl" />

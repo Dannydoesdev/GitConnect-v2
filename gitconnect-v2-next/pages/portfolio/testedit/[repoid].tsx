@@ -14,9 +14,8 @@ import {
   getAllProjectIds,
   getAllCustomProjectData,
 } from '@/lib/projects';
-import TestingEditPortfolioProject from '@/components/Portfolio/EditProject/TestingEditProject';
+import EditPortfolioProject from '@/components/Portfolio/EditProject/EditProject';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import EditPortfolioProject from '../../../components/Portfolio/EditProject/EditProject';
 import { AuthContext } from '../../../context/AuthContext';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -179,7 +178,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) {
       // <Provider>
       <>
         <Space h={70} />
-        <TestingEditPortfolioProject
+        <EditPortfolioProject
           repoName={name}
           description={description}
           url={html_url}
