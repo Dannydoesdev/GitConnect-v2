@@ -2,7 +2,7 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { Router, useRouter } from 'next/router';
-import { projectDataAtom, textEditorAtom, unsavedChangesAtom } from '@/atoms';
+import { projectDataAtom, textEditorAtom, unsavedChangesAtom, unsavedChangesSettingsAtom } from '@/atoms';
 import { db } from '@/firebase/clientApp';
 import {
   Aside,
@@ -87,6 +87,7 @@ export default function EditPortfolioProject({
   const [settingsOnly, setSettingsOnly] = useState(false);
 
   const [preview, setPreview] = useState(false);
+  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(unsavedChangesSettingsAtom);
 
   const { classes, theme } = useStyles();
 
@@ -145,6 +146,7 @@ export default function EditPortfolioProject({
         { merge: true }
       );
       setUnsavedChanges(false);
+      setUnsavedChangesSettings(false);
       // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
       // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
@@ -251,6 +253,7 @@ export default function EditPortfolioProject({
       );
       await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
       setUnsavedChanges(false);
+      setUnsavedChangesSettings(false);
       // console.log(formData)
       // console.log('publishing');
       // close();
@@ -351,6 +354,7 @@ export default function EditPortfolioProject({
       });
     } finally {
       setUnsavedChanges(false);
+    setUnsavedChangesSettings(false);
       {
         revertToDraft ?
           notifications.update({
@@ -422,6 +426,7 @@ export default function EditPortfolioProject({
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
+      setUnsavedChangesSettings(false);
       setSettingsOnly(false);
       close();
     }
@@ -534,10 +539,12 @@ export default function EditPortfolioProject({
         },
       })
       .then((response) => {
+        setTextEditor('');
         const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
         // setReadme(sanitizedHTML);
         // handleEditorChange(sanitizedHTML);
         setTextEditor(sanitizedHTML);
+        setUnsavedChanges(true);
         notifications.update({
           id: 'fetch-readme',
           color: 'teal',
@@ -562,6 +569,31 @@ export default function EditPortfolioProject({
 
   function handlePreview() {
     setPreview(!preview);
+  }
+  const settingsModalCloseCheck = () => {
+    if (unsavedChangesSettings) {
+      modals.openConfirmModal({
+        title: 'Unsaved changes',
+        centered: true,
+        children: (
+          <Text size="sm">
+            You have unsaved changes. Are you sure you want to close this window?
+          </Text>
+        ),
+        labels: { confirm: 'Close without saving', cancel: 'Cancel' },
+        onCancel: () => {
+          // console.log('Cancel');
+          // router.events.on('routeChangeStart', handleRouteChange);
+        },
+        onConfirm: () => {
+          // console.log('Confirmed');
+          setUnsavedChangesSettings(false);
+          close();
+        },
+      });
+    } else {
+      close();
+    }
   }
 
   if (preview) {
@@ -606,7 +638,8 @@ export default function EditPortfolioProject({
             // handleSaveAsDraft={handleSaveAsDraft}
             opened={opened}
             open={open}
-            close={close}
+            close={settingsModalCloseCheck}
+            // close={close}
             techStack={otherProjectData?.techStack}
             liveUrl={otherProjectData?.liveUrl || otherProjectData?.live_url}
             repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url}
