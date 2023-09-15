@@ -308,7 +308,7 @@ export function ProfilePageUserPanelSettings({
   /> */}
           <TextInput
             label="Website"
-            placeholder="Website"
+            placeholder="Personal Website or Portfolio"
             {...form.getInputProps('website')}
           />
           {/* <TextInput

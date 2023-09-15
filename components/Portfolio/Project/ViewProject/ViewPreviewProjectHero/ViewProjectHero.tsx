@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Overlay, Container, Title, Text, Button, Group, Box } from '@mantine/core';
-import { correctImageGetter } from '../../../lib/correctImageGetter';
+import { correctImageGetter } from '@/lib/correctImageGetter';
 import useStyles from './ViewProjectHero.styles';
 
 interface ViewProjectHeroProps {

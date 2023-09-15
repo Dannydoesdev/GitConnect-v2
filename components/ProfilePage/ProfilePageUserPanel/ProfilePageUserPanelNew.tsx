@@ -59,7 +59,7 @@ interface ProfilePageUserPanelProps {
   currentUser?: boolean;
 }
 
-export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPanelProps) {
+export default function ProfilePageUserPanelNew({ props, currentUser }: ProfilePageUserPanelProps) {
   const { userData } = useContext(AuthContext);
   const userId = userData.userId;
   const [editMode, setEditMode] = useState(false);
@@ -187,7 +187,7 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
     // Send data to Firebase, maps into DB & update state to show new static values instantly
 
     // TODO: Re-enable upload to firebase when ready
-    // await updateProfileDataGithub(userId, formData).then(() => {
+    await updateProfileDataGithub(userId, formData).then(() => {
       // console.log('Added to DB');
     
       setUpdatedBio(bio);
@@ -221,8 +221,8 @@ export function ProfilePageUserPanel({ props, currentUser }: ProfilePageUserPane
 
       setEditMode(!editMode);
     
-    // close();
-      // });
+    close();
+      });
 
   }
   // console.log(html_url)
