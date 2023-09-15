@@ -25,6 +25,8 @@ import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 // import { useDisclosure } from '@mantine/hooks';
 import UploadProjectCoverImage from './UploadProjectCoverImage';
+import { useAtom } from 'jotai';
+import { unsavedChangesSettingsAtom } from '@/atoms';
 
 interface ProjectSettingsSimpleProps {
   repoId?: string;
@@ -80,6 +82,7 @@ function ProjectSettingsModal({
   settingsOnly,
 }: ProjectSettingsProps) {
   const [projectCategoriesValue, setProjectCategoriesValue] = useState<string[]>([]);
+  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(unsavedChangesSettingsAtom);
 
   // console.log('desciption:', projectDescription);
   // console.log('repourl', repoUrl);
@@ -132,6 +135,14 @@ function ProjectSettingsModal({
       projectDescription: projectDescription || '',
     },
   });
+
+  useEffect(() => {
+    if (form.isDirty()) {
+      setUnsavedChangesSettings(true);
+    } else {
+      setUnsavedChangesSettings(false);
+    }
+  }, [form.values]);
 
   const openCoverImageRequiredModal = () =>
     modals.open({
