@@ -12,9 +12,9 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
-import { CustomResizableImage } from '../RichTextEditor/extensions/image/customResizableImage';
-import { ResizableMedia } from '../RichTextEditor/extensions/resizableMedia';
-import { notitapEditorClass } from '../RichTextEditor/proseClassString';
+import { CustomResizableImage } from '../../EditProject/RichTextEditor/extensions/image/customResizableImage';
+import { ResizableMedia } from '../../EditProject/RichTextEditor/extensions/resizableMedia';
+import { notitapEditorClass } from '../../EditProject/RichTextEditor/proseClassString';
 import useStyles from './ViewPreviewProjectContent.styles';
 
 type RichTextEditorVanillaProps = {

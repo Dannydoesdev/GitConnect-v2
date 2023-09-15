@@ -16,7 +16,7 @@ import {
   getSingleProjectById,
   getSingleProjectByNameLowercase,
 } from '@/lib/projects';
-import EditPortfolioProject from '@/components/Portfolio/EditProject/EditProject';
+import EditPortfolioProject from '@/components/Portfolio/Project/EditProject/EditProject';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../../context/AuthContext';
 

@@ -29,8 +29,8 @@ import {
   where,
 } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { AuthContext } from '../../../context/AuthContext';
-import { db, storage } from '../../../firebase/clientApp';
+import { AuthContext } from '../../../../context/AuthContext';
+import { db, storage } from '../../../../firebase/clientApp';
 import { useAtom } from 'jotai';
 import { unsavedChangesSettingsAtom } from '@/atoms';
 
