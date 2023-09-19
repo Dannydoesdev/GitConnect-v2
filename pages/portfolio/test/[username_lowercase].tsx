@@ -1,3 +1,4 @@
+import { type } from 'os';
 import React, { useContext, useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
@@ -94,6 +95,26 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   const profile = fetchProfile ?? initialProfile ?? null;
   const [activeTab, setActiveTab] = useState<string | null>('first');
 
+  const isCurrentUser =
+    username_lowercase &&
+    userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
+      ? true
+      : false;
+
+  const draftProjecs = projects?.filter((project: any) => {
+    return project.docData.hidden === true;
+  });
+
+  // console.log('Draft projects: ');
+  // console.log(draftProjecs);
+
+  const publishedProjects = projects?.filter((project: any) => {
+    return (project.docData.hidden === false || project.docData.hidden === undefined);
+  });
+
+  // console.log('Published projects: ');
+  // console.log(publishedProjects);
+
   return (
     <>
       <Head>
@@ -131,29 +152,42 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
             <Grid.Col md={9} lg={10}>
               <Grid gutter="md">
                 <Grid.Col>
-                  <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                    <Tabs.List
-                    // grow
-                    // position='center'
-                    >
-                      <Tabs.Tab value="first">Projects</Tabs.Tab>
-                      <Tabs.Tab value="second" color="orange">
-                        Drafts
-                      </Tabs.Tab>
-                    </Tabs.List>
-
-                    <Tabs.Panel value="first">
-                      <Space h={20} />
-                      <Grid.Col>
-                        <ProfilePageProjectGrid projects={projects} />
-                      </Grid.Col>
-                    </Tabs.Panel>
-                    <Tabs.Panel value="second">Second panel</Tabs.Panel>
-                  </Tabs>
+                  {/* NOTE: If current user owns profile - show drafts etc */}
+                  {isCurrentUser ? (
+                    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                      <Tabs.List>
+                        <Tabs.Tab value="first">Projects</Tabs.Tab>
+                        <Tabs.Tab value="second" color="orange">
+                          Drafts
+                        </Tabs.Tab>
+                      </Tabs.List>
+                      <Tabs.Panel value="first">
+                        <Space h={20} />
+                        <Grid.Col>
+                          <ProfilePageProjectGrid projects={publishedProjects} />
+                        </Grid.Col>
+                      </Tabs.Panel>
+                      <Tabs.Panel value="second">
+                        <Space h={20} />
+                        <Grid.Col>
+                          <ProfilePageProjectGrid projects={draftProjecs} />
+                        </Grid.Col>
+                      </Tabs.Panel>
+                    </Tabs>
+                  ) : (
+                    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                      <Tabs.List>
+                        <Tabs.Tab value="first">Projects</Tabs.Tab>
+                      </Tabs.List>
+                      <Tabs.Panel value="first">
+                        <Space h={20} />
+                        <Grid.Col>
+                          <ProfilePageProjectGrid projects={publishedProjects} />
+                        </Grid.Col>
+                      </Tabs.Panel>
+                    </Tabs>
+                  )}
                 </Grid.Col>
-                {/* <Grid.Col>
-                  <ProfilePageProjectGrid projects={projects} />
-                </Grid.Col> */}
               </Grid>
             </Grid.Col>
           )}
