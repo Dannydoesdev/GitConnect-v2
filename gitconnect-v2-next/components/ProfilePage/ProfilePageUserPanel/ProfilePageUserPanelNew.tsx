@@ -225,7 +225,6 @@ export default function ProfilePageUserPanelNew({ props, currentUser }: ProfileP
       });
 
   }
-  // console.log(html_url)
 
   return (
     <>

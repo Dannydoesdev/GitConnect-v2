@@ -1,4 +1,3 @@
-import { type } from 'os';
 import React, { useContext, useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
