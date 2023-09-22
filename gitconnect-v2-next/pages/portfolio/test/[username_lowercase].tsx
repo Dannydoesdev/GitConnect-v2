@@ -13,7 +13,8 @@ import {
 import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
-import ProfilePageUserPanelNew from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelNew';
+// import ProfilePageUserPanelNew from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelNew';
+import ProfilePageUserPanelNew from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelTest';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username_lowercase } = params as { username_lowercase: string };
