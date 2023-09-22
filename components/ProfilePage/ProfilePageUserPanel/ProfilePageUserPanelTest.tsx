@@ -2,20 +2,38 @@ import { useContext, useState } from 'react';
 import Link from 'next/link';
 import {
   Avatar,
-  Text,
   Button,
-  Paper,
-  Divider,
-  TextInput,
-  Switch,
-  MultiSelect,
   Checkbox,
+  Divider,
   Group,
+  MultiSelect,
+  Paper,
   Spoiler,
+  Switch,
+  Text,
+  Textarea,
+  TextInput,
 } from '@mantine/core';
-import { Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
+import {
+  FaBehance,
+  FaCodepen,
+  FaDev,
+  FaDiscord,
+  FaDribbble,
+  FaFacebookF,
+  FaGithub,
+  FaGitlab,
+  FaHashnode,
+  FaInstagram,
+  FaLinkedin,
+  FaMedium,
+  FaStackOverflow,
+  FaTwitch,
+  FaTwitter,
+  FaYoutube,
+} from 'react-icons/fa6';
 import { AuthContext } from '../../../context/AuthContext';
 import { updateProfileDataGithub } from '../../../lib/profiles';
 import { ProfilePageUserPanelSettings } from './ProfilePageUserPanelSettings';
@@ -59,7 +77,10 @@ interface ProfilePageUserPanelProps {
   currentUser?: boolean;
 }
 
-export default function ProfilePageUserPanelNew({ props, currentUser }: ProfilePageUserPanelProps) {
+export default function ProfilePageUserPanelNew({
+  props,
+  currentUser,
+}: ProfilePageUserPanelProps) {
   const { userData } = useContext(AuthContext);
   const userId = userData.userId;
   const [editMode, setEditMode] = useState(false);
@@ -189,7 +210,7 @@ export default function ProfilePageUserPanelNew({ props, currentUser }: ProfileP
     // TODO: Re-enable upload to firebase when ready
     await updateProfileDataGithub(userId, formData).then(() => {
       // console.log('Added to DB');
-    
+
       setUpdatedBio(bio);
       setUpdatedLocation(location);
       setUpdatedName(name);
@@ -220,10 +241,9 @@ export default function ProfilePageUserPanelNew({ props, currentUser }: ProfileP
       setUpdatedSkills(skills);
 
       setEditMode(!editMode);
-    
-    close();
-      });
 
+      close();
+    });
   }
 
   return (
@@ -255,26 +275,162 @@ export default function ProfilePageUserPanelNew({ props, currentUser }: ProfileP
           {login}
           {location && ' • '} {updatedLocation ? updatedLocation : location}
         </Text>
-        <Link href={html_url} passHref legacyBehavior>
+        {/* <Link href={html_url} passHref legacyBehavior>
           <Button component="a" target="_blank" variant="default" fullWidth mt="md">
             GitHub Page
           </Button>
-        </Link>
-        {/* <Divider my="sm" /> */}
+        </Link> */}
+        {updatedWebsite && (
+          <Link href={updatedWebsite} passHref legacyBehavior>  
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              Website
+            </Button>
+          </Link>
+        )}
+        
+
+        {updatedGithubUrl && (
+          <Link href={updatedGithubUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaGithub /> &nbsp;Github
+              {/* <img src="/path/to/github/logo" alt="Github" /> Github */}
+            </Button>
+          </Link>
+        )}
+        {updatedGitlabUrl && (
+          <Link href={updatedGitlabUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaGitlab /> &nbsp;Gitlab
+              {/* <img src="/path/to/gitlab/logo" alt="Gitlab" /> Gitlab */}
+            </Button>
+          </Link>
+        )}
+        {updatedLinkedinUrl && (
+          <Link href={updatedLinkedinUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaLinkedin /> &nbsp;Linkedin
+              {/* <img src="/path/to/linkedin/logo" alt="Linkedin" /> Linkedin */}
+            </Button>
+          </Link>
+        )}
+        {updatedTwitterUrl && (
+          <Link href={updatedTwitterUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaTwitter /> &nbsp;Twitter
+              {/* <img src="/path/to/twitter/logo" alt="Twitter" /> Twitter */}
+            </Button>
+          </Link>
+        )}
+        {updatedMediumUrl && (
+          <Link href={updatedMediumUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaMedium /> &nbsp;Medium
+              {/* <img src="/path/to/medium/logo" alt="Medium" /> Medium */}
+            </Button>
+          </Link>
+        )}
+        {updatedHashnodeUrl && (
+          <Link href={updatedHashnodeUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaHashnode /> &nbsp;Hashnode
+              {/* <img src="/path/to/hashnode/logo" alt="Hashnode" /> Hashnode */}
+            </Button>
+          </Link>
+        )}
+        {updatedCodepenUrl && (
+          <Link href={updatedCodepenUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaCodepen /> &nbsp;Codepen
+              {/* <img src="/path/to/codepen/logo" alt="Codepen" /> Codepen */}
+            </Button>
+          </Link>
+        )}
+        {updatedDevtoUrl && (
+          <Link href={updatedDevtoUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <FaDev /> &nbsp;Dev.to
+              {/* <img src="/path/to/devto/logo" alt="Dev.to" /> Dev.to */}
+            </Button>
+          </Link>
+        )}
+        {updatedOpenToWork && (
+          <Text ta="center" fz="lg" weight={500} mt="md">
+            Open to Work: {updatedOpenToWork ? 'Yes' : 'No'}
+          </Text>
+        )}
+        {updatedSkills && updatedSkills.length > 0 && (
+          <Text ta="center" fz="lg" weight={500} mt="md">
+            Skills: {updatedSkills.join(', ')}
+          </Text>
+        )}
+        {updatedYoutubeUrl && (
+          <Link href={updatedYoutubeUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/youtube/logo" alt="Youtube" /> Youtube
+            </Button>
+          </Link>
+        )}
+        {updatedTwitchUrl && (
+          <Link href={updatedTwitchUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/twitch/logo" alt="Twitch" /> Twitch
+            </Button>
+          </Link>
+        )}
+        {updatedDiscordUrl && (
+          <Link href={updatedDiscordUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/discord/logo" alt="Discord" /> Discord
+            </Button>
+          </Link>
+        )}
+        {updatedInstagramUrl && (
+          <Link href={updatedInstagramUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/instagram/logo" alt="Instagram" /> Instagram
+            </Button>
+          </Link>
+        )}
+        {updatedDribbbleUrl && (
+          <Link href={updatedDribbbleUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/dribbble/logo" alt="Dribbble" /> Dribbble
+            </Button>
+          </Link>
+        )}
+        {updatedBehanceUrl && (
+          <Link href={updatedBehanceUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/behance/logo" alt="Behance" /> Behance
+            </Button>
+          </Link>
+        )}
+        {updatedStackoverflowUrl && (
+          <Link href={updatedStackoverflowUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/stackoverflow/logo" alt="Stackoverflow" /> Stackoverflow
+            </Button>
+          </Link>
+        )}
+        {updatedFacebookUrl && (
+          <Link href={updatedFacebookUrl} passHref legacyBehavior>
+            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+              <img src="/path/to/facebook/logo" alt="Facebook" /> Facebook
+            </Button>
+          </Link>
+        )}
+
+        {updatedVisibleToPublic && (
+          <Text ta="center" fz="lg" weight={500} mt="md">
+            Profile Visible to Public: {updatedVisibleToPublic ? 'Yes' : 'No'}
+          </Text>
+        )}
       </Paper>
       {currentUser && (
-        // && !editMode
-        <Button
-          variant="filled"
-          fullWidth
-          mt="md"
-          // onClick={handleEditMode}
-          onClick={open}
-        >
+        <Button variant="filled" fullWidth mt="md" onClick={open}>
           Edit Profile
         </Button>
       )}
-      {/* Check if any bio exists */}
       {bio && (
         <Paper
           radius="md"
@@ -285,7 +441,6 @@ export default function ProfilePageUserPanelNew({ props, currentUser }: ProfileP
               theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
           })}
         >
-          {/* // When not in edit mode - show static content */}
           <Text ta="center" fz="lg" weight={500} mt="md">
             {updatedBio ? updatedBio : bio}
           </Text>
@@ -294,4 +449,3 @@ export default function ProfilePageUserPanelNew({ props, currentUser }: ProfileP
     </>
   );
 }
-
