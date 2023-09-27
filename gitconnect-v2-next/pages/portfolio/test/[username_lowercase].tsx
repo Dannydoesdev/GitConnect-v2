@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { use, useContext, useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { formDataAtom } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
 import { Container, Grid, Space, Tabs } from '@mantine/core';
+// import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
+import { useAtom } from 'jotai';
 import useSWR from 'swr';
 import {
   getAllProfileUsernamesLowercase,
@@ -14,7 +17,7 @@ import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 // import ProfilePageUserPanelNew from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelNew';
-import ProfilePageUserPanelNew from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelTest';
+import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username_lowercase } = params as { username_lowercase: string };
@@ -63,6 +66,8 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   const router = useRouter();
   const { username_lowercase } = router.query;
 
+  const [formData, setFormData] = useAtom(formDataAtom);
+
   if (router.isFallback) {
     return <LoadingPage />;
   }
@@ -77,6 +82,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     fetcher,
     initialProjects
   );
+
   // const { data: fetchProjects } = useSWR(
   //   `/api/portfolio/getUserProjects?username=${username}`,
   //   fetcher,
@@ -95,6 +101,16 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   const profile = fetchProfile ?? initialProfile ?? null;
   const [activeTab, setActiveTab] = useState<string | null>('first');
 
+  useEffect(() => {
+    if (profile) {
+      setFormData(profile);
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    console.log('formData in page route: ', formData);
+  }, [formData]);
+
   const isCurrentUser =
     username_lowercase &&
     userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
@@ -109,7 +125,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   // console.log(draftProjecs);
 
   const publishedProjects = projects?.filter((project: any) => {
-    return (project.docData.hidden === false || project.docData.hidden === undefined);
+    return project.docData.hidden === false || project.docData.hidden === undefined;
   });
 
   // console.log('Published projects: ');
@@ -135,18 +151,13 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
         <Space h={70} />
         <Grid grow>
           <Grid.Col sm={12} md={3} lg={2}>
-            {profile && (
-              <ProfilePageUserPanelNew
-                props={profile}
-                currentUser={
-                  username_lowercase &&
-                  userData.userName.toLowerCase() ===
-                    username_lowercase.toString().toLowerCase()
-                    ? true
-                    : false
-                }
-              />
-            )}
+            {profile &&
+              // FIXME: NEW PROFILE PANEL SIMPLIFIED FOR VIEW ONLY
+              (isCurrentUser ? (
+                <ProfilePageUserPanelEditable props={profile} currentUser={true} />
+              ) : (
+                <ProfilePageUserPanelEditable props={profile} currentUser={false} />
+              ))}
           </Grid.Col>
           {projects && (
             <Grid.Col md={9} lg={10}>

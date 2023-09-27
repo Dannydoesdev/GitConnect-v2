@@ -287,8 +287,6 @@ export default function ProfilePageUserPanelNew({
             </Button>
           </Link>
         )}
-        
-
         {updatedGithubUrl && (
           <Link href={updatedGithubUrl} passHref legacyBehavior>
             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
