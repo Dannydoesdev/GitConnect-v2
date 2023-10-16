@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { formDataAtom } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
-import { Container, Grid, Space, Tabs } from '@mantine/core';
+import { Container, Grid, Group, Space, Tabs } from '@mantine/core';
 // import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import { useAtom } from 'jotai';
 import useSWR from 'swr';
@@ -15,9 +15,10 @@ import {
 } from '@/lib/profiles';
 import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
-import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 // import ProfilePageUserPanelNew from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelNew';
 import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
+// import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
+import ProfilePageProjectGrid from '@/components/ProfilePage/test/ProfilePageProjectGrid';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username_lowercase } = params as { username_lowercase: string };
@@ -147,62 +148,70 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
         {/* Add other SEO related tags here */}
       </Head>
 
-      <Container fluid mx="md" my="md">
-        <Space h={70} />
-        <Grid grow>
-          <Grid.Col sm={12} md={3} lg={2}>
-            {profile &&
-              // FIXME: NEW PROFILE PANEL SIMPLIFIED FOR VIEW ONLY
-              (isCurrentUser ? (
-                <ProfilePageUserPanelEditable props={profile} currentUser={true} />
-              ) : (
-                <ProfilePageUserPanelEditable props={profile} currentUser={false} />
-              ))}
-          </Grid.Col>
-          {projects && (
-            <Grid.Col md={9} lg={10}>
-              <Grid gutter="md">
-                <Grid.Col>
-                  {/* NOTE: If current user owns profile - show drafts etc */}
-                  {isCurrentUser ? (
-                    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                      <Tabs.List>
-                        <Tabs.Tab value="first">Projects</Tabs.Tab>
-                        <Tabs.Tab value="second" color="orange">
-                          Drafts
-                        </Tabs.Tab>
-                      </Tabs.List>
-                      <Tabs.Panel value="first">
-                        <Space h={20} />
-                        <Grid.Col>
-                          <ProfilePageProjectGrid projects={publishedProjects} />
-                        </Grid.Col>
-                      </Tabs.Panel>
-                      <Tabs.Panel value="second">
-                        <Space h={20} />
-                        <Grid.Col>
-                          <ProfilePageProjectGrid projects={draftProjecs} />
-                        </Grid.Col>
-                      </Tabs.Panel>
-                    </Tabs>
-                  ) : (
-                    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                      <Tabs.List>
-                        <Tabs.Tab value="first">Projects</Tabs.Tab>
-                      </Tabs.List>
-                      <Tabs.Panel value="first">
-                        <Space h={20} />
-                        <Grid.Col>
-                          <ProfilePageProjectGrid projects={publishedProjects} />
-                        </Grid.Col>
-                      </Tabs.Panel>
-                    </Tabs>
-                  )}
-                </Grid.Col>
-              </Grid>
+      {/* <Container fluid mx="md" my="md"> */}
+      {/* <Container size="xl" mx="md" my="md" > */}
+      <Container size="xl" my="md">
+      {/* <Space h={10} /> */}
+
+      <Group position="center">
+          <Space h={60} />
+          <Grid grow>
+            {/* <Grid.Col sm={12} md={3} lg={2}> */}
+            <Grid.Col sm={12} md={4}>
+              {profile &&
+                // FIXME: NEW PROFILE PANEL SIMPLIFIED FOR VIEW ONLY
+                (isCurrentUser ? (
+                  <ProfilePageUserPanelEditable props={profile} currentUser={true} />
+                ) : (
+                  <ProfilePageUserPanelEditable props={profile} currentUser={false} />
+                ))}
             </Grid.Col>
-          )}
-        </Grid>
+            {projects && (
+              // <Grid.Col md={9} lg={10}>
+              <Grid.Col span={8}>
+                <Grid gutter="md">
+                  <Grid.Col>
+                    {/* NOTE: If current user owns profile - show drafts etc */}
+                    {isCurrentUser ? (
+                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                        <Tabs.List>
+                          <Tabs.Tab value="first">Projects</Tabs.Tab>
+                          <Tabs.Tab value="second" color="orange">
+                            Drafts
+                          </Tabs.Tab>
+                        </Tabs.List>
+                        <Tabs.Panel value="first">
+                          <Space h={20} />
+                          <Grid.Col>
+                            <ProfilePageProjectGrid projects={publishedProjects} />
+                          </Grid.Col>
+                        </Tabs.Panel>
+                        <Tabs.Panel value="second">
+                          <Space h={20} />
+                          <Grid.Col>
+                            <ProfilePageProjectGrid projects={draftProjecs} />
+                          </Grid.Col>
+                        </Tabs.Panel>
+                      </Tabs>
+                    ) : (
+                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                        <Tabs.List>
+                          <Tabs.Tab value="first">Projects</Tabs.Tab>
+                        </Tabs.List>
+                        <Tabs.Panel value="first">
+                          <Space h={20} />
+                          <Grid.Col>
+                            <ProfilePageProjectGrid projects={publishedProjects} />
+                          </Grid.Col>
+                        </Tabs.Panel>
+                      </Tabs>
+                    )}
+                  </Grid.Col>
+                </Grid>
+              </Grid.Col>
+            )}
+          </Grid>
+        </Group>
       </Container>
     </>
   );

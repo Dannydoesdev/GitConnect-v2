@@ -1,0 +1,64 @@
+import { createStyles, getStylesRef } from '@mantine/core';
+
+export default createStyles((theme, _params, getRef) => {
+  const image = getStylesRef('image');
+
+  return {
+    card: {
+      position: 'relative',
+      height: 280,
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+
+      [`&:hover .image`]: {
+        transform: 'scale(1.03)',
+      },
+    },
+
+    image: {
+      ref: image,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      // backgroundImage: 'url(https://images.unsplash.com/photo-1612835362596-4b0b2b1b0b0f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y29tcHV0ZXIlMjBwcm9qZWN0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80)',
+      backgroundSize: 'cover',
+      transition: 'transform 500ms ease',
+    },
+
+    overlay: {
+      position: 'absolute',
+      top: '20%',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundImage: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)',
+    },
+
+    content: {
+      height: '100%',
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
+      zIndex: 1,
+    },
+
+    title: {
+      color: theme.white,
+      marginBottom: 5,
+    },
+
+    bodyText: {
+      color: theme.colors.dark[2],
+      marginLeft: 7,
+    },
+
+    author: {
+      color: theme.colors.dark[2],
+      position: 'relative',
+      top: '-55px',
+      left: '25px',
+    },
+  };
+});
