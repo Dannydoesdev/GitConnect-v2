@@ -248,7 +248,7 @@ RichTextEditorVanillaProps) {
           </BubbleMenu>
         )}
         {editor && (
-          <FloatingMenu editor={editor}>
+          <FloatingMenu editor={editor} tippyOptions={{ placement: 'top-start', duration: 100 }}>
             <RichTextEditor.ControlsGroup>
               {userId && repoId && (
                 <RichTextEditor.Control
