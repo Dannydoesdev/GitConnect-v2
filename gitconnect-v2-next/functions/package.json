@@ -11,7 +11,8 @@
     "logs": "firebase functions:log",
     "emulatedata": "firebase emulators:start --import ../backup/database_backup_180823",
     "emulatedatanew": "firebase emulators:start --import ../backup/database_backup_cleanup_two_0609",
-    "emulatedatanewest": "firebase emulators:start --import ../backup/manual_export_120923"
+    "emulatedatanewest": "firebase emulators:start --import ../backup/manual_export_120923",
+    "emulatedatabest": "firebase emulators:start --import ../backup/db_best_bk_161023"
   },
   "engines": {
     "node": "18"

@@ -32,7 +32,7 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
   //     })
 
   // }, [])
-  console.log(projects);
+  // console.log(projects);
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
   }
@@ -40,7 +40,7 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
   return (
     // <Container>
     <>
-      <Stack spacing={40}>
+      <Stack spacing={80}>
         {projects &&
           projects.map((project: any, index: any) => {
             return (
@@ -92,6 +92,8 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
                       {project.docData.techStack &&
                         project.docData.techStack.length >= 1 && (
                           <>
+                            <Space h={5} />
+
                             <Group noWrap={true}>
                               <Badge color="gray" radius="sm" variant="outline">
                                 Tech Stack:
@@ -113,7 +115,7 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
                         project.docData.projectCategories.length >= 1 && (
                           <>
                             {/* Category heading badge */}
-                            <Space h={10} />
+                            <Space h={13} />
                             <Group noWrap={true}>
                               <Badge color="gray" radius="sm" variant="outline">
                                 Categories:
@@ -139,7 +141,7 @@ const ProfilePageProjectGrid = ({ projects }: any) => {
                       {project.docData.projectTags &&
                         project.docData.projectTags.length >= 1 && (
                           <>
-                            <Space h={10} />
+                            <Space h={13} />
 
                             <Group noWrap={true}>
                               <Badge color="gray" radius="sm" variant="outline">
