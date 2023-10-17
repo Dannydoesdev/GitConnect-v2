@@ -109,7 +109,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   }, [profile]);
 
   useEffect(() => {
-    console.log('formData in page route: ', formData);
+    // console.log('formData in page route: ', formData);
   }, [formData]);
 
   const isCurrentUser =
@@ -155,7 +155,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
 
       <Group position="center">
           <Space h={60} />
-          <Grid grow>
+          <Grid grow gutter={35}>
             {/* <Grid.Col sm={12} md={3} lg={2}> */}
             <Grid.Col sm={12} md={4}>
               {profile &&

@@ -2,39 +2,71 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { Router, useRouter } from 'next/router';
-import { projectDataAtom, textEditorAtom, unsavedChangesAtom, unsavedChangesSettingsAtom } from '@/atoms';
+import {
+  projectDataAtom,
+  textEditorAtom,
+  unsavedChangesAtom,
+  unsavedChangesSettingsAtom,
+} from '@/atoms';
 import { db } from '@/firebase/clientApp';
+// import { RepoData } from '../../../types/repos';
 import {
   Aside,
   Button,
-  ScrollArea,
-  Container,
-  Title,
-  Text,
-  Group,
   Center,
-  MediaQuery,
-  Flex,
+  Container,
+  createStyles,
   Dialog,
+  Flex,
+  Group,
+  MediaQuery,
+  ScrollArea,
+  Text,
+  Title,
 } from '@mantine/core';
-// import { RepoData } from '../../../types/repos';
-import { createStyles } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconCross } from '@tabler/icons-react';
 import axios from 'axios';
-import DOMPurify from 'dompurify';
+// import DOMPurify from 'dompurify';
+// import * as DOMPurify from 'dompurify';
+// import {DomPur}
+// import DOMPurify from 'lib/dompurifyCustomHooks';  // Import from your custom file
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import DOMPurify from 'isomorphic-dompurify';
 import { useAtom } from 'jotai';
 import { set } from 'lodash';
 import useSWR from 'swr';
 import LoadingPage from '../../../LoadingPage/LoadingPage';
-import RichTextEditorVanilla from './RichTextEditor/OldRichTextEditorVanilla';
-import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
 import ViewPreviewProjectEditor from '../ViewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal from './EditProjectSettings';
+import RichTextEditorVanilla from './RichTextEditor/OldRichTextEditorVanilla';
+import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
+
+// import { createDOMPurify } from 'dompurify';
+// const DOMPurify = createDOMPurify(window);
+
+// import { JSDOM } from 'jsdom';
+// import DOMPurify from 'dompurify';
+
+// DOMPurify.addHook('uponSanitizeElement', (currentNode, data) => {
+//   // If the current node is a heading element with a child anchor element with class 'heading-link'
+//   if (/^h[1-6]$/.test(data.tagName) && currentNode.querySelector('a.heading-link')) {
+//     // Remove the anchor element
+//     const anchorElement = currentNode.querySelector('a.heading-link');
+//     if (anchorElement) {
+//       while (anchorElement.firstChild) {
+//         const parentNode = anchorElement.parentNode;
+//         if (parentNode) {
+//           parentNode.insertBefore(anchorElement.firstChild, anchorElement);
+//         }
+//       }
+//       anchorElement.remove();
+//     }
+//   }
+// });
 
 type EditPortfolioProps = {
   repoName: string;
@@ -87,7 +119,9 @@ export default function EditPortfolioProject({
   const [settingsOnly, setSettingsOnly] = useState(false);
 
   const [preview, setPreview] = useState(false);
-  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(unsavedChangesSettingsAtom);
+  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(
+    unsavedChangesSettingsAtom
+  );
 
   const { classes, theme } = useStyles();
 
@@ -136,7 +170,13 @@ export default function EditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid, username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
+        {
+          ...formData,
+          userId: userid,
+          repoId: repoid,
+          username_lowercase: userName.toLowerCase(),
+          reponame_lowercase: repoName.toLowerCase(),
+        },
         { merge: true }
       );
       //
@@ -248,7 +288,13 @@ export default function EditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
+        {
+          ...formData,
+          userId: userid,
+          repoId: repoid,
+          username_lowercase: userName.toLowerCase(),
+          reponame_lowercase: repoName.toLowerCase(),
+        },
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
@@ -335,7 +381,17 @@ export default function EditPortfolioProject({
         autoClose: false,
         withCloseButton: false,
       });
-      await setDoc(docRef, { htmlOutput: sanitizedHTML, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() }, { merge: true });
+      await setDoc(
+        docRef,
+        {
+          htmlOutput: sanitizedHTML,
+          userId: userid,
+          repoId: repoid,
+          username_lowercase: userName.toLowerCase(),
+          reponame_lowercase: repoName.toLowerCase(),
+        },
+        { merge: true }
+      );
       // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
 
       const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
@@ -354,33 +410,32 @@ export default function EditPortfolioProject({
       });
     } finally {
       setUnsavedChanges(false);
-    setUnsavedChangesSettings(false);
+      setUnsavedChangesSettings(false);
       {
-        revertToDraft ?
-          notifications.update({
-            id: 'load-data',
-            color: 'teal',
-            title: 'Reverted to draft',
-            message: 'Reloading page',
-            icon: <IconCheck size="1rem" />,
-            autoClose: 2000,
-          })
-        :
-        notifications.update({
-          id: 'load-data',
-          color: 'teal',
-          title: 'Draft was saved',
-          message: 'Your project was saved as a draft',
-          icon: <IconCheck size="1rem" />,
-          autoClose: 2000,
-        });
+        revertToDraft
+          ? notifications.update({
+              id: 'load-data',
+              color: 'teal',
+              title: 'Reverted to draft',
+              message: 'Reloading page',
+              icon: <IconCheck size="1rem" />,
+              autoClose: 2000,
+            })
+          : notifications.update({
+              id: 'load-data',
+              color: 'teal',
+              title: 'Draft was saved',
+              message: 'Your project was saved as a draft',
+              icon: <IconCheck size="1rem" />,
+              autoClose: 2000,
+            });
       }
       close();
       if (revertToDraft) {
         setTimeout(() => {
           router.reload();
         }, 1500);
-      }      
+      }
     }
   }
 
@@ -400,7 +455,13 @@ export default function EditPortfolioProject({
       });
       await setDoc(
         docRef,
-        { ...formData, userId: userid, repoId: repoid,  username_lowercase: userName.toLowerCase(), reponame_lowercase: repoName.toLowerCase() },
+        {
+          ...formData,
+          userId: userid,
+          repoId: repoid,
+          username_lowercase: userName.toLowerCase(),
+          reponame_lowercase: repoName.toLowerCase(),
+        },
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData }, { merge: true });
@@ -540,10 +601,30 @@ export default function EditPortfolioProject({
       })
       .then((response) => {
         setTextEditor('');
+
+        DOMPurify.addHook('uponSanitizeElement', (currentNode: Element, data) => {
+          if (data.tagName === 'a' && currentNode.classList.contains('heading-link')) {
+            // Create a text node with the anchor's content
+            const textContent = currentNode.textContent || ''; // Fallback to empty string if null
+            const textNode = document.createTextNode(textContent);
+
+            // Replace the anchor with the text node
+            const parentNode = currentNode.parentNode;
+            if (parentNode) {
+              parentNode.replaceChild(textNode, currentNode);
+            }
+          }
+        });
+
         const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
+        setTextEditor(sanitizedHTML);
+        // console.log(response.data)
+        // setTextEditor(response.data)
+
         // setReadme(sanitizedHTML);
         // handleEditorChange(sanitizedHTML);
-        setTextEditor(sanitizedHTML);
+        // setTextEditor(sanitizedHTML);
+
         setUnsavedChanges(true);
         notifications.update({
           id: 'fetch-readme',
@@ -594,7 +675,7 @@ export default function EditPortfolioProject({
     } else {
       close();
     }
-  }
+  };
 
   if (preview) {
     return (
@@ -784,7 +865,9 @@ export default function EditPortfolioProject({
               </Button>
               <Button
                 component="a"
-                onClick={() => {router.push(`/portfolio/${userName}/${repoName}`)}}
+                onClick={() => {
+                  router.push(`/portfolio/${userName}/${repoName}`);
+                }}
                 radius="md"
                 w={{
                   base: '95%',
@@ -885,7 +968,9 @@ export default function EditPortfolioProject({
                   }}
                   mt={12}
                   mb={30}
-                  onClick={() => { handleSaveAsDraft(false) }}
+                  onClick={() => {
+                    handleSaveAsDraft(false);
+                  }}
                   className="mx-auto"
                   variant="outline"
                   // onClick={handleSave}
@@ -952,8 +1037,10 @@ export default function EditPortfolioProject({
                     sm: '90%',
                   }}
                   mt={12}
-                    mb={30}
-                    onClick={() => { handleSaveAsDraft(true) }}
+                  mb={30}
+                  onClick={() => {
+                    handleSaveAsDraft(true);
+                  }}
                   // onClick={handleSaveAsDraft}
                   className="mx-auto"
                   variant="outline"
