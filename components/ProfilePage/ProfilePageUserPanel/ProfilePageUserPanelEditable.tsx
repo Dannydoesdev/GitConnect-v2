@@ -50,7 +50,7 @@ interface SocialMediaButtonProps {
 }
 
 const SocialMediaButton = ({ url, icon, label }: SocialMediaButtonProps) => {
-  console.log(url);
+  // console.log(url);
   if (!url || url.length === 0) return <></>;
   return (
     <Link href={url} passHref legacyBehavior>
@@ -153,7 +153,7 @@ const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
   // Function to handle saving changes
   const handleSaveChanges = async (newData: any) => {
     if (!currentUser) return;
-    console.log('formData in save changes', newData);
+    // console.log('formData in save changes', newData);
     setFormData(newData);
     await updateProfileDataGithub(userId, newData).then(() => {
       // Update UI or show success message
@@ -166,8 +166,8 @@ const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
   // }, []);
 
   useEffect(() => {
-    console.log('Client-side formData:', formData);
-    console.log('Client-side props:', props);
+    // console.log('Client-side formData:', formData);
+    // console.log('Client-side props:', props);
   }, []);
 
   return (

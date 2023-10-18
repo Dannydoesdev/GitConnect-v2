@@ -132,7 +132,77 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   // console.log('Published projects: ');
   // console.log(publishedProjects);
 
-  return (
+
+  if (draftProjecs.length === 0 || publishedProjects.length === 0) {
+    return (
+      <>
+        <Head>
+          <title>{`${profile?.name ?? username_lowercase ?? 'GitConnect'
+            }'s Portfolio`}</title>
+          <meta
+            name="description"
+            content={`${profile?.name ?? username_lowercase ?? 'GitConnect'
+              }'s portfolio page`}
+          />
+          {/* Add other SEO related tags here */}
+        </Head>
+
+        <Container size="xl" my="md">
+          <Space h={60} />
+          <Group position="center">
+            <Grid grow gutter={35}>
+              <Grid.Col sm={12} md={4}>
+                {profile && (
+                  <ProfilePageUserPanelEditable props={profile} currentUser={isCurrentUser} />
+                )}
+              </Grid.Col>
+              <Grid.Col span={8}>
+                <Grid gutter="md">
+                  <Grid.Col>
+                  {isCurrentUser ? (
+                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                        <Tabs.List>
+                          <Tabs.Tab value="first">Projects</Tabs.Tab>
+                          <Tabs.Tab value="second" color="orange">
+                            Drafts
+                          </Tabs.Tab>
+                        </Tabs.List>
+                        <Tabs.Panel value="first">
+                          <Space h={20} />
+                          <Grid.Col>
+                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
+                          </Grid.Col>
+                        </Tabs.Panel>
+                        <Tabs.Panel value="second">
+                          <Space h={20} />
+                          <Grid.Col>
+                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjecs} />
+                          </Grid.Col>
+                        </Tabs.Panel>
+                      </Tabs>
+                    ) : (
+                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                        <Tabs.List>
+                          <Tabs.Tab value="first">Projects</Tabs.Tab>
+                        </Tabs.List>
+                        <Tabs.Panel value="first">
+                          <Space h={20} />
+                          <Grid.Col>
+                            <ProfilePageProjectGrid projects={publishedProjects} />
+                          </Grid.Col>
+                        </Tabs.Panel>
+                      </Tabs>
+                    )}
+
+                  </Grid.Col>
+                </Grid>
+              </Grid.Col>
+            </Grid>
+          </Group>
+        </Container>
+      </>
+    );
+  } else return (
     <>
       <Head>
         {/* TODO: Test if this works */}
@@ -183,13 +253,13 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid projects={publishedProjects} />
+                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                         <Tabs.Panel value="second">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid projects={draftProjecs} />
+                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjecs} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
