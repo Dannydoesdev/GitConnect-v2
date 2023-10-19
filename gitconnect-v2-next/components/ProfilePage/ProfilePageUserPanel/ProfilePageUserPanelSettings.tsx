@@ -308,7 +308,7 @@ export function ProfilePageUserPanelSettings({
   /> */}
           <TextInput
             label="Website"
-            placeholder="Website"
+            placeholder="Personal Website or Portfolio"
             {...form.getInputProps('website')}
           />
           {/* <TextInput
@@ -397,22 +397,6 @@ export function ProfilePageUserPanelSettings({
             {...form.getInputProps('instagramUrl')}
           />
 
-          {/* <Toggle
-  label="Visible To Public"
-  {...form.getToggleProps('visibleToPublic')}
-/> */}
-          {/* <Button variant="filled" fullWidth mt="md" onClick={handleSaveChanges}>
-    Save Changes
-  </Button>
-  <Button
-    type="submit"
-    variant="outline"
-    fullWidth
-    mt="sm"
-    onClick={handleEditMode}
-  >
-    Cancel Changes
-  </Button> */}
           <Button
             variant="filled"
             fullWidth

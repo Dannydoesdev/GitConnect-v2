@@ -74,9 +74,9 @@ export function HeroLanding() {
                 Add a project
               </Button>
             </Link>
-            <Text className={classes.description} italic={true} size="xs" mt="xl">
+            {/* <Text className={classes.description} italic={true} size="xs" mt="xl">
               Note: This site is actively under construction
-            </Text>
+            </Text> */}
 
             <Group mt="md" spacing="xl">
               <Link

@@ -10,8 +10,8 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { TipTapCustomImage } from '../RichTextEditor/extensions/image';
-import { UploadFn } from '../RichTextEditor/extensions/image/upload_image';
+import { TipTapCustomImage } from '../Project/EditProject/RichTextEditor/extensions/image';
+import { UploadFn } from '../Project/EditProject/RichTextEditor/extensions/image/upload_image';
 import {
   collection,
   doc,
@@ -25,12 +25,12 @@ import {
 import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
 import { lowlight } from 'lowlight';
 import { db } from '../../../firebase/clientApp';
-import { Video } from '../RichTextEditor/extensions/video';
+import { Video } from '../Project/EditProject/RichTextEditor/extensions/video';
 // import { CustomImage } from './extensions/CustomImage';
-import { CustomImage } from '../RichTextEditor/extensions/image/customImageNew';
-import { ResizableMedia } from '../RichTextEditor/extensions/resizableMedia';
+import { CustomImage } from '../Project/EditProject/RichTextEditor/extensions/image/customImageNew';
+import { ResizableMedia } from '../Project/EditProject/RichTextEditor/extensions/resizableMedia';
 // import "tippy.js/animations/shift-toward-subtle.css";
-import { notitapEditorClass } from '../RichTextEditor/proseClassString';
+import { notitapEditorClass } from '../Project/EditProject/RichTextEditor/proseClassString';
 import { read } from 'fs';
 import { IconPhotoPlus } from '@tabler/icons-react';
 
