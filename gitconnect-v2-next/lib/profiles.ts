@@ -43,7 +43,8 @@ export async function getAllProfileUsernamesLowercase() {
       // ...data,
       usernameLowercase: data.username_lowercase,
     };
-  });
+  })
+ .filter((profile: any) => Boolean(profile.usernameLowercase));  // Filter out undefined or falsy usernames
 
   return profileIds;
 }
@@ -132,6 +133,9 @@ export async function getProfileDataWithUsernameLowercase(
   usernameLowercase = usernameLowercase.toLowerCase();
   const profileQuery = query(collectionGroup(db, 'profileData'), where('username_lowercase', '==', usernameLowercase));
   const profileQuerySnapshot = await getDocs(profileQuery);
+  if (profileQuerySnapshot.empty) {
+    return null;
+  }
   // Only return the data for the publicData doc id
   return profileQuerySnapshot.docs
     .filter((doc: any) => doc.id === 'publicData')

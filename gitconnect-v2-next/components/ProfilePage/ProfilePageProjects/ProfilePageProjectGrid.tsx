@@ -39,8 +39,9 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
     return input.replace(/[_-]/g, ' ');
   }
   // console.log(projects.length)
+  const projectsLength = projects ? projects.length : 0;
 
-  if (projects.length === 0) {
+  if (projectsLength === 0) {
     return (
       <Group>
         {currentUser ? (
