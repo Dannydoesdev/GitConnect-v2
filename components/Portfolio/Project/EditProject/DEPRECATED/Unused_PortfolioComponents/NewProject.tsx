@@ -2,8 +2,8 @@
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { AuthContext } from '../../../context/AuthContext';
-import LoadingPage from '../../LoadingPage/LoadingPage';
+import { AuthContext } from '../../../../../../context/AuthContext';
+import LoadingPage from '../../../../../LoadingPage/LoadingPage';
 import { Aside } from '@mantine/core';
 // import { RepoData } from '../../../types/repos';
 
