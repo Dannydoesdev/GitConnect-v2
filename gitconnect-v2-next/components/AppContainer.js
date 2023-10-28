@@ -390,7 +390,7 @@ export const AppContainer = ({ children }, props) => {
                   </Link>
 
                   {/* TESTING ONLY */}
-                  {(userData.userId === 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' || process.env.NODE_ENV === 'development') && (
+                  {/* {(userData.userId === 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' || process.env.NODE_ENV === 'development') && (
                     <Link
                     href={`/portfolio/test/${userData.username_lowercase}`}
                     passHref
@@ -412,7 +412,7 @@ export const AppContainer = ({ children }, props) => {
                       TEST
                     </Button>
                   </Link>
-                  )}
+                  )} */}
                   {/* TESTING ONLY */}
 
                 </Group>
