@@ -34,8 +34,8 @@ import {
   FaTwitter,
   FaYoutube,
 } from 'react-icons/fa6';
-import { AuthContext } from '../../../context/AuthContext';
-import { updateProfileDataGithub } from '../../../lib/profiles';
+import { AuthContext } from '../../../../context/AuthContext';
+import { updateProfileDataGithub } from '../../../../lib/profiles';
 import { ProfilePageUserPanelSettings } from './ProfilePageUserPanelSettings';
 
 interface ProfilePageUserPanelProps {

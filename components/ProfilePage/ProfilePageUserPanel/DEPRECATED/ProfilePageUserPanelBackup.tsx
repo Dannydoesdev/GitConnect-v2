@@ -1,11 +1,11 @@
 
 import { Avatar, Text, Button, Paper, Divider, TextInput } from '@mantine/core';
 import Link from 'next/link';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../../../context/AuthContext';
 import { useContext, useState } from 'react';
 import { Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { updateProfileDataGithub } from '../../../lib/profiles';
+import { updateProfileDataGithub } from '../../../../lib/profiles';
 
 interface ProfilePageUserPanelProps {
   props: {

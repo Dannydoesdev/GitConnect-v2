@@ -11,15 +11,15 @@ import {
   Stack,
   Button,
 } from '@mantine/core';
-import ProjectPageDynamicContent from '../../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
-import { ProjectEditPageHero } from '../../../../components/ProjectEditPage/ProjectEditPageHero/ProjectEditPageHero';
-import TipTapEditor from '../../../../components/ProjectEditPage/RichTextEditor/RichTextEditor';
-import { AuthContext } from '../../../../context/AuthContext';
+import ProjectPageDynamicContent from '../../../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
+import { ProjectEditPageHero } from '../../../../../components/ProjectEditPage/ProjectEditPageHero/ProjectEditPageHero';
+import TipTapEditor from '../../../../../components/ProjectEditPage/RichTextEditor/RichTextEditor';
+import { AuthContext } from '../../../../../context/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../../firebase/clientApp';
-import ToggleHiddenStatus from '../../../../components/ProjectEditPage/EditProjectActions/ToggleHiddenStatus';
-import UploadProjectCoverImage from '../../../../components/ProjectEditPage/EditProjectActions/UploadProjectCoverImage';
-import LoadingPage from '../../../../components/LoadingPage/LoadingPage';
+import { db } from '../../../../../firebase/clientApp';
+import ToggleHiddenStatus from '../../../../../components/ProjectEditPage/EditProjectActions/ToggleHiddenStatus';
+import UploadProjectCoverImage from '../../../../../components/ProjectEditPage/EditProjectActions/UploadProjectCoverImage';
+import LoadingPage from '../../../../../components/LoadingPage/LoadingPage';
 
 export default function EditProject() {
   const { userData } = useContext(AuthContext);

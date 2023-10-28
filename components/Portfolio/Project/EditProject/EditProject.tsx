@@ -42,7 +42,7 @@ import LoadingPage from '../../../LoadingPage/LoadingPage';
 import ViewPreviewProjectEditor from '../ViewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal from './EditProjectSettings';
-import RichTextEditorVanilla from './RichTextEditor/OldRichTextEditorVanilla';
+// import RichTextEditorVanilla from './RichTextEditor/OldRichTextEditorVanilla';
 import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
 
 // import { createDOMPurify } from 'dompurify';
