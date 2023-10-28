@@ -16,8 +16,8 @@ import {
 import { Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { AuthContext } from '../../../context/AuthContext';
-import { updateProfileDataGithub } from '../../../lib/profiles';
+import { AuthContext } from '../../../../context/AuthContext';
+import { updateProfileDataGithub } from '../../../../lib/profiles';
 import { ProfilePageUserPanelSettings } from './ProfilePageUserPanelSettings';
 
 interface ProfilePageUserPanelProps {

@@ -3,16 +3,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Button, Center, Chip, Group, Stack } from '@mantine/core';
 import axios from 'axios';
-import ProjectPageDynamicContent from '../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
-import { ProjectPageDynamicHero } from '../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
-import RichTextEditorDisplay from '../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
-import { AuthContext } from '../../../context/AuthContext';
+import ProjectPageDynamicContent from '../../../../components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
+import { ProjectPageDynamicHero } from '../../../../components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
+import RichTextEditorDisplay from '../../../../components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
+import { AuthContext } from '../../../../context/AuthContext';
 import {
   getAllProjectIds,
   getProjectTextEditorContent,
   getSingleProjectById,
-} from '../../../lib/projects';
-import { starProject, unstarProject } from '../../../lib/stars';
+} from '../../../../lib/projects';
+import { starProject, unstarProject } from '../../../../lib/stars';
 
 export async function getStaticProps({ params }: any) {
   // const sortedProjects = await getAllPublicProjectsAndSort();

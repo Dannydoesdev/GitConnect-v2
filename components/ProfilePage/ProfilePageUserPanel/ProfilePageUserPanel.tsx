@@ -83,7 +83,7 @@ import {
 } from 'react-icons/si';
 import { AuthContext } from '../../../context/AuthContext';
 import { updateProfileDataGithub } from '../../../lib/profiles';
-import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsTest';
+import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
 
 interface IconMap {
   [key: string]: React.ReactNode;
@@ -184,7 +184,7 @@ interface ProfilePageUserPanelProps {
   currentUser?: boolean;
 }
 
-const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
+const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
   props,
   currentUser,
 }) => {
@@ -809,7 +809,7 @@ const skillsBadge = (skills: string[]) => {
   ));
 };
 
-export default ProfilePageUserPanelEditable;
+export default ProfilePageUserPanel;
 
 // interface ProfilePageUserPanelProps {
 //   props: {
