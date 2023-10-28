@@ -19,19 +19,40 @@ import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/
 import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
+  // console.log('getStaticProps fired')
   const { username_lowercase } = params as { username_lowercase: string };
 
   const projectData = await getAllUserProjectsWithUsernameLowercase(username_lowercase);
 
-  const profileData = projectData[0]
-    ? await getProfileDataWithFirebaseIdNew(projectData[0]?.docData.userId)
-    : await getProfileDataWithUsernameLowercase(username_lowercase);
+  // console.log(`${username_lowercase}'s project data: `, projectData ? projectData.length : 'no project data')
+
+  let profileData;
+
+  if (projectData && projectData[0]) {
+    profileData = await getProfileDataWithFirebaseIdNew(projectData[0].docData.userId);
+  } else {
+    profileData = await getProfileDataWithUsernameLowercase(username_lowercase);
+  }
+
+  // console.log(`${username_lowercase}'s profile data: `, profileData)
+
+  // const projectData = await getAllUserProjectsWithUsernameLowercase(username_lowercase);
+
+  // const profileData = projectData[0]
+  //   ? await getProfileDataWithFirebaseIdNew(projectData[0]?.docData.userId)
+  //   : await getProfileDataWithUsernameLowercase(username_lowercase)
 
   const initialProjects = projectData ?? null;
   const initialProfile = Array.isArray(profileData)
     ? profileData[0]?.docData ?? null
     : profileData?.docData ?? null;
 
+  // console.log(`${username_lowercase}'s initial profile data: `, initialProfile)
+  
+    // if (!projectData) {
+    //   projectData = [];
+    // }
+  
   return {
     props: {
       initialProjects,
@@ -41,7 +62,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   };
 };
 export const getStaticPaths: GetStaticPaths = async () => {
+  // console.log('getStaticPaths fired')
   const usernamesLowercaseArr = await getAllProfileUsernamesLowercase();
+  // console.log('usernamesLowercaseArr: ', usernamesLowercaseArr)
 
   const paths = usernamesLowercaseArr.map((username_lowercase: any) => ({
     params: { username_lowercase: username_lowercase.usernameLowercase },
@@ -120,6 +143,11 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     return project.docData.hidden === true;
   });
 
+  // if (!draftProjecs || draftProjecs.length === 0) {
+  //   console.log(`${username_lowercase} has no draft project or a bug  - draft projects returns:`)
+  //   console.log('draft project = ', draftProjecs)
+  // }
+
   // console.log('Draft projects: ');
   // console.log(draftProjecs);
 
@@ -127,11 +155,27 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     return project.docData.hidden === false || project.docData.hidden === undefined;
   });
 
+  // if (!publishedProjects || publishedProjects.length === 0) {
+  //   console.log(`${username_lowercase} has no published project or a bug  - published projects returns:`)
+  //   console.log('published project = ', publishedProjects)
+  // }
+
   // console.log('Published projects: ');
   // console.log(publishedProjects);
 
-  if (draftProjecs.length === 0 || publishedProjects.length === 0) {
+  // console.log('length appearance # before return:')
+
+  // console.log(publishedProjects.length)
+
+  const draftProjectsLength = draftProjecs ? draftProjecs.length : 0;
+  const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
+
+  // console.log(`${username_lowercase}s draftprojects new length`, draftProjectsLength);
+  // console.log(`${username_lowercase}s publishedprojects new length`, publishedProjectsLength);
+
+  if (draftProjectsLength === 0 || publishedProjectsLength === 0) {
     // NOTE: NO PROJECTS RETURNED VERSION
+    // console.log('no projects returned version')
     return (
       <>
         <Head>
