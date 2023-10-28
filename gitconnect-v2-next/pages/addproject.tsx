@@ -206,12 +206,13 @@ const GetRepos = () => {
     } finally {
       notifications.update({
         id: 'adding-repo', 
-        loading: false,
+        loading: true,
         title: `${repo.name} added successfully`,
         message: `Loading project page`,
         color: 'green',
         icon: <IconCheck size="1.5rem" />,
-        autoClose: 1500,
+      //  autoClose: false,
+        autoClose: 2000,
       });
     }
     setTimeout(() => {

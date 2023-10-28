@@ -2,18 +2,18 @@ import {
   getAllProfileIds,
   getGithubDataFromFirebaseIdOnly,
   getProfileDataPublic,
-} from '../../lib/profiles';
-import { getGithubProfileData } from '../../lib/github';
-import { getAllProjectDataFromProfile } from '../../lib/projects';
-import ProfilePageProjectGrid from '../../components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
+} from '../../../lib/profiles';
+import { getGithubProfileData } from '../../../lib/github';
+import { getAllProjectDataFromProfile } from '../../../lib/projects';
+import ProfilePageProjectGrid from '../../../components/ProfilePage/test/DEPRECATED/ProfilePageProjectGrid';
 import { Space, Container, Grid } from '@mantine/core';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext';
 // import AuthRoute from "../../HoC/authRoute"
 import React, { useContext, useEffect, useState } from 'react';
 // import { ProfilePageUserPanel } from '../../components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
-import { ProfilePageUserPanel } from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelBackup';
+import { ProfilePageUserPanel } from '@/components/ProfilePage/ProfilePageUserPanel/DEPRECATED/ProfilePageUserPanelBackup';
 import { useRouter } from 'next/router';
-import LoadingPage from '../../components/LoadingPage/LoadingPage';
+import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 
 export async function getStaticProps({ params }: any) {
   const projectData: any = await getAllProjectDataFromProfile(params.id);
