@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
+import { formDataAtom } from '@/atoms';
 import {
-  Modal,
-  Stack,
+  Affix,
   Button,
-  TextInput,
+  Checkbox,
+  Group,
+  Modal,
+  MultiSelect,
   ScrollArea,
+  Space,
+  Spoiler,
+  Stack,
   Switch,
   Textarea,
-  MultiSelect,
-  Checkbox,
-  Spoiler,
-  Group,
+  TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAtom } from 'jotai';
-import { formDataAtom } from '@/atoms';
 
 // Define the type of the `form` parameter explicitly
 interface URLInputProps {
@@ -52,11 +54,9 @@ const URLInput = ({ label, form, name }: URLInputProps) => (
 //   return match ? match[1] : url;
 // };
 
-
 const extractUsernameFromURL = (url: string, platform: string) => {
-
-  url = url.toLowerCase()
-  platform = platform.toLowerCase()
+  url = url.toLowerCase();
+  platform = platform.toLowerCase();
   // Check if the input is already a username
   if (!url.includes(platform)) return url;
 
@@ -155,7 +155,6 @@ const formatSocialURL = (input: string, platform: string) => {
   // ... (rest of the code remains the same)
 };
 
-
 // const extractUsernameFromURL = (url: string, platform: string) => {
 //   // Check if the input is already a username
 //   if (!url.includes(platform)) return url;
@@ -231,6 +230,7 @@ interface ProfilePageUserPanelSettingsProps {
     avatar_url?: string;
     name: string;
     email: string;
+    publicEmail?: string;
     location?: string;
     login: string;
     public_repos?: number;
@@ -276,8 +276,6 @@ interface ProfilePageUserPanelSettingsProps {
     stackoverflowUsername?: string;
     facebookUsername?: string;
     instagramUsername?: string;
-
-
   };
 }
 
@@ -290,9 +288,7 @@ const ProfilePageUserPanelSettings = ({
   open,
   close,
 }: ProfilePageUserPanelSettingsProps) => {
-  
   const [formData, setFormData] = useAtom(formDataAtom);
-
 
   // ChatGPTs implementation:
   // const form = useForm({
@@ -305,6 +301,7 @@ const ProfilePageUserPanelSettings = ({
       name: props.name || '',
       location: props.location || '',
       email: props.email || '',
+      publicEmail: props.publicEmail || '',
       website: props.website || '',
       headline: props.headline || '',
       company: props.company || '',
@@ -315,7 +312,7 @@ const ProfilePageUserPanelSettings = ({
       // visibleToPublic: props.visibleToPublic || false,
       profileTags: props.profileTags || [],
       bio: props.bio || '',
- 
+
       githubUrl: props.githubUrl || '',
       gitlabUrl: props.gitlabUrl || '',
       linkedinUrl: props.linkedinUrl || '',
@@ -332,7 +329,7 @@ const ProfilePageUserPanelSettings = ({
       stackoverflowUrl: props.stackoverflowUrl || '',
       facebookUrl: props.facebookUrl || '',
       instagramUrl: props.instagramUrl || '',
- 
+
       githubUsername: props.githubUsername || '',
       gitlabUsername: props.gitlabUsername || '',
       linkedinUsername: props.linkedinUsername || '',
@@ -349,34 +346,72 @@ const ProfilePageUserPanelSettings = ({
       stackoverflowUsername: props.stackoverflowUsername || '',
       facebookUsername: props.facebookUsername || '',
       instagramUsername: props.instagramUsername || '',
-
     },
   });
 
   // Data for MultiSelect
+  // const [data, setData] = useState([
+  //   { value: 'react', label: 'React', group: 'Frontend' },
+  //   { value: 'javascript', label: 'Javascript', group: 'Frontend' },
+  //   { value: 'typescript', label: 'TypeScript', group: 'Frontend' },
+  //   { value: 'nextjs', label: 'Next.js', group: 'Backend' },
+  //   { value: 'nodejs', label: 'Node.js', group: 'Backend' },
+  //   { value: 'firebase', label: 'Firebase', group: 'Backend' },
+  //   { value: 'python', label: 'Python', group: 'Backend' },
+  //   { value: 'flask', label: 'Flask', group: 'Frontend' },
+  //   { value: 'sql', label: 'SQL', group: 'Database' },
+  //   { value: 'firestore', label: 'Firestore', group: 'Database' },
+  //   { value: 'mongodb', label: 'MongoDB', group: 'Database' },
+  //   { value: 'html', label: 'HTML', group: 'Frontend' },
+  //   { value: 'css', label: 'CSS', group: 'Frontend' },
+  //   { value: 'tailwindcss', label: 'Tailwind CSS', group: 'Styling + Components' },
+  //   { value: 'bootstrap', label: 'Bootstrap', group: 'Styling + Components' },
+  //   { value: 'materialui', label: 'Material UI', group: 'Styling + Components' },
+  //   { value: 'chakraui', label: 'Chakra UI', group: 'Styling + Components' },
+  // ]);
+
+  // Updated options:
+
   const [data, setData] = useState([
     { value: 'react', label: 'React', group: 'Frontend' },
+    { value: 'vuejs', label: 'Vue.js', group: 'Frontend' },
+    { value: 'angular', label: 'Angular', group: 'Frontend' },
+    { value: 'svelte', label: 'Svelte', group: 'Frontend' },
     { value: 'javascript', label: 'Javascript', group: 'Frontend' },
     { value: 'typescript', label: 'TypeScript', group: 'Frontend' },
     { value: 'nextjs', label: 'Next.js', group: 'Backend' },
+    { value: 'gatsby', label: 'Gatsby', group: 'Backend' },
     { value: 'nodejs', label: 'Node.js', group: 'Backend' },
+    { value: 'express', label: 'Express.js', group: 'Backend' },
+    { value: 'django', label: 'Django', group: 'Backend' },
+    { value: 'rubyonrails', label: 'Ruby on Rails', group: 'Backend' },
     { value: 'firebase', label: 'Firebase', group: 'Backend' },
+    { value: 'graphql', label: 'GraphQL', group: 'Backend' },
     { value: 'python', label: 'Python', group: 'Backend' },
+    { value: 'java', label: 'Java', group: 'Backend' },
+    { value: 'csharp', label: 'C#', group: 'Backend' },
+    { value: 'php', label: 'PHP', group: 'Backend' },
+    { value: 'go', label: 'Go', group: 'Backend' },
     { value: 'flask', label: 'Flask', group: 'Frontend' },
     { value: 'sql', label: 'SQL', group: 'Database' },
+    { value: 'mysql', label: 'MySQL', group: 'Database' },
+    { value: 'postgresql', label: 'PostgreSQL', group: 'Database' },
     { value: 'firestore', label: 'Firestore', group: 'Database' },
     { value: 'mongodb', label: 'MongoDB', group: 'Database' },
+    { value: 'oracle', label: 'Oracle', group: 'Database' },
     { value: 'html', label: 'HTML', group: 'Frontend' },
     { value: 'css', label: 'CSS', group: 'Frontend' },
+    { value: 'sass', label: 'SASS', group: 'Styling + Components' },
+    { value: 'less', label: 'LESS', group: 'Styling + Components' },
     { value: 'tailwindcss', label: 'Tailwind CSS', group: 'Styling + Components' },
     { value: 'bootstrap', label: 'Bootstrap', group: 'Styling + Components' },
     { value: 'materialui', label: 'Material UI', group: 'Styling + Components' },
     { value: 'chakraui', label: 'Chakra UI', group: 'Styling + Components' },
+    { value: 'bulma', label: 'Bulma', group: 'Styling + Components' },
   ]);
 
   const handleSubmit = () => {
     const formattedValues = {
-
       // Get all values from form
       ...form.values,
 
@@ -393,7 +428,10 @@ const ProfilePageUserPanelSettings = ({
       youtubeUrl: formatSocialURL(form.values.youtubeUsername, 'youtube'),
       twitchUrl: formatSocialURL(form.values.twitchUsername, 'twitch'),
       discordUrl: formatSocialURL(form.values.discordUsername, 'discord'),
-      stackoverflowUrl: formatSocialURL(form.values.stackoverflowUsername, 'stackoverflow'),
+      stackoverflowUrl: formatSocialURL(
+        form.values.stackoverflowUsername,
+        'stackoverflow'
+      ),
       facebookUrl: formatSocialURL(form.values.facebookUsername, 'facebook'),
       instagramUrl: formatSocialURL(form.values.instagramUsername, 'instagram'),
 
@@ -410,13 +448,18 @@ const ProfilePageUserPanelSettings = ({
       youtubeUsername: extractUsernameFromURL(form.values.youtubeUsername, 'youtube'),
       twitchUsername: extractUsernameFromURL(form.values.twitchUsername, 'twitch'),
       discordUsername: extractUsernameFromURL(form.values.discordUsername, 'discord'),
-      stackoverflowUsername: extractUsernameFromURL(form.values.stackoverflowUsername, 'stackoverflow'),
+      stackoverflowUsername: extractUsernameFromURL(
+        form.values.stackoverflowUsername,
+        'stackoverflow'
+      ),
       facebookUsername: extractUsernameFromURL(form.values.facebookUsername, 'facebook'),
-      instagramUsername: extractUsernameFromURL(form.values.instagramUsername, 'instagram'),
-
+      instagramUsername: extractUsernameFromURL(
+        form.values.instagramUsername,
+        'instagram'
+      ),
     };
     // Save to state
-    setFormData(formattedValues); 
+    setFormData(formattedValues);
 
     // Save to Firebase
     handleSaveChanges(formattedValues);
@@ -441,18 +484,18 @@ const ProfilePageUserPanelSettings = ({
   //     facebookUrl: formatSocialURL(form.values.facebookUrl, 'facebook'),
   //     instagramUrl: formatSocialURL(form.values.instagramUrl, 'instagram'),
 
-      // mediumUrl: formatSocialURL(form.values.mediumUsername, 'medium'),
-      // hashnodeUrl: formatSocialURL(form.values.hashnodeUsername, 'hashnode'),
-      // codepenUrl: formatSocialURL(form.values.codepenUsername, 'codepen'),
-      // dribbbleUrl: formatSocialURL(form.values.dribbbleUsername, 'dribbble'),
-      // behanceUrl: formatSocialURL(form.values.behanceUsername, 'behance'),
-      // devToUrl: formatSocialURL(form.values.devToUsername, 'devTo'),
-      // youtubeUrl: formatSocialURL(form.values.youtubeUsername, 'youtube'),
-      // twitchUrl: formatSocialURL(form.values.twitchUsername, 'twitch'),
-      // discordUrl: formatSocialURL(form.values.discordUsername, 'discord'),
-      // stackoverflowUrl: formatSocialURL(form.values.stackoverflowUsername, 'stackoverflow'),
-      // facebookUrl: formatSocialURL(form.values.facebookUsername, 'facebook'),
-      // instagramUrl: formatSocialURL(form.values.instagramUsername, 'instagram'),
+  // mediumUrl: formatSocialURL(form.values.mediumUsername, 'medium'),
+  // hashnodeUrl: formatSocialURL(form.values.hashnodeUsername, 'hashnode'),
+  // codepenUrl: formatSocialURL(form.values.codepenUsername, 'codepen'),
+  // dribbbleUrl: formatSocialURL(form.values.dribbbleUsername, 'dribbble'),
+  // behanceUrl: formatSocialURL(form.values.behanceUsername, 'behance'),
+  // devToUrl: formatSocialURL(form.values.devToUsername, 'devTo'),
+  // youtubeUrl: formatSocialURL(form.values.youtubeUsername, 'youtube'),
+  // twitchUrl: formatSocialURL(form.values.twitchUsername, 'twitch'),
+  // discordUrl: formatSocialURL(form.values.discordUsername, 'discord'),
+  // stackoverflowUrl: formatSocialURL(form.values.stackoverflowUsername, 'stackoverflow'),
+  // facebookUrl: formatSocialURL(form.values.facebookUsername, 'facebook'),
+  // instagramUrl: formatSocialURL(form.values.instagramUsername, 'instagram'),
   //   };
   //   handleSaveChanges(formattedValues);
   // };
@@ -460,42 +503,62 @@ const ProfilePageUserPanelSettings = ({
   return (
     <Modal
       size="xl"
+      // fullScreen
+        transitionProps={{ transition: 'fade', duration: 200 }}
+      // size='80%'
+      padding='lg'
       opened={opened}
       onClose={close}
       title="Profile Settings"
-      scrollAreaComponent={ScrollArea.Autosize}
+      // scrollAreaComponent={ScrollArea.Autosize}
       centered
     >
-      <Stack spacing="lg">
+      <Stack spacing="xl">
         <TextInput label="Name" {...form.getInputProps('name')} />
         <TextInput label="Location" {...form.getInputProps('location')} />
-        <TextInput label="Email" {...form.getInputProps('email')} />
-        <TextInput label="Personal Website"  placeholder="Personal Website or Portfolio" {...form.getInputProps('website')} />
+        {/* <TextInput label="Email" {...form.getInputProps('email')} /> */}
+        <TextInput label="Public Contact Email" {...form.getInputProps('publicEmail')} />
+        <TextInput
+          label="Personal Website"
+          placeholder="Personal Website or Portfolio"
+          {...form.getInputProps('website')}
+        />
         <TextInput label="Headline" {...form.getInputProps('headline')} />
         <TextInput label="Company" {...form.getInputProps('company')} />
         <TextInput label="Position" {...form.getInputProps('position')} />
-        <Switch label="Open To Work" {...form.getInputProps('openToWork', { type: 'checkbox' })} />
-        <Switch label="Visible To Public" {...form.getInputProps('visibleToPublic', { type: 'checkbox' })} />
-        <Textarea label="Bio" autosize minRows={2} maxRows={7} {...form.getInputProps('bio')} />
+        <Switch
+          label="Open To Work"
+          {...form.getInputProps('openToWork', { type: 'checkbox' })}
+        />
+                {/* <Space h={1} /> */}
+
+        {/* <Switch label="Visible To Public" {...form.getInputProps('visibleToPublic', { type: 'checkbox' })} /> */}
+        <Textarea
+          label="Bio"
+          autosize
+          minRows={2}
+          maxRows={7}
+          {...form.getInputProps('bio')}
+        />
+        {/* <Space h={4} /> */}
         <MultiSelect
           label="Tech Stack"
           data={data}
           searchable
           creatable
-          clearable
+          // clearable
           getCreateLabel={(query) => `+ Create ${query}`}
           onCreate={(query) => {
             const item = { value: query, label: query, group: 'Custom' };
             setData((current) => [...current, item]);
             return item;
           }}
-        
           {...form.getInputProps('techStack')}
         />
-         {/* Checkbox Group for Skills */}
+        {/* Checkbox Group for Skills */}
         <Checkbox.Group
-           mt="sm"
-           mb="md"
+          mt="sm"
+          mb="md"
           label="Skills"
           description="Pick the categories that best describe your skills & experience"
           {...form.getInputProps('skills')}
@@ -507,39 +570,41 @@ const ProfilePageUserPanelSettings = ({
             styles={(theme) => ({
               control: {
                 marginTop: 15,
+                fontWeight: 500,
               },
             })}
+       
           >
             <Group spacing="xl" mt="md">
-            <Checkbox value="frontend" label="Frontend" />
-                <Checkbox value="backend" label="Backend" />
-                <Checkbox value="databases" label="Databases" />
-                <Checkbox value="fullstack" label="Fullstack" />
-                <Checkbox value="cloud" label="Cloud" />
-                <Checkbox value="games" label="Games" />
-                <Checkbox value="machinelearning" label="Machine Learning" />
-                <Checkbox value="ai" label="AI" />
-                <Checkbox value="developmenttools" label="Development Tools" />
-                <Checkbox value="apps" label="Apps" />
-                <Checkbox value="design" label="Design" />
-                <Checkbox value="automation" label="Automation" />
-                <Checkbox value="components" label="Components" />
-                <Checkbox value="libraries" label="Libraries" />
-                <Checkbox value="opensource" label="Open Source" />
-                <Checkbox value="mobile" label="Mobile" />
-                <Checkbox value="web" label="Web" />
-                <Checkbox value="desktop" label="Desktop" />
-                <Checkbox value="datascience" label="Data Science" />
-                <Checkbox value="security" label="Security" />
-                <Checkbox value="devops" label="DevOps" />
-                <Checkbox value="testing" label="Testing" />
-                <Checkbox value="security" label="Security" />
-                <Checkbox value="cloud" label="Cloud" />
-                <Checkbox value="hardware" label="Hardware" />
-                <Checkbox value="education" label="Education" />
-                <Checkbox value="community" label="Community" />
-                <Checkbox value="social" label="Social" />
-                <Checkbox value="ecommerce" label="Ecommerce" />
+              <Checkbox value="frontend" label="Frontend" />
+              <Checkbox value="backend" label="Backend" />
+              <Checkbox value="databases" label="Databases" />
+              <Checkbox value="fullstack" label="Fullstack" />
+              <Checkbox value="cloud" label="Cloud" />
+              <Checkbox value="games" label="Games" />
+              <Checkbox value="machinelearning" label="Machine Learning" />
+              <Checkbox value="ai" label="AI" />
+              <Checkbox value="developmenttools" label="Development Tools" />
+              <Checkbox value="apps" label="Apps" />
+              <Checkbox value="design" label="Design" />
+              <Checkbox value="automation" label="Automation" />
+              <Checkbox value="components" label="Components" />
+              <Checkbox value="libraries" label="Libraries" />
+              <Checkbox value="opensource" label="Open Source" />
+              <Checkbox value="mobile" label="Mobile" />
+              <Checkbox value="web" label="Web" />
+              <Checkbox value="desktop" label="Desktop" />
+              <Checkbox value="datascience" label="Data Science" />
+              <Checkbox value="security" label="Security" />
+              <Checkbox value="devops" label="DevOps" />
+              <Checkbox value="testing" label="Testing" />
+              <Checkbox value="security" label="Security" />
+              <Checkbox value="cloud" label="Cloud" />
+              <Checkbox value="hardware" label="Hardware" />
+              <Checkbox value="education" label="Education" />
+              <Checkbox value="community" label="Community" />
+              <Checkbox value="social" label="Social" />
+              <Checkbox value="ecommerce" label="Ecommerce" />
               <Checkbox value="entertainment" label="Entertainment" />
               {/* ... (other checkboxes) */}
             </Group>
@@ -547,30 +612,91 @@ const ProfilePageUserPanelSettings = ({
         </Checkbox.Group>
         {/* ... other form fields */}
 
-        <TextInput label="Github Username" {...form.getInputProps('githubUsername')} />
-        <TextInput label="Linkedin Username" {...form.getInputProps('linkedinUsername')} />
-        <TextInput label="Twitter Username" {...form.getInputProps('twitterUsername')} />
-        <TextInput label="Medium Username" {...form.getInputProps('mediumUsername')} />
-        <TextInput label="Hashnode Username" {...form.getInputProps('hashnodeUsername')} />
-        <TextInput label="Codepen Username" {...form.getInputProps('codepenUsername')} />
-        <TextInput label="Dribbble Username" {...form.getInputProps('dribbbleUsername')} />
-        <TextInput label="Behance Username" {...form.getInputProps('behanceUsername')} />
-        <TextInput label="Dev.to Username" {...form.getInputProps('devToUsername')} />
-        <TextInput label="Youtube Username" {...form.getInputProps('youtubeUsername')} />
-        <TextInput label="Twitch Username" {...form.getInputProps('twitchUsername')} />
-        <TextInput label="Discord Username" {...form.getInputProps('discordUsername')} />
-        <TextInput label="Stackoverflow Username" {...form.getInputProps('stackoverflowUsername')} />
-        <TextInput label="Facebook Username" {...form.getInputProps('facebookUsername')} />
-        <TextInput label="Instagram Username" {...form.getInputProps('instagramUsername')} />
-
-
+        <Spoiler
+          maxHeight={300}
+          showLabel="Show all socials"
+          hideLabel="Hide"
+          styles={(theme) => ({
+            control: {
+              marginTop: 15,
+              fontWeight: 500,
+            },
+          })}
+        >
+          <Stack spacing='lg'>
+          <TextInput label="Github Username" {...form.getInputProps('githubUsername')} />
+          <TextInput
+            label="Linkedin Username"
+            {...form.getInputProps('linkedinUsername')}
+          />
+          <TextInput
+            label="Twitter Username"
+            {...form.getInputProps('twitterUsername')}
+          />
+          <TextInput label="Medium Username" {...form.getInputProps('mediumUsername')} />
+          <TextInput
+            label="Hashnode Username"
+            {...form.getInputProps('hashnodeUsername')}
+          />
+          <TextInput
+            label="Codepen Username"
+            {...form.getInputProps('codepenUsername')}
+          />
+          <TextInput
+            label="Dribbble Username"
+            {...form.getInputProps('dribbbleUsername')}
+          />
+          <TextInput
+            label="Behance Username"
+            {...form.getInputProps('behanceUsername')}
+          />
+          <TextInput label="Dev.to Username" {...form.getInputProps('devToUsername')} />
+          <TextInput
+            label="Youtube Username"
+            {...form.getInputProps('youtubeUsername')}
+          />
+          <TextInput label="Twitch Username" {...form.getInputProps('twitchUsername')} />
+          {/* <TextInput
+            label="Discord Username"
+            {...form.getInputProps('discordUsername')}
+          /> */}
+          <TextInput
+            label="Stackoverflow Username"
+            {...form.getInputProps('stackoverflowUsername')}
+          />
+          {/* <TextInput
+            label="Facebook Username"
+            {...form.getInputProps('facebookUsername')}
+          /> */}
+          <TextInput
+            label="Instagram Username"
+            {...form.getInputProps('instagramUsername')}
+          />
+          </Stack>
+        </Spoiler>
+        {/* <Affix
+          bg={'black'}
+          // position={{ bottom: 0 }}
+          // bottom='30%'
+          // ml={40}
+          right='30%'
+          bottom={0}
+          left={0}
+          // left='50%'
+          // right='70%'
+          // top='70%'
+          zIndex={300}
+       > */}
+        <Group position='center' pb='lg'>
         {/* <Button variant="filled" fullWidth mt="md" onClick={() => handleSaveChanges(form.values)}> */}
-        <Button variant="filled" fullWidth mt="md" onClick={handleSubmit}>
+        <Button variant="filled" radius='sm' w='40%' mt="md" onClick={handleSubmit}>
           Save Changes
         </Button>
-        <Button variant="outline" fullWidth mt="sm" onClick={handleCancelChanges}>
+        <Button variant="outline" radius='sm' w='40%' mt="sm" onClick={handleCancelChanges}>
           Cancel Changes
-        </Button>
+          </Button>
+          </Group>
+        {/* </Affix> */}
       </Stack>
     </Modal>
   );
@@ -578,8 +704,8 @@ const ProfilePageUserPanelSettings = ({
 
 export default ProfilePageUserPanelSettings;
 
-
-  {/* <URLInput label="Github" form={form} name="githubUrl" />
+{
+  /* <URLInput label="Github" form={form} name="githubUrl" />
         <URLInput label="Gitlab" form={form} name="gitlabUrl" />
         <URLInput label="LinkedIn" form={form} name="linkedinUrl" />
         <URLInput label="Twitter" form={form} name="twitterUrl" />
@@ -595,4 +721,5 @@ export default ProfilePageUserPanelSettings;
         <URLInput label="Twitch" form={form} name="twitchUrl" />
         <URLInput label="Discord" form={form} name="discordUrl" />
         <URLInput label="Instagram" form={form} name="instagramUrl" />
-        <URLInput label="Facebook" form={form} name="facebookUrl" /> */}
+        <URLInput label="Facebook" form={form} name="facebookUrl" /> */
+}
