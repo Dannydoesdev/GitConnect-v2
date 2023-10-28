@@ -192,6 +192,11 @@ useEffect(() => {
       setUserHasStarred(true);
       setStarCount(starCount + 1);
     }
+
+  //   // Manually refresh data after update
+  // const updatedProjectData = await fetchProjectDataFromFirebase(); // Replace with your actual fetch function
+  // setUserHasStarred(updatedProjectData.stars ? updatedProjectData.stars.includes(userData.userId) : false);
+
   };
 
   if (projects) {
