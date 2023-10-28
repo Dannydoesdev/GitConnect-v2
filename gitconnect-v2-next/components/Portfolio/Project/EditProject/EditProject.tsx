@@ -1,7 +1,7 @@
 // import type { NextPage } from 'next';
 // import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
-import { Router, useRouter } from 'next/router';
+import router, { Router, useRouter } from 'next/router';
 import {
   projectDataAtom,
   textEditorAtom,
@@ -27,7 +27,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconCross } from '@tabler/icons-react';
+import { IconArrowRight, IconCheck, IconCross, IconExternalLink } from '@tabler/icons-react';
 import axios from 'axios';
 // import DOMPurify from 'dompurify';
 // import * as DOMPurify from 'dompurify';
@@ -42,7 +42,6 @@ import LoadingPage from '../../../LoadingPage/LoadingPage';
 import ViewPreviewProjectEditor from '../ViewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal from './EditProjectSettings';
-import RichTextEditorVanilla from './RichTextEditor/OldRichTextEditorVanilla';
 import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
 
 // import { createDOMPurify } from 'dompurify';
@@ -224,6 +223,26 @@ export default function EditPortfolioProject({
     // router.push(`/profiles/projects/${repoid}`);
   }
 
+  // Close the notification when the router changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      notifications.update({
+        id: 'load-data',
+        color: 'teal',
+        loading: false,
+        title: 'Project page loaded',
+        message: 'Your project page is ready',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 500,
+      });
+      // notifications.clean();
+    };
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
+
   async function handleUpdateProject() {
     // if ( realtimeEditorContent !== '' ) {
 
@@ -263,7 +282,7 @@ export default function EditPortfolioProject({
         title: 'Updates were saved',
         message: 'Your updates have been saved',
         icon: <IconCheck size="1rem" />,
-        autoClose: 2000,
+        autoClose: 1000,
       });
     }
 
@@ -894,7 +913,7 @@ export default function EditPortfolioProject({
                   },
                 })}
               >
-                Go to project page
+                Project Page&nbsp; <IconExternalLink size={15} stroke={2} />
               </Button>
               {/* <Button
                 component="a"

@@ -12,7 +12,7 @@ import {
 import useStyles from './ProfilePageProjectCard.styles';
 import Link from 'next/link';
 import Image from 'next/image';
-import { correctImageGetter } from '../../../lib/correctImageGetter';
+import { correctImageGetter } from '@/lib/correctImageGetter';
 
 export function ProfilePageProjectCard({
   hidden,
@@ -48,7 +48,7 @@ export function ProfilePageProjectCard({
 
         <Card
           p='xl'
-          mb='lg'
+          // mb='lg'
           shadow='lg'
           className={classes.card}
           radius='md'
@@ -93,20 +93,17 @@ export function ProfilePageProjectCard({
 
           <div className={classes.overlay} />
 
-          <div className={classes.content}>
+          {/* <div className={classes.content}>
             <div>
               <Text size='lg' pb='md' className={classes.title} weight={500}>
                 {customTitle || githubTitleFormatted}
               </Text>
             </div>
-          </div>
+          </div> */}
         </Card>
       </Link>
-      <Group position='apart' spacing='xs' mt='sm'>
+      {/* <Group position='apart' spacing='xs' mt='sm'>
         <Center>
-          {/* Note - positioning hack to resolve nested link issues (temporary) */}
-
-          {/* <Link href={profileUrl} passHref legacyBehavior> */}
             <Avatar
               component='a'
               radius='xl'
@@ -121,14 +118,12 @@ export function ProfilePageProjectCard({
                 },
               })}
             />
-          {/* </Link> */}
-          {/* <Link href={profileUrl} passHref legacyBehavior> */}
+
             <Text component='a' size='sm' inline className={classes.author}>
               {author}
             </Text>
-          {/* </Link> */}
         </Center>
-      </Group>
+      </Group> */}
     </>
   );
 }

@@ -3,14 +3,19 @@ import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { formDataAtom } from '@/atoms';
 import {
+  ActionIcon,
   Avatar,
+  Badge,
   Button,
+  Center,
   Checkbox,
   Divider,
   Group,
   MultiSelect,
   Paper,
+  Space,
   Spoiler,
+  Stack,
   Switch,
   Text,
   Textarea,
@@ -29,6 +34,7 @@ import {
   FaFacebookF,
   FaGithub,
   FaGitlab,
+  FaGlobe,
   FaHashnode,
   FaInstagram,
   FaLinkedin,
@@ -38,9 +44,86 @@ import {
   FaTwitter,
   FaYoutube,
 } from 'react-icons/fa6';
+import { IconType } from 'react-icons/lib';
+import {
+  SiAngular,
+  SiBootstrap,
+  SiBulma,
+  SiChakraui,
+  SiCoffeescript,
+  SiCsharp,
+  SiCss3,
+  SiDjango,
+  SiExpress,
+  SiFirebase,
+  SiFlask,
+  SiGatsby,
+  SiGo,
+  SiGraphql,
+  SiHtml5,
+  SiJavascript,
+  SiLess,
+  SiMaterialdesign,
+  SiMongodb,
+  SiMysql,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiOracle,
+  SiPhp,
+  SiPostgresql,
+  SiPython,
+  SiReact,
+  SiRubyonrails,
+  SiSass,
+  SiSqlite,
+  SiSvelte,
+  SiTailwindcss,
+  SiTypescript,
+  SiVuedotjs,
+} from 'react-icons/si';
 import { AuthContext } from '../../../context/AuthContext';
 import { updateProfileDataGithub } from '../../../lib/profiles';
-import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsTest';
+import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
+
+interface IconMap {
+  [key: string]: React.ReactNode;
+}
+
+const iconMap: IconMap = {
+  react: <SiReact />,
+  vuejs: <SiVuedotjs />,
+  angular: <SiAngular />,
+  svelte: <SiSvelte />,
+  javascript: <SiJavascript />,
+  typescript: <SiTypescript />,
+  nextjs: <SiNextdotjs />,
+  gatsby: <SiGatsby />,
+  nodejs: <SiNodedotjs />,
+  express: <SiExpress />,
+  django: <SiDjango />,
+  rubyonrails: <SiRubyonrails />,
+  firebase: <SiFirebase />,
+  graphql: <SiGraphql />,
+  python: <SiPython />,
+  java: <SiCoffeescript />,
+  csharp: <SiCsharp />,
+  php: <SiPhp />,
+  go: <SiGo />,
+  flask: <SiFlask />,
+  mysql: <SiMysql />,
+  postgresql: <SiPostgresql />,
+  mongodb: <SiMongodb />,
+  oracle: <SiOracle />,
+  html: <SiHtml5 />,
+  css: <SiCss3 />,
+  sass: <SiSass />,
+  less: <SiLess />,
+  tailwindcss: <SiTailwindcss />,
+  bootstrap: <SiBootstrap />,
+  materialui: <SiMaterialdesign />,
+  chakraui: <SiChakraui />,
+  bulma: <SiBulma />,
+};
 
 // Define the type of the `url` parameter explicitly
 interface SocialMediaButtonProps {
@@ -68,6 +151,7 @@ interface ProfilePageUserPanelProps {
     avatar_url?: string;
     name: string;
     email: string;
+    publicEmail?: string;
     location?: string;
     login: string;
     public_repos?: number;
@@ -100,7 +184,7 @@ interface ProfilePageUserPanelProps {
   currentUser?: boolean;
 }
 
-const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
+const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
   props,
   currentUser,
 }) => {
@@ -170,6 +254,11 @@ const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
     // console.log('Client-side props:', props);
   }, []);
 
+  // Safely retrieve the first name
+  const firstName = props.name && props.name.split(' ')[0];
+
+  // Determine the display name based on the presence of a first name
+
   return (
     <>
       <ProfilePageUserPanelSettings
@@ -207,7 +296,7 @@ const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
 
         {/* Position @ Company */}
         {formData.position && formData.company ? (
-          <Text ta="center" fz="md" weight={400} mt="md">
+          <Text ta="center" fz="md" weight={500} mt="md">
             {formData.position} @ {formData.company}
           </Text>
         ) : props.position && props.company ? (
@@ -225,19 +314,393 @@ const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
         ) : (
           <></>
         )}
+        <Text mt="xs" ta="center" fz="sm">
+          {' '}
+          {props.publicEmail && props.publicEmail}
+        </Text>
+
+        {/* <Text mt={4} ta="center" c="dimmed" fz="sm">  {props.publicEmail && props.publicEmail}</Text> */}
 
         {/* Edit Profile Button */}
         {currentUser && (
-          <Button variant="filled" fullWidth mt="md" onClick={open}>
-            Edit Profile
+          <Button variant="filled" fullWidth mt="xl" onClick={open}>
+            Edit Your Profile
           </Button>
         )}
+
+        {/* Bio Section */}
+        {formData.bio ? (
+          <>
+            <Space h={9} />
+
+            <Divider
+              mt="xl"
+              // mb='xs'
+              size="xs"
+              label="About"
+              labelPosition="left"
+              labelProps={{ fw: 500, fz: 'md' }}
+            />
+
+            <Paper radius="md" p="lg">
+              <Text ta="center" fz="lg" weight={500} mt="md">
+                {formData.bio}
+              </Text>
+            </Paper>
+          </>
+        ) : props.bio ? (
+          <>
+            <Space h={9} />
+
+            <Divider
+              mt="xl"
+              // mb='xs'
+              size="xs"
+              label="About"
+              labelPosition="left"
+              labelProps={{ fw: 500, fz: 'md' }}
+            />
+
+            <Paper radius="md" p="lg">
+              <Text ta="center" fz="lg" weight={500} mt="md">
+                {props.bio}
+              </Text>
+            </Paper>
+          </>
+        ) : (
+          <></>
+        )}
+
+        {/* Open to Work */}
+        {formData.openToWork === true || props.openToWork === true ? (
+          <>
+            <Divider
+              my="lg"
+              size="xs"
+              label="Availability"
+              labelPosition="left"
+              labelProps={{ fw: 500, fz: 'md' }}
+            />
+
+            <Space h={12} />
+            <Center>
+              <Badge color="teal" size="lg" radius="lg" w="70%" variant="light">
+                Open to Work
+              </Badge>
+
+              {/* <Badge
+                mx="xl"
+                py="md"
+                w="70%"
+                // fullWidth
+                size="lg"
+                radius="lg"
+                variant="gradient"
+                // gradient={{ from: '#047453', to: '#467b00', deg: 105 }}
+//     background: linear-gradient(105deg, #11b182 0%, #66b103 100%);
+                gradient={{ from: '#11b182', to: '#66b103', deg: 105 }}
+
+                //     background: linear-gradient(105deg, #11b182 0%, #467b00 100%);
+                // background: linear-gradient(105deg, #11b182 0%, #ceff07 100%);
+                // background: linear-gradient(105deg, #11b182 0%, #bfee00 100%);
+
+                // gradient={{ from: '#647f00', to: '#016243fc', deg: 93 }}
+
+
+                // gradient={{ from: 'lime', to: 'teal', deg: 105 }}
+
+                // linear-gradient(105deg, #047453 0%, #467b00 100%)
+                // linear-gradient(93deg, #647f00 0%, #016243fc 100%)
+                // rgb(4 116 83) 0%, rgb(70 123 0) 100%
+                // gradient={{ from: 'indigo', to: 'cyan' }}
+              >
+               
+                Available for work
+              </Badge> */}
+
+              {/* {firstName ? `${firstName} is available for work` : 'Open to work'} */}
+            </Center>
+            <Space h={18} />
+            {/* <Text ta="center" fz="lg" weight={500} mt="md">
+              Open to Work: {formData.openToWork ? 'Yes' : 'No'}
+            </Text> */}
+          </>
+        ) : (
+          <></>
+        )}
+
+        {/* FIXME: Can't even remember why there's double props checks for everything - note because return is diff depending on source - needs reinvestigation */}
+        {((formData.techStack && formData.techStack.length > 0) ||
+          (props.techStack && props.techStack.length > 0)) && (
+          <>
+            <Divider
+              my="lg"
+              size="xs"
+              label="Tech Stack"
+              labelPosition="left"
+              labelProps={{ fw: 500, fz: 'md' }}
+            />
+            <Space h={12} />
+          </>
+        )}
+
+        {/* Tech Stack */}
+        {formData.techStack && formData.techStack.length > 0 ? (
+          // <Stack align="center" spacing="lg">
+          <>
+            {/* <Badge color="gray" radius="md" size="lg" variant="outline">
+              {firstName ? `${firstName}'s Tech Stack` : 'Tech Stack'}
+            </Badge> */}
+            {/* <Spoiler
+              ta="center"
+              // fw={500}
+              maxHeight={120}
+              showLabel="Show full stack"
+              hideLabel="Hide"
+              styles={{
+                control: {
+                  marginTop: 5,
+                  fontWeight: 500,
+                  // },
+                },
+              }}
+            > */}
+            <Group spacing="sm">
+              <>
+                {formData.techStack.map((tech) => {
+                  // NOTE: If you want to use icons next to languages within the badges, use this code
+                  // const IconComponent = iconMap[tech];
+
+                  return (
+                    // <Badge key={tech} radius="md" variant="outline">
+                    //   {/* {IconComponent && <IconComponent />} {tech} */}
+                    //   {IconComponent}  &nbsp; {tech}
+                    // </Badge>
+                    // <Badge key={tech} pl={10}  radius="sm" variant="outline" leftSection={IconComponent}>
+
+                    // NOTE: I like the dot style bagdes but not the dot itself - hence the root style change
+                    // See OG code: https://github.com/mantinedev/mantine/blob/cdf1179358c6d4591f5de76a2a41935ff4c91ec6/src/mantine-core/src/Badge/Badge.styles.ts#L49C3-L49C3
+                    <Badge
+                      key={tech}
+                      size="md"
+                      radius="lg"
+                      color="gray"
+                      // variant="light"
+                      variant="dot"
+                      p="xs"
+                      py="sm"
+                      styles={(theme) => ({
+                        inner: {
+                          // color: 'yellowgreen',
+                          fontSize: 11,
+                        },
+                        root: {
+                          // padding: 5,
+                          // borderWidth: 1,
+                          '&::before': {
+                            display: 'none', // Hide the dot
+                          },
+                        },
+                      })}
+                    >
+                      {tech}
+
+                      {/* {IconComponent && <IconComponent />} {tech} */}
+                      {/* {IconComponent}  &nbsp; */}
+                    </Badge>
+                  );
+                })}
+              </>
+            </Group>
+            {/* </Spoiler> */}
+          </>
+        ) : // {/* </Stack> */}
+        props.techStack && props.techStack.length > 0 ? (
+          <>
+            <Group spacing="sm">
+              <>
+                {props.techStack.map((tech) => {
+                  // NOTE: If you want to use icons next to languages within the badges, use this code
+                  // const IconComponent = iconMap[tech];
+
+                  return (
+                    // <Badge key={tech} radius="md" variant="outline">
+                    //   {IconComponent}  &nbsp; {tech}
+                    // </Badge>
+
+                    // NOTE: I like the dot style bagdes but not the dot itself - hence the root style change
+                    // See OG code: https://github.com/mantinedev/mantine/blob/cdf1179358c6d4591f5de76a2a41935ff4c91ec6/src/mantine-core/src/Badge/Badge.styles.ts#L49C3-L49C3
+                    <Badge
+                      key={tech}
+                      size="md"
+                      radius="lg"
+                      color="gray"
+                      variant="dot"
+                      p="xs"
+                      py="sm"
+                      styles={(theme) => ({
+                        inner: {
+                          // color: 'yellowgreen',
+                          fontSize: 11,
+                        },
+                        root: {
+                          // padding: 5,
+                          // borderWidth: 1,
+                          '&::before': {
+                            display: 'none', // Hide the dot
+                          },
+                        },
+                      })}
+                    >
+                      {tech}
+                    </Badge>
+                  );
+                })}
+              </>
+            </Group>
+          </>
+        ) : (
+          <></>
+        )}
+
+        {/* Skills */}
+        {formData.skills && formData.skills.length > 0 ? (
+          <>
+            <Space h={16} />
+            <Divider
+              my="lg"
+              size="xs"
+              label="Skills:"
+              labelPosition="left"
+              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
+            />
+            <Space h={10} />
+
+            <Group spacing="sm">
+              <>
+                {formData.skills.map((skill) => {
+                  return (
+                    <Badge
+                      key={skill}
+                      size="md"
+                      radius="lg"
+                      color="gray"
+                      variant="dot"
+                      p="xs"
+                      py="sm"
+                      styles={(theme) => ({
+                        inner: {
+                          // color: 'yellowgreen',
+                          fontSize: 11,
+                        },
+                        root: {
+                          '&::before': {
+                            display: 'none', // Hide the dot
+                          },
+                        },
+                      })}
+                    >
+                      {skill}
+                    </Badge>
+                  );
+                })}
+              </>
+            </Group>
+          </>
+        ) : props.skills && props.skills.length > 0 ? (
+          <>
+            <Space h={15} />
+
+            <Divider
+              my="lg"
+              size="xs"
+              label="Skills:"
+              labelPosition="left"
+              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
+            />
+            <Space h={10} />
+
+            <Group spacing="sm">
+              <>
+                {props.skills.map((skill) => {
+                  return (
+                    <Badge
+                      key={skill}
+                      size="md"
+                      radius="lg"
+                      color="gray"
+                      variant="dot"
+                      p="xs"
+                      py="sm"
+                      styles={(theme) => ({
+                        inner: {
+                          // color: 'yellowgreen',
+                          fontSize: 11,
+                        },
+                        root: {
+                          '&::before': {
+                            display: 'none', // Hide the dot
+                          },
+                        },
+                      })}
+                    >
+                      {skill}
+                    </Badge>
+                  );
+                })}
+              </>
+            </Group>
+          </>
+        ) : (
+          <></>
+        )}
+
+        {props.githubUrl ||
+        props.twitterUrl ||
+        props.linkedinUrl ||
+        props.website ||
+        props.mediumUrl ||
+        props.hashnodeUrl ||
+        props.devToUrl ||
+        formData.githubUrl ||
+        formData.twitterUrl ||
+        formData.linkedinUrl ||
+        formData.website ||
+        formData.mediumUrl ||
+        formData.hashnodeUrl ||
+        formData.devToUrl ? (
+          <>
+            <Space h={22} />
+            <Divider
+              my="md"
+              // mb={19}
+              size="xs"
+              label="Links"
+              labelPosition="left"
+              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
+            />
+            <Space h={1} />
+          </>
+        ) : (
+          <></>
+        )}
+
+        {/* Website Button */}
+        {/* <Space h={15} />
+
+        <Divider
+          my="lg"
+          size="xs"
+          label="Links"
+          labelPosition="left"
+          labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
+        /> */}
 
         {/* Website Button */}
         {formData.website ? (
           <Link href={formData.website} passHref legacyBehavior>
             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-              Website
+              <FaGlobe /> &nbsp; Website
             </Button>
           </Link>
         ) : props.website ? (
@@ -246,23 +709,6 @@ const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
               Website
             </Button>
           </Link>
-        ) : (
-          <></>
-        )}
-
-        {/* Bio Section */}
-        {formData.bio ? (
-          <Paper radius="md" withBorder p="lg">
-            <Text ta="center" fz="lg" weight={500} mt="md">
-              {formData.bio}
-            </Text>
-          </Paper>
-        ) : props.bio ? (
-          <Paper radius="md" withBorder p="lg">
-            <Text ta="center" fz="lg" weight={500} mt="md">
-              {formData.bio || props.bio}
-            </Text>
-          </Paper>
         ) : (
           <></>
         )}
@@ -342,51 +788,28 @@ const ProfilePageUserPanelEditable: React.FC<ProfilePageUserPanelProps> = ({
           icon={<FaBehance />}
           label="Behance"
         />
-
-        {/* Open to Work */}
-        {formData.openToWork ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
-            Open to Work: {formData.openToWork ? 'Yes' : 'No'}
-          </Text>
-        ) : props.openToWork ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
-            Open to Work: {props.openToWork ? 'Yes' : 'No'}
-          </Text>
-        ) : (
-          <></>
-        )}
-
-        {/* {props.openToWork && (
-          <Text ta="center" fz="lg" weight={500} mt="md">
-            Open to Work: {props.openToWork ? 'Yes' : 'No'}
-          </Text>
-        )} */}
-
-        {/* Skills */}
-
-        {formData.skills && formData.skills.length > 0 ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
-            Skills: {formData.skills.join(', ')}
-          </Text>
-        ) : props.skills && props.skills.length > 0 ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
-            Skills: {props.skills.join(', ')}
-          </Text>
-        ) : (
-          <></>
-        )}
-
-        {/* {props.skills && props.skills.length > 0 && (
-          <Text ta="center" fz="lg" weight={500} mt="md">
-            Skills: {props.skills.join(', ')}
-          </Text>
-        )} */}
       </Paper>
     </>
   );
 };
 
-export default ProfilePageUserPanelEditable;
+const techStackBadge = (techStack: string[]) => {
+  return techStack.map((tech) => (
+    <Badge key={tech} radius="md" variant="outline">
+      {tech}
+    </Badge>
+  ));
+};
+
+const skillsBadge = (skills: string[]) => {
+  return skills.map((skill) => (
+    <Badge key={skill} color="teal" radius="md" variant="outline">
+      {skill}
+    </Badge>
+  ));
+};
+
+export default ProfilePageUserPanel;
 
 // interface ProfilePageUserPanelProps {
 //   props: {

@@ -5,25 +5,25 @@ import { useRouter } from 'next/router';
 import { projectDataAtom } from '@/atoms';
 import {
   Avatar,
-  Card,
-  Text,
-  SimpleGrid,
   Badge,
+  Blockquote,
   Button,
+  Card,
   Group,
+  SimpleGrid,
   Space,
   Stack,
-  Blockquote,
+  Text,
 } from '@mantine/core';
-import { collection, setDoc, query, doc, getDocs } from 'firebase/firestore';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconCross } from '@tabler/icons-react';
+import { collection, doc, getDocs, query, setDoc } from 'firebase/firestore';
 import { useAtom } from 'jotai';
 import { InfoCircle } from 'tabler-icons-react';
 import { AuthContext } from '../context/AuthContext';
 import { db } from '../firebase/clientApp';
 import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconCross } from '@tabler/icons-react';
 
 interface ShowRepoProps {
   repo: RepoDataFull;
@@ -155,31 +155,30 @@ const GetRepos = () => {
       ).then(() => {
         // ADDING BELOW FOR JOTAI TEST
         setProjectData(repo);
+      });
+      // .then(() => {
+      // console.log('Project Data Atom');
+      // console.log(projectDataState);
+      // console.log('Repo Data');
+      // console.log(repo);
 
-      })
-        // .then(() => {
-        // console.log('Project Data Atom');
-        // console.log(projectDataState);
-        // console.log('Repo Data');
-        // console.log(repo);
-
-        // router.push(
-        //   {
-        //     pathname: `/portfolio/testedit/${repo.id}`,
-        //     query: {
-        //       name: repo.name,
-        //       username_lowercase: userName.toLowerCase(),
-        //       reponame_lowercase: repo.name.toLowerCase(),
-        //       description: repo.description,
-        //       url: repo.html_url,
-        //       userId: userId,
-        //       newRepoParam: JSON.stringify(true),
-        //     },
-        //   },
-        //   `/portfolio/testedit/${repo.id}`
-        // );
+      // router.push(
+      //   {
+      //     pathname: `/portfolio/testedit/${repo.id}`,
+      //     query: {
+      //       name: repo.name,
+      //       username_lowercase: userName.toLowerCase(),
+      //       reponame_lowercase: repo.name.toLowerCase(),
+      //       description: repo.description,
+      //       url: repo.html_url,
+      //       userId: userId,
+      //       newRepoParam: JSON.stringify(true),
+      //     },
+      //   },
+      //   `/portfolio/testedit/${repo.id}`
+      // );
       // });
-        
+
       // router.push(
       //   {
       //     pathname: `/portfolio/new/${repo.id}`,
@@ -196,7 +195,7 @@ const GetRepos = () => {
     } catch (err) {
       console.error(err);
       notifications.update({
-        id: 'adding-repo', 
+        id: 'adding-repo',
         color: 'red',
         title: 'Something went wrong',
         message: 'Something went wrong, please try again',
@@ -205,33 +204,44 @@ const GetRepos = () => {
       });
     } finally {
       notifications.update({
-        id: 'adding-repo', 
+        id: 'adding-repo',
         loading: false,
         title: `${repo.name} added successfully`,
         message: `Loading project page`,
         color: 'green',
         icon: <IconCheck size="1.5rem" />,
-        autoClose: 1500,
+        autoClose: 3000,
       });
     }
     setTimeout(() => {
-    router.push(
-      {
-        pathname: `/portfolio/edit/${reponame_lowercase}`,
-        query: {
-          name: repo.name,
-          username_lowercase: userName.toLowerCase(),
-          reponame_lowercase: repo.name.toLowerCase(),
-          description: repo.description,
-          url: repo.html_url,
-          userId: userId,
-          newRepoParam: JSON.stringify(true),
+      router.push(
+        {
+          pathname: `/portfolio/edit/${reponame_lowercase}`,
+          query: {
+            name: repo.name,
+            username_lowercase: userName.toLowerCase(),
+            reponame_lowercase: repo.name.toLowerCase(),
+            description: repo.description,
+            url: repo.html_url,
+            userId: userId,
+            newRepoParam: JSON.stringify(true),
+          },
         },
-      },
-      `/portfolio/edit/${reponame_lowercase}`,
-    );
+        `/portfolio/edit/${reponame_lowercase}`
+      );
     }, 200);
   };
+
+  // Close the notification when the router changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      notifications.clean();
+    };
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
 
   useEffect(() => {
     const fetchData = async () => {

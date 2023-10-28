@@ -202,7 +202,7 @@ export const AppContainer = ({ children }, props) => {
     { label: 'About', link: '/landing' },
     // { label: 'Add Project', link: '/getrepos' },
     { label: 'Add Project', link: `/addproject` },
-    { label: 'Profile', link: `/portfolio/${userData.username_lowercase}` },
+    { label: 'Portfolio', link: `/portfolio/${userData.username_lowercase}` },
 
     // { label: 'Profile', link: `/profiles/${userData.userId}` },
     // { label: 'Sign Out', link: '/login' },
@@ -385,12 +385,12 @@ export const AppContainer = ({ children }, props) => {
                             : theme.colors.dark,
                       })}
                     >
-                      Profile
+                      Portfolio
                     </Button>
                   </Link>
 
                   {/* TESTING ONLY */}
-                  {(userData.userId === 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' || process.env.NODE_ENV === 'development') && (
+                  {/* {(userData.userId === 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' || process.env.NODE_ENV === 'development') && (
                     <Link
                     href={`/portfolio/test/${userData.username_lowercase}`}
                     passHref
@@ -412,7 +412,7 @@ export const AppContainer = ({ children }, props) => {
                       TEST
                     </Button>
                   </Link>
-                  )}
+                  )} */}
                   {/* TESTING ONLY */}
 
                 </Group>
