@@ -47,6 +47,7 @@ export function ColorSchemeToggle() {
       </ActionIcon>
     </Group>
   );
+}
 
   // return (
   //   <Group position="center" mt="xl">
@@ -64,4 +65,3 @@ export function ColorSchemeToggle() {
   //     </ActionIcon>
   //   </Group>
   // )
-}

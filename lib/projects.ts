@@ -10,8 +10,6 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/clientApp';
 
-
-
 export async function getSingleProjectByNameLowercase(repoNameLowercase: string) {
   repoNameLowercase = repoNameLowercase.toLowerCase();
   const q = query(
@@ -37,7 +35,9 @@ interface ProjectData {
   [key: string]: any;
 }
 
-export async function getSingleProjectByNameLowercaseTyped(repoNameLowercase: string): Promise<ProjectData[]> {
+export async function getSingleProjectByNameLowercaseTyped(
+  repoNameLowercase: string
+): Promise<ProjectData[]> {
   repoNameLowercase = repoNameLowercase.toLowerCase();
   const q = query(
     collectionGroup(db, 'repos'),
@@ -56,7 +56,6 @@ export async function getSingleProjectByNameLowercaseTyped(repoNameLowercase: st
   });
   return projectData;
 }
-
 
 export async function getSingleProjectByName(repoName: string) {
   const q = query(collectionGroup(db, 'repos'), where('name', '==', repoName));
@@ -226,7 +225,6 @@ export async function getProjectTextEditorContent(userId: string, repoId: string
 
 // export async function getAllCustomProjectData(userId: string, repoId: string): Promise<ProjectData[]> {
 export async function getAllCustomProjectData(userId: string, repoId: string) {
-
   const customProjectData: any = [];
   // const customProjectData: ProjectData[] = [];
 
@@ -309,7 +307,9 @@ interface ProjectData {
   };
 }
 
-export async function getAllUserProjectsWithUsernameLowercaseTyped(usernameLowercase: string): Promise<ProjectData[]> {
+export async function getAllUserProjectsWithUsernameLowercaseTyped(
+  usernameLowercase: string
+): Promise<ProjectData[]> {
   usernameLowercase = usernameLowercase.toLowerCase();
 
   const projectQuery = query(
@@ -317,26 +317,34 @@ export async function getAllUserProjectsWithUsernameLowercaseTyped(usernameLower
     where('username_lowercase', '==', usernameLowercase)
   );
   const querySnapshot = await getDocs(projectQuery);
-  return querySnapshot.docs.map((detail: any) => {
-    const docData = { ...detail.data() };
-    if (!docData) {
-      return null;
-    }
-    return {
-      ...docData,
-    };
-  }).filter((projectData: ProjectData | null): projectData is ProjectData => projectData !== null);
+  return querySnapshot.docs
+    .map((detail: any) => {
+      const docData = { ...detail.data() };
+      if (!docData) {
+        return null;
+      }
+      return {
+        ...docData,
+      };
+    })
+    .filter(
+      (projectData: ProjectData | null): projectData is ProjectData =>
+        projectData !== null
+    );
 }
 
 // This function fetches all projects associated with a username from Firestore
 export async function getAllUserProjectsWithUsernameLowercase(usernameLowercase: string) {
   usernameLowercase = usernameLowercase.toLowerCase();
-
+  // console.log('getAllUserProjectsWithUsernameLowercase, username: ', usernameLowercase);
   const projectQuery = query(
     collectionGroup(db, 'repos'),
     where('username_lowercase', '==', usernameLowercase)
   );
   const querySnapshot = await getDocs(projectQuery);
+  if (querySnapshot.empty) {
+    return null;
+  }
   return querySnapshot.docs.map((detail: any) => {
     const docData = { ...detail.data() };
     if (!docData) {
