@@ -27,7 +27,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconCross } from '@tabler/icons-react';
+import { IconArrowRight, IconCheck, IconCross, IconExternalLink } from '@tabler/icons-react';
 import axios from 'axios';
 // import DOMPurify from 'dompurify';
 // import * as DOMPurify from 'dompurify';
@@ -913,7 +913,7 @@ export default function EditPortfolioProject({
                   },
                 })}
               >
-                Go to project page
+                Project Page&nbsp; <IconExternalLink size={15} stroke={2} />
               </Button>
               {/* <Button
                 component="a"
