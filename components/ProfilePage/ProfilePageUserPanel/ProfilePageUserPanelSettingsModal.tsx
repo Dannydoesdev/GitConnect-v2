@@ -524,35 +524,51 @@ const ProfilePageUserPanelSettings = ({
     { value: 'svelte', label: 'Svelte', group: 'Frontend' },
     { value: 'javascript', label: 'Javascript', group: 'Frontend' },
     { value: 'typescript', label: 'TypeScript', group: 'Frontend' },
+    { value: 'solidjs', label: 'SolidJS', group: 'Frontend' },
+    { value: 'flask', label: 'Flask', group: 'Frontend' },
+    { value: 'reactnative', label: 'React Native', group: 'Frontend' },
     { value: 'nextjs', label: 'Next.js', group: 'Backend' },
+    { value: 'astro', label: 'Astro', group: 'Backend' },
+    { value: 'sveltekit', label: 'SvelteKit', group: 'Backend' },
+    { value: 'remix', label: 'Remix', group: 'Backend' },
+    { value: 'nestjs', label: 'NestJS', group: 'Backend' },
+    { value: 'nuxt', label: 'Nuxt', group: 'Backend' },
     { value: 'gatsby', label: 'Gatsby', group: 'Backend' },
     { value: 'nodejs', label: 'Node.js', group: 'Backend' },
     { value: 'express', label: 'Express.js', group: 'Backend' },
     { value: 'django', label: 'Django', group: 'Backend' },
     { value: 'rubyonrails', label: 'Ruby on Rails', group: 'Backend' },
     { value: 'firebase', label: 'Firebase', group: 'Backend' },
+    { value: 'supabase', label: 'Supabase', group: 'Backend' },
     { value: 'graphql', label: 'GraphQL', group: 'Backend' },
     { value: 'python', label: 'Python', group: 'Backend' },
     { value: 'java', label: 'Java', group: 'Backend' },
+    { value: 'kotlin', label: 'Kotlin', group: 'Backend' },
     { value: 'csharp', label: 'C#', group: 'Backend' },
     { value: 'php', label: 'PHP', group: 'Backend' },
     { value: 'go', label: 'Go', group: 'Backend' },
-    { value: 'flask', label: 'Flask', group: 'Frontend' },
     { value: 'sql', label: 'SQL', group: 'Database' },
     { value: 'mysql', label: 'MySQL', group: 'Database' },
     { value: 'postgresql', label: 'PostgreSQL', group: 'Database' },
+    { value: 'planetscale', label: 'PlanetScale', group: 'Database' },
+    { value: 'redis', label: 'Redis', group: 'Database' },
     { value: 'firestore', label: 'Firestore', group: 'Database' },
     { value: 'mongodb', label: 'MongoDB', group: 'Database' },
-    { value: 'oracle', label: 'Oracle', group: 'Database' },
+    { value: 'dynamodb', label: 'DynamoDB', group: 'Database' },
+    { value: 'cockroachdb', label: 'CockroachDB', group: 'Database' },
     { value: 'html', label: 'HTML', group: 'Frontend' },
     { value: 'css', label: 'CSS', group: 'Frontend' },
     { value: 'sass', label: 'SASS', group: 'Styling + Components' },
     { value: 'less', label: 'LESS', group: 'Styling + Components' },
+    { value: 'postcss', label: 'PostCSS', group: 'Styling + Components' },
     { value: 'tailwindcss', label: 'Tailwind CSS', group: 'Styling + Components' },
+    { value: 'mantineui', label: 'Mantine UI', group: 'Styling + Components' },
     { value: 'bootstrap', label: 'Bootstrap', group: 'Styling + Components' },
     { value: 'materialui', label: 'Material UI', group: 'Styling + Components' },
     { value: 'chakraui', label: 'Chakra UI', group: 'Styling + Components' },
-    { value: 'bulma', label: 'Bulma', group: 'Styling + Components' },
+    { value: 'antdesign', label: 'Ant Design', group: 'Styling + Components' },
+    { value: 'materializecss', label: 'Materialize CSS', group: 'Styling + Components' },
+
   ]);
 
   const handleSubmit = () => {
@@ -776,7 +792,6 @@ const ProfilePageUserPanelSettings = ({
               <Checkbox value="devops" label="DevOps" />
               <Checkbox value="testing" label="Testing" />
               <Checkbox value="security" label="Security" />
-              <Checkbox value="cloud" label="Cloud" />
               <Checkbox value="hardware" label="Hardware" />
               <Checkbox value="education" label="Education" />
               <Checkbox value="community" label="Community" />
