@@ -1,5 +1,5 @@
-import { HeroSection } from "../components/LandingPage/LandingPageHero";
-import { FeatureSection, AboutUsSection, RegistrationProcessSection, MultiSection } from "../components/LandingPage/LandingPageSections";
+import { HeroSection } from "../components/LandingPage/v1/LandingPageHero";
+import { FeatureSection, AboutUsSection, RegistrationProcessSection, MultiSection } from "../components/LandingPage/v1/LandingPageSections";
 
 
 // export async function getStaticProps() {
