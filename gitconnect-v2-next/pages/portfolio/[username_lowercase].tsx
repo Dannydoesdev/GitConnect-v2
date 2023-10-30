@@ -19,12 +19,9 @@ import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/
 import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  // console.log('getStaticProps fired')
   const { username_lowercase } = params as { username_lowercase: string };
 
   const projectData = await getAllUserProjectsWithUsernameLowercase(username_lowercase);
-
-  // console.log(`${username_lowercase}'s project data: `, projectData ? projectData.length : 'no project data')
 
   let profileData;
 
@@ -34,24 +31,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     profileData = await getProfileDataWithUsernameLowercase(username_lowercase);
   }
 
-  // console.log(`${username_lowercase}'s profile data: `, profileData)
-
-  // const projectData = await getAllUserProjectsWithUsernameLowercase(username_lowercase);
-
-  // const profileData = projectData[0]
-  //   ? await getProfileDataWithFirebaseIdNew(projectData[0]?.docData.userId)
-  //   : await getProfileDataWithUsernameLowercase(username_lowercase)
 
   const initialProjects = projectData ?? null;
   const initialProfile = Array.isArray(profileData)
     ? profileData[0]?.docData ?? null
     : profileData?.docData ?? null;
-
-  // console.log(`${username_lowercase}'s initial profile data: `, initialProfile)
-  
-    // if (!projectData) {
-    //   projectData = [];
-    // }
   
   return {
     props: {
@@ -62,7 +46,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   };
 };
 export const getStaticPaths: GetStaticPaths = async () => {
-  // console.log('getStaticPaths fired')
   const usernamesLowercaseArr = await getAllProfileUsernamesLowercase();
   // console.log('usernamesLowercaseArr: ', usernamesLowercaseArr)
 
@@ -88,6 +71,22 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   const router = useRouter();
   const { username_lowercase } = router.query;
 
+
+  const isCurrentUser =
+    username_lowercase &&
+    userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
+      ? true
+      : false;
+
+      // const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
+
+      // useEffect(() => {
+      //     if (username_lowercase && userData.userName) {
+      //         setIsCurrentUser(userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase());
+      //     }
+      // }, [username_lowercase, userData.userName]);
+      
+
   const [formData, setFormData] = useAtom(formDataAtom);
 
   if (router.isFallback) {
@@ -105,20 +104,6 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     initialProjects
   );
 
-  // const { data: fetchProjects } = useSWR(
-  //   `/api/portfolio/getUserProjects?username=${username}`,
-  //   fetcher,
-  //   initialProjects
-  // );
-
-  // TODO: assess if this is a good idea or causes more loading time than needed
-  // if (!fetchProfile && !fetchProjects) {
-  //   return <LoadingPage />;
-  // }
-
-  // if (profileError) return <div>Failed to load profile</div>;
-  // if (projectsError) return <div>Failed to load projects</div>;
-
   const projects = fetchProjects ?? initialProjects ?? null;
   const profile = fetchProfile ?? initialProfile ?? null;
   const [activeTab, setActiveTab] = useState<string | null>('first');
@@ -133,11 +118,23 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     // console.log('formData in page route: ', formData);
   }, [formData]);
 
-  const isCurrentUser =
-    username_lowercase &&
-    userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
-      ? true
-      : false;
+  // const { data: fetchProjects } = useSWR(
+  //   `/api/portfolio/getUserProjects?username=${username}`,
+  //   fetcher,
+  //   initialProjects
+  // );
+
+  // TODO: assess if this is a good idea or causes more loading time than needed
+  // if (!fetchProfile && !fetchProjects) {
+  //   return <LoadingPage />;
+  // }
+
+  // if (profileError) return <div>Failed to load profile</div>;
+  // if (projectsError) return <div>Failed to load projects</div>;
+
+
+ 
+
 
   const draftProjecs = projects?.filter((project: any) => {
     return project.docData.hidden === true;
