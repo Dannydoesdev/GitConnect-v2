@@ -155,6 +155,16 @@ const formatSocialURL = (input: string, platform: string) => {
   // ... (rest of the code remains the same)
 };
 
+const formatWebsiteURL = (input: string): string => {
+  if (!input) return '';
+
+  // Check if input already starts with http:// or https://
+  if (/^https?:\/\//.test(input)) return input;
+
+  // If not, prepend http://
+  return `https://${input}`;
+};
+
 // const extractUsernameFromURL = (url: string, platform: string) => {
 //   // Check if the input is already a username
 //   if (!url.includes(platform)) return url;
@@ -280,12 +290,12 @@ interface ProfilePageUserPanelSettingsProps {
 }
 
 // Await async data then populate the form
-  function loadInitialValuesFromPropsOrState(formData: any, props: any): Promise<any> {
-    return new Promise((resolve) => {
-      const dataToShow = formData ?? props;
-      resolve(dataToShow);
-    });
-  }
+function loadInitialValuesFromPropsOrState(formData: any, props: any): Promise<any> {
+  return new Promise((resolve) => {
+    const dataToShow = formData ?? props;
+    resolve(dataToShow);
+  });
+}
 
 const ProfilePageUserPanelSettings = ({
   props,
@@ -305,8 +315,6 @@ const ProfilePageUserPanelSettings = ({
 
   // Attempting to fix the issue with the form not updating when the user changes their profile data:
 
-
-
   // const [formData, setFormData] = useState(props);
   // const form = useForm({
   //   initialValues: { ...formData },
@@ -315,7 +323,7 @@ const ProfilePageUserPanelSettings = ({
   const [formData, setFormData] = useAtom(formDataAtom);
 
   const dataToShow = formData ?? props;
-  
+
   const form = useForm({
     initialValues: {
       name: '',
@@ -362,12 +370,11 @@ const ProfilePageUserPanelSettings = ({
       discordUsername: '',
       stackoverflowUsername: '',
       facebookUsername: '',
-      instagramUsername: ''
-    }
+      instagramUsername: '',
+    },
   });
 
-
-// When the component mounts, send to await async fn to properly populate the form
+  // When the component mounts, send to await async fn to properly populate the form
   useEffect(() => {
     loadInitialValuesFromPropsOrState(formData, props).then((values) => {
       form.setValues(values);
@@ -375,11 +382,10 @@ const ProfilePageUserPanelSettings = ({
     });
   }, [formData, props]);
 
-  console.log("formData:", formData);
-  console.log("props:", props);
-  console.log("dataToShow:", dataToShow);
-  console.log("form.values:", form.values);
-
+  // console.log("formData:", formData);
+  // console.log("props:", props);
+  // console.log("dataToShow:", dataToShow);
+  // console.log("form.values:", form.values);
 
   // Attempt #1 to resolve discrepencies and blank form fields
 
@@ -433,8 +439,6 @@ const ProfilePageUserPanelSettings = ({
   //     instagramUsername: dataToShow.instagramUsername || '',
   //   },
   // });
-
-
 
   // OLD - DOESNT WORK
   // const form = useForm({
@@ -556,6 +560,8 @@ const ProfilePageUserPanelSettings = ({
       // Get all values from form
       ...form.values,
 
+      // Format website URL correctly
+      website: formatWebsiteURL(form.values.website),
       // Extract and Format URLs correctly
       githubUrl: formatSocialURL(form.values.githubUsername, 'github'),
       linkedinUrl: formatSocialURL(form.values.linkedinUsername, 'linkedin'),
@@ -644,39 +650,69 @@ const ProfilePageUserPanelSettings = ({
   return (
     <Modal
       size="xl"
-      radius='sm'
+      radius="sm"
       // fullScreen
-        transitionProps={{ transition: 'fade', duration: 200 }}
+      transitionProps={{ transition: 'fade', duration: 200 }}
       // size='80%'
-      padding='lg'
+      padding="lg"
       opened={opened}
       onClose={close}
       title="Profile Settings"
       scrollAreaComponent={ScrollArea.Autosize}
       centered
     >
-      <Stack pr='md' pl='md' spacing="xl">
-        <TextInput label="Name" {...form.getInputProps('name')} />
-        <TextInput label="Location" {...form.getInputProps('location')} />
+      <Stack pr="md" pl="md" spacing="xl">
+        <TextInput label="Name" placeholder="John Doe" {...form.getInputProps('name')} />
+        <TextInput
+          label="Location"
+          placeholder="Sydney, Australia"
+          {...form.getInputProps('location')}
+        />
+        <TextInput
+          label="Public Contact Email"
+          placeholder="The email you want users to see - feel free to leave this blank"
+          {...form.getInputProps('publicEmail')}
+        />
+        {/* <TextInput label="Name" {...form.getInputProps('name')} /> */}
+        {/* <TextInput label="Location" {...form.getInputProps('location')} /> */}
         {/* <TextInput label="Email" {...form.getInputProps('email')} /> */}
-        <TextInput label="Public Contact Email" {...form.getInputProps('publicEmail')} />
+        {/* <TextInput label="Public Contact Email" {...form.getInputProps('publicEmail')} /> */}
         <TextInput
           label="Personal Website"
-          placeholder="Personal Website or Portfolio"
+          placeholder="Your personal website, portfolio etc"
           {...form.getInputProps('website')}
         />
-        <TextInput label="Headline" {...form.getInputProps('headline')} />
+        <TextInput
+          label="Headline"
+          placeholder="Full-Stack Developer | Tech Enthusiast"
+          {...form.getInputProps('headline')}
+        />
+        <TextInput
+          label="Company"
+          placeholder="Gitconnect"
+          {...form.getInputProps('company')}
+        />
+        <TextInput
+          label="Position"
+          placeholder="Early Adopter"
+          {...form.getInputProps('position')}
+        />
+        {/* <Switch */}
+        {/* <TextInput label="Headline" {...form.getInputProps('headline')} />
         <TextInput label="Company" {...form.getInputProps('company')} />
-        <TextInput label="Position" {...form.getInputProps('position')} />
+        <TextInput label="Position" {...form.getInputProps('position')} /> */}
         <Switch
           label="Open To Work"
           {...form.getInputProps('openToWork', { type: 'checkbox' })}
         />
-                {/* <Space h={1} /> */}
+        {/* <Space h={1} /> */}
 
         {/* <Switch label="Visible To Public" {...form.getInputProps('visibleToPublic', { type: 'checkbox' })} /> */}
         <Textarea
           label="Bio"
+          placeholder="A passionate developer who loves playing with new technology & building impactful web apps. I keep up to date with the developer community through awesome platforms like GitConnect..."
+          // placeholder="Passionate developer,  learning and excited about building impactful web apps..."
+          // placeholder="Passionate developer with 5 years of experience in building web apps..."
           autosize
           minRows={2}
           maxRows={7}
@@ -715,7 +751,6 @@ const ProfilePageUserPanelSettings = ({
                 fontWeight: 500,
               },
             })}
-       
           >
             <Group spacing="xl" mt="md">
               <Checkbox value="frontend" label="Frontend" />
@@ -765,8 +800,73 @@ const ProfilePageUserPanelSettings = ({
             },
           })}
         >
-          <Stack spacing='lg'>
-          <TextInput label="Github Username" {...form.getInputProps('githubUsername')} />
+          <Stack spacing="lg">
+            <TextInput
+              label="Github Username"
+              placeholder="e.g. johndoedev"
+              {...form.getInputProps('githubUsername')}
+            />
+            <TextInput
+              label="Linkedin Username"
+              placeholder="e.g. johnmakedoe"
+              {...form.getInputProps('linkedinUsername')}
+            />
+            <TextInput
+              label="Twitter Username"
+              placeholder="e.g. @johndoesopinions"
+              {...form.getInputProps('twitterUsername')}
+            />
+            <TextInput
+              label="Medium Username"
+              placeholder="e.g. @johndoestories"
+              {...form.getInputProps('mediumUsername')}
+            />
+            <TextInput
+              label="Hashnode Username"
+              placeholder="e.g. johndoeblogs"
+              {...form.getInputProps('hashnodeUsername')}
+            />
+            <TextInput
+              label="Codepen Username"
+              placeholder="e.g. johndoescode"
+              {...form.getInputProps('codepenUsername')}
+            />
+            <TextInput
+              label="Dribbble Username"
+              placeholder="e.g. johndoe_designs"
+              {...form.getInputProps('dribbbleUsername')}
+            />
+            <TextInput
+              label="Behance Username"
+              placeholder="e.g. johndoe_studio"
+              {...form.getInputProps('behanceUsername')}
+            />
+            <TextInput
+              label="Dev.to Username"
+              placeholder="e.g. johndoe.to"
+              {...form.getInputProps('devToUsername')}
+            />
+            <TextInput
+              label="Youtube Username"
+              placeholder="e.g. JohnDoeProductions"
+              {...form.getInputProps('youtubeUsername')}
+            />
+            <TextInput
+              label="Twitch Username"
+              placeholder="e.g. johndoegaming"
+              {...form.getInputProps('twitchUsername')}
+            />
+            <TextInput
+              label="Stackoverflow Username"
+              placeholder="e.g. johndoe12345"
+              {...form.getInputProps('stackoverflowUsername')}
+            />
+            <TextInput
+              label="Instagram Username"
+              placeholder="e.g. johndoesgram"
+              {...form.getInputProps('instagramUsername')}
+            />
+            {/* <TextInput label="Github Username" {...form.getInputProps('githubUsername')} />
           <TextInput
             label="Linkedin Username"
             {...form.getInputProps('linkedinUsername')}
@@ -798,22 +898,23 @@ const ProfilePageUserPanelSettings = ({
             {...form.getInputProps('youtubeUsername')}
           />
           <TextInput label="Twitch Username" {...form.getInputProps('twitchUsername')} />
-          {/* <TextInput
-            label="Discord Username"
-            {...form.getInputProps('discordUsername')}
-          /> */}
+
           <TextInput
             label="Stackoverflow Username"
             {...form.getInputProps('stackoverflowUsername')}
-          />
-          {/* <TextInput
+          /> */}
+            {/* <TextInput
             label="Facebook Username"
             {...form.getInputProps('facebookUsername')}
           /> */}
-          <TextInput
+            {/* <TextInput
+            label="Discord Username"
+            {...form.getInputProps('discordUsername')}
+          /> */}
+            {/* <TextInput
             label="Instagram Username"
             {...form.getInputProps('instagramUsername')}
-          />
+          /> */}
           </Stack>
         </Spoiler>
         {/* <Affix
@@ -829,16 +930,22 @@ const ProfilePageUserPanelSettings = ({
           // top='70%'
           zIndex={300}
        > */}
-        <Group position='center' pb='lg'>
-        {/* <Button variant="filled" fullWidth mt="md" onClick={() => handleSaveChanges(form.values)}> */}
-        <Button variant="filled" radius='sm' w='40%' mt="md" onClick={handleSubmit}>
-          Save Changes
+        <Group position="center" pb="lg">
+          {/* <Button variant="filled" fullWidth mt="md" onClick={() => handleSaveChanges(form.values)}> */}
+          <Button variant="filled" radius="sm" w="40%" mt="md" onClick={handleSubmit}>
+            Save Changes
           </Button>
           {/* <Button onClick={() => { form.reset(); handleCancelChanges() }} > */}
-        <Button variant="outline" radius='sm' w='40%' mt="sm" onClick={handleCancelChanges}>
-          Cancel Changes
+          <Button
+            variant="outline"
+            radius="sm"
+            w="40%"
+            mt="sm"
+            onClick={handleCancelChanges}
+          >
+            Cancel Changes
           </Button>
-          </Group>
+        </Group>
         {/* </Affix> */}
       </Stack>
     </Modal>
@@ -848,7 +955,7 @@ const ProfilePageUserPanelSettings = ({
 export default ProfilePageUserPanelSettings;
 
 // {
-  /* <URLInput label="Github" form={form} name="githubUrl" />
+/* <URLInput label="Github" form={form} name="githubUrl" />
         <URLInput label="Gitlab" form={form} name="gitlabUrl" />
         <URLInput label="LinkedIn" form={form} name="linkedinUrl" />
         <URLInput label="Twitter" form={form} name="twitterUrl" />
