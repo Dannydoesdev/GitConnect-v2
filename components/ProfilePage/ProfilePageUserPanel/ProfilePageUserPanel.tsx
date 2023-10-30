@@ -249,13 +249,13 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
   //   console.log('Server-side props:', props);
   // }, []);
 
-  useEffect(() => {
+  // useEffect(() => {
     // console.log('Client-side formData:', formData);
     // console.log('Client-side props:', props);
-  }, []);
+  // }, []);
 
   // Safely retrieve the first name
-  const firstName = props.name && props.name.split(' ')[0];
+  // const firstName = props.name && props.name.split(' ')[0];
 
   // Determine the display name based on the presence of a first name
 
