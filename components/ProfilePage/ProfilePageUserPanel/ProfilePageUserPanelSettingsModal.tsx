@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { formDataAtom } from '@/atoms';
 import {
   Affix,
@@ -222,7 +222,7 @@ interface ProfilePageUserPanelSettingsProps {
   open: () => void;
   close: () => void;
   handleSaveChanges: (formData: any) => void;
-  handleCancelChanges?: () => void;
+  handleCancelChanges: () => void;
   currentUser?: boolean;
   props: {
     bio?: string;
@@ -279,6 +279,14 @@ interface ProfilePageUserPanelSettingsProps {
   };
 }
 
+// Await async data then populate the form
+  function loadInitialValuesFromPropsOrState(formData: any, props: any): Promise<any> {
+    return new Promise((resolve) => {
+      const dataToShow = formData ?? props;
+      resolve(dataToShow);
+    });
+  }
+
 const ProfilePageUserPanelSettings = ({
   props,
   currentUser,
@@ -288,66 +296,199 @@ const ProfilePageUserPanelSettings = ({
   open,
   close,
 }: ProfilePageUserPanelSettingsProps) => {
-  const [formData, setFormData] = useAtom(formDataAtom);
+  // const [formData, setFormData] = useAtom(formDataAtom);
 
   // ChatGPTs implementation:
   // const form = useForm({
   //   initialValues: { ...props },
   // });
 
-  // Co-pilots implementation:
+  // Attempting to fix the issue with the form not updating when the user changes their profile data:
+
+
+
+  // const [formData, setFormData] = useState(props);
+  // const form = useForm({
+  //   initialValues: { ...formData },
+  // });
+
+  const [formData, setFormData] = useAtom(formDataAtom);
+
+  const dataToShow = formData ?? props;
+  
   const form = useForm({
     initialValues: {
-      name: props.name || '',
-      location: props.location || '',
-      email: props.email || '',
-      publicEmail: props.publicEmail || '',
-      website: props.website || '',
-      headline: props.headline || '',
-      company: props.company || '',
-      position: props.position || '',
-      techStack: props.techStack || [],
-      skills: props.skills || [],
-      openToWork: props.openToWork || false,
-      // visibleToPublic: props.visibleToPublic || false,
-      profileTags: props.profileTags || [],
-      bio: props.bio || '',
-
-      githubUrl: props.githubUrl || '',
-      gitlabUrl: props.gitlabUrl || '',
-      linkedinUrl: props.linkedinUrl || '',
-      twitterUrl: props.twitterUrl || '',
-      mediumUrl: props.mediumUrl || '',
-      hashnodeUrl: props.hashnodeUrl || '',
-      codepenUrl: props.codepenUrl || '',
-      dribbbleUrl: props.dribbbleUrl || '',
-      behanceUrl: props.behanceUrl || '',
-      devToUrl: props.devToUrl || '',
-      youtubeUrl: props.youtubeUrl || '',
-      twitchUrl: props.twitchUrl || '',
-      discordUrl: props.discordUrl || '',
-      stackoverflowUrl: props.stackoverflowUrl || '',
-      facebookUrl: props.facebookUrl || '',
-      instagramUrl: props.instagramUrl || '',
-
-      githubUsername: props.githubUsername || '',
-      gitlabUsername: props.gitlabUsername || '',
-      linkedinUsername: props.linkedinUsername || '',
-      twitterUsername: props.twitterUsername || '',
-      mediumUsername: props.mediumUsername || '',
-      hashnodeUsername: props.hashnodeUsername || '',
-      codepenUsername: props.codepenUsername || '',
-      dribbbleUsername: props.dribbbleUsername || '',
-      behanceUsername: props.behanceUsername || '',
-      devToUsername: props.devToUsername || '',
-      youtubeUsername: props.youtubeUsername || '',
-      twitchUsername: props.twitchUsername || '',
-      discordUsername: props.discordUsername || '',
-      stackoverflowUsername: props.stackoverflowUsername || '',
-      facebookUsername: props.facebookUsername || '',
-      instagramUsername: props.instagramUsername || '',
-    },
+      name: '',
+      location: '',
+      email: '',
+      publicEmail: '',
+      website: '',
+      headline: '',
+      company: '',
+      position: '',
+      techStack: [],
+      skills: [],
+      openToWork: false,
+      profileTags: [],
+      bio: '',
+      githubUrl: '',
+      gitlabUrl: '',
+      linkedinUrl: '',
+      twitterUrl: '',
+      mediumUrl: '',
+      hashnodeUrl: '',
+      codepenUrl: '',
+      dribbbleUrl: '',
+      behanceUrl: '',
+      devToUrl: '',
+      youtubeUrl: '',
+      twitchUrl: '',
+      discordUrl: '',
+      stackoverflowUrl: '',
+      facebookUrl: '',
+      instagramUrl: '',
+      githubUsername: '',
+      gitlabUsername: '',
+      linkedinUsername: '',
+      twitterUsername: '',
+      mediumUsername: '',
+      hashnodeUsername: '',
+      codepenUsername: '',
+      dribbbleUsername: '',
+      behanceUsername: '',
+      devToUsername: '',
+      youtubeUsername: '',
+      twitchUsername: '',
+      discordUsername: '',
+      stackoverflowUsername: '',
+      facebookUsername: '',
+      instagramUsername: ''
+    }
   });
+
+
+// When the component mounts, send to await async fn to properly populate the form
+  useEffect(() => {
+    loadInitialValuesFromPropsOrState(formData, props).then((values) => {
+      form.setValues(values);
+      form.resetDirty(values);
+    });
+  }, [formData, props]);
+
+  console.log("formData:", formData);
+  console.log("props:", props);
+  console.log("dataToShow:", dataToShow);
+  console.log("form.values:", form.values);
+
+
+  // Attempt #1 to resolve discrepencies and blank form fields
+
+  // const form = useForm({
+  //   initialValues: {
+  //     name: dataToShow.name || '',
+  //     location: dataToShow.location || '',
+  //     email: dataToShow.email || '',
+  //     publicEmail: dataToShow.publicEmail || '',
+  //     website: dataToShow.website || '',
+  //     headline: dataToShow.headline || '',
+  //     company: dataToShow.company || '',
+  //     position: dataToShow.position || '',
+  //     techStack: dataToShow.techStack || [],
+  //     skills: dataToShow.skills || [],
+  //     openToWork: dataToShow.openToWork || false,
+  //     // visibleToPublic: dataToShow.visibleToPublic || false,
+  //     profileTags: dataToShow.profileTags || [],
+  //     bio: dataToShow.bio || '',
+  //     githubUrl: dataToShow.githubUrl || '',
+  //     gitlabUrl: dataToShow.gitlabUrl || '',
+  //     linkedinUrl: dataToShow.linkedinUrl || '',
+  //     twitterUrl: dataToShow.twitterUrl || '',
+  //     mediumUrl: dataToShow.mediumUrl || '',
+  //     hashnodeUrl: dataToShow.hashnodeUrl || '',
+  //     codepenUrl: dataToShow.codepenUrl || '',
+  //     dribbbleUrl: dataToShow.dribbbleUrl || '',
+  //     behanceUrl: dataToShow.behanceUrl || '',
+  //     devToUrl: dataToShow.devToUrl || '',
+  //     youtubeUrl: dataToShow.youtubeUrl || '',
+  //     twitchUrl: dataToShow.twitchUrl || '',
+  //     discordUrl: dataToShow.discordUrl || '',
+  //     stackoverflowUrl: dataToShow.stackoverflowUrl || '',
+  //     facebookUrl: dataToShow.facebookUrl || '',
+  //     instagramUrl: dataToShow.instagramUrl || '',
+  //     githubUsername: dataToShow.githubUsername || '',
+  //     gitlabUsername: dataToShow.gitlabUsername || '',
+  //     linkedinUsername: dataToShow.linkedinUsername || '',
+  //     twitterUsername: dataToShow.twitterUsername || '',
+  //     mediumUsername: dataToShow.mediumUsername || '',
+  //     hashnodeUsername: dataToShow.hashnodeUsername || '',
+  //     codepenUsername: dataToShow.codepenUsername || '',
+  //     dribbbleUsername: dataToShow.dribbbleUsername || '',
+  //     behanceUsername: dataToShow.behanceUsername || '',
+  //     devToUsername: dataToShow.devToUsername || '',
+  //     youtubeUsername: dataToShow.youtubeUsername || '',
+  //     twitchUsername: dataToShow.twitchUsername || '',
+  //     discordUsername: dataToShow.discordUsername || '',
+  //     stackoverflowUsername: dataToShow.stackoverflowUsername || '',
+  //     facebookUsername: dataToShow.facebookUsername || '',
+  //     instagramUsername: dataToShow.instagramUsername || '',
+  //   },
+  // });
+
+
+
+  // OLD - DOESNT WORK
+  // const form = useForm({
+  //   initialValues: {
+  //     name: props.name || '',
+  //     location: props.location || '',
+  //     email: props.email || '',
+  //     publicEmail: props.publicEmail || '',
+  //     website: props.website || '',
+  //     headline: props.headline || '',
+  //     company: props.company || '',
+  //     position: props.position || '',
+  //     techStack: props.techStack || [],
+  //     skills: props.skills || [],
+  //     openToWork: props.openToWork || false,
+  //     // visibleToPublic: props.visibleToPublic || false,
+  //     profileTags: props.profileTags || [],
+  //     bio: props.bio || '',
+
+  //     githubUrl: props.githubUrl || '',
+  //     gitlabUrl: props.gitlabUrl || '',
+  //     linkedinUrl: props.linkedinUrl || '',
+  //     twitterUrl: props.twitterUrl || '',
+  //     mediumUrl: props.mediumUrl || '',
+  //     hashnodeUrl: props.hashnodeUrl || '',
+  //     codepenUrl: props.codepenUrl || '',
+  //     dribbbleUrl: props.dribbbleUrl || '',
+  //     behanceUrl: props.behanceUrl || '',
+  //     devToUrl: props.devToUrl || '',
+  //     youtubeUrl: props.youtubeUrl || '',
+  //     twitchUrl: props.twitchUrl || '',
+  //     discordUrl: props.discordUrl || '',
+  //     stackoverflowUrl: props.stackoverflowUrl || '',
+  //     facebookUrl: props.facebookUrl || '',
+  //     instagramUrl: props.instagramUrl || '',
+
+  //     githubUsername: props.githubUsername || '',
+  //     gitlabUsername: props.gitlabUsername || '',
+  //     linkedinUsername: props.linkedinUsername || '',
+  //     twitterUsername: props.twitterUsername || '',
+  //     mediumUsername: props.mediumUsername || '',
+  //     hashnodeUsername: props.hashnodeUsername || '',
+  //     codepenUsername: props.codepenUsername || '',
+  //     dribbbleUsername: props.dribbbleUsername || '',
+  //     behanceUsername: props.behanceUsername || '',
+  //     devToUsername: props.devToUsername || '',
+  //     youtubeUsername: props.youtubeUsername || '',
+  //     twitchUsername: props.twitchUsername || '',
+  //     discordUsername: props.discordUsername || '',
+  //     stackoverflowUsername: props.stackoverflowUsername || '',
+  //     facebookUsername: props.facebookUsername || '',
+  //     instagramUsername: props.instagramUsername || '',
+  //   },
+  // });
 
   // Data for MultiSelect
   // const [data, setData] = useState([
@@ -503,6 +644,7 @@ const ProfilePageUserPanelSettings = ({
   return (
     <Modal
       size="xl"
+      radius='sm'
       // fullScreen
         transitionProps={{ transition: 'fade', duration: 200 }}
       // size='80%'
@@ -510,10 +652,10 @@ const ProfilePageUserPanelSettings = ({
       opened={opened}
       onClose={close}
       title="Profile Settings"
-      // scrollAreaComponent={ScrollArea.Autosize}
+      scrollAreaComponent={ScrollArea.Autosize}
       centered
     >
-      <Stack spacing="xl">
+      <Stack pr='md' pl='md' spacing="xl">
         <TextInput label="Name" {...form.getInputProps('name')} />
         <TextInput label="Location" {...form.getInputProps('location')} />
         {/* <TextInput label="Email" {...form.getInputProps('email')} /> */}
@@ -691,7 +833,8 @@ const ProfilePageUserPanelSettings = ({
         {/* <Button variant="filled" fullWidth mt="md" onClick={() => handleSaveChanges(form.values)}> */}
         <Button variant="filled" radius='sm' w='40%' mt="md" onClick={handleSubmit}>
           Save Changes
-        </Button>
+          </Button>
+          {/* <Button onClick={() => { form.reset(); handleCancelChanges() }} > */}
         <Button variant="outline" radius='sm' w='40%' mt="sm" onClick={handleCancelChanges}>
           Cancel Changes
           </Button>
@@ -704,7 +847,7 @@ const ProfilePageUserPanelSettings = ({
 
 export default ProfilePageUserPanelSettings;
 
-{
+// {
   /* <URLInput label="Github" form={form} name="githubUrl" />
         <URLInput label="Gitlab" form={form} name="gitlabUrl" />
         <URLInput label="LinkedIn" form={form} name="linkedinUrl" />
@@ -722,4 +865,4 @@ export default ProfilePageUserPanelSettings;
         <URLInput label="Discord" form={form} name="discordUrl" />
         <URLInput label="Instagram" form={form} name="instagramUrl" />
         <URLInput label="Facebook" form={form} name="facebookUrl" /> */
-}
+// }

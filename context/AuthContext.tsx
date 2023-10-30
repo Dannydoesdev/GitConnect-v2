@@ -1,12 +1,10 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { getCookie, setCookie } from 'cookies-next';
 import { Auth, onAuthStateChanged } from 'firebase/auth';
 import {
   addDoc,
   collection,
   doc,
   getDoc,
-  serverTimestamp,
   setDoc,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase/clientApp';
@@ -123,6 +121,42 @@ export const AuthProvider = ({ children }: Props) => {
                 );
               });
 
+
+            })
+            .catch((error) => {
+              console.log('Error adding document: ', error);
+            });
+        }
+      } else {
+        setCurrentUser(null);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  // if (loading) {
+  //   return (
+  //     <LoadingPage />
+
+  //     // <>Loading...</>
+  //   )
+  //   }
+
+  // Passing the currentUser and userData to the context components
+  return (
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        userData,
+        loading
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+
               // TODO: All of the data duplication on register can be moved to cloud functions
 
               // // add the public profile data to the database
@@ -157,36 +191,3 @@ export const AuthProvider = ({ children }: Props) => {
               //     { merge: true }
               //   );
               // });
-            })
-            .catch((error) => {
-              console.log('Error adding document: ', error);
-            });
-        }
-      } else {
-        setCurrentUser(null);
-      }
-      setLoading(false);
-    });
-  }, []);
-
-  // if (loading) {
-  //   return (
-  //     <LoadingPage />
-
-  //     // <>Loading...</>
-  //   )
-  //   }
-
-  // Passing the currentUser and userData to the context components
-  return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        userData,
-        loading
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
