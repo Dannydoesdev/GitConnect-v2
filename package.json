@@ -60,6 +60,7 @@
     "firebase": "^10.1.0",
     "firebase-admin": "^11.10.1",
     "fuzzysort": "^2.0.4",
+    "geist": "^1.0.0",
     "isomorphic-dompurify": "^1.9.0",
     "jotai": "^2.2.3",
     "jotai-location": "^0.5.1",

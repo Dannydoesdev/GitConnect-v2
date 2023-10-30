@@ -25,6 +25,10 @@ export function HeroSection() {
         await signInWithPopup(auth, provider).then(() => {
           console.log(provider)
           console.log(auth.currentUser)
+          
+          // const userId = auth.currentUser?.uid;
+          Router.push('/getrepos');
+
           // push to home after auth
           // Router.push('/');
         });
