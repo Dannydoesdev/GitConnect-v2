@@ -1,6 +1,6 @@
 import { HeroSection } from "../components/LandingPage/v2/LandingPageHero";
-import { FeatureSection, AboutUsSection, RegistrationProcessSection, MultiSection } from "../components/LandingPage/v2/LandingPageSections";
-
+import { FeatureSection, AboutUsSection, RegistrationProcessSection, MultiSection, AllBuildersWelcomeSection, IdeasWelcomeSection  } from "../components/LandingPage/v2/LandingPageSections";
+import { PricingSection } from "@/components/LandingPage/v2/PricingSection";
 
 // export async function getStaticProps() {
 
@@ -23,6 +23,9 @@ function LandingPage() {
       <AboutUsSection />
       <RegistrationProcessSection />
       <MultiSection />
+      <AllBuildersWelcomeSection />
+      <IdeasWelcomeSection />
+      <PricingSection />
     </div>
   );
 }
