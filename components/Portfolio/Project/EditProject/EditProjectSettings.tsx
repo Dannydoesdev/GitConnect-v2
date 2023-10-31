@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import { Check } from '@emotion-icons/boxicons-regular';
 import {
   Button,
@@ -26,7 +26,9 @@ import { IconX } from '@tabler/icons-react';
 // import { useDisclosure } from '@mantine/hooks';
 import UploadProjectCoverImage from './UploadProjectCoverImage';
 import { useAtom } from 'jotai';
-import { unsavedChangesSettingsAtom } from '@/atoms';
+import { isProAtom, unsavedChangesSettingsAtom } from '@/atoms';
+import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
+import { app } from '@/firebase/clientApp';
 
 interface ProjectSettingsSimpleProps {
   repoId?: string;
@@ -34,6 +36,18 @@ interface ProjectSettingsSimpleProps {
   opened?: boolean;
   open?: () => void;
   close?: () => void;
+}
+export interface FormData {
+  projectTitle: string;
+  techStack: string[];
+  projectTags: string[];
+  liveUrl: string;
+  repoUrl: string;
+  projectCategories: string[];
+  // visibleToPublic: visibleToPublic || false,
+  openToCollaboration: boolean;
+  // coverImage: coverImage || '',
+  projectDescription: string;
 }
 
 interface ProjectSettingsProps {
@@ -86,6 +100,7 @@ function ProjectSettingsModal({
 
   // console.log('desciption:', projectDescription);
   // console.log('repourl', repoUrl);
+  const [isPro, setIsPro] = useAtom(isProAtom);
 
   useEffect(() => {
     if (
@@ -175,6 +190,32 @@ function ProjectSettingsModal({
   // function logFormValues() {
   //   console.log(form.values);
   // }
+  // function handleOnClick(formData: {
+  //     projectTitle: string; techStack: string[]; projectTags: string[]; liveUrl: string; repoUrl: string; projectCategories: string[];
+  //     // visibleToPublic: visibleToPublic || false,
+  //     openToCollaboration: boolean;
+  //     // coverImage: coverImage || '',
+  //     projectDescription: string;
+  //   }) {
+  //   console.log(formData)
+  //   return
+  // }
+
+
+  const upgradeToPremium = async () => {
+    const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+    const checkoutUrl = await getCheckoutUrl(app, priceId);
+    // console.log(checkoutUrl);
+    router.push(checkoutUrl);
+    // console.log('Upgrade to Premium');
+  };
+
+  const upgradeToPremiumButton = (
+    <Button onClick={upgradeToPremium} variant="default" radius="lg" size="lg">
+      Upgrade To Premium to Publish
+    </Button>
+  );
+
 
   return (
     <>
@@ -402,7 +443,9 @@ function ProjectSettingsModal({
                     >
                       Save Draft
                     </Button>
-
+                      {/* <Button onClick={handleOnClick(form.values)}>
+                        OnClick
+                      </Button> */}
                     <Button
                       component="a"
                       radius="lg"

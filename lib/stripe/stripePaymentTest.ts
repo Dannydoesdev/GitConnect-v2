@@ -8,6 +8,8 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { setCookie, getCookie, hasCookie } from 'cookies-next';
+
 
 export const getCheckoutUrl = async (
   app: FirebaseApp,
@@ -15,8 +17,9 @@ export const getCheckoutUrl = async (
 ): Promise<string> => {
   const auth = getAuth(app);
   const userId = auth.currentUser?.uid;
-  console.log("userId: ", userId)
+  console.log("userId: ", userId);
   if (!userId) throw new Error("User is not authenticated");
+  // if (!userId) return;
 
   const db = getFirestore(app);
   const checkoutSessionRef = collection(

@@ -7,11 +7,14 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { setCookie, getCookie, hasCookie } from 'cookies-next';
+
 
 export const getPremiumStatus = async (app: FirebaseApp) => {
   const auth = getAuth(app);
   const userId = auth.currentUser?.uid;
-  if (!userId) throw new Error("User not logged in");
+  // if (!userId) throw new Error("User not logged in");
+  if (!userId) return false;
 
   const db = getFirestore(app);
   const subscriptionsRef = collection(db, "customersTestMode", userId, "subscriptions");
@@ -19,7 +22,8 @@ export const getPremiumStatus = async (app: FirebaseApp) => {
     subscriptionsRef,
     where("status", "in", ["trialing", "active"])
   );
-
+  // TODO - Cleanup
+    console.log('running premium subscription check')
   return new Promise<boolean>((resolve, reject) => {
     const unsubscribe = onSnapshot(
       q,

@@ -94,12 +94,12 @@ export function LoginPage() {
           // console.log(userId)
           // Log mixpanel if not dev mode
           if (process.env.NODE_ENV === 'development') {
-            mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
-            mixpanel.identify(userId);
+            // mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
+            // mixpanel.identify(userId);
 
-            mixpanel.track('Logged In', {
-              'Login Type': 'GitHub',
-            });
+            // mixpanel.track('Logged In', {
+            //   'Login Type': 'GitHub',
+            // });
           } else {
             mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
             mixpanel.identify(userId);
