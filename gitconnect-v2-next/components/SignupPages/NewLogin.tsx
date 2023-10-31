@@ -15,17 +15,16 @@ import {
 } from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
+// import useStyles from './Login.styles';
+// import Mixpanel from "mixpanel"
 import mixpanel from 'mixpanel-browser';
 import { auth } from '../../firebase/clientApp';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    // marginBottom: -100,
     marginTop: 45,
     // minHeight: 900,
-    minHeight: '98vh',
-    maxHeight: '100vh',
-
+    minHeight: '100vh',
     // borderTop: 'none',
     // maxHeight: '100vh',
     backgroundSize: theme.colorScheme === 'dark' ? '30%' : '33%',
@@ -40,12 +39,11 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
     }`,
     minHeight: '100vh',
-    maxHeight: '100vh',
     // minHeight: 900,
     //  maxWidth: 450,
     maxWidth: 500,
     minWidth: '30vw',
-    // paddingTop: 80,
+    paddingTop: 80,
 
     [`@media (max-width: ${theme.breakpoints.md}px)`]: {
       maxWidth: '100%',
@@ -71,16 +69,13 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function SignupPage() {
+export function LoginPage() {
   const { classes } = useStyles();
 
   const Router = useRouter();
 
-  mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
-
   // Don't re-render the Github provider until the router changes (eg user is pushed home)
-  // const loginHandler = useCallback(async () => {
-  const signupHandler = useCallback(
+  const loginHandler = useCallback(
     async (e: any) => {
       e.preventDefault();
       const provider = new GithubAuthProvider();
@@ -88,44 +83,43 @@ export function SignupPage() {
       try {
         // Attempt popup OAuth
         await signInWithPopup(auth, provider).then((result) => {
+          // This gives you a GitHub Access Token. You can use it to access the GitHub API.
           const credential: any = GithubAuthProvider.credentialFromResult(result);
-          const user = result.user;
-          const userId = user.uid;
+          const token = credential.accessToken;
 
+          // The signed-in user info.
+          const user = result.user;
+
+          const userId = user.uid;
+          // console.log(userId)
+          // Log mixpanel if not dev mode
           if (process.env.NODE_ENV === 'development') {
             mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
             mixpanel.identify(userId);
 
-            mixpanel.track('Signed In', {
-              'Signup Type': 'GitHub',
+            mixpanel.track('Logged In', {
+              'Login Type': 'GitHub',
             });
           } else {
             mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
             mixpanel.identify(userId);
 
-            mixpanel.track('Signed up', {
-              'Signup Type': 'GitHub',
+            mixpanel.track('Logged In', {
+              'Login Type': 'GitHub',
             });
           }
         });
         // .then(() => {
-        // Push to portfolio creation page
 
         // push to home after auth
-        // Router.push('/', undefined, { shallow: true });
-        // });
-
-        // This gives you a GitHub Access Token. You can use
-        // Attempt popup OAuth
-        // await signInWithPopup(auth, provider).then(() => {
-        // push to home after auth
-        // Router.push('/');
+        // Router.push("/", undefined, { shallow: true })
         // });
       } catch (error) {
         console.log(error);
         // alert(error)
       } finally {
-        Router.push('/addproject');
+        // Router.push("/", undefined, { shallow: true })
+        Router.push('/');
       }
     },
     [Router]
@@ -133,26 +127,19 @@ export function SignupPage() {
 
   return (
     <div className={classes.wrapper}>
-      <Paper className={classes.form} radius={10} pt={110} px={50}>
-        <Title order={2} className={classes.title} align="center" pt={50} pb={50}>
-          Welcome to GitConnect;
+      <Paper className={classes.form} radius={10} pt={150} px={50}>
+        <Title order={2} className={classes.title} align="center" mt={50} mb={50}>
+          Welcome back to GitConnect;
         </Title>
-        <Text size="md" weight={500} align="center">
-          We use GitHub for authentication. <br /> Only your email address and public info
-          is accessed. <br />
-          {/* This makes it easy to add your public repos to your portfolio */}
-          {/* Register with Github for the best experience on GitConnect */}
-          {/* Github authentication makes grabbing your public repos easy. */}
-          {/* <br /> */}
-          <br />
-          {/* Only your email address is accessed */}
+        <Text size="lg" weight={500} align="center">
+          Your code, visualised.
         </Text>
-        <Text size="sm" my="sm" align="center">
-          More registration options coming soon!
-        </Text>
+
+        {/* <Group grow mx="xl" mb="md" mt="xl"> */}
         <Group position="center" mx="xl" pb="md" mt="xl">
           <Link href="#" passHref legacyBehavior>
             <Button
+              mt={35}
               color="dark"
               variant="white"
               // compact={true}
@@ -161,7 +148,7 @@ export function SignupPage() {
               radius="md"
               // w='10%'
               onClick={(e) => {
-                signupHandler(e);
+                loginHandler(e);
               }}
               leftIcon={<IconBrandGithub size={18} />}
               sx={(theme) => ({
@@ -174,31 +161,29 @@ export function SignupPage() {
                     theme.colorScheme === 'dark' ? '1px solid white' : '1px solid black',
                   backgroundColor: theme.colorScheme === 'dark' ? 'black' : 'white',
                   color: theme.colorScheme === 'dark' ? 'white' : 'black',
-
-                  // color: 'white',
-
-                  // border: '1px solid white',
                 },
                 minWidth: '75%',
                 maxWidth: '85%',
-                // )
-                // :(
-                // border: '1px solid black',
-                // '&:hover': {
-                //   color: 'white',
-                //   backgroundColor: 'black',
-                //   border: '1px solid white',
-                // },
-                // )
               })}
-              // fullWidth={true}
+            >
+              Login with GitHub
+            </Button>
+            {/* <Button
+              component="a"
+              size="lg"
+              // onClick={loginHandler}
+              onClick={(e) => {
+                loginHandler(e);
+              }}
+              leftIcon={<IconBrandGithub size={18} />}
+              fullWidth={true}
               //  sx={(theme) => ({
               //   // subscribe to color scheme changes
               //   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],
               // })}
             >
-              Register with GitHub
-            </Button>
+              GitHub
+            </Button> */}
           </Link>
         </Group>
 
@@ -208,10 +193,9 @@ export function SignupPage() {
         <Button fullWidth mt="xl" size="md">
           Login
         </Button> */}
-
-        <Link href="/login" passHref legacyBehavior>
-          <Text align="center" mt="lg">
-            Already have an account? <Anchor weight={700}>Login</Anchor>
+        <Link href="/signup" passHref legacyBehavior>
+          <Text align="center" mt="md">
+            Don&apos;t have an account? <Anchor weight={700}>Register</Anchor>
           </Text>
         </Link>
       </Paper>
