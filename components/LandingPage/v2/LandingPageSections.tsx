@@ -87,7 +87,7 @@ export function FeatureSection() {
               <Text c='dimmed'>
                  Integrate with GitHub, import your projects with just a few clicks, and create a customised portfolio that you can share with potential employers, colleagues, or even your mom.
               </Text>
-              <Link href='/signup' passHref>
+              <Link href='/signup' passHref legacyBehavior>
                 <Button
                   component='a'
                   variant='gradient'
@@ -132,7 +132,7 @@ export function AboutUsSection() {
               <Text c='dimmed'>
                 Our mission is to foster innovation through creating a community-driven space for devs to inspire other devs. We hope to fuel your creativity, champion your novel ideas, and provide a natural home for you to display what you build.
               </Text>
-              <Link href='https://discord.gg/hkajEH6WkW' passHref>
+              <Link href='https://discord.gg/hkajEH6WkW' passHref legacyBehavior>
                 <Button
                   component='a'
                   target='_blank'
@@ -168,13 +168,13 @@ export function AboutUsSection() {
                   </Text>
                   <Text ta='center' weight={500} c='dimmed' fz='sm'>
                     danny@gitconnect.dev
-                    <Link href='https://linkedin.com/in/danieltmcgee' passHref>
+                    <Link href='https://linkedin.com/in/danieltmcgee' passHref legacyBehavior>
                       <Text component='a' target='_blank' underline={true}>
                         linkedin.com/in/danieltmcgee
                       </Text>
                     </Link>
                   </Text>
-                  <Link href='https://linktr.ee/gitconnect' passHref>
+                  <Link href='https://linktr.ee/gitconnect' passHref legacyBehavior>
                     <Button
                       component='a'
                       target='_blank'
