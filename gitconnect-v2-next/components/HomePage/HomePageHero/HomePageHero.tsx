@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Overlay, Container, Title, Button, Text, Group, Box } from '@mantine/core';
+import { Box, Button, Container, Group, Overlay, Stack, Text, Title } from '@mantine/core';
+import { IconBrandGithub } from '@tabler/icons-react';
 import { AuthContext } from '../../../context/AuthContext';
 import { correctImageGetter } from '../../../lib/correctImageGetter';
 import useStyles from './HomePageHero.styles';
@@ -43,26 +44,15 @@ export function HeroLanding() {
         zIndex={0}
       />
       <Container className={classes.container}>
-        <Title className={classes.title}>
-          GitConnect; <span className={classes.beta}>[beta]</span>
-        </Title>
-        <Text className={classes.description} size="xl" mt="xs">
-          Create. Share. Collaborate. Inspire.
-        </Text>
-
-        {/* <>
-        <Text className={classes.description} size="sm" italic={true} mt="xl">
-          Import from Github. Create a portfolio.
-        </Text>
-
-        <Text className={classes.description} size="sm" italic={true} mt='xs'>
-          Share your projects. Inspire and be inspired.
-        </Text>
-        </> */}
-
         {currentUser ? (
           <>
-            {/* <Link href='/getrepos' passHref legacyBehavior> */}
+            <Title className={classes.title}>
+              GitConnect; <span className={classes.beta}>[beta]</span>
+            </Title>
+            <Text className={classes.description} size="xl" mt="xs">
+              {/* Create. Share. Collaborate. Inspire. */}
+              The portfolio platform for devs.
+            </Text>
             <Link href="/addproject" passHref legacyBehavior>
               <Button
                 component="a"
@@ -74,9 +64,6 @@ export function HeroLanding() {
                 Add a project
               </Button>
             </Link>
-            {/* <Text className={classes.description} italic={true} size="xs" mt="xl">
-              Note: This site is actively under construction
-            </Text> */}
 
             <Group mt="md" spacing="xl">
               <Link
@@ -116,53 +103,121 @@ export function HeroLanding() {
             </Group>
           </>
         ) : (
-          <>
-            <Link href="/signup" passHref legacyBehavior>
-              <Button
-                component="a"
-                size="lg"
-                radius="md"
-                mt={40}
-                className={classes.control}
-              >
-                Get started
-              </Button>
-            </Link>
-            <Text className={classes.description} italic={true} size="xs" mt="xl">
-              Note: This site is actively under construction
+            <>
+              {/* <Group> */}
+            <Title className={classes.title}>
+              Welcome to GitConnect; <br />
+              {/* portfolio platform for devs. */}
+              {/* <span className={classes.beta}>[beta]</span> */}
+            </Title>
+            <Title className={classes.titleTwo}>
+              <span>the </span> global creative platform for devs
+              {/* <span className={classes.beta}>[beta]</span> */}
+            </Title>
+            <Text className={classes.description} size="xl" mt="xs">
+              Create your portfolio <span className={classes.emphasis}>in minutes</span>,
+              not days - <span className={classes.emphasisTwo}>for free.</span>
+              <br />
+                {/* Share what you've been building with the world */}
+                Show off what you're building to peers, clients & employers.
+                <br /><span className={classes.emphasisThree}>..or to your mum!</span>
+              {/* Share what you're building with peers, employers, <br />or even with mum. */}
+              {/* Join a worldwide network of your devs
+                create a portfolio in minutes, not days - for free. */}
+              {/* your work with peers around the world. */}
+              {/* <br /> */}
+              {/* Share and discover work by developers around the world */}
+              {/* Create. Share. Collaborate. Inspire. */}
+              {/* The portfolio platform for devs. */}
+              {/* GitConnect is a dedicated platform for developers to build their portfolio, connect with opportunities, and with eachother. */}
             </Text>
+            {/* <Text className={classes.description} italic={true} size="xs" mt="xl">
+              Note: This site is actively under construction
+            </Text> */}
+              <Stack >
+              <Link href="/signup" passHref legacyBehavior>
+                <Button
+                  component="a"
+                  size="lg"
+                  // variant='outline'
+                  radius="md"
+                  variant="white"
+                  color="dark"
+                  // leftIcon={<IconBrandGithub size={18} />}
 
-            <Group mt="md" spacing="xl">
-              <Link href="/landing" passHref legacyBehavior>
-                <Text
-                  component="a"
-                  // target='_blank'
-                  className={classes.description}
-                  // underline={true}
-                  // italic={true}
-                  weight={500}
-                  size="xs"
-                  mt="sm"
+                  // color='white'
+                  mt={40}
+                  sx={(theme) => ({
+                    // leftIcon: {
+                    //   marginRight: theme.spacing.lg,
+                    // },
+                    // '&:hover': {
+                    //   backgroundColor: theme.colors.dark[6],
+                    // },
+                    '&:hover': {
+                      color: 'white',
+                      backgroundColor: 'black',
+                      border: '1px solid white',
+                    },
+
+                    width: '25%',
+
+                    [theme.fn.smallerThan('sm')]: {
+                      width: '70%',
+                    },
+                  })}
+                  styles={(theme) => ({
+                    leftIcon: {
+                      // paddingRight: '20px',
+                    },
+                  })}
+                  // className={classes.control}
                 >
-                  Learn more
-                </Text>
+                  {/* Create your portfolio in minutes, not days. */}
+                  Join GitConnect
+                </Button>
               </Link>
-              <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
-                <Text
-                  component="a"
-                  target="_blank"
-                  className={classes.description}
-                  weight={500}
-                  // underline={true}
-                  // italic={true}
-                  size="xs"
-                  underline={false}
-                  mt="sm"
-                >
-                  Join the Discord
-                </Text>
-              </Link>
-            </Group>
+
+              <Group ml={1} mt="md" spacing="xl">
+                <Link href="/landing" passHref legacyBehavior>
+                  <Text
+                    component="a"
+                    className={classes.description}
+                    weight={500}
+                    size="xs"
+                    mt="sm"
+                    sx={(theme) => ({
+                      '&:hover': {
+                        backgroundColor: theme.colors.dark[6],
+                      },
+                    })}
+                  >
+                    Learn more
+                  </Text>
+                </Link>
+                <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
+                  <Text
+                    component="a"
+                    target="_blank"
+                    className={classes.description}
+                    weight={500}
+                    // underline={true}
+                    // italic={true}
+                    size="xs"
+                    underline={false}
+                      mt="sm"
+                      sx={(theme) => ({
+                        '&:hover': {
+                          backgroundColor: theme.colors.dark[6],
+                        },
+                      })}
+                  >
+                    Join the Discord
+                  </Text>
+                </Link>
+              </Group>
+                </Stack>
+                {/* </Group> */}
           </>
         )}
       </Container>

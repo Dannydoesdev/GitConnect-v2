@@ -34,6 +34,7 @@ export default createStyles((theme) => ({
     fontSize: 60,
     fontWeight: 900,
     lineHeight: 1.1,
+    marginLeft: -6,
 
     [theme.fn.smallerThan('sm')]: {
       fontSize: 40,
@@ -44,6 +45,63 @@ export default createStyles((theme) => ({
       fontSize: 32,
       lineHeight: 1.3,
     },
+  },
+
+  titleTwo: {
+    color: theme.white,
+    fontSize: 40,
+    fontWeight: 900,
+    lineHeight: 1.5,
+
+    [theme.fn.smallerThan('sm')]: {
+      fontSize: 40,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('xs')]: {
+      fontSize: 32,
+      lineHeight: 1.3,
+    },
+  },
+
+  emphasisThree: {
+  fontSize: 15,
+  fontWeight: 700,
+},
+
+  emphasisTwo: {
+    fontWeight: 650,
+  },
+
+  emphasis: {
+    // fontStyle: 'oblique',
+    // textEmphasis: 'firebrick',
+
+    // color: theme.white,
+    // fontSize: 30,
+    // fontStyle: 'italic',
+
+    fontWeight: 700,
+    // fontStyle: 'italic',
+    // textAlign: 'center',
+    // reverse: true,
+    // direction: 'ltr',
+    // // fontVariantCaps: 'small-caps',
+    // fontVariantCaps: 'petite-caps',
+    // // textDecoration: 'italic',
+    // lineHeight: 1,
+    // fontFamily: 'monospace',
+    // // marginTop: '8px',
+
+    // [theme.fn.smallerThan('sm')]: {
+    //   fontSize: 26,
+    //   lineHeight: 1.2,
+    // },
+
+    // [theme.fn.smallerThan('xs')]: {
+    //   fontSize: 18,
+    //   lineHeight: 1.3,
+    // },
   },
 
   beta: {
@@ -75,6 +133,7 @@ export default createStyles((theme) => ({
   description: {
     color: theme.white,
     maxWidth: 600,
+    lineHeight: 1.7,
 
     [theme.fn.smallerThan('sm')]: {
       maxWidth: '100%',
@@ -99,6 +158,17 @@ export default createStyles((theme) => ({
       theme.colorScheme === 'dark'
         ? theme.colors.dark[5]
         : theme.colors.blue[6],
+    
+    '&.hover': {
+      root: {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.blue[7],
+      },
+    },
+    
+    
     width: '25%',
 
     [theme.fn.smallerThan('sm')]: {
