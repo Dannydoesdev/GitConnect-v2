@@ -10,8 +10,9 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    height: '58vh',
-    marginTop: 50,
+    minHeight: '50vh',
+    maxHeight: '80vh',
+    marginTop: 100,
     paddingTop: 10,
     paddingBottom: 70,
     maxWidth: '80rem',
@@ -32,9 +33,29 @@ export default createStyles((theme) => ({
   title: {
     color: theme.white,
     fontSize: 60,
-    fontWeight: 900,
+    fontWeight: 800,
     lineHeight: 1.1,
     marginLeft: -6,
+
+    // [theme.fn.largerThan('xxl')]: {
+    //   fontSize: 65,
+    //   lineHeight: 1.2,
+    // },
+
+    [theme.fn.smallerThan('xl')]: {
+      fontSize: 55,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('lg')]: {
+      fontSize: 50,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('md')]: {
+      fontSize: 45,
+      lineHeight: 1.2,
+    },
 
     [theme.fn.smallerThan('sm')]: {
       fontSize: 40,
@@ -49,24 +70,61 @@ export default createStyles((theme) => ({
 
   titleTwo: {
     color: theme.white,
-    fontSize: 40,
-    fontWeight: 900,
-    lineHeight: 1.5,
+    fontSize: 45,
+    fontWeight: 700,
+    lineHeight: 1.4,
 
-    [theme.fn.smallerThan('sm')]: {
+    [theme.fn.smallerThan('lg')]: {
       fontSize: 40,
       lineHeight: 1.2,
     },
 
-    [theme.fn.smallerThan('xs')]: {
-      fontSize: 32,
-      lineHeight: 1.3,
+    [theme.fn.smallerThan('md')]: {
+      fontSize: 35,
+      lineHeight: 1.2,
     },
+    
+    [theme.fn.smallerThan('sm')]: {
+      fontSize: 30,
+      lineHeight: 1.2,
+    },
+
+    // [theme.fn.smallerThan('xs')]: {
+    //   fontSize: 25,
+    //   lineHeight: 1.3,
+    // },
+  },
+
+  titleThree: {
+    color: theme.white,
+    fontSize: 52,
+    fontWeight: 750,
+    lineHeight: 1.3,
+
+    [theme.fn.smallerThan('lg')]: {
+      fontSize: 40,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('md')]: {
+      fontSize: 35,
+      lineHeight: 1.2,
+    },
+    
+    [theme.fn.smallerThan('sm')]: {
+      fontSize: 30,
+      lineHeight: 1.2,
+    },
+
+    // [theme.fn.smallerThan('xs')]: {
+    //   fontSize: 25,
+    //   lineHeight: 1.3,
+    // },
   },
 
   emphasisThree: {
   fontSize: 15,
-  fontWeight: 700,
+  fontWeight: 600,
 },
 
   emphasisTwo: {
