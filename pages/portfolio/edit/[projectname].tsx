@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
-import { projectDataAtom, textEditorAtom, unsavedChangesAtom } from '@/atoms/jotaiAtoms';
+import { isProAtom, projectDataAtom, textEditorAtom, unsavedChangesAtom } from '@/atoms/jotaiAtoms';
 import { Group, ScrollArea, Space, Text, Title } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import axios from 'axios';
@@ -19,6 +19,8 @@ import {
 import EditPortfolioProject from '@/components/Portfolio/Project/EditProject/EditProject';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../../context/AuthContext';
+import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
+import { app } from '@/firebase/clientApp';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
@@ -49,8 +51,19 @@ export default function UpdatePortfolioProject({
   textContent,
 }: // customProjectData,
 InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { userData } = useContext(AuthContext);
+  const { userData, currentUser } = useContext(AuthContext);
   const router = useRouter();
+
+  const [isPro, setIsPro] = useAtom(isProAtom)
+
+
+  useEffect(() => {
+    const checkPremium = async () => {
+      const newPremiumStatus = currentUser ? await getPremiumStatus(app) : false;
+      setIsPro(newPremiumStatus);
+    };
+    checkPremium();
+  }, [app, currentUser?.uid]);
 
   // NOTE: Updated to get repoid from projectData
   const repoid = projectData[0]?.id;
