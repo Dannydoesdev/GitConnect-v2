@@ -19,7 +19,8 @@ import {
 import EditPortfolioProject from '@/components/Portfolio/Project/EditProject/EditProject';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../../context/AuthContext';
-import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
+// import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
+// import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 import { app } from '@/firebase/clientApp';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -58,12 +59,17 @@ InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 
   useEffect(() => {
-    const checkPremium = async () => {
-      const newPremiumStatus = currentUser ? await getPremiumStatus(app) : false;
-      setIsPro(newPremiumStatus);
-    };
-    checkPremium();
-  }, [app, currentUser?.uid]);
+          const newPremiumStatus = userData ? userData.isPro : false;
+          setIsPro(newPremiumStatus);
+
+    // const checkPremium = async () => {
+      
+      // const newPremiumStatus = currentUser ? await getPremiumStatus(app) : false;
+      // console.log('userData - ', userData)
+      // console.log('newPremiumStatus - ', newPremiumStatus)
+    // };
+    // checkPremium();
+  }, [userData]);
 
   // NOTE: Updated to get repoid from projectData
   const repoid = projectData[0]?.id;

@@ -13,6 +13,7 @@ export type AuthData = {
   displayName?: string | null
   userEmail?: string | null
   userPhotoLink?: string | null
+  isPro?: boolean
 }
 
 export type ChildrenProps = {
