@@ -3,12 +3,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import router, { Router, useRouter } from 'next/router';
 import {
+  isProAtom,
   projectDataAtom,
   textEditorAtom,
   unsavedChangesAtom,
   unsavedChangesSettingsAtom,
 } from '@/atoms';
-import { db } from '@/firebase/clientApp';
+import { app, auth, db } from '@/firebase/clientApp';
 // import { RepoData } from '../../../types/repos';
 import {
   Aside,
@@ -27,21 +28,38 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconArrowRight, IconCheck, IconCross, IconExternalLink } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconCheck,
+  IconCross,
+  IconExternalLink,
+} from '@tabler/icons-react';
 import axios from 'axios';
 // import DOMPurify from 'dompurify';
 // import * as DOMPurify from 'dompurify';
 // import {DomPur}
 // import DOMPurify from 'lib/dompurifyCustomHooks';  // Import from your custom file
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 import DOMPurify from 'isomorphic-dompurify';
 import { useAtom } from 'jotai';
 import { set } from 'lodash';
 import useSWR from 'swr';
+// import { isAllowedToPublishProject } from '@/lib/stripe/isAllowedToPublishProject';
+import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
+import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
 import LoadingPage from '../../../LoadingPage/LoadingPage';
 import ViewPreviewProjectEditor from '../ViewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewProject/ViewPreviewProjectHero/ViewProjectHero';
-import ProjectSettingsModal from './EditProjectSettings';
+import ProjectSettingsModal, { FormData } from './EditProjectSettings';
 import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
 
 // import { createDOMPurify } from 'dompurify';
@@ -124,38 +142,175 @@ export default function EditPortfolioProject({
 
   const { classes, theme } = useStyles();
 
-  // Hoist the editor state up to this component
-  // const handleEditorChange = (value: string) => {
-  // setRealtimeEditorContent(value);
-  // console.log(value);
-  // console.log('editor changed');
-  // };
-
+  // TODO - may not be ideal for this to run in a circular fashion - may need to refactor
+  // Consider extracting checkPremium() to acustom hook or trigger upon publishing projects
   // useEffect(() => {
-  //   if (textContent && textContent !== '' && realtimeEditorContent === '') {
-  //     setRealtimeEditorContent(textContent);
+  // const checkPremium = async () => {
+  //   const newPremiumStatus = auth.currentUser ? await getPremiumStatus(app) : false;
+  //   setIsPro(newPremiumStatus);
+  //   if (newPremiumStatus) {
+  //     console.log('isAllowedToPublishProject - user is pro')
+  //     return true;
   //   }
-  // }, []);
+  // };
+  // }, [app, auth.currentUser?.uid]);
 
-  const handleNewCoverImage = (imageURL: string) => {
-    setcurrentCoverImage(imageURL);
+  const [isPro, setIsPro] = useAtom(isProAtom);
+
+  type IsAllowedToPublishProjectProps = {
+    userId: string;
+    repo: string;
   };
 
-  useEffect(() => {
-    if (
-      currentCoverImage === '' &&
-      otherProjectData &&
-      otherProjectData.coverImage !== ''
-    ) {
-      setcurrentCoverImage(otherProjectData.coverImage);
+  const isAllowedToPublishProject = async ({
+    userId,
+    repo,
+  }: IsAllowedToPublishProjectProps) => {
+    // console.log(`isAllowedToPublishProject check - userId: ${userId} repo: ${repo}`)
+    // console.log('isAllowedToPublishProject isPro - start of function: ', isPro);
+
+    if (isPro) {
+      // console.log('is a Pro')
+      return true;
     }
-  }, []);
+    // const newPremiumStatus = await getPremiumStatus(app)
 
-  // Publish the data from the editor settings modal to Firebase
-  //! TODO - should this be duplicated to a shallower collection?
+    // setIsPro(newPremiumStatus);
 
-  async function handlePublish(formData: any) {
+    // console.log('isAllowedToPublishProject - getPremium Status returned: ', getPremiumStatus(app))
+    // if (newPremiumStatus) { return true }
+    // const newPremiumStatus = auth.currentUser ? await getPremiumStatus(app) : false;
+
+    // console.log('moving on to db check:');
+
+    // const q = query(collectionGroup(db, 'repos'), where('hidden', '==', false));
+    // const querySnapshot = await getDocs(q);
+    const coll = collection(db, `users/${userId}/repos/`);
+    const q = query(coll, where('hidden', '==', false), where('id', '!=', repo));
+
+    // const querySnapshot = await getDocs(q);
+    // const projectData: any = querySnapshot.docs.map((doc: any) => {
+    //   const data = doc.data();
+    //   if (!data) {
+    //     return null;
+    //   }
+    //   return {
+    //     ...data,
+    //   };
+    // });
+    // console.log('projectData: ', projectData)
+
+    const snapshot = await getCountFromServer(q);
+    //   .then((snapshot) => {
+    //   console.log('snapshot: ', snapshot)
+    //   console.log('count of published projects: ', snapshot.data().count)
+    //   const count = snapshot.data().count;
+    //   return snapshot;
+    // })
+
+    // console.log('count of published projects: ', snapshot.data().count);
+
+    // If user has published 3 or more projects and is not pro, return false
+    if (snapshot.data().count >= 3 && !isPro) {
+      // console.log(
+      //   'isAllowedToPublishProject false - user has published 3 projects and is not pro'
+      // );
+      return false;
+    } else {
+      // console.log(
+      //   'isAllowedToPublishProject true - user has published less than 3 projects or is pro'
+      // );
+      return true;
+    }
+  };
+
+  // Check if user is allowed to publish project
+  // If so - they can publish
+
+  async function handlePublish(formData: FormData) {
     // if ( realtimeEditorContent !== '' ) {
+
+    // const canPublish = await isAllowedToPublishProject(userid, repoid);
+    const canPublish = await isAllowedToPublishProject({ userId: userid, repo: repoid });
+
+    if (!canPublish) {
+      notifications.show({
+        id: 'load-data',
+        color: 'red',
+        loading: true,
+        title: 'Publishing limit reached',
+        message:
+          'You have reached the limit of 3 published projects - saving your project',
+        icon: <IconCross size="1rem" />,
+        autoClose: false,
+      });
+
+      const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+      const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
+
+      setTimeout(async () => {
+        try {
+          await setDoc(
+            docRef,
+            {
+              ...formData,
+              userId: userid,
+              repoId: repoid,
+              username_lowercase: userName.toLowerCase(),
+              reponame_lowercase: repoName.toLowerCase(),
+            },
+            { merge: true }
+          );
+          //
+          await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
+          setUnsavedChanges(false);
+          setUnsavedChangesSettings(false);
+ 
+        } catch (error) {
+          console.log(error);
+          notifications.update({
+            id: 'load-data',
+            color: 'red',
+            title: 'Something went wrong',
+            message: 'Something went wrong, please try again',
+            icon: <IconCross size="1rem" />,
+            autoClose: 2000,
+          });
+        } finally {
+          setUnsavedChanges(false);
+          notifications.update({
+            id: 'load-data',
+            color: 'red',
+            // loading: true,
+            title: 'Project saved - redirecting',
+            message:
+              'You have reached the limit of 3 published projects - redirecting to Stripe',
+            icon: <IconCross size="1rem" />,
+            autoClose: false,
+          });
+        }
+      }, 2000);
+      setTimeout(async () => {
+        // const upgradeToPremium = async () => {
+        const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+        const checkoutUrl = await getCheckoutUrl(app, priceId);
+        // console.log(checkoutUrl);
+        router.push(checkoutUrl);
+        // console.log('Upgrade to Premium');
+        // };
+      }, 2000);
+
+      // id: 'load-data',
+      // color: 'teal',
+      // title: 'Updates were saved',
+      // message: 'Your updates have been saved',
+      // icon: <IconCheck size="1rem" />,
+      // autoClose: 1000,
+      return;
+    }
+
+    // console.log(`handlePublish fn - canPublish end result: ${canPublish}`);
+
     const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
     const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
     try {
@@ -242,6 +397,33 @@ export default function EditPortfolioProject({
       router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [router]);
+
+  // Hoist the editor state up to this component
+  // const handleEditorChange = (value: string) => {
+  // setRealtimeEditorContent(value);
+  // console.log(value);
+  // console.log('editor changed');
+  // };
+
+  // useEffect(() => {
+  //   if (textContent && textContent !== '' && realtimeEditorContent === '') {
+  //     setRealtimeEditorContent(textContent);
+  //   }
+  // }, []);
+
+  const handleNewCoverImage = (imageURL: string) => {
+    setcurrentCoverImage(imageURL);
+  };
+
+  useEffect(() => {
+    if (
+      currentCoverImage === '' &&
+      otherProjectData &&
+      otherProjectData.coverImage !== ''
+    ) {
+      setcurrentCoverImage(otherProjectData.coverImage);
+    }
+  }, []);
 
   async function handleUpdateProject() {
     // if ( realtimeEditorContent !== '' ) {

@@ -93,12 +93,12 @@ export function SignupPage() {
           const userId = user.uid;
 
           if (process.env.NODE_ENV === 'development') {
-            mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
-            mixpanel.identify(userId);
+            // mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
+            // mixpanel.identify(userId);
 
-            mixpanel.track('Signed In', {
-              'Signup Type': 'GitHub',
-            });
+            // mixpanel.track('Signed In', {
+            //   'Signup Type': 'GitHub',
+            // });
           } else {
             mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
             mixpanel.identify(userId);
