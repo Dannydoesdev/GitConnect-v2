@@ -2,7 +2,11 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { getCookie, hasCookie, setCookie } from 'cookies-next';
 import { Auth, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
-import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
+import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
+  // getPremiumStatus,
+  // getPremiumStatusContext,
+// } from '@/lib/stripe/getPremiumStatusTest';
+import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 import { app, auth, db } from '../firebase/clientApp';
 import { getGithubProfileData } from '../lib/github';
 import { AuthData } from '../types';
@@ -25,6 +29,9 @@ const colRef = collection(db, 'users');
 export const AuthProvider = ({ children }: Props) => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  // const [isPro, setIsPro] = useState<boolean>(false);
+  const [isPro, setIsPro] = useState<boolean | null>(null); // Initialize with null
+
   const [userData, setUserData] = useState<AuthData>({
     userProviderId: '',
     userId: '',
@@ -34,24 +41,48 @@ export const AuthProvider = ({ children }: Props) => {
     displayName: '',
     userEmail: '',
     userPhotoLink: '',
+    isPro: false, // Add isPro to userData
   });
 
   useEffect(() => {
-    // Listen for state changes on the auth object
-    onAuthStateChanged(auth, async (user: any) => {
-      if (user) {
-        const requiredData: any = {
-          userProviderId: user.providerData[0].providerId,
-          userId: user.uid,
-          userName: user.reloadUserInfo.screenName,
-          username_lowercase: user.reloadUserInfo.screenName.toLowerCase(),
-          githubId: user.providerData[0].uid,
-          displayName: user.displayName,
-          userEmail: user.email,
-          userPhotoLink: user.photoURL,
-        };
+    let unsubscribePremiumStatus: any = null; // To hold the unsubscribe function
 
+    const unsubscribe = onAuthStateChanged(auth, async (user: any) => {
+      // Listen for state changes on the auth object
+      // onAuthStateChanged(auth, async (user: any) => {
+
+      if (user) {
+
+        // if dev environment use test stripe
+        // if (process.env.NODE_ENV === 'development') {
+          // unsubscribePremiumStatus = await getPremiumStatusTest(app, setIsPro); // Set up premium status listener
+        // } else {
+          unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro); // Set up premium status listener
+        // }
+        // FIXME - only load userData if isPro is not null
+
+        // if (isPro !== null) { // Update userData only when isPro is not null
+
+          const requiredData: any = {
+            userProviderId: user.providerData[0].providerId,
+            userId: user.uid,
+            userName: user.reloadUserInfo.screenName,
+            username_lowercase: user.reloadUserInfo.screenName.toLowerCase(),
+            githubId: user.providerData[0].uid,
+            displayName: user.displayName,
+            userEmail: user.email,
+            userPhotoLink: user.photoURL,
+            isPro,
+            // isPro: isPro,
+          };
+
+          setUserData(requiredData);
+          // console.log('AuthContext userData: ', userData)
+
+          setCurrentUser(user);
+        // }
         // FIXME: This is a hacky way to get the isPro status - store status in cookies until we can get it from the server efficiently at the correct times
+        // console.log('AuthContext requiredData: ', userData)
 
         // if (!hasCookie('isPro')) {
         //   console.log('No cookie found')
@@ -72,10 +103,7 @@ export const AuthProvider = ({ children }: Props) => {
         // console.log('AuthContext requiredData: ', requiredData)
 
         // set the user data object
-        setUserData(requiredData);
-        // console.log('AuthContext userData: ', userData)
-
-        setCurrentUser(user);
+     
 
         // check for user id
         const docRef = doc(colRef, user.uid);
@@ -143,11 +171,22 @@ export const AuthProvider = ({ children }: Props) => {
             });
         }
       } else {
+        setIsPro(false); // Reset premium status if user logs out
+        if (unsubscribePremiumStatus) {
+          unsubscribePremiumStatus(); // Remove listener
+        }
         setCurrentUser(null);
       }
       setLoading(false);
     });
-  }, []);
+
+    return () => {
+      unsubscribe(); // Unsubscribe from auth changes
+      if (unsubscribePremiumStatus) {
+        unsubscribePremiumStatus(); // Unsubscribe from premium status changes
+      }
+    };
+  }, [isPro]);
 
   // if (loading) {
   //   return (

@@ -3,8 +3,10 @@ import { useRouter } from 'next/router';
 import { AuthContext } from '@/context/AuthContext';
 import { app, auth } from '@/firebase/clientApp';
 import { Button, Group, Space } from '@mantine/core';
-import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
-import { getCheckoutUrl, getPortalUrl } from '@/lib/stripe/stripePaymentTest';
+// import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
+// import { getCheckoutUrl, getPortalUrl } from '@/lib/stripe/stripePaymentTest';
+import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
+import { getCheckoutUrl, getPortalUrl } from '@/lib/stripe/stripePaymentProd';
 import { PricingSection } from '@/components/LandingPage/v2/PricingSection';
 import { PremiumPanel } from '@/components/SubscriptionComponents/PremiumPanel';
 import { StandardPanel } from '@/components/SubscriptionComponents/StandardPanel';
@@ -36,19 +38,33 @@ function LandingPage() {
   const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
-    const checkPremium = async () => {
-      const newPremiumStatus = auth.currentUser ? await getPremiumStatus(app) : false;
-      setIsPro(newPremiumStatus);
-    };
-    checkPremium();
-  }, [app, auth.currentUser?.uid]);
+    const newPremiumStatus = userData ? userData.isPro : false;
+    setIsPro(newPremiumStatus);
+    // const checkPremium = async () => {
+    // const newPremiumStatus = auth.currentUser ? await getPremiumStatus(app) : false;
+    // const newPremiumStatus = userData ? userData.isPro : false;
+    // setIsPro(newPremiumStatus);
+    // };
+    // checkPremium();
+  }, [app, userData]);
+
+  // useEffect(() => {
+  //   const checkPremium = async () => {
+  //     // const newPremiumStatus = auth.currentUser ? await getPremiumStatus(app) : false;
+  //     const newPremiumStatus = userData ? userData.isPro : false;
+  //     setIsPro(newPremiumStatus);
+  //   };
+  //   checkPremium();
+  // }, [app, userData]);
 
   const upgradeToPremium = async () => {
-    const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+    // const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+    const priceId = 'price_1O7gfFCT5BNNo8lFNzj4c76Y';
+
     const checkoutUrl = await getCheckoutUrl(app, priceId);
-    console.log(checkoutUrl);
+    // console.log(checkoutUrl);
     router.push(checkoutUrl);
-    console.log('Upgrade to Premium');
+    // console.log('Upgrade to Premium');
   };
 
   const upgradeToPremiumButton = (
@@ -71,7 +87,6 @@ function LandingPage() {
 
   const statusPanel = isPro ? <PremiumPanel /> : <StandardPanel />;
   const memberButton = isPro ? managePortalButton : upgradeToPremiumButton;
-
 
   return (
     <div>

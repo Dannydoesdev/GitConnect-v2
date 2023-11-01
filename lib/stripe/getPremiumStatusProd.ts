@@ -8,10 +8,18 @@ import {
   where,
 } from "firebase/firestore";
 
-export const getPremiumStatus = async (app: FirebaseApp) => {
+
+
+type PremiumStatusCallback = (status: boolean) => void;
+
+export const getPremiumStatusProd = async (app: FirebaseApp, callback: PremiumStatusCallback) => {
   const auth = getAuth(app);
   const userId = auth.currentUser?.uid;
-  if (!userId) throw new Error("User not logged in");
+
+  if (!userId) {
+    callback(false); // If the user is not logged in, set premium status to false
+    return;
+  }
 
   const db = getFirestore(app);
   const subscriptionsRef = collection(db, "users", userId, "subscriptions");
@@ -20,22 +28,58 @@ export const getPremiumStatus = async (app: FirebaseApp) => {
     where("status", "in", ["trialing", "active"])
   );
 
-  return new Promise<boolean>((resolve, reject) => {
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        // In this implementation we only expect one active or trialing subscription to exist.
-        console.log("Subscription snapshot", snapshot.docs.length);
-        if (snapshot.docs.length === 0) {
-          console.log("No active or trialing subscriptions found");
-          resolve(false);
-        } else {
-          console.log("Active or trialing subscription found");
-          resolve(true);
-        }
-        unsubscribe();
-      },
-      reject
-    );
-  });
+  // console.log('Setting up premium subscription listener');
+
+  // The onSnapshot function returns an unsubscribe function that can be called to remove the listener
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      // console.log("Subscription snapshot", snapshot.docs.length);
+      if (snapshot.docs.length === 0) {
+        // console.log("No active or trialing subscriptions found");
+        callback(false);
+      } else {
+        // console.log("Active or trialing subscription found");
+        callback(true);
+      }
+    },
+    (error) => {
+      console.error("Error fetching subscription status: ", error);
+    }
+  );
+
+  return unsubscribe; // Return the unsubscribe function
 };
+
+
+// export const getPremiumStatus = async (app: FirebaseApp) => {
+//   const auth = getAuth(app);
+//   const userId = auth.currentUser?.uid;
+//   if (!userId) throw new Error("User not logged in");
+
+//   const db = getFirestore(app);
+//   const subscriptionsRef = collection(db, "users", userId, "subscriptions");
+//   const q = query(
+//     subscriptionsRef,
+//     where("status", "in", ["trialing", "active"])
+//   );
+
+//   return new Promise<boolean>((resolve, reject) => {
+//     const unsubscribe = onSnapshot(
+//       q,
+//       (snapshot) => {
+//         // In this implementation we only expect one active or trialing subscription to exist.
+//         console.log("Subscription snapshot", snapshot.docs.length);
+//         if (snapshot.docs.length === 0) {
+//           console.log("No active or trialing subscriptions found");
+//           resolve(false);
+//         } else {
+//           console.log("Active or trialing subscription found");
+//           resolve(true);
+//         }
+//         unsubscribe();
+//       },
+//       reject
+//     );
+//   });
+// };
