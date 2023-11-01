@@ -55,11 +55,18 @@ export const storage = getStorage(app);
 export const storageRef = ref(storage);
 
 // See https://stackoverflow.com/q/66812479
-
 let analytics;
-if (typeof window != undefined) {
-  analytics = isSupported().then((yes) => (yes ? getAnalytics(app) : null));
-}
+
+//  If we're in dev mode, don't initialize analytics
+if (
+  process.env.NODE_ENV === 'development'
+) {
+  analytics = null;
+} else {
+  if (typeof window != undefined) {
+    analytics = isSupported().then((yes) => (yes ? getAnalytics(app) : null));
+  }
+};
 
 export { analytics, db };
 // logEvent(analytics, 'notification_received');

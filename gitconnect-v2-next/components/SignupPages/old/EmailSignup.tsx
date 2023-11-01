@@ -1,6 +1,6 @@
 import React, { useCallback } from "react"
 import { useRouter } from "next/router"
-import { auth } from "../../firebase/clientApp"
+import { auth } from "../../../firebase/clientApp"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 
 import Link from "next/link"

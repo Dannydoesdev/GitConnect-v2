@@ -1,7 +1,7 @@
 import type { GetStaticProps, NextPage } from 'next'
 import React, { useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
-import { Space, Title } from '@mantine/core'
+import { Container, Space, Title } from '@mantine/core'
 import { HeroLanding } from '../components/HomePage/HomePageHero/HomePageHero'
 import UploadFile from '../components/UploadFile'
 import HomePageProjectGrid from '../components/HomePage/HomePageProjects/HomePageProjectGrid'
@@ -33,11 +33,13 @@ const Index: NextPage = ({ sortedProjects }: any) => {
       <HeroLanding />
       <Space h='xl' />
       <Space h='xl' />
+      <Container fluid>
 
       {/* <HomePageProjectGrid projects={projects} /> */}
       <HomePageProjectGrid projects={sortedProjects} />
 
       {/* < UploadFile /> */}
+    </Container>
     </>
   )
 }

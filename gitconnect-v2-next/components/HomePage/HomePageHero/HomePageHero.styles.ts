@@ -10,8 +10,9 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    height: '58vh',
-    marginTop: 50,
+    minHeight: '50vh',
+    maxHeight: '80vh',
+    marginTop: 100,
     paddingTop: 10,
     paddingBottom: 70,
     maxWidth: '80rem',
@@ -32,8 +33,29 @@ export default createStyles((theme) => ({
   title: {
     color: theme.white,
     fontSize: 60,
-    fontWeight: 900,
+    fontWeight: 800,
     lineHeight: 1.1,
+    marginLeft: -6,
+
+    // [theme.fn.largerThan('xxl')]: {
+    //   fontSize: 65,
+    //   lineHeight: 1.2,
+    // },
+
+    [theme.fn.smallerThan('xl')]: {
+      fontSize: 55,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('lg')]: {
+      fontSize: 50,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('md')]: {
+      fontSize: 45,
+      lineHeight: 1.2,
+    },
 
     [theme.fn.smallerThan('sm')]: {
       fontSize: 40,
@@ -44,6 +66,100 @@ export default createStyles((theme) => ({
       fontSize: 32,
       lineHeight: 1.3,
     },
+  },
+
+  titleTwo: {
+    color: theme.white,
+    fontSize: 45,
+    fontWeight: 700,
+    lineHeight: 1.4,
+
+    [theme.fn.smallerThan('lg')]: {
+      fontSize: 40,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('md')]: {
+      fontSize: 35,
+      lineHeight: 1.2,
+    },
+    
+    [theme.fn.smallerThan('sm')]: {
+      fontSize: 30,
+      lineHeight: 1.2,
+    },
+
+    // [theme.fn.smallerThan('xs')]: {
+    //   fontSize: 25,
+    //   lineHeight: 1.3,
+    // },
+  },
+
+  titleThree: {
+    color: theme.white,
+    fontSize: 52,
+    fontWeight: 750,
+    lineHeight: 1.3,
+
+    [theme.fn.smallerThan('lg')]: {
+      fontSize: 40,
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan('md')]: {
+      fontSize: 35,
+      lineHeight: 1.2,
+    },
+    
+    [theme.fn.smallerThan('sm')]: {
+      fontSize: 30,
+      lineHeight: 1.2,
+    },
+
+    // [theme.fn.smallerThan('xs')]: {
+    //   fontSize: 25,
+    //   lineHeight: 1.3,
+    // },
+  },
+
+  emphasisThree: {
+  fontSize: 15,
+  fontWeight: 600,
+},
+
+  emphasisTwo: {
+    fontWeight: 650,
+  },
+
+  emphasis: {
+    // fontStyle: 'oblique',
+    // textEmphasis: 'firebrick',
+
+    // color: theme.white,
+    // fontSize: 30,
+    // fontStyle: 'italic',
+
+    fontWeight: 700,
+    // fontStyle: 'italic',
+    // textAlign: 'center',
+    // reverse: true,
+    // direction: 'ltr',
+    // // fontVariantCaps: 'small-caps',
+    // fontVariantCaps: 'petite-caps',
+    // // textDecoration: 'italic',
+    // lineHeight: 1,
+    // fontFamily: 'monospace',
+    // // marginTop: '8px',
+
+    // [theme.fn.smallerThan('sm')]: {
+    //   fontSize: 26,
+    //   lineHeight: 1.2,
+    // },
+
+    // [theme.fn.smallerThan('xs')]: {
+    //   fontSize: 18,
+    //   lineHeight: 1.3,
+    // },
   },
 
   beta: {
@@ -75,6 +191,7 @@ export default createStyles((theme) => ({
   description: {
     color: theme.white,
     maxWidth: 600,
+    lineHeight: 1.7,
 
     [theme.fn.smallerThan('sm')]: {
       maxWidth: '100%',
@@ -99,6 +216,17 @@ export default createStyles((theme) => ({
       theme.colorScheme === 'dark'
         ? theme.colors.dark[5]
         : theme.colors.blue[6],
+    
+    '&.hover': {
+      root: {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.blue[7],
+      },
+    },
+    
+    
     width: '25%',
 
     [theme.fn.smallerThan('sm')]: {
