@@ -1,4 +1,3 @@
-"use client";
 import { FirebaseApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
@@ -22,7 +21,7 @@ export const getCheckoutUrl = async (
   const db = getFirestore(app);
   const checkoutSessionRef = collection(
     db,
-    "customers",
+    "users",
     userId,
     "checkout_sessions"
   );

@@ -54,13 +54,17 @@ import { useAtom } from 'jotai';
 import { set } from 'lodash';
 import useSWR from 'swr';
 // import { isAllowedToPublishProject } from '@/lib/stripe/isAllowedToPublishProject';
-import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
-import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
+import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
+import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
+// import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
+import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
+
 import LoadingPage from '../../../LoadingPage/LoadingPage';
 import ViewPreviewProjectEditor from '../ViewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal, { FormData } from './EditProjectSettings';
 import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
+import { AuthContext } from '@/context/AuthContext';
 
 // import { createDOMPurify } from 'dompurify';
 // const DOMPurify = createDOMPurify(window);
@@ -124,6 +128,7 @@ export default function EditPortfolioProject({
   // const [readme, setReadme] = useState('');
   // const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
   const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
+
   const [currentCoverImage, setcurrentCoverImage] = useState('');
   // const [projectDataState, setProjectData] = useAtom(projectDataAtom);
   const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
@@ -141,6 +146,7 @@ export default function EditPortfolioProject({
   );
 
   const { classes, theme } = useStyles();
+  const { userData } = useContext(AuthContext);
 
   // TODO - may not be ideal for this to run in a circular fashion - may need to refactor
   // Consider extracting checkPremium() to acustom hook or trigger upon publishing projects
@@ -157,6 +163,14 @@ export default function EditPortfolioProject({
 
   const [isPro, setIsPro] = useAtom(isProAtom);
 
+  useEffect(() => {
+  
+  const newPremiumStatus = userData ? userData.isPro : false;
+  setIsPro(newPremiumStatus);
+
+
+  }, [userData])
+
   type IsAllowedToPublishProjectProps = {
     userId: string;
     repo: string;
@@ -170,7 +184,7 @@ export default function EditPortfolioProject({
     // console.log('isAllowedToPublishProject isPro - start of function: ', isPro);
 
     if (isPro) {
-      // console.log('is a Pro')
+      console.log('is a Pro')
       return true;
     }
     // const newPremiumStatus = await getPremiumStatus(app)
@@ -292,7 +306,9 @@ export default function EditPortfolioProject({
       }, 2000);
       setTimeout(async () => {
         // const upgradeToPremium = async () => {
-        const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+        // const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+        const priceId = 'price_1O7gfFCT5BNNo8lFNzj4c76Y';
+
         const checkoutUrl = await getCheckoutUrl(app, priceId);
         // console.log(checkoutUrl);
         router.push(checkoutUrl);

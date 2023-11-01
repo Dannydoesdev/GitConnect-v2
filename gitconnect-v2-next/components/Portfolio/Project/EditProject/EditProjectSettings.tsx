@@ -27,7 +27,9 @@ import { IconX } from '@tabler/icons-react';
 import UploadProjectCoverImage from './UploadProjectCoverImage';
 import { useAtom } from 'jotai';
 import { isProAtom, unsavedChangesSettingsAtom } from '@/atoms';
-import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
+// import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
+import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
+
 import { app } from '@/firebase/clientApp';
 
 interface ProjectSettingsSimpleProps {
@@ -203,7 +205,9 @@ function ProjectSettingsModal({
 
 
   const upgradeToPremium = async () => {
-    const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+    // const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
+// 
+    const priceId = 'price_1O7gfFCT5BNNo8lFNzj4c76Y';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     // console.log(checkoutUrl);
     router.push(checkoutUrl);
