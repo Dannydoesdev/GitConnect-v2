@@ -92,7 +92,7 @@ import { AuthContext } from '@/context/AuthContext';
 type EditPortfolioProps = {
   repoName: string;
   description?: string | null;
-  url: string;
+  url?: string;
   repoid: string;
   userid: string;
   textContent?: string;
@@ -184,7 +184,7 @@ export default function EditPortfolioProject({
     // console.log('isAllowedToPublishProject isPro - start of function: ', isPro);
 
     if (isPro) {
-      console.log('is a Pro')
+      // console.log('is a Pro')
       return true;
     }
     // const newPremiumStatus = await getPremiumStatus(app)
