@@ -163,7 +163,10 @@ export function LoginPage() {
                   color: theme.colorScheme === 'dark' ? 'white' : 'black',
                 },
                 minWidth: '75%',
-                maxWidth: '85%',
+                maxWidth: '95%',
+                [theme.fn.smallerThan('sm')]: {
+                  // width: '300px',
+                },
               })}
             >
               Login with GitHub

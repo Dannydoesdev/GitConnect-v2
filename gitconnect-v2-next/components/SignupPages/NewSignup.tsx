@@ -150,7 +150,7 @@ export function SignupPage() {
         <Text size="sm" my="sm" align="center">
           More registration options coming soon!
         </Text>
-        <Group position="center" mx="xl" pb="md" mt="xl">
+        <Group position="center" mx="lg" pb="md" mt="xl">
           <Link href="#" passHref legacyBehavior>
             <Button
               color="dark"
@@ -180,7 +180,7 @@ export function SignupPage() {
                   // border: '1px solid white',
                 },
                 minWidth: '75%',
-                maxWidth: '85%',
+                maxWidth: '100%',
                 // )
                 // :(
                 // border: '1px solid black',
