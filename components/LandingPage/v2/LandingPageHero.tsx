@@ -15,7 +15,7 @@ export function HeroSection() {
   const Router = useRouter();
 
   // Don't re-render the Github provider until the router changes (eg user is pushed home)
-  const loginHandler = useCallback(
+  const signupHandler = useCallback(
     async (e: any) => {
       e.preventDefault();
       const provider = new GithubAuthProvider();
@@ -23,18 +23,18 @@ export function HeroSection() {
       try {
         // Attempt popup OAuth
         await signInWithPopup(auth, provider).then(() => {
-          console.log(provider)
-          console.log(auth.currentUser)
-          
+          // console.log(provider)
+          // console.log(auth.currentUser)
+          // console.log('Successfully signed up with Github');
           // const userId = auth.currentUser?.uid;
-          Router.push('/getrepos');
-
           // push to home after auth
           // Router.push('/');
         });
       } catch (error) {
         console.log(error);
         // alert(error)
+      } finally {
+        Router.push('/addproject');
       }
     },
     [Router]
@@ -91,7 +91,7 @@ export function HeroSection() {
                   radius="lg"
                   size="lg"
                   onClick={(e) => {
-                    loginHandler(e);
+                    signupHandler(e);
                   }}
                   className={classes.buttons}
                 >
