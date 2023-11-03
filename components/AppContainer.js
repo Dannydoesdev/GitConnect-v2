@@ -175,9 +175,33 @@ export const AppContainer = ({ children }, props) => {
   const { userData, currentUser } = useContext(AuthContext);
   const { classes, cx, theme } = useStyles();
 
+
   // const { currentUser } = useContext(AuthContext)
   const Router = useRouter();
   const [opened, { toggle, close }] = useDisclosure(false);
+
+
+  useEffect(() => {
+    const newPremiumStatus = userData ? userData.isPro : false;
+    setIsPro(newPremiumStatus);
+
+  }, [app, userData]);
+
+  const upgradeToPremiumMonthly = async () => {
+    const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
+
+    const checkoutUrl = await getCheckoutUrl(app, priceId);
+    router.push(checkoutUrl);
+  };
+  const upgradeToPremiumAnnual = async () => {
+
+  const priceId = 'price_1O7gfECT5BNNo8lFM64LROAo';
+
+  const checkoutUrl = await getCheckoutUrl(app, priceId);
+  router.push(checkoutUrl);
+};
+
+
 
   const signOutHandler = async (e) => {
     e.preventDefault();
