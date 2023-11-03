@@ -207,7 +207,7 @@ function ProjectSettingsModal({
   const upgradeToPremium = async () => {
     // const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
 // 
-    const priceId = 'price_1O7gfFCT5BNNo8lFNzj4c76Y';
+    const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     // console.log(checkoutUrl);
     router.push(checkoutUrl);
