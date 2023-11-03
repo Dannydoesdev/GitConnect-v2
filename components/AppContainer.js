@@ -1,25 +1,39 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Router, { useRouter } from 'next/router';
+import { CheckIcon } from '@heroicons/react/20/solid';
 import {
   AppShell,
   Avatar,
+  Box,
   Burger,
   Button,
+  Chip,
   createStyles,
   Footer,
   Group,
   Header,
+  List,
+  ListIcon,
+  ListItem,
   Menu,
+  Flex,
   Paper,
   rem,
+  SimpleGrid,
+  Stack,
   Text,
+  Title,
+  Center,
   Transition,
 } from '@mantine/core';
+import { app, auth } from '@/firebase/clientApp';
+
 import { useDisclosure } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { signOut } from 'firebase/auth';
+import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
 import { AuthContext } from '../context/AuthContext';
-import { auth } from '../firebase/clientApp';
 // import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { ColorSchemeToggle } from './ColorSchemeToggle/ColorSchemeToggle';
 
@@ -171,37 +185,336 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+const tiers = [
+  {
+    name: 'Monthly',
+    id: 'tier-hobby',
+    href: '#',
+    priceMonthly: '$15 AUD',
+    description: 'Monthly subscription - discount codes available.',
+    features: [
+      'Unlimited projects',
+      // 'Get featured more often',
+      'Influence the roadmap - join the Discord Pro chat',
+      'Add blogs - coming soon',
+      'AI integration (images and project copy) - coming soon',
+      // 'Custom URL - coming soon',
+      // 'Paid Project board - coming soon',
+      // 'Video integration - coming soon',
+      // 'Advanced analytics',
+      // '24-hour support response time'
+    ],
+    featured: false,
+  },
+  // {
+  //   name: 'Annual',
+  //   id: 'tier-enterprise',
+  //   href: '#',
+  //   priceMonthly: '$150 AUD',
+  //   description:
+  //     'Get 2 months free with an Annual subscription - discount codes available.',
+  //   features: [
+  //     'Unlimited projects',
+  //     'Get featured more often',
+  //     'Influence the roadmap - join the Discord Pro chat',
+  //     'Add blogs - coming soon',
+  //     'AI integration (images and project copy) - coming soon',
+  //     'Custom URL - coming soon',
+  //     // 'Paid Project board - coming soon',
+  //     // 'Video integration - coming soon',
+  //     // 'Access the pro Discord',
+  //     // 'Custom integrations',
+  //   ],
+  //   featured: true,
+  // },
+];
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
 export const AppContainer = ({ children }, props) => {
   const { userData, currentUser } = useContext(AuthContext);
   const { classes, cx, theme } = useStyles();
 
-
   // const { currentUser } = useContext(AuthContext)
   const Router = useRouter();
   const [opened, { toggle, close }] = useDisclosure(false);
-
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     const newPremiumStatus = userData ? userData.isPro : false;
     setIsPro(newPremiumStatus);
-
-  }, [app, userData]);
+  }, [userData]);
 
   const upgradeToPremiumMonthly = async () => {
     const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
 
     const checkoutUrl = await getCheckoutUrl(app, priceId);
-    router.push(checkoutUrl);
+    Router.push(checkoutUrl);
   };
   const upgradeToPremiumAnnual = async () => {
+    const priceId = 'price_1O7gfECT5BNNo8lFM64LROAo';
 
-  const priceId = 'price_1O7gfECT5BNNo8lFM64LROAo';
+    const checkoutUrl = await getCheckoutUrl(app, priceId);
+    Router.push(checkoutUrl);
+  };
 
-  const checkoutUrl = await getCheckoutUrl(app, priceId);
-  router.push(checkoutUrl);
-};
+  const premiumModal = () => {
+    modals.openConfirmModal({
+      title: 'Which subscription would you like to purchase?',
 
+      // groupProps: { width: '100%', height: '100%' },
+      children: (
+        // <Text size="sm">
 
+        // <Group flex>
+        <Flex
+        // sx={(theme) => ({
+        //   backgroundColor: 'black',
+        // })}
+      mih={50}
+      bg="rgba(0, 0, 0, .3)"
+      gap="md"
+      justify="center"
+      align="center"
+      direction="column"
+      wrap="wrap"
+        >
+          <Text fw={400} italic>Sorry for the bad UI here - will be fixed ASAP</Text>
+          {/* <br /> */}
+          {/* <SimpleGrid
+            cols={2}
+            spacing="lg"
+            justifyItems="start"
+            breakpoints={[
+              { maxWidth: '62rem', cols: 2, spacing: 'md' },
+              { maxWidth: '48rem', cols: 2, spacing: 'sm' },
+              { maxWidth: '36rem', cols: 1, spacing: 'sm' },
+            ]}
+          > */}
+            {/* <Group w='100%' h='100%'> */}
+            {/* <Group> */}
+          <Title order={4}>Monthly</Title>
+          <Group>
+              <Text size="sm">Monthly subscription</Text>
+              <Text size="sm">$15 AUD</Text>
+              </Group>
+          <Title order={4}>Annual</Title>
+          <Group>
+
+              <Text size="sm">Get 2 months free with an Annual subscription</Text>
+            <Text size="sm">$150 AUD</Text>
+            </Group>
+            {/* </Group> */}
+
+          <br />
+          {/* <br /> */}
+            <Stack
+            alignItems="center"
+            justifyContent="center"
+            spacing="xs"
+            h={200}
+            // sx={(theme) => ({
+            //   backgroundColor: 'black',
+            // })}
+              // sx={(theme) => ({
+              //   backgroundColor:
+              //     theme.colorScheme === 'dark'
+              //       ? theme.colors.dark[8]
+              //       : theme.colors.gray[0],
+              // })}
+            >
+              {/* <Group position="center"> */}
+              <Center>
+                {tiers.map((tier) => (
+                  <Group justify='center' justifyContent='center'>
+                    {tier.features.map((feature) =>
+                      feature.includes('coming soon') ? (
+                        <Chip
+                          key={feature}
+                          defaultChecked
+                          color="yellow"
+                          variant="light"
+                          size="xs"
+                          radius="md"
+                        >
+                          {feature}
+                        </Chip>
+                      ) : (
+                        <Chip
+                          key={feature}
+                          defaultChecked
+                          color="teal"
+                          variant="light"
+                          size="xs"
+                          radius="md"
+                        >
+                          {feature}
+                        </Chip>
+                      )
+                    )}
+                  </Group>
+                ))}
+                </Center>
+              {/* </Group> */}
+            </Stack>
+            {/* </Group> */}
+          {/* </SimpleGrid> */}
+          </Flex>
+        // {/* const tiers = [
+        //   {
+        //     name: 'Monthly',
+        //     id: 'tier-hobby',
+        //     href: '#',
+        //     priceMonthly: '$15 AUD',
+        //     description: 'Monthly subscription - discount codes available.',
+        //     features: [
+        //       'Unlimited projects',
+        //       'Get featured more often',
+        //       'Influence the roadmap - join the Discord Pro chat',
+        //       'Add blogs - coming soon',
+        //       'AI integration (images and project copy) - coming soon',
+        //       'Custom URL - coming soon',
+        //       // 'Paid Project board - coming soon',
+        //       // 'Video integration - coming soon',
+        //       // 'Advanced analytics',
+        //       // '24-hour support response time'
+        //     ],
+        //     featured: false,
+        //   },
+        //   {
+        //     name: 'Annual',
+        //     id: 'tier-enterprise',
+        //     href: '#',
+        //     priceMonthly: '$150 AUD',
+        //     description:
+        //       'Get 2 months free with an Annual subscription - discount codes available.',
+        //     features: [
+        //       'Unlimited projects',
+        //       'Get featured more often',
+        //       'Influence the roadmap - join the Discord Pro chat',
+        //       'Add blogs - coming soon',
+        //       'AI integration (images and project copy) - coming soon',
+        //       'Custom URL - coming soon',
+        //       // 'Paid Project board - coming soon',
+        //       // 'Video integration - coming soon',
+        //       // 'Access the pro Discord',
+        //       // 'Custom integrations',
+        //     ],
+        //     featured: true,
+        //   },
+        // ]; */}
+
+        //             {/* <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+        //               {tiers.map((tier, tierIdx) => (
+        //                 <div
+        //                   key={tier.id}
+        //                   className={classNames(
+        //                     tier.featured
+        //                       ? 'relative bg-gray-900 shadow-2xl'
+        //                       : 'bg-white/60 sm:mx-8 lg:mx-0',
+        //                     tier.featured
+        //                       ? ''
+        //                       : tierIdx === 0
+        //                       ? 'rounded-t-3xl sm:rounded-b-none lg:rounded-tr-none lg:rounded-bl-3xl'
+        //                       : 'sm:rounded-t-none lg:rounded-tr-3xl lg:rounded-bl-none',
+        //                     'rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10'
+        //                   )}
+        //                 >
+        //                   <h3
+        //                     id={tier.id}
+        //                     className={classNames(
+        //                       tier.featured ? 'text-indigo-400' : 'text-indigo-600',
+        //                       'text-base font-semibold leading-7'
+        //                     )}
+        //                   >
+        //                     {tier.name}
+        //                   </h3>
+        //                   <p className="mt-4 flex items-baseline gap-x-2">
+        //                     <span
+        //                       className={classNames(
+        //                         tier.featured ? 'text-white' : 'text-gray-900',
+        //                         'text-5xl font-bold tracking-tight'
+        //                       )}
+        //                     >
+        //                       {tier.priceMonthly}
+        //                     </span>
+        //                     <span
+        //                       className={classNames(
+        //                         tier.featured ? 'text-gray-400' : 'text-gray-500',
+        //                         'text-base'
+        //                       )}
+        //                     >
+        //                       /month
+        //                     </span>
+        //                   </p>
+        //                   <p
+        //                     className={classNames(
+        //                       tier.featured ? 'text-gray-300' : 'text-gray-600',
+        //                       'mt-6 text-base leading-7'
+        //                     )}
+        //                   >
+        //                     {tier.description}
+        //                   </p>
+        //                   <ul
+        //                     role="list"
+        //                     className={classNames(
+        //                       tier.featured ? 'text-gray-300' : 'text-gray-600',
+        //                       'mt-8 space-y-3 text-sm leading-6 sm:mt-10'
+        //                     )}
+        //                   >
+        //                     {tier.features.map((feature) => (
+        //                       <li key={feature} className="flex gap-x-3">
+        //                         <CheckIcon
+        //                           className={classNames(
+        //                             tier.featured ? 'text-indigo-400' : 'text-indigo-600',
+        //                             'h-6 w-5 flex-none'
+        //                           )}
+        //                           aria-hidden="true"
+        //                         />
+        //                         {feature}
+        //                       </li>
+        //                     ))}
+        //                   </ul> */}
+        //                   {/* <a
+        //                   href={tier.href}
+        //                   aria-describedby={tier.id}
+        //                   className={classNames(
+        //                     tier.featured
+        //                       ? 'bg-indigo-500 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-indigo-500'
+        //                       : 'text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300 focus-visible:outline-indigo-600',
+        //                     'mt-8 block rounded-md py-2.5 px-3.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'
+        //                   )}
+        //                 >
+        //                   Get started today
+        //                 </a> */}
+        //                 {/* </div> */}
+        //               {/* ))} */}
+        //             {/* </div> */}
+        //             {/* </div> */}
+        //             // </Group>
+      ),
+      labels: { confirm: 'Annual', cancel: 'Monthly' },
+      onCancel: () => upgradeToPremiumMonthly(),
+      onConfirm: () => upgradeToPremiumAnnual(),
+      // onCancel: () => console.log('Cancel'),
+      // onConfirm: () => console.log('Confirmed'),
+    });
+    // <Modal opened={opened} onClose={close} title="Authentication" centered>
+    {
+      /* Modal content */
+    }
+    {
+      /* </Modal> */
+    }
+  };
+
+  const premiumButton = () => {
+    <Group position="center">
+      <Button onClick={open}>Open centered Modal</Button>
+    </Group>;
+  };
 
   const signOutHandler = async (e) => {
     e.preventDefault();
@@ -412,6 +725,60 @@ export const AppContainer = ({ children }, props) => {
                       Portfolio
                     </Button>
                   </Link>
+                  {/* <Link href="#" passHref legacyBehavior>
+                    <Button
+                      // px='xl'
+                      color="dark"
+                      variant="white"
+                      // compact={true}
+                      component="a"
+                      size="md"
+                      radius="lg"
+                      // w='10%'
+                      onClick={premiumModal}
+                      // leftIcon={<IconBrandGithub size={18} />}
+                      sx={(theme) => ({
+                        // width: '5%',
+                        border:
+                          theme.colorScheme === 'dark'
+                            ? '1px solid black'
+                            : '1px solid white',
+
+                        backgroundColor: theme.colorScheme === 'dark' ? 'white' : 'black',
+                        color: theme.colorScheme === 'dark' ? 'black' : 'white',
+
+                        '&:hover': {
+                          border:
+                            theme.colorScheme === 'dark'
+                              ? '1px solid black'
+                              : '1px solid black',
+                          backgroundColor:
+                            theme.colorScheme === 'dark' ? 'black' : 'white',
+                          color: theme.colorScheme === 'dark' ? 'white' : 'black',
+                        },
+                        // width: '350px',
+                        // height: '65px',
+                      })}
+                    >
+                      Go Pro
+                    </Button>
+                  </Link> */}
+
+                  {/* <Button
+                    size="xs"
+                    color="gray"
+                    variant="subtle"
+                    onClick={premiumModal}
+                    sx={(theme) => ({
+                      fontSize: '16px',
+                      color:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.white
+                          : theme.colors.dark,
+                    })}
+                  >
+                    Portfolio
+                  </Button> */}
 
                   {/* TESTING ONLY */}
                   {/* {(userData.userId === 'bO4o8u9IskNbFk2wXZmjtJhAYkR2' || process.env.NODE_ENV === 'development') && (
@@ -438,9 +805,45 @@ export const AppContainer = ({ children }, props) => {
                   </Link>
                   )} */}
                   {/* TESTING ONLY */}
-
                 </Group>
+                <Link href="#" passHref legacyBehavior>
+                    <Button
+                      // px='xl'
+                      color="dark"
+                      variant="white"
+                      // compact={true}
+                      component="a"
+                      size="md"
+                      radius="lg"
+                      // w='10%'
+                      onClick={premiumModal}
+                      // leftIcon={<IconBrandGithub size={18} />}
+                      sx={(theme) => ({
+                        // width: '5%',
+                        border:
+                          theme.colorScheme === 'dark'
+                            ? '1px solid black'
+                            : '1px solid white',
 
+                        backgroundColor: theme.colorScheme === 'dark' ? 'white' : 'black',
+                        color: theme.colorScheme === 'dark' ? 'black' : 'white',
+
+                        '&:hover': {
+                          border:
+                            theme.colorScheme === 'dark'
+                              ? '1px solid black'
+                              : '1px solid black',
+                          backgroundColor:
+                            theme.colorScheme === 'dark' ? 'black' : 'white',
+                          color: theme.colorScheme === 'dark' ? 'white' : 'black',
+                        },
+                        // width: '350px',
+                        // height: '65px',
+                      })}
+                    >
+                      Go Pro
+                    </Button>
+                  </Link>
                 <Group>
                   <Burger
                     opened={opened}
