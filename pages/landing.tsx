@@ -40,6 +40,7 @@ import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import mixpanel from 'mixpanel-browser';
 import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
 import { AuthContext } from '@/context/AuthContext';
+import { getCheckoutUrlTest } from '@/lib/stripe/stripePaymentTest';
 
 const navigation = [
   { name: 'Product', href: '#' },
@@ -305,14 +306,14 @@ export default function LandingPage() {
   }, [userData]);
 
   const upgradeToPremiumMonthly = async () => {
-    const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
 
+    const priceId = 'price_1O8cptCT5BNNo8lFuDcGOAcM';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
   const upgradeToPremiumAnnual = async () => {
-    const priceId = 'price_1O7gfECT5BNNo8lFM64LROAo';
 
+     const priceId = 'price_1O8cq0CT5BNNo8lFWd3e5TYy';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
