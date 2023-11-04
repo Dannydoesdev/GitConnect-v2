@@ -292,17 +292,31 @@ export default function PricingPage() {
   }, [userData]);
 
   const upgradeToPremiumMonthly = async () => {
-    const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
 
+    const priceId = 'price_1O8cptCT5BNNo8lFuDcGOAcM';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
   const upgradeToPremiumAnnual = async () => {
-    const priceId = 'price_1O7gfECT5BNNo8lFM64LROAo';
 
+     const priceId = 'price_1O8cq0CT5BNNo8lFWd3e5TYy';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
+
+
+  // const upgradeToPremiumMonthly = async () => {
+  //   const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
+
+  //   const checkoutUrl = await getCheckoutUrl(app, priceId);
+  //   Router.push(checkoutUrl);
+  // };
+  // const upgradeToPremiumAnnual = async () => {
+  //   const priceId = 'price_1O7gfECT5BNNo8lFM64LROAo';
+
+  //   const checkoutUrl = await getCheckoutUrl(app, priceId);
+  //   Router.push(checkoutUrl);
+  // };
 
   return (
     <div className="bg-gray-900">
