@@ -475,11 +475,14 @@ export default function PricingPage() {
                   {tier.name.includes('Pro') ? (
                     <>
                       <span className="text-4xl font-bold tracking-tight text-gray-300 line-through">
-                        ${tier.price[frequency.value]}{' '}
+                        {/* ${tier.price[frequency.value]}{' '} */}
+                        ${tier.price[frequency.value as 'monthly' | 'annually']}{' '}
+
                         {/* Assuming this is the original price */}
                       </span>
                       <span className="ml-2 text-4xl font-bold tracking-tight text-white">
-                        ${tier.discountedPrice[frequency.value]}{' '}
+                      ${tier.discountedPrice && tier.discountedPrice[frequency.value as 'monthly' | 'annually']}{' '} 
+                        {/* ${tier.discountedPrice[frequency.value]}{' '} */}
                         {/* You will need to add the discounted price in your tier data */}
                       </span>
                       <span className="text-sm font-semibold leading-6 text-gray-300">
@@ -489,7 +492,9 @@ export default function PricingPage() {
                   ) : (
                     <>
                       <span className="text-4xl font-bold tracking-tight text-white">
-                        {tier.price[frequency.value]}
+                        {/* {tier.price[frequency.value]} */}
+                        {tier.price[frequency.value as 'monthly' | 'annually']}{' '}
+
                       </span>
                       <span className="text-sm font-semibold leading-6 text-gray-300">
                         {frequency.priceSuffix}
