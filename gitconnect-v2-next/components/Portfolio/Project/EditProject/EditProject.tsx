@@ -9,6 +9,7 @@ import {
   unsavedChangesAtom,
   unsavedChangesSettingsAtom,
 } from '@/atoms';
+import { AuthContext } from '@/context/AuthContext';
 import { app, auth, db } from '@/firebase/clientApp';
 // import { RepoData } from '../../../types/repos';
 import {
@@ -53,18 +54,16 @@ import DOMPurify from 'isomorphic-dompurify';
 import { useAtom } from 'jotai';
 import { set } from 'lodash';
 import useSWR from 'swr';
+import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 // import { isAllowedToPublishProject } from '@/lib/stripe/isAllowedToPublishProject';
 import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
-import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 // import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
 import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
-
 import LoadingPage from '../../../LoadingPage/LoadingPage';
 import ViewPreviewProjectEditor from '../ViewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '../ViewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal, { FormData } from './EditProjectSettings';
 import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
-import { AuthContext } from '@/context/AuthContext';
 
 // import { createDOMPurify } from 'dompurify';
 // const DOMPurify = createDOMPurify(window);
@@ -164,12 +163,9 @@ export default function EditPortfolioProject({
   const [isPro, setIsPro] = useAtom(isProAtom);
 
   useEffect(() => {
-  
-  const newPremiumStatus = userData ? userData.isPro : false;
-  setIsPro(newPremiumStatus);
-
-
-  }, [userData])
+    const newPremiumStatus = userData ? userData.isPro : false;
+    setIsPro(newPremiumStatus);
+  }, [userData]);
 
   type IsAllowedToPublishProjectProps = {
     userId: string;
@@ -279,7 +275,6 @@ export default function EditPortfolioProject({
           await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
           setUnsavedChanges(false);
           setUnsavedChangesSettings(false);
- 
         } catch (error) {
           console.log(error);
           notifications.update({
@@ -296,24 +291,24 @@ export default function EditPortfolioProject({
             id: 'load-data',
             color: 'red',
             // loading: true,
-            title: 'Project saved - redirecting',
+            title: 'Your updates were saved - redirecting',
             message:
-              'You have reached the limit of 3 published projects - redirecting to Stripe',
+              'You have reached the free plan limit of published projects - redirecting to Pricing',
             icon: <IconCross size="1rem" />,
-            autoClose: false,
+            autoClose: 2000,
           });
         }
       }, 2000);
       setTimeout(async () => {
-        // const upgradeToPremium = async () => {
-        // const priceId = 'price_1O6NBtCT5BNNo8lFdMWZfRgO';
-        const priceId = 'price_1O7gfFCT5BNNo8lFNzj4c76Y';
+        // const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
 
-        const checkoutUrl = await getCheckoutUrl(app, priceId);
-        // console.log(checkoutUrl);
-        router.push(checkoutUrl);
-        // console.log('Upgrade to Premium');
-        // };
+        // const checkoutUrl = await getCheckoutUrl(app, priceId);
+        // router.push(checkoutUrl);
+
+        // const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
+
+        // const checkoutUrl = await getCheckoutUrl(app, priceId);
+        router.push('/pricing');
       }, 2000);
 
       // id: 'load-data',
@@ -323,73 +318,72 @@ export default function EditPortfolioProject({
       // icon: <IconCheck size="1rem" />,
       // autoClose: 1000,
       return;
+    } else {
+      // console.log(`handlePublish fn - canPublish end result: ${canPublish}`);
+
+      const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+      const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
+      try {
+        notifications.show({
+          id: 'load-data',
+          loading: true,
+          title: 'Publishing your project',
+          message: 'Project is being saved to the database',
+          autoClose: false,
+          withCloseButton: false,
+        });
+        await setDoc(
+          docRef,
+          {
+            ...formData,
+            userId: userid,
+            repoId: repoid,
+            username_lowercase: userName.toLowerCase(),
+            reponame_lowercase: repoName.toLowerCase(),
+          },
+          { merge: true }
+        );
+        //
+        await setDoc(
+          parentDocRef,
+          { ...formData, hidden: false, visibleToPublic: true },
+          { merge: true }
+        );
+        setUnsavedChanges(false);
+        setUnsavedChangesSettings(false);
+        // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
+
+        // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
+        // console.log(formData)
+        // console.log('publishing');
+        // close();
+      } catch (error) {
+        console.log(error);
+        notifications.update({
+          id: 'load-data',
+          color: 'red',
+          title: 'Something went wrong',
+          message: 'Something went wrong, please try again',
+          icon: <IconCross size="1rem" />,
+          autoClose: 2000,
+        });
+      } finally {
+        notifications.update({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Project published successfully',
+          message: 'Loading your project page',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 2000,
+        });
+        close();
+
+        setTimeout(() => {
+          router.push(`/portfolio/${userName}/${repoName}`);
+        }, 2000);
+        // router.push(`/portfolio/${userName}/${repoName}`);
+      }
     }
-
-    // console.log(`handlePublish fn - canPublish end result: ${canPublish}`);
-
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
-    const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
-    try {
-      notifications.show({
-        id: 'load-data',
-        loading: true,
-        title: 'Publishing your project',
-        message: 'Project is being saved to the database',
-        autoClose: false,
-        withCloseButton: false,
-      });
-      await setDoc(
-        docRef,
-        {
-          ...formData,
-          userId: userid,
-          repoId: repoid,
-          username_lowercase: userName.toLowerCase(),
-          reponame_lowercase: repoName.toLowerCase(),
-        },
-        { merge: true }
-      );
-      //
-      await setDoc(
-        parentDocRef,
-        { ...formData, hidden: false, visibleToPublic: true },
-        { merge: true }
-      );
-      setUnsavedChanges(false);
-      setUnsavedChangesSettings(false);
-      // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
-
-      // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
-      // console.log(formData)
-      // console.log('publishing');
-      // close();
-    } catch (error) {
-      console.log(error);
-      notifications.update({
-        id: 'load-data',
-        color: 'red',
-        title: 'Something went wrong',
-        message: 'Something went wrong, please try again',
-        icon: <IconCross size="1rem" />,
-        autoClose: 2000,
-      });
-    } finally {
-      notifications.update({
-        id: 'load-data',
-        color: 'teal',
-        title: 'Project published successfully',
-        message: 'Loading your project page',
-        icon: <IconCheck size="1rem" />,
-        autoClose: 2000,
-      });
-      close();
-
-      setTimeout(() => {
-        router.push(`/portfolio/${userName}/${repoName}`);
-      }, 2000);
-      // router.push(`/portfolio/${userName}/${repoName}`);
-    }
-
     // TODO: New project view page
     // router.push(`/profiles/projects/${repoid}`);
   }

@@ -10,7 +10,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { setCookie, getCookie, hasCookie } from 'cookies-next';
 
 
-export const getCheckoutUrl = async (
+export const getCheckoutUrlTest = async (
   app: FirebaseApp,
   priceId: string
 ): Promise<string> => {
@@ -54,7 +54,7 @@ export const getCheckoutUrl = async (
   });
 };
 
-export const getPortalUrl = async (app: FirebaseApp): Promise<string> => {
+export const getPortalUrlTest = async (app: FirebaseApp): Promise<string> => {
   const auth = getAuth(app);
   const user = auth.currentUser;
 

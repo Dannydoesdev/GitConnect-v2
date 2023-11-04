@@ -4,12 +4,9 @@ module.exports = {
   mode: 'jit',
   // content: ['./src/**/*.tsx'],
   // content: ['./**/*.tsx'],
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-  ],
- 
-    // "./src/utils/**/*.{js,ts,jsx,tsx,mdx}",
+  content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+
+  // "./src/utils/**/*.{js,ts,jsx,tsx,mdx}",
 
   // purge: [
   //   // './src/**/*.tsx',
@@ -25,10 +22,10 @@ module.exports = {
     },
   },
   // plugins: [],
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [require('@tailwindcss/typography'), require('@tailwindcss/forms')],
   safelist: [
     {
-      pattern: /justify-(start|end)/
-    }
-  ]
-}
+      pattern: /justify-(start|end)/,
+    },
+  ],
+};
