@@ -365,7 +365,7 @@ export default function LandingPage() {
 
       <main>
         {/* Hero section */}
-        <div className="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
+        <div className="relative isolate overflow-hidden bg-gray-900 pb-0 pt-6 sm:pb-0 -mt-28 -mb-28 sm:-mb-36">
           {/* <img
             // src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2830&q=80&blend=111827&sat=-100&exp=15&blend-mode=multiply"
             src="/img/gitconnect.webp"
@@ -385,15 +385,16 @@ export default function LandingPage() {
             />
           </div>
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+            <div className="mx-auto max-w-2xl py-44 sm:py-48 lg:py-48">
               {/* </div>  */}
               <div className="text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
                   Show the world what you’re building
                 </h1>
                 <p className="mt-6 text-lg leading-8 text-gray-300">
-                  GitConnect is a dedicated platform for developers to build their
-                  portfolio, connect with opportunities, and with each other.
+                  {/* GitConnect is a platform for developers to build their
+                  portfolio, connect with opportunities, and with each other. */}
+                  GitConnect is a platform dedicated to helping developers build their portfolio, find opportunities and connect with each other.
                 </p>
 
                 <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
