@@ -4,7 +4,18 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { formDataAtom } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
-import { Container, Grid, Group, MediaQuery, Space, Tabs } from '@mantine/core';
+import {
+  Container,
+  createStyles,
+  em,
+  getBreakpointValue,
+  Grid,
+  Group,
+  MediaQuery,
+  rem,
+  Space,
+  Tabs,
+} from '@mantine/core';
 // import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import { useAtom } from 'jotai';
 import useSWR from 'swr';
@@ -15,10 +26,10 @@ import {
 } from '@/lib/profiles';
 import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
-import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 // import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageDraftProjectGrid';
 import ProfilePageDraftProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageDraftProjectGrid';
 import ProfilePagePublishedProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePagePublishedProjectGrid';
+import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username_lowercase } = params as { username_lowercase: string };
@@ -36,7 +47,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const initialProfile = Array.isArray(profileData)
     ? profileData[0]?.docData ?? null
     : profileData?.docData ?? null;
-  
+
   return {
     props: {
       initialProjects,
@@ -65,12 +76,50 @@ interface PortfolioProps {
   initialProjects: any;
   initialProfile: any;
 }
+const useStyles = createStyles((theme) => ({
+  //  Grid needs to flex nowrap at md+ (over 1000px) and flex wrap at md- (under 1000px)
+  grid: {
+    // Static media query
+    flexWrap: 'nowrap',
+    [`@media (max-width: ${em(1000)})`]: {
+      flexWrap: 'wrap',
+    },
+  },
+
+  // grid: {
+
+  //   // Static media query
+  //   flexWrap: 'nowrap',
+  //   [`@media (max-width: ${em(1000)})`]: {
+  //     flexWrap: 'wrap',
+  //   },
+  // },
+  // container: {
+  //   height: rem(100),
+  //   backgroundColor: theme.colors.blue[6],
+
+  //   // Media query with value from theme
+  //   [`@media (max-width: ${em(getBreakpointValue(theme.breakpoints.xl) - 1)})`]: {
+  //     backgroundColor: theme.colors.pink[6],
+  //   },
+
+  //   // Simplify media query writing with theme functions
+  //   [theme.fn.smallerThan('lg')]: {
+  //     backgroundColor: theme.colors.yellow[6],
+  //   },
+
+  //   // Static media query
+  //   [`@media (max-width: ${em(800)})`]: {
+  //     backgroundColor: theme.colors.orange[6],
+  //   },
+  // },
+}));
 
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
+  const { classes, theme } = useStyles();
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const { username_lowercase } = router.query;
-
 
   const isCurrentUser =
     username_lowercase &&
@@ -78,14 +127,13 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
       ? true
       : false;
 
-      // const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
+  // const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
 
-      // useEffect(() => {
-      //     if (username_lowercase && userData.userName) {
-      //         setIsCurrentUser(userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase());
-      //     }
-      // }, [username_lowercase, userData.userName]);
-      
+  // useEffect(() => {
+  //     if (username_lowercase && userData.userName) {
+  //         setIsCurrentUser(userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase());
+  //     }
+  // }, [username_lowercase, userData.userName]);
 
   const [formData, setFormData] = useAtom(formDataAtom);
 
@@ -132,10 +180,6 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   // if (profileError) return <div>Failed to load profile</div>;
   // if (projectsError) return <div>Failed to load projects</div>;
 
-
- 
-
-
   const draftProjects = projects?.filter((project: any) => {
     return project.docData.hidden === true;
   });
@@ -176,13 +220,21 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     return (
       <>
         <Head>
-          <title>{`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Portfolio`}</title>
+          <title>{`${
+            (profile?.name && profile.name.length >= 1
+              ? profile.name
+              : username_lowercase) ?? 'GitConnect'
+          }'s Portfolio`}</title>
           <meta
             name="description"
-            content={`${(profile?.name && profile.name.length >> 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s portfolio page`}
+            content={`${
+              (profile?.name && profile.name.length >> 1
+                ? profile.name
+                : username_lowercase) ?? 'GitConnect'
+            }'s portfolio page`}
           />
         </Head>
-          {/* <title>{`${profile?.name ?? username_lowercase ?? 'GitConnect'
+        {/* <title>{`${profile?.name ?? username_lowercase ?? 'GitConnect'
             }'s Portfolio`}</title> */}
         {/* // <meta
           //   name="description"
@@ -201,7 +253,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
               <Grid.Col span={8}>
                 <Grid gutter="md">
                   <Grid.Col>
-                  {isCurrentUser ? (
+                    {isCurrentUser ? (
                       <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
                         <Tabs.List>
                           <Tabs.Tab value="first">Projects</Tabs.Tab>
@@ -212,13 +264,21 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePagePublishedProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
+                            <ProfilePagePublishedProjectGrid
+                              currentUser={isCurrentUser}
+                              projectType={'published'}
+                              projects={publishedProjects}
+                            />
                           </Grid.Col>
                         </Tabs.Panel>
                         <Tabs.Panel value="second">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageDraftProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
+                            <ProfilePageDraftProjectGrid
+                              currentUser={isCurrentUser}
+                              projectType={'drafts'}
+                              projects={draftProjects}
+                            />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
@@ -230,7 +290,10 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePagePublishedProjectGrid projectType={'published'} projects={publishedProjects} />
+                            <ProfilePagePublishedProjectGrid
+                              projectType={'published'}
+                              projects={publishedProjects}
+                            />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
@@ -243,102 +306,122 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
         </Container>
       </>
     );
-  } else return (
-    <>
-       <Head>
-          <title>{`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Portfolio`}</title>
+  } else
+    return (
+      <>
+        <Head>
+          <title>{`${
+            (profile?.name && profile.name.length >= 1
+              ? profile.name
+              : username_lowercase) ?? 'GitConnect'
+          }'s Portfolio`}</title>
           <meta
             name="description"
-            content={`${(profile?.name && profile.name.length >> 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s portfolio page`}
+            content={`${
+              (profile?.name && profile.name.length >> 1
+                ? profile.name
+                : username_lowercase) ?? 'GitConnect'
+            }'s portfolio page`}
           />
         </Head>
-    
 
-      {/* <Container fluid mx="md" my="md"> */}
-      {/* <Container size="xl" mx="md" my="md" > */}
-      <Container size="xl" mt={0}
-        // sx={(theme) => ({
-          
-    
-        //   '@media (max-width: 1200px)': {
-        //     marginTop: '70px',
-        //   },
-        //   '@media (max-width: 1100px)': {
-        //     marginTop: '0px',
-        //   },
+        {/* <Container fluid mx="md" my="md"> */}
+        {/* <Container size="xl" mx="md" my="md" > */}
+        <Container
+          size="xl"
+          mt={0}
+          // sx={(theme) => ({
 
+          //   '@media (max-width: 1200px)': {
+          //     marginTop: '70px',
+          //   },
+          //   '@media (max-width: 1100px)': {
+          //     marginTop: '0px',
+          //   },
 
-        // })}
-      >
-      {/* <Space h={10} />
+          // })}
+        >
+          {/* <Space h={10} />
       <MediaQuery
       query="(max-width: 1200px) and (min-width: 1200px)"
       styles={{ fontSize: rem(20), '&:hover': { backgroundColor: 'silver' } }}
         >
 
              </MediaQuery> */}
-        <Group position="center">
-     
+          <Group position="center">
+            <Space h={60} />
 
-        <Space h={60} />
-          <Grid grow gutter={35}>
+            {/*  Grid needs to flex nowrap at md+ (over 1000px) and flex wrap at md- (under 1000px) */}
 
-            {/* <Grid.Col sm={12} md={3} lg={2}> */}
-            <Grid.Col sm={12} md={4}>
-              {profile &&
-                // FIXME: NEW PROFILE PANEL SIMPLIFIED FOR VIEW ONLY
-                (isCurrentUser ? (
-                  <ProfilePageUserPanel props={profile} currentUser={true} />
-                ) : (
-                  <ProfilePageUserPanel props={profile} currentUser={false} />
-                ))}
-            </Grid.Col>
-            {projects && (
-              <Grid.Col span={8}>
-                <Grid gutter="md">
-                  <Grid.Col>
-                    {/* NOTE: If current user owns profile - show drafts etc */}
-                    {isCurrentUser ? (
-                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                        <Tabs.List>
-                          <Tabs.Tab value="first">Projects</Tabs.Tab>
-                          <Tabs.Tab value="second" color="orange">
-                            Drafts
-                          </Tabs.Tab>
-                        </Tabs.List>
-                        <Tabs.Panel value="first">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePagePublishedProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                        <Tabs.Panel value="second">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePageDraftProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                      </Tabs>
-                    ) : (
-                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                        <Tabs.List>
-                          <Tabs.Tab value="first">Projects</Tabs.Tab>
-                        </Tabs.List>
-                        <Tabs.Panel value="first">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePagePublishedProjectGrid projectType={'published'} projects={publishedProjects} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                      </Tabs>
-                    )}
-                  </Grid.Col>
-                </Grid>
+            {/* <Grid grow gutter={35} style={{ flexWrap: 'nowrap' }}> */}
+            <Grid grow gutter={35} className={classes.grid}>
+              {/* <Grid.Col sm={12} md={3} lg={2}> */}
+              <Grid.Col sm={12} md={4}>
+                {profile &&
+                  // FIXME: NEW PROFILE PANEL SIMPLIFIED FOR VIEW ONLY
+                  (isCurrentUser ? (
+                    <ProfilePageUserPanel props={profile} currentUser={true} />
+                  ) : (
+                    <ProfilePageUserPanel props={profile} currentUser={false} />
+                  ))}
               </Grid.Col>
-            )}
-          </Grid>
-        </Group>
-      </Container>
-    </>
-  );
+              {projects && (
+                <Grid.Col span={8}>
+                  <Grid gutter="md">
+                    <Grid.Col>
+                      {/* NOTE: If current user owns profile - show drafts etc */}
+                      {isCurrentUser ? (
+                        <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                          <Tabs.List>
+                            <Tabs.Tab value="first">Projects</Tabs.Tab>
+                            <Tabs.Tab value="second" color="orange">
+                              Drafts
+                            </Tabs.Tab>
+                          </Tabs.List>
+                          <Tabs.Panel value="first">
+                            <Space h={20} />
+                            <Grid.Col>
+                              <ProfilePagePublishedProjectGrid
+                                currentUser={isCurrentUser}
+                                projectType={'published'}
+                                projects={publishedProjects}
+                              />
+                            </Grid.Col>
+                          </Tabs.Panel>
+                          <Tabs.Panel value="second">
+                            <Space h={20} />
+                            <Grid.Col>
+                              <ProfilePageDraftProjectGrid
+                                currentUser={isCurrentUser}
+                                projectType={'drafts'}
+                                projects={draftProjects}
+                              />
+                            </Grid.Col>
+                          </Tabs.Panel>
+                        </Tabs>
+                      ) : (
+                        <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+                          <Tabs.List>
+                            <Tabs.Tab value="first">Projects</Tabs.Tab>
+                          </Tabs.List>
+                          <Tabs.Panel value="first">
+                            <Space h={20} />
+                            <Grid.Col>
+                              <ProfilePagePublishedProjectGrid
+                                projectType={'published'}
+                                projects={publishedProjects}
+                              />
+                            </Grid.Col>
+                          </Tabs.Panel>
+                        </Tabs>
+                      )}
+                    </Grid.Col>
+                  </Grid>
+                </Grid.Col>
+              )}
+            </Grid>
+          </Group>
+        </Container>
+      </>
+    );
 }

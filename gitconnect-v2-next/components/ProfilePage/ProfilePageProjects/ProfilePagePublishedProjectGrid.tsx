@@ -1,6 +1,8 @@
 import React, { use, useContext, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { projectOrderAtom } from '@/atoms';
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import {
   Badge,
   Box,
@@ -22,26 +24,33 @@ import { useListState } from '@mantine/hooks';
 import { IconGripVertical } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
 // import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
-import { DragDropContext, Draggable, Droppable, DropResult } from 'hello-pangea/dnd'
+// import { DragDropContext, Draggable, Droppable, DropResult } from 'hello-pangea'
 import { ProfilePageProjectCard } from './ProfilePageProjectCard';
-import dynamic from 'next/dynamic';
 
 const useStyles = createStyles((theme) => ({
   item: {
     display: 'flex',
     alignItems: 'center',
-    borderRadius: theme.radius.md,
-    border: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`,
-    padding: `${theme.spacing.sm} ${theme.spacing.xl}`,
-    paddingLeft: `calc(${theme.spacing.xl} - ${theme.spacing.md})`, // to offset drag handle
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
+    // borderRadius: theme.radius.md,
+    // border: `${rem(1)} solid ${
+    //   theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+    // }`,
+    // padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+    padding: `${theme.spacing.lg} 0`,
+
+    // paddingLeft: `calc(${theme.spacing.xl} - ${theme.spacing.md})`, // to offset drag handle
+    // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
     marginBottom: theme.spacing.sm,
   },
 
   itemDragging: {
+    marginLeft: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    border: `${rem(1)} solid ${
+      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+    }`,
     boxShadow: theme.shadows.sm,
+        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
   },
 
   symbol: {
@@ -59,6 +68,8 @@ const useStyles = createStyles((theme) => ({
     color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[6],
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
+    cursor: 'grab',
+    marginLeft: '-17px',
   },
 }));
 
@@ -104,10 +115,10 @@ const ProfilePagePublishedProjectGrid = ({
   }, []);
 
   // Import your DragDropContext without SSR
-  const DragDropContextNoSSR = dynamic(
-    () => import('react-beautiful-dnd').then((mod) => mod.DragDropContext),
-    { ssr: false }
-  );
+  // const DragDropContextNoSSR = dynamic(
+  //   () => import('react-beautiful-dnd').then((mod) => mod.DragDropContext),
+  //   { ssr: false }
+  // );
 
   const onDragEnd = (result: DropResult) => {
     // Destructure necessary properties from result
@@ -129,14 +140,18 @@ const ProfilePagePublishedProjectGrid = ({
     const [reorderedItem] = items.splice(source.index, 1);
     items.splice(destination.index, 0, reorderedItem);
 
+    items.map((item: any, index: any) => {
+      console.log('item name and index', item.docData.name, index);
+    });
+
     console.log('items', items);
     console.log('projectOrder', projectOrder);
-    console.log('localProjectOrder', localProjectOrder)
+    console.log('localProjectOrder', localProjectOrder);
     // Update state and Firestore
     // setProjectOrder(items);
     // updateProjectOrder(items); // Assuming this is your Firestore update function
   };
-  console.log('projectOrder outside onDragEnd', projectOrder)
+  console.log('projectOrder outside onDragEnd', projectOrder);
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
@@ -144,15 +159,15 @@ const ProfilePagePublishedProjectGrid = ({
   // console.log(projects.length)
   const projectsLength = projects ? projects.length : 0;
 
-  console.log('projectsLength', projectsLength)
-  console.log('projectType', projectType)
+  console.log('projectsLength', projectsLength);
+  console.log('projectType', projectType);
 
   if (projectsLength >= 1) {
     return (
       <>
         <Stack spacing={80}>
           <DragDropContext onDragEnd={onDragEnd}>
-          {/* <DragDropContextNoSSR onDragEnd={onDragEnd}> */}
+            {/* <DragDropContextNoSSR onDragEnd={onDragEnd}> */}
             <Droppable droppableId="projects">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -160,12 +175,11 @@ const ProfilePagePublishedProjectGrid = ({
                     projects.map((project: any, index: any) => (
                       <Draggable
                         // key={project.docData.id}
-                        key={project.docData.id.toString()}
-
+                        // key={project.docData.id.toString()}
+                        key={index}
                         draggableId={project.docData.id.toString()}
-                        index={project.docData.id}
-                      // index={index}
-
+                        // index={project.docData.id}
+                        index={index}
                       >
                         {(provided, snapshot) => (
                           <div
@@ -196,8 +210,8 @@ const ProfilePagePublishedProjectGrid = ({
                                 <Title order={1}>
                                   {project.docData.projectTitle
                                     ? replaceUnderscoresAndDashes(
-                                      project.docData.projectTitle
-                                    )
+                                        project.docData.projectTitle
+                                      )
                                     : replaceUnderscoresAndDashes(project.docData.name)}
                                   {/* NOTE: Unregex-ed version FYI: */}
                                   {/* {project.docData.projectTitle ? project.docData.projectTitle : project.docData.name} */}
@@ -324,7 +338,7 @@ const ProfilePagePublishedProjectGrid = ({
                               {...provided.dragHandleProps}
                               className={classes.dragHandle}
                             >
-                              <IconGripVertical size="1.05rem" stroke={1.5} />
+                              <IconGripVertical size="1.35rem" stroke={1.7} />
                             </div>
                           </div>
                         )}
@@ -335,12 +349,10 @@ const ProfilePagePublishedProjectGrid = ({
               )}
             </Droppable>
             {/* </DragDropContextNoSSR> */}
-            </DragDropContext>
-
+          </DragDropContext>
         </Stack>
       </>
     );
-
   }
   // else if (projectsLength >= 1 && projectType === 'drafts') {
 
@@ -570,7 +582,7 @@ const ProfilePagePublishedProjectGrid = ({
   }
 };
 
-  export default ProfilePagePublishedProjectGrid;
+export default ProfilePagePublishedProjectGrid;
 
 //   if (projectsLength === 0) {
 //     return (
@@ -850,7 +862,6 @@ const ProfilePagePublishedProjectGrid = ({
 //       </>
 //     );
 // };
-
 
 // <Stack spacing={80}>
 //   <DragDropContext onDragEnd={onDragEnd}>
