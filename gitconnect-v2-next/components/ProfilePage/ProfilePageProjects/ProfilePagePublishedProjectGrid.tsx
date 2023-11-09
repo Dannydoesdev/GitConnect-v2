@@ -23,7 +23,6 @@ import { IconGripVertical } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
 import { ProfilePageProjectCard } from './ProfilePageProjectCard';
 
-
 const useStyles = createStyles((theme) => ({
   item: {
     display: 'flex',
@@ -72,12 +71,13 @@ const ProfilePagePublishedProjectGrid = ({
   updateProjectOrderInFirestore,
   projectType,
 }: any) => {
+  // console.log('projects in ProfilePagePublishedProjectGrid', projects)
 
   const { classes, cx } = useStyles();
   const [projectOrder, setProjectOrder] = useAtom(projectOrderAtom);
   // const [localProjectOrder, handlers] = useListState(projects);
 
-  const [localProjectOrder, handlers] = useListState(projects);
+  const [localProjectOrder, handlers] = useListState(projectOrder || []);
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
@@ -93,27 +93,25 @@ const ProfilePagePublishedProjectGrid = ({
   // NOTE: If current user is viewing their own profile, show the drag and drop grid + functionality
 
   if (projectsLength >= 1 && currentUser) {
- 
-
     const onDragEnd = (result: DropResult) => {
       const { destination, source } = result;
-    
+
       if (!destination || destination.index === source.index) {
         return;
       }
-    
-      const newOrder = Array.from(localProjectOrder);
+
+      const newOrder = Array.from(projectOrder);
+
+      // const newOrder = Array.from(localProjectOrder);
       const [reorderedItem] = newOrder.splice(source.index, 1);
       newOrder.splice(destination.index, 0, reorderedItem);
-    
 
       // Use Mantine's useListState `reorder` method to reorder the items
       handlers.reorder({ from: source.index, to: destination.index });
-    
+
       // Call the function passed down from the parent to update Firestore
       updateProjectOrderInFirestore(newOrder);
     };
-
 
     return (
       <>
@@ -122,8 +120,9 @@ const ProfilePagePublishedProjectGrid = ({
             <Droppable droppableId="projects">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {projectOrder && projectOrder.map((project: any, index: any) => (
-                  // {projects && projects.map((project: any, index: any) => (
+                  {projectOrder &&
+                    projectOrder.map((project: any, index: any) => (
+                      // {projects && projects.map((project: any, index: any) => (
                       <Draggable
                         key={project.docData.id}
                         // key={project.docData.id.toString()}
@@ -181,8 +180,9 @@ const ProfilePagePublishedProjectGrid = ({
                                   scrollbarSize={7}
                                   w={{
                                     base: 400,
-                                    sm: 700,
-                                    md: 400,
+                                    xs: 600,
+                                    sm: 740,
+                                    md: 700,
                                     lg: 740,
                                     xl: 830,
                                   }}

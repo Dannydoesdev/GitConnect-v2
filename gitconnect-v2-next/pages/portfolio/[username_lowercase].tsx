@@ -32,6 +32,7 @@ import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import ProfilePageDraftProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageDraftProjectGrid';
 import ProfilePagePublishedProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePagePublishedProjectGrid';
 import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
+import { set } from 'lodash';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username_lowercase } = params as { username_lowercase: string };
@@ -111,7 +112,8 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
 
   const [formData, setFormData] = useAtom(formDataAtom);
   const [projectOrder, setProjectOrder] = useAtom(projectOrderAtom);
-
+  // const [initialProjectOrder, setInitialProjectOrder] = useState<ProjectOrder | null>(null);
+  const [sortedPublishedProjects, setSortedPublishedProjects] = useState<any>(null);
   if (router.isFallback) {
     return <LoadingPage />;
   }
@@ -209,36 +211,49 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     return project.docData.hidden === false || project.docData.hidden === undefined;
   });
 
-  const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
-    // Sort by portfolio_order if both projects have it
-    if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
-      return a.docData.portfolio_order - b.docData.portfolio_order;
-    }
-    // If only one project has portfolio_order, it should come first
-    if ('portfolio_order' in a.docData) return -1;
-    if ('portfolio_order' in b.docData) return 1;
 
-    // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
-    const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
-    const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
-    if (dateA && dateB) {
-      // Convert dates to timestamps and compare
-      // Note that newer dates should come first, hence the subtraction b - a
-      return new Date(dateB).getTime() - new Date(dateA).getTime();
-    }
-    if (dateA) return -1;
-    if (dateB) return 1;
+  const sortProjects = (projects: any) => {
 
-    // If none of the dates are available, sort by id (assuming higher ids are newer)
-    // Convert the ids to numbers if they are strings that represent numbers
-    const idA = +a.docData.id;
-    const idB = +b.docData.id;
-    return idB - idA; // Sort in descending order
-  });
+    const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
+      // Sort by portfolio_order if both projects have it
+      if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
+        return a.docData.portfolio_order - b.docData.portfolio_order;
+      }
+      // If only one project has portfolio_order, it should come first
+      if ('portfolio_order' in a.docData) return -1;
+      if ('portfolio_order' in b.docData) return 1;
+
+      // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
+      const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
+      const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
+      if (dateA && dateB) {
+        // Convert dates to timestamps and compare
+        // Note that newer dates should come first, hence the subtraction b - a
+        return new Date(dateB).getTime() - new Date(dateA).getTime();
+      }
+      if (dateA) return -1;
+      if (dateB) return 1;
+
+      // If none of the dates are available, sort by id (assuming higher ids are newer)
+      // Convert the ids to numbers if they are strings that represent numbers
+      const idA = +a.docData.id;
+      const idB = +b.docData.id;
+      return idB - idA; // Sort in descending order
+    });
+
+    return sortedPublishedProjects;
+  };
 
   useEffect(() => {
-    setProjectOrder(sortedPublishedProjects);
-  }, []);
+    if (!publishedProjects || (publishedProjects.length === 0)) {
+      setProjectOrder([]);
+      return;
+    }
+    const sorted = sortProjects(publishedProjects);
+    setProjectOrder(sorted);
+    setSortedPublishedProjects(sorted);
+    // console.log('sorted: ', sorted);
+  }, [projects]);
 
   const draftProjectsLength = draftProjects ? draftProjects.length : 0;
   const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
