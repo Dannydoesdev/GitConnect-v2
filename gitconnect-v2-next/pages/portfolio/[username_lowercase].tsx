@@ -16,7 +16,9 @@ import {
 import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
-import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
+// import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageDraftProjectGrid';
+import ProfilePageDraftProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageDraftProjectGrid';
+import ProfilePagePublishedProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePagePublishedProjectGrid';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username_lowercase } = params as { username_lowercase: string };
@@ -210,13 +212,13 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
+                            <ProfilePagePublishedProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                         <Tabs.Panel value="second">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
+                            <ProfilePageDraftProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
@@ -228,7 +230,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid projectType={'published'} projects={publishedProjects} />
+                            <ProfilePagePublishedProjectGrid projectType={'published'} projects={publishedProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
@@ -307,13 +309,13 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
+                            <ProfilePagePublishedProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                         <Tabs.Panel value="second">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
+                            <ProfilePageDraftProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
@@ -325,7 +327,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid projectType={'published'} projects={publishedProjects} />
+                            <ProfilePagePublishedProjectGrid projectType={'published'} projects={publishedProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>

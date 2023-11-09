@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { use, useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { projectOrderAtom } from '@/atoms';
 import {
@@ -21,7 +21,8 @@ import { useListState } from '@mantine/hooks';
 // import { useListState } from '@mantine/hooks';
 import { IconGripVertical } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
-import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+// import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable, DropResult } from 'hello-pangea/dnd'
 import { ProfilePageProjectCard } from './ProfilePageProjectCard';
 import dynamic from 'next/dynamic';
 
@@ -70,19 +71,20 @@ const useStyles = createStyles((theme) => ({
 //   }[];
 // }
 
-// const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => {
+// const ProfilePagePublishedProjectGrid = ({ projects, currentUser, projectType }: any) => {
 
 // Assume projects prop is an array of project objects from Firestore
-const ProfilePageProjectGrid = ({
+const ProfilePagePublishedProjectGrid = ({
   projects,
   currentUser,
   updateProjectOrder,
   projectType,
 }: any) => {
   const { classes, cx } = useStyles();
-  const [projectOrder, setProjectOrder] = useState(projects);
-  // const [state, handlers] = useListState(data);
-  // const [projectOrder, setProjectOrder] = useAtom(projectOrderAtom);
+  // const [projectOrder, setProjectOrder] = useState(projects);
+  // const [projectOrder, setProjectOrder] = useState(projects);
+  const [localProjectOrder, handlers] = useListState(projects);
+  const [projectOrder, setProjectOrder] = useAtom(projectOrderAtom);
   // const [localProjectOrder, handlers] = useListState(projectOrder);
 
   // Handle the reordering logic
@@ -96,6 +98,10 @@ const ProfilePageProjectGrid = ({
   //   setProjectOrder(items);
   //   updateProjectOrder(items); // Function to update Firestore
   // };
+  useEffect(() => {
+    setProjectOrder(projects);
+    // updateProjectOrder(localProjectOrder); // Function to update Firestore
+  }, []);
 
   // Import your DragDropContext without SSR
   const DragDropContextNoSSR = dynamic(
@@ -113,7 +119,7 @@ const ProfilePageProjectGrid = ({
     }
 
     // Use Mantine's useListState handlers to reorder the items
-    // handlers.reorder({ from: source.index, to: destination.index });
+    handlers.reorder({ from: source.index, to: destination.index });
 
     // Then update Firestore with the new order
     // updateFirestoreProjectOrder(localProjectOrder);
@@ -125,11 +131,12 @@ const ProfilePageProjectGrid = ({
 
     console.log('items', items);
     console.log('projectOrder', projectOrder);
-    // console.log('localProjectOrder', localProjectOrder)
+    console.log('localProjectOrder', localProjectOrder)
     // Update state and Firestore
-    setProjectOrder(items);
+    // setProjectOrder(items);
     // updateProjectOrder(items); // Assuming this is your Firestore update function
   };
+  console.log('projectOrder outside onDragEnd', projectOrder)
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
@@ -140,12 +147,12 @@ const ProfilePageProjectGrid = ({
   console.log('projectsLength', projectsLength)
   console.log('projectType', projectType)
 
-  if (projectsLength >= 1 && projectType === 'published') {
+  if (projectsLength >= 1) {
     return (
       <>
         <Stack spacing={80}>
-          {/* <DragDropContext onDragEnd={onDragEnd}> */}
-          <DragDropContextNoSSR onDragEnd={onDragEnd}>
+          <DragDropContext onDragEnd={onDragEnd}>
+          {/* <DragDropContextNoSSR onDragEnd={onDragEnd}> */}
             <Droppable droppableId="projects">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -327,153 +334,157 @@ const ProfilePageProjectGrid = ({
                 </div>
               )}
             </Droppable>
-          </DragDropContextNoSSR>
+            {/* </DragDropContextNoSSR> */}
+            </DragDropContext>
+
         </Stack>
       </>
     );
 
-  } else if (projectsLength >= 1 && projectType === 'drafts') {
+  }
+  // else if (projectsLength >= 1 && projectType === 'drafts') {
 
-    return (
-      // <Container>
-      <>
-        <Stack spacing={80}>
-          {projects &&
-            projects.map((project: any, index: any) => {
-              return (
-                <div key={project.docData.id}>
-                  {/* TODO: Test default column count vs custom for styling preferences */}
-                  <Grid columns={8}>
-                    <Grid.Col span={3}>
-                      <ProfilePageProjectCard
-                        hidden={project.docData.hidden}
-                        image={project.docData.coverImage}
-                        index={index}
-                        githubTitle={project.docData.name}
-                        customTitle={project.docData.projectTitle}
-                        avatar={project.docData.owner.avatar_url}
-                        author={project.docData.owner.login}
-                        views={1}
-                        comments={2}
-                        profileUrl={`/portfolio/${project.docData.username_lowercase}`}
-                        link={`/portfolio/${project.docData.username_lowercase}/${project.docData.reponame_lowercase}`}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={5}>
-                      <Title order={1}>
-                        {project.docData.projectTitle
-                          ? replaceUnderscoresAndDashes(project.docData.projectTitle)
-                          : replaceUnderscoresAndDashes(project.docData.name)}
-                        {/* NOTE: Unregex-ed version FYI: */}
-                        {/* {project.docData.projectTitle ? project.docData.projectTitle : project.docData.name} */}
-                      </Title>
-                      <Space h={10} />
-                      <Text weight={500} pr="xl">
-                        {project.docData.projectDescription
-                          ? project.docData.projectDescription
-                          : project.docData.description}
-                      </Text>
-                    </Grid.Col>
-                    <Grid.Col span={8}>
-                      {/* Horizontal scroll bars if badges exceed width */}
-                      <ScrollArea
-                        offsetScrollbars
-                        scrollbarSize={7}
-                        w={{ base: 400, sm: 700, md: 400, lg: 740, xl: 830 }}
-                      // w={800}
-                      >
-                        {/* <ScrollArea.Autosize  offsetScrollbars scrollbarSize={6}  maw={400}> */}
-                        {/* <Box h={50} w={600}> */}
+  //   return (
+  //     // <Container>
+  //     <>
+  //       <Stack spacing={80}>
+  //         {projects &&
+  //           projects.map((project: any, index: any) => {
+  //             return (
+  //               <div key={project.docData.id}>
+  //                 {/* TODO: Test default column count vs custom for styling preferences */}
+  //                 <Grid columns={8}>
+  //                   <Grid.Col span={3}>
+  //                     <ProfilePageProjectCard
+  //                       hidden={project.docData.hidden}
+  //                       image={project.docData.coverImage}
+  //                       index={index}
+  //                       githubTitle={project.docData.name}
+  //                       customTitle={project.docData.projectTitle}
+  //                       avatar={project.docData.owner.avatar_url}
+  //                       author={project.docData.owner.login}
+  //                       views={1}
+  //                       comments={2}
+  //                       profileUrl={`/portfolio/${project.docData.username_lowercase}`}
+  //                       link={`/portfolio/${project.docData.username_lowercase}/${project.docData.reponame_lowercase}`}
+  //                     />
+  //                   </Grid.Col>
+  //                   <Grid.Col span={5}>
+  //                     <Title order={1}>
+  //                       {project.docData.projectTitle
+  //                         ? replaceUnderscoresAndDashes(project.docData.projectTitle)
+  //                         : replaceUnderscoresAndDashes(project.docData.name)}
+  //                       {/* NOTE: Unregex-ed version FYI: */}
+  //                       {/* {project.docData.projectTitle ? project.docData.projectTitle : project.docData.name} */}
+  //                     </Title>
+  //                     <Space h={10} />
+  //                     <Text weight={500} pr="xl">
+  //                       {project.docData.projectDescription
+  //                         ? project.docData.projectDescription
+  //                         : project.docData.description}
+  //                     </Text>
+  //                   </Grid.Col>
+  //                   <Grid.Col span={8}>
+  //                     {/* Horizontal scroll bars if badges exceed width */}
+  //                     <ScrollArea
+  //                       offsetScrollbars
+  //                       scrollbarSize={7}
+  //                       w={{ base: 400, sm: 700, md: 400, lg: 740, xl: 830 }}
+  //                     // w={800}
+  //                     >
+  //                       {/* <ScrollArea.Autosize  offsetScrollbars scrollbarSize={6}  maw={400}> */}
+  //                       {/* <Box h={50} w={600}> */}
 
-                        {/* Tech Stack badges */}
-                        {project.docData.techStack &&
-                          project.docData.techStack.length >= 1 && (
-                            <>
-                              <Space h={5} />
+  //                       {/* Tech Stack badges */}
+  //                       {project.docData.techStack &&
+  //                         project.docData.techStack.length >= 1 && (
+  //                           <>
+  //                             <Space h={5} />
 
-                              <Group noWrap={true}>
-                                <Badge color="gray" radius="sm" variant="outline">
-                                  Tech Stack:
-                                </Badge>
+  //                             <Group noWrap={true}>
+  //                               <Badge color="gray" radius="sm" variant="outline">
+  //                                 Tech Stack:
+  //                               </Badge>
 
-                                {project.docData.techStack &&
-                                  project.docData.techStack.map((tech: any) => {
-                                    return (
-                                      <Badge key={tech} radius="md" variant="outline">
-                                        {tech}
-                                      </Badge>
-                                    );
-                                  })}
-                              </Group>
-                            </>
-                          )}
+  //                               {project.docData.techStack &&
+  //                                 project.docData.techStack.map((tech: any) => {
+  //                                   return (
+  //                                     <Badge key={tech} radius="md" variant="outline">
+  //                                       {tech}
+  //                                     </Badge>
+  //                                   );
+  //                                 })}
+  //                             </Group>
+  //                           </>
+  //                         )}
 
-                        {project.docData.projectCategories &&
-                          project.docData.projectCategories.length >= 1 && (
-                            <>
-                              {/* Category heading badge */}
-                              <Space h={13} />
-                              <Group noWrap={true}>
-                                <Badge color="gray" radius="sm" variant="outline">
-                                  Categories:
-                                </Badge>
+  //                       {project.docData.projectCategories &&
+  //                         project.docData.projectCategories.length >= 1 && (
+  //                           <>
+  //                             {/* Category heading badge */}
+  //                             <Space h={13} />
+  //                             <Group noWrap={true}>
+  //                               <Badge color="gray" radius="sm" variant="outline">
+  //                                 Categories:
+  //                               </Badge>
 
-                                {/* Category badges */}
-                                {project.docData.projectCategories.map(
-                                  (category: any) => {
-                                    return (
-                                      <Badge
-                                        key={category}
-                                        color="teal"
-                                        radius="md"
-                                        variant="outline"
-                                      >
-                                        {category}
-                                      </Badge>
-                                    );
-                                  }
-                                )}
-                              </Group>
-                            </>
-                          )}
+  //                               {/* Category badges */}
+  //                               {project.docData.projectCategories.map(
+  //                                 (category: any) => {
+  //                                   return (
+  //                                     <Badge
+  //                                       key={category}
+  //                                       color="teal"
+  //                                       radius="md"
+  //                                       variant="outline"
+  //                                     >
+  //                                       {category}
+  //                                     </Badge>
+  //                                   );
+  //                                 }
+  //                               )}
+  //                             </Group>
+  //                           </>
+  //                         )}
 
-                        {project.docData.projectTags &&
-                          project.docData.projectTags.length >= 1 && (
-                            <>
-                              <Space h={13} />
+  //                       {project.docData.projectTags &&
+  //                         project.docData.projectTags.length >= 1 && (
+  //                           <>
+  //                             <Space h={13} />
 
-                              <Group noWrap={true}>
-                                <Badge color="gray" radius="sm" variant="outline">
-                                  Tags:
-                                </Badge>
+  //                             <Group noWrap={true}>
+  //                               <Badge color="gray" radius="sm" variant="outline">
+  //                                 Tags:
+  //                               </Badge>
 
-                                {project.docData.projectTags &&
-                                  project.docData.projectTags.map((tag: any) => {
-                                    return (
-                                      <Badge
-                                        key={tag}
-                                        color="cyan"
-                                        radius="md"
-                                        variant="outline"
-                                      >
-                                        {tag}
-                                      </Badge>
-                                    );
-                                  })}
-                              </Group>
-                            </>
-                          )}
-                      </ScrollArea>
-                    </Grid.Col>
-                  </Grid>
-                </div>
-              );
-            })}
-        </Stack>
-      </>
-    );
+  //                               {project.docData.projectTags &&
+  //                                 project.docData.projectTags.map((tag: any) => {
+  //                                   return (
+  //                                     <Badge
+  //                                       key={tag}
+  //                                       color="cyan"
+  //                                       radius="md"
+  //                                       variant="outline"
+  //                                     >
+  //                                       {tag}
+  //                                     </Badge>
+  //                                   );
+  //                                 })}
+  //                             </Group>
+  //                           </>
+  //                         )}
+  //                     </ScrollArea>
+  //                   </Grid.Col>
+  //                 </Grid>
+  //               </div>
+  //             );
+  //           })}
+  //       </Stack>
+  //     </>
+  //   );
 
-  } else {
+  // }
+  else {
     return (
       <Group>
         {currentUser ? (
@@ -559,7 +570,7 @@ const ProfilePageProjectGrid = ({
   }
 };
 
-  export default ProfilePageProjectGrid;
+  export default ProfilePagePublishedProjectGrid;
 
 //   if (projectsLength === 0) {
 //     return (
