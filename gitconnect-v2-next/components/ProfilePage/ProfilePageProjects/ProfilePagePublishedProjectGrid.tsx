@@ -76,8 +76,10 @@ const ProfilePagePublishedProjectGrid = ({
 }: any) => {
 
   const { classes, cx } = useStyles();
-  const [localProjectOrder, handlers] = useListState(projects);
   const [projectOrder, setProjectOrder] = useAtom(projectOrderAtom);
+  // const [localProjectOrder, handlers] = useListState(projects);
+
+  const [localProjectOrder, handlers] = useListState(projects);
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');

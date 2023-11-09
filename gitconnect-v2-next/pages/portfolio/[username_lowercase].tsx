@@ -20,7 +20,7 @@ import {
 import { doc, getFirestore, writeBatch } from 'firebase/firestore';
 // import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import { useAtom } from 'jotai';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import {
   getAllProfileUsernamesLowercase,
   getProfileDataWithFirebaseIdNew,
@@ -88,33 +88,6 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
-  // grid: {
-
-  //   // Static media query
-  //   flexWrap: 'nowrap',
-  //   [`@media (max-width: ${em(1000)})`]: {
-  //     flexWrap: 'wrap',
-  //   },
-  // },
-  // container: {
-  //   height: rem(100),
-  //   backgroundColor: theme.colors.blue[6],
-
-  //   // Media query with value from theme
-  //   [`@media (max-width: ${em(getBreakpointValue(theme.breakpoints.xl) - 1)})`]: {
-  //     backgroundColor: theme.colors.pink[6],
-  //   },
-
-  //   // Simplify media query writing with theme functions
-  //   [theme.fn.smallerThan('lg')]: {
-  //     backgroundColor: theme.colors.yellow[6],
-  //   },
-
-  //   // Static media query
-  //   [`@media (max-width: ${em(800)})`]: {
-  //     backgroundColor: theme.colors.orange[6],
-  //   },
-  // },
 }));
 
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
@@ -182,10 +155,19 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
 
   const updateProjectOrderInFirestore = async (newOrder: any) => {
     setProjectOrder(newOrder);
+
+    await persistOrderToFirestore(newOrder);
+
+    // Revalidate SWR cache
+    revalidateProjects();
+
+  }
+
+  const persistOrderToFirestore = async (newOrder: any) => {
+
     const batch = writeBatch(db);
 
     newOrder.forEach((project: any, index: any) => {
-
       // Ensure the ID is a string
       const projectId = String(project.docData.id);
 
@@ -201,7 +183,6 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
       try {
         const projectRef = doc(db, 'users', userData.userId, 'repos', projectId);
         batch.update(projectRef, { portfolio_order: index });
-
       } catch (error) {
         console.error('Error creating document reference:', error);
       }
@@ -209,11 +190,16 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
 
     try {
       await batch.commit();
-      console.log('Project order updated in Firestore successfully');
+      // console.log('Project order updated in Firestore successfully');
     } catch (error) {
       console.error('Failed to update project order in Firestore:', error);
     }
   };
+
+  // Call this function when you need to revalidate SWR cache, like after Firestore update
+const revalidateProjects = () => {
+  mutate(`/api/portfolio/getUserProjects?username=${username_lowercase}`);
+};
 
   // if (profileError) return <div>Failed to load profile</div>;
   // if (projectsError) return <div>Failed to load projects</div>;
@@ -234,61 +220,98 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     return project.docData.hidden === false || project.docData.hidden === undefined;
   });
 
+  // After fetching the projects
+  // const projects = fetchProjects ?? initialProjects ?? [];
 
-// After fetching the projects
-// const projects = fetchProjects ?? initialProjects ?? [];
+  // Sort the projects array
+  // const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
+  //   // Sort by portfolio_order if it exists
+  //   if ('portfolio_order' in a && 'portfolio_order' in b) {
+  //     return a.portfolio_order - b.portfolio_order;
+  //   }
+  //   if ('portfolio_order' in a) return -1;
+  //   if ('portfolio_order' in b) return 1;
 
-// Sort the projects array
-// const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
-//   // Sort by portfolio_index if it exists
-//   if ('portfolio_index' in a && 'portfolio_index' in b) {
-//     return a.portfolio_index - b.portfolio_index;
-//   }
-//   if ('portfolio_index' in a) return -1;
-//   if ('portfolio_index' in b) return 1;
+  //   // Use gitconnect_updated_at if it exists, otherwise fallback to updated_at
+  //   const dateA = a.gitconnect_updated_at || a.updated_at;
+  //   const dateB = b.gitconnect_updated_at || b.updated_at;
 
-//   // Use gitconnect_updated_at if it exists, otherwise fallback to updated_at
-//   const dateA = a.gitconnect_updated_at || a.updated_at;
-//   const dateB = b.gitconnect_updated_at || b.updated_at;
+  //   // Convert dates to timestamps and compare
+  //   return new Date(dateB).getTime() - new Date(dateA).getTime();
+  // });
 
-//   // Convert dates to timestamps and compare
-//   return new Date(dateB).getTime() - new Date(dateA).getTime();
-// });
+  // Function to sort projects
+  // const sortProjects = (publishedProjects: any) => {
+  //   // Your sorting logic here
+  //   return publishedProjects.sort((a: any, b: any) => {
+  //     // Sort by portfolio_order if both projects have it
+  //     if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
+  //       // console.log('both projects have portfolio_order')
+  //       // console.log(a.docData.portfolio_order - b.docData.portfolio_order)
+  //       return a.docData.portfolio_order - b.docData.portfolio_order;
+  //     }
+  //     // If only one project has portfolio_order, it should come first
+  //     if ('portfolio_order' in a.docData) return -1;
+  //     if ('portfolio_order' in b.docData) return 1;
 
-const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
-  // Sort by portfolio_index if both projects have it
-  if ('portfolio_index' in a.docData && 'portfolio_index' in b.docData) {
-    return a.docData.portfolio_index - b.docData.portfolio_index;
-  }
-  // If only one project has portfolio_index, it should come first
-  if ('portfolio_index' in a.docData) return -1;
-  if ('portfolio_index' in b.docData) return 1;
+  //     // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
+  //     const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
+  //     const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
+  //     if (dateA && dateB) {
+  //       // Convert dates to timestamps and compare
+  //       // Note that newer dates should come first, hence the subtraction b - a
+  //       return new Date(dateB).getTime() - new Date(dateA).getTime();
+  //     }
+  //     if (dateA) return -1;
+  //     if (dateB) return 1;
 
-  // If neither project has a portfolio_index, sort by gitconnect_updated_at or updated_at
-  const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
-  const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
-  if (dateA && dateB) {
-    // Convert dates to timestamps and compare
-    // Note that newer dates should come first, hence the subtraction b - a
-    return new Date(dateB).getTime() - new Date(dateA).getTime();
-  }
-  if (dateA) return -1;
-  if (dateB) return 1;
+  //     // If none of the dates are available, sort by id (assuming higher ids are newer)
+  //     // Convert the ids to numbers if they are strings that represent numbers
+  //     const idA = +a.docData.id;
+  //     const idB = +b.docData.id;
+  //     return idB - idA; // Sort in descending order
+  //   });
+  // }
 
-  // If none of the dates are available, sort by id (assuming higher ids are newer)
-  // Convert the ids to numbers if they are strings that represent numbers
-  const idA = +a.docData.id;
-  const idB = +b.docData.id;
-  return idB - idA; // Sort in descending order
-});
+  const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
+    // Sort by portfolio_order if both projects have it
+    if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
+      // console.log('both projects have portfolio_order')
+      // console.log(a.docData.portfolio_order - b.docData.portfolio_order)
+      return a.docData.portfolio_order - b.docData.portfolio_order;
+    }
+    // If only one project has portfolio_order, it should come first
+    if ('portfolio_order' in a.docData) return -1;
+    if ('portfolio_order' in b.docData) return 1;
+
+    // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
+    const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
+    const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
+    if (dateA && dateB) {
+      // Convert dates to timestamps and compare
+      // Note that newer dates should come first, hence the subtraction b - a
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    }
+    if (dateA) return -1;
+    if (dateB) return 1;
+
+    // If none of the dates are available, sort by id (assuming higher ids are newer)
+    // Convert the ids to numbers if they are strings that represent numbers
+    const idA = +a.docData.id;
+    const idB = +b.docData.id;
+    return idB - idA; // Sort in descending order
+  });
 
   // if (!publishedProjects || publishedProjects.length === 0) {
   //   console.log(`${username_lowercase} has no published project or a bug  - published projects returns:`)
   //   console.log('published project = ', publishedProjects)
   // }
   useEffect(() => {
-    setProjectOrder(publishedProjects);
-  },[])
+    // const sorted = sortProjects(publishedProjects);
+    // setProjectOrder(sorted)
+    // console.log('sortedPublishedProjects in useEffect: ', sortedPublishedProjects)
+    setProjectOrder(sortedPublishedProjects);
+  }, []);
 
   // console.log('Published projects: ');
   // console.log(publishedProjects);
@@ -395,7 +418,7 @@ const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
         </Container>
       </>
     );
-  } else
+  } else {
     return (
       <>
         <Head>
@@ -471,10 +494,13 @@ const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
                             <Space h={20} />
                             <Grid.Col>
                               <ProfilePagePublishedProjectGrid
-                                updateProjectOrderInFirestore={updateProjectOrderInFirestore}
+                                updateProjectOrderInFirestore={
+                                  updateProjectOrderInFirestore
+                                }
                                 currentUser={isCurrentUser}
                                 projectType={'published'}
-                                projects={publishedProjects}
+                                projects={sortedPublishedProjects}
+                                // projects={publishedProjects}
                               />
                             </Grid.Col>
                           </Tabs.Panel>
@@ -499,7 +525,8 @@ const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
                             <Grid.Col>
                               <ProfilePagePublishedProjectGrid
                                 projectType={'published'}
-                                projects={publishedProjects}
+                                // projects={publishedProjects}
+                                projects={sortedPublishedProjects}
                               />
                             </Grid.Col>
                           </Tabs.Panel>
@@ -514,4 +541,5 @@ const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
         </Container>
       </>
     );
+  }
 }
