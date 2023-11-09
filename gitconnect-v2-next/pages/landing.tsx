@@ -365,13 +365,11 @@ export default function LandingPage() {
 
       <main>
         {/* Hero section */}
-        <div className="relative isolate overflow-hidden bg-gray-900 pb-0 pt-6 sm:pb-0 -mt-28 -mb-28 sm:-mb-36">
-          {/* <img
-            // src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2830&q=80&blend=111827&sat=-100&exp=15&blend-mode=multiply"
-            src="/img/gitconnect.webp"
-            alt=""
-            className="absolute inset-0 -z-10 h-full w-full object-cover"
-          /> */}
+        {/* <div className="relative isolate overflow-hidden bg-gray-900 pb-0 sm:pb-0 md:pb-0 -mt-20 -mb-28 sm:-mb-36 md:pt-14 lg:-mb-42 lg:-pb-24 xl:-mb-50 xxl:pb-24"> */}
+
+        <div className="relative isolate overflow-hidden bg-gray-900 pb-20 pt-6 sm:pb-0 -mt-28 xl:-pb-8 xl:pt-8 xl:-mb-36 sm:-mb-12 2xl:mb-32 2xl:mt-12 2xl:pt-12 2xl:pb-32">
+        {/* <div className="relative isolate overflow-hidden bg-gray-900 pb-0 pt-6 sm:pb-0 -mt-28 -mb-28 sm:-mb-36 md:pb-16 lg:pb-32"> */}
+
           <div
             className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
             aria-hidden="true"
@@ -433,8 +431,12 @@ export default function LandingPage() {
         </div>
 
         {/* FEATURES SECTION */}
-        <div className="bg-gray-900 py-24 sm:py-32">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* <div className="bg-gray-900 lg:-mt-32 pb-24 sm:py-32 xl:-mt-32 xxl:mt-32"> */}
+
+        <div className="bg-gray-900 py-16 sm:py-24 md:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* <div className="bg-gray-900 py-24 sm:py-32"> */}
+          {/* <div className="mx-auto max-w-7xl px-6 lg:px-8"> */}
             <div className="mx-auto max-w-2xl lg:text-center">
               <h2 className="text-base font-semibold leading-7 text-indigo-400">
                 Share your new portfolio in 10 minutes
