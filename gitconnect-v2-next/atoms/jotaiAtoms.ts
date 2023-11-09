@@ -8,6 +8,8 @@ export const textEditorAtom = atom<string | undefined>('');
 export const unsavedChangesAtom = atom<boolean>(false);
 export const unsavedChangesSettingsAtom = atom<boolean>(false);
 export const isProAtom = atom<boolean>(false);
+export const projectOrderAtom = atom<string[]>([]);
+
 
 const pageAtom = atomWithHash('page', 1, {
   // replaceState: true,

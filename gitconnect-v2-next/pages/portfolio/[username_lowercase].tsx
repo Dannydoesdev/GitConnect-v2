@@ -30,8 +30,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   } else {
     profileData = await getProfileDataWithUsernameLowercase(username_lowercase);
   }
-
-
   const initialProjects = projectData ?? null;
   const initialProfile = Array.isArray(profileData)
     ? profileData[0]?.docData ?? null
@@ -136,17 +134,17 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
  
 
 
-  const draftProjecs = projects?.filter((project: any) => {
+  const draftProjects = projects?.filter((project: any) => {
     return project.docData.hidden === true;
   });
 
-  // if (!draftProjecs || draftProjecs.length === 0) {
+  // if (!draftProjects || draftProjects.length === 0) {
   //   console.log(`${username_lowercase} has no draft project or a bug  - draft projects returns:`)
-  //   console.log('draft project = ', draftProjecs)
+  //   console.log('draft project = ', draftProjects)
   // }
 
   // console.log('Draft projects: ');
-  // console.log(draftProjecs);
+  // console.log(draftProjects);
 
   const publishedProjects = projects?.filter((project: any) => {
     return project.docData.hidden === false || project.docData.hidden === undefined;
@@ -164,7 +162,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
 
   // console.log(publishedProjects.length)
 
-  const draftProjectsLength = draftProjecs ? draftProjecs.length : 0;
+  const draftProjectsLength = draftProjects ? draftProjects.length : 0;
   const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
 
   // console.log(`${username_lowercase}s draftprojects new length`, draftProjectsLength);
@@ -218,7 +216,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="second">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjecs} />
+                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
@@ -230,12 +228,11 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid projects={publishedProjects} />
+                            <ProfilePageProjectGrid projectType={'published'} projects={publishedProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
                     )}
-
                   </Grid.Col>
                 </Grid>
               </Grid.Col>
@@ -295,7 +292,6 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                 ))}
             </Grid.Col>
             {projects && (
-              // <Grid.Col md={9} lg={10}>
               <Grid.Col span={8}>
                 <Grid gutter="md">
                   <Grid.Col>
@@ -317,7 +313,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="second">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjecs} />
+                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
@@ -329,7 +325,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                         <Tabs.Panel value="first">
                           <Space h={20} />
                           <Grid.Col>
-                            <ProfilePageProjectGrid projects={publishedProjects} />
+                            <ProfilePageProjectGrid projectType={'published'} projects={publishedProjects} />
                           </Grid.Col>
                         </Tabs.Panel>
                       </Tabs>
