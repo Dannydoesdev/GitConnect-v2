@@ -1,7 +1,7 @@
 import React, { use, useContext, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { projectOrderAtom } from '@/atoms';
+import { ProjectOrder, projectOrderAtom } from '@/atoms';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import {
   Badge,
@@ -21,8 +21,10 @@ import {
 import { useListState } from '@mantine/hooks';
 import { IconGripVertical } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
-// import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { ProfilePageProjectCard } from './ProfilePageProjectCard';
+import { writeBatch, doc, getFirestore } from 'firebase/firestore';
+import { RepoDataFullWithTags } from '@/types/repos';
+import { db } from '@/firebase/clientApp';
 
 const useStyles = createStyles((theme) => ({
   item: {
@@ -69,15 +71,13 @@ const useStyles = createStyles((theme) => ({
 const ProfilePagePublishedProjectGrid = ({
   projects,
   currentUser,
-  updateProjectOrder,
+  updateProjectOrderInFirestore,
   projectType,
 }: any) => {
+
   const { classes, cx } = useStyles();
-  // const [projectOrder, setProjectOrder] = useState(projects);
-  // const [projectOrder, setProjectOrder] = useState(projects);
   const [localProjectOrder, handlers] = useListState(projects);
   const [projectOrder, setProjectOrder] = useAtom(projectOrderAtom);
-  // const [localProjectOrder, handlers] = useListState(projectOrder);
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
@@ -85,57 +85,77 @@ const ProfilePagePublishedProjectGrid = ({
   // console.log(projects.length)
   const projectsLength = projects ? projects.length : 0;
 
-  useEffect(() => {
-    setProjectOrder(projects);
-    // updateProjectOrder(localProjectOrder); // Function to update Firestore
-  }, []);
+  // useEffect(() => {
+  // console.log('projectOrder in useEffect', projectOrder)
+  //   // updateProjectOrder(localProjectOrder); // Function to update Firestore
+  // }, [projectOrder]);
 
   // NOTE: If current user is viewing their own profile, show the drag and drop grid + functionality
 
+  
+
   if (projectsLength >= 1 && currentUser) {
  
-    // console.log('projectOrder outside onDragEnd', projectOrder);
-    // console.log('projectsLength', projectsLength);
-    // console.log('projectType', projectType);
-    // console.log('currentUser', currentUser)
-
-    // Import your DragDropContext without SSR
-    // const DragDropContextNoSSR = dynamic(
-    //   () => import('react-beautiful-dnd').then((mod) => mod.DragDropContext),
-    //   { ssr: false }
-    // );
 
     const onDragEnd = (result: DropResult) => {
-      // Destructure necessary properties from result
       const { destination, source } = result;
-
-      // Check if the destination is null (dragged outside droppable area) or hasn't changed
+    
       if (!destination || destination.index === source.index) {
         return;
       }
+    
+      const newOrder = Array.from(localProjectOrder);
+      const [reorderedItem] = newOrder.splice(source.index, 1);
+      newOrder.splice(destination.index, 0, reorderedItem);
+    
 
-      // Use Mantine's useListState handlers to reorder the items
+        // Use Mantine's useListState `reorder` method to reorder the items
+        // handlers.reorder(source.index, destination.index);
       handlers.reorder({ from: source.index, to: destination.index });
+      // Update local and global state
+      // handlers.set(newOrder);
+      // setProjectOrder(newOrder);
+    
+      // Call a function passed down from the parent to update Firestore
+      updateProjectOrderInFirestore(newOrder);
+    };
 
+    
+
+    // const onDragEnd = (result: DropResult) => {
+    //   // Destructure necessary properties from result
+    //   const { destination, source } = result;
+
+    //   // Check if the destination is null (dragged outside droppable area) or hasn't changed
+    //   if (!destination || destination.index === source.index) {
+    //     return;
+    //   }
+
+    //   // Use Mantine's useListState handlers to reorder the items
+    //   handlers.reorder({ from: source.index, to: destination.index });
+    //   updateFirestoreProjectOrder(localProjectOrder);
+    // }
       // Then update Firestore with the new order
       // updateFirestoreProjectOrder(localProjectOrder);
 
       // Create a new reordered items array
-      const items = Array.from(projectOrder);
-      const [reorderedItem] = items.splice(source.index, 1);
-      items.splice(destination.index, 0, reorderedItem);
+      // const items = Array.from(projectOrder);
+      // const [reorderedItem] = items.splice(source.index, 1);
+      // items.splice(destination.index, 0, reorderedItem);
 
-      items.map((item: any, index: any) => {
-        console.log('item name and index', item.docData.name, index);
-      });
+      // items.map((item: any, index: any) => {
+      //   console.log('item name and index', item.docData.name, index);
+      // });
 
-      console.log('items', items);
-      console.log('projectOrder', projectOrder);
-      console.log('localProjectOrder', localProjectOrder);
+      // console.log('items', items);
+      // console.log('projectOrder', projectOrder);
+      // console.log('localProjectOrder', localProjectOrder);
       // Update state and Firestore
       // setProjectOrder(items);
       // updateProjectOrder(items); // Assuming this is your Firestore update function
-    };
+    // };
+
+
     return (
       <>
         <Stack spacing={80}>
@@ -144,12 +164,13 @@ const ProfilePagePublishedProjectGrid = ({
             <Droppable droppableId="projects">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {projects &&
-                    projects.map((project: any, index: any) => (
+                  {projectOrder && projectOrder.map((project: any, index: any) => (
+                  // {localProjectOrder && localProjectOrder.map((project: any, index: any) => (
+                  // {projects && projects.map((project: any, index: any) => (
                       <Draggable
-                        // key={project.docData.id}
+                        key={project.docData.id}
                         // key={project.docData.id.toString()}
-                        key={index}
+                        // key={index}
                         draggableId={project.docData.id.toString()}
                         // index={project.docData.id}
                         index={index}

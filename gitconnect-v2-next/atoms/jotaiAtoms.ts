@@ -1,15 +1,24 @@
 import Router from 'next/router';
 import { WritableAtom, atom } from 'jotai';
 import { atomWithHash } from 'jotai-location';
-import { RepoDataFull } from '../types/repos';
+import { RepoDataFull, RepoDataFullWithTags } from '../types/repos';
 
 export const projectDataAtom = atom<RepoDataFull>({} as RepoDataFull);
 export const textEditorAtom = atom<string | undefined>('');
 export const unsavedChangesAtom = atom<boolean>(false);
 export const unsavedChangesSettingsAtom = atom<boolean>(false);
 export const isProAtom = atom<boolean>(false);
-export const projectOrderAtom = atom<string[]>([]);
+// export const projectOrderAtom = atom<RepoDataFull>({} as RepoDataFull);
+// export const projectOrderAtom = atom<RepoDataFullWithTags[]>([] as RepoDataFullWithTags[]);
+export const projectOrderAtom = atom<ProjectOrder[]>([] as ProjectOrder[]);
 
+
+
+export interface ProjectOrder {
+  id?: string;
+  order?: number;
+  docData: RepoDataFullWithTags;
+}
 
 const pageAtom = atomWithHash('page', 1, {
   // replaceState: true,

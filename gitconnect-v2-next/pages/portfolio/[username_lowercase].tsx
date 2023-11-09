@@ -2,8 +2,9 @@ import React, { use, useContext, useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { formDataAtom } from '@/atoms';
+import { formDataAtom, ProjectOrder, projectOrderAtom } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
+import { db } from '@/firebase/clientApp';
 import {
   Container,
   createStyles,
@@ -16,6 +17,7 @@ import {
   Space,
   Tabs,
 } from '@mantine/core';
+import { doc, getFirestore, writeBatch } from 'firebase/firestore';
 // import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import { useAtom } from 'jotai';
 import useSWR from 'swr';
@@ -136,6 +138,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   // }, [username_lowercase, userData.userName]);
 
   const [formData, setFormData] = useAtom(formDataAtom);
+  const [projectOrder, setProjectOrder] = useAtom(projectOrderAtom);
 
   if (router.isFallback) {
     return <LoadingPage />;
@@ -162,9 +165,9 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     }
   }, [profile]);
 
-  useEffect(() => {
-    // console.log('formData in page route: ', formData);
-  }, [formData]);
+  // useEffect(() => {
+  //   // console.log('formData in page route: ', formData);
+  // }, [formData]);
 
   // const { data: fetchProjects } = useSWR(
   //   `/api/portfolio/getUserProjects?username=${username}`,
@@ -176,6 +179,41 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   // if (!fetchProfile && !fetchProjects) {
   //   return <LoadingPage />;
   // }
+
+  const updateProjectOrderInFirestore = async (newOrder: any) => {
+    setProjectOrder(newOrder);
+    const batch = writeBatch(db);
+
+    newOrder.forEach((project: any, index: any) => {
+
+      // Ensure the ID is a string
+      const projectId = String(project.docData.id);
+
+      // Perform checks and log the types to debug
+      if (typeof userData.userId !== 'string' || typeof projectId !== 'string') {
+        console.error('One of the IDs is not a string:', {
+          userId: userData.userId,
+          projectId: projectId,
+        });
+        return; // Skip this iteration
+      }
+
+      try {
+        const projectRef = doc(db, 'users', userData.userId, 'repos', projectId);
+        batch.update(projectRef, { portfolio_order: index });
+
+      } catch (error) {
+        console.error('Error creating document reference:', error);
+      }
+    });
+
+    try {
+      await batch.commit();
+      console.log('Project order updated in Firestore successfully');
+    } catch (error) {
+      console.error('Failed to update project order in Firestore:', error);
+    }
+  };
 
   // if (profileError) return <div>Failed to load profile</div>;
   // if (projectsError) return <div>Failed to load projects</div>;
@@ -196,10 +234,61 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
     return project.docData.hidden === false || project.docData.hidden === undefined;
   });
 
+
+// After fetching the projects
+// const projects = fetchProjects ?? initialProjects ?? [];
+
+// Sort the projects array
+// const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
+//   // Sort by portfolio_index if it exists
+//   if ('portfolio_index' in a && 'portfolio_index' in b) {
+//     return a.portfolio_index - b.portfolio_index;
+//   }
+//   if ('portfolio_index' in a) return -1;
+//   if ('portfolio_index' in b) return 1;
+
+//   // Use gitconnect_updated_at if it exists, otherwise fallback to updated_at
+//   const dateA = a.gitconnect_updated_at || a.updated_at;
+//   const dateB = b.gitconnect_updated_at || b.updated_at;
+
+//   // Convert dates to timestamps and compare
+//   return new Date(dateB).getTime() - new Date(dateA).getTime();
+// });
+
+const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
+  // Sort by portfolio_index if both projects have it
+  if ('portfolio_index' in a.docData && 'portfolio_index' in b.docData) {
+    return a.docData.portfolio_index - b.docData.portfolio_index;
+  }
+  // If only one project has portfolio_index, it should come first
+  if ('portfolio_index' in a.docData) return -1;
+  if ('portfolio_index' in b.docData) return 1;
+
+  // If neither project has a portfolio_index, sort by gitconnect_updated_at or updated_at
+  const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
+  const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
+  if (dateA && dateB) {
+    // Convert dates to timestamps and compare
+    // Note that newer dates should come first, hence the subtraction b - a
+    return new Date(dateB).getTime() - new Date(dateA).getTime();
+  }
+  if (dateA) return -1;
+  if (dateB) return 1;
+
+  // If none of the dates are available, sort by id (assuming higher ids are newer)
+  // Convert the ids to numbers if they are strings that represent numbers
+  const idA = +a.docData.id;
+  const idB = +b.docData.id;
+  return idB - idA; // Sort in descending order
+});
+
   // if (!publishedProjects || publishedProjects.length === 0) {
   //   console.log(`${username_lowercase} has no published project or a bug  - published projects returns:`)
   //   console.log('published project = ', publishedProjects)
   // }
+  useEffect(() => {
+    setProjectOrder(publishedProjects);
+  },[])
 
   // console.log('Published projects: ');
   // console.log(publishedProjects);
@@ -382,6 +471,7 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
                             <Space h={20} />
                             <Grid.Col>
                               <ProfilePagePublishedProjectGrid
+                                updateProjectOrderInFirestore={updateProjectOrderInFirestore}
                                 currentUser={isCurrentUser}
                                 projectType={'published'}
                                 projects={publishedProjects}
