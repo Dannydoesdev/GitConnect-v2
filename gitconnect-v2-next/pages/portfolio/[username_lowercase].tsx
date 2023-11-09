@@ -87,7 +87,6 @@ const useStyles = createStyles((theme) => ({
       flexWrap: 'wrap',
     },
   },
-
 }));
 
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
@@ -160,11 +159,9 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
 
     // Revalidate SWR cache
     revalidateProjects();
-
-  }
+  };
 
   const persistOrderToFirestore = async (newOrder: any) => {
-
     const batch = writeBatch(db);
 
     newOrder.forEach((project: any, index: any) => {
@@ -197,9 +194,9 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
   };
 
   // Call this function when you need to revalidate SWR cache, like after Firestore update
-const revalidateProjects = () => {
-  mutate(`/api/portfolio/getUserProjects?username=${username_lowercase}`);
-};
+  const revalidateProjects = () => {
+    mutate(`/api/portfolio/getUserProjects?username=${username_lowercase}`);
+  };
 
   // if (profileError) return <div>Failed to load profile</div>;
   // if (projectsError) return <div>Failed to load projects</div>;
@@ -208,76 +205,13 @@ const revalidateProjects = () => {
     return project.docData.hidden === true;
   });
 
-  // if (!draftProjects || draftProjects.length === 0) {
-  //   console.log(`${username_lowercase} has no draft project or a bug  - draft projects returns:`)
-  //   console.log('draft project = ', draftProjects)
-  // }
-
-  // console.log('Draft projects: ');
-  // console.log(draftProjects);
-
   const publishedProjects = projects?.filter((project: any) => {
     return project.docData.hidden === false || project.docData.hidden === undefined;
   });
 
-  // After fetching the projects
-  // const projects = fetchProjects ?? initialProjects ?? [];
-
-  // Sort the projects array
-  // const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
-  //   // Sort by portfolio_order if it exists
-  //   if ('portfolio_order' in a && 'portfolio_order' in b) {
-  //     return a.portfolio_order - b.portfolio_order;
-  //   }
-  //   if ('portfolio_order' in a) return -1;
-  //   if ('portfolio_order' in b) return 1;
-
-  //   // Use gitconnect_updated_at if it exists, otherwise fallback to updated_at
-  //   const dateA = a.gitconnect_updated_at || a.updated_at;
-  //   const dateB = b.gitconnect_updated_at || b.updated_at;
-
-  //   // Convert dates to timestamps and compare
-  //   return new Date(dateB).getTime() - new Date(dateA).getTime();
-  // });
-
-  // Function to sort projects
-  // const sortProjects = (publishedProjects: any) => {
-  //   // Your sorting logic here
-  //   return publishedProjects.sort((a: any, b: any) => {
-  //     // Sort by portfolio_order if both projects have it
-  //     if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
-  //       // console.log('both projects have portfolio_order')
-  //       // console.log(a.docData.portfolio_order - b.docData.portfolio_order)
-  //       return a.docData.portfolio_order - b.docData.portfolio_order;
-  //     }
-  //     // If only one project has portfolio_order, it should come first
-  //     if ('portfolio_order' in a.docData) return -1;
-  //     if ('portfolio_order' in b.docData) return 1;
-
-  //     // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
-  //     const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
-  //     const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
-  //     if (dateA && dateB) {
-  //       // Convert dates to timestamps and compare
-  //       // Note that newer dates should come first, hence the subtraction b - a
-  //       return new Date(dateB).getTime() - new Date(dateA).getTime();
-  //     }
-  //     if (dateA) return -1;
-  //     if (dateB) return 1;
-
-  //     // If none of the dates are available, sort by id (assuming higher ids are newer)
-  //     // Convert the ids to numbers if they are strings that represent numbers
-  //     const idA = +a.docData.id;
-  //     const idB = +b.docData.id;
-  //     return idB - idA; // Sort in descending order
-  //   });
-  // }
-
   const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
     // Sort by portfolio_order if both projects have it
     if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
-      // console.log('both projects have portfolio_order')
-      // console.log(a.docData.portfolio_order - b.docData.portfolio_order)
       return a.docData.portfolio_order - b.docData.portfolio_order;
     }
     // If only one project has portfolio_order, it should come first
@@ -302,29 +236,12 @@ const revalidateProjects = () => {
     return idB - idA; // Sort in descending order
   });
 
-  // if (!publishedProjects || publishedProjects.length === 0) {
-  //   console.log(`${username_lowercase} has no published project or a bug  - published projects returns:`)
-  //   console.log('published project = ', publishedProjects)
-  // }
   useEffect(() => {
-    // const sorted = sortProjects(publishedProjects);
-    // setProjectOrder(sorted)
-    // console.log('sortedPublishedProjects in useEffect: ', sortedPublishedProjects)
     setProjectOrder(sortedPublishedProjects);
   }, []);
 
-  // console.log('Published projects: ');
-  // console.log(publishedProjects);
-
-  // console.log('length appearance # before return:')
-
-  // console.log(publishedProjects.length)
-
   const draftProjectsLength = draftProjects ? draftProjects.length : 0;
   const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
-
-  // console.log(`${username_lowercase}s draftprojects new length`, draftProjectsLength);
-  // console.log(`${username_lowercase}s publishedprojects new length`, publishedProjectsLength);
 
   if (draftProjectsLength === 0 || publishedProjectsLength === 0) {
     // NOTE: NO PROJECTS RETURNED VERSION
@@ -439,33 +356,11 @@ const revalidateProjects = () => {
 
         {/* <Container fluid mx="md" my="md"> */}
         {/* <Container size="xl" mx="md" my="md" > */}
-        <Container
-          size="xl"
-          mt={0}
-          // sx={(theme) => ({
-
-          //   '@media (max-width: 1200px)': {
-          //     marginTop: '70px',
-          //   },
-          //   '@media (max-width: 1100px)': {
-          //     marginTop: '0px',
-          //   },
-
-          // })}
-        >
-          {/* <Space h={10} />
-      <MediaQuery
-      query="(max-width: 1200px) and (min-width: 1200px)"
-      styles={{ fontSize: rem(20), '&:hover': { backgroundColor: 'silver' } }}
-        >
-
-             </MediaQuery> */}
+        <Container size="xl" mt={0}>
           <Group position="center">
             <Space h={60} />
 
             {/*  Grid needs to flex nowrap at md+ (over 1000px) and flex wrap at md- (under 1000px) */}
-
-            {/* <Grid grow gutter={35} style={{ flexWrap: 'nowrap' }}> */}
             <Grid grow gutter={35} className={classes.grid}>
               {/* <Grid.Col sm={12} md={3} lg={2}> */}
               <Grid.Col sm={12} md={4}>
