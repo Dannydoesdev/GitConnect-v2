@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Card, Center, Container, Group, Paper } from '@mantine/core';
-import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
+import { Link, RichTextEditor, useRichTextEditorContext } from '@mantine/tiptap';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
@@ -11,7 +11,7 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 // import { lowlight } from 'lowlight/lib/core'
 // import { lowlight } from 'lowlight';
-import { lowlight } from "lowlight/lib/common.js";
+import { lowlight } from 'lowlight/lib/common.js';
 import { CustomResizableImage } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/image/customResizableImage';
 import { ResizableMedia } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/resizableMedia';
 // import { notitapEditorClass } from '../../Portfolio/RichTextEditor/proseClassString';
@@ -33,7 +33,6 @@ type RichTextEditorVanillaProps = {
 export default function RichTextEditorDisplay({ content }: RichTextEditorVanillaProps) {
   const [editable, setEditable] = useState(false);
   const { classes, theme } = useStyles();
-
 
   useEffect(() => {
     if (content && editor) {
@@ -119,9 +118,9 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
         >
           <RichTextEditor.Content />
         </RichTextEditor>
-        </Card>
+      </Card>
       {/* </Paper> */}
-     </Container>
+    </Container>
   );
 }
 
