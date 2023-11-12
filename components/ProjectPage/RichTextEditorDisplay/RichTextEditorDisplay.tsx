@@ -7,45 +7,22 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
-// import { lowlight } from 'lowlight/lib/common.js';
-// import { createLowlight } from 'lowlight'
-// import { registerLanguage, highlight, common } from 'lowlight'
 // import { lowlight } from 'lowlight/lib/core'
 // import { lowlight } from 'lowlight';
 import { lowlight } from "lowlight/lib/common.js";
-// import { createLowlight } from 'lowlight';
-// import { lowlight } from 'lowlight/lib/core';
-// import { registerLanguage } from 'lowlight/lib/core';
-// import { lowlight } from 'lowlight/lib/common.js';
-
-// import lowlight from 'lowlight/lib/core';
-import css from 'highlight.js/lib/languages/css';
 import { CustomResizableImage } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/image/customResizableImage';
 import { ResizableMedia } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/resizableMedia';
 // import { notitapEditorClass } from '../../Portfolio/RichTextEditor/proseClassString';
 // import useStyles from './ViewPreviewProjectContent.styles';
 import useStyles from './RichTextEditorDisplay.styles';
-// import { create } from 'lodash';
-// import { createLowlight } from 'lowlight/lib';
 
 type RichTextEditorVanillaProps = {
   content?: string | null | undefined;
 };
 
-// registerLanguage('js', js);
-// registerLanguage('ts', ts);
-// registerLanguage('html', html);
-// registerLanguage('css', css);
-
-// const lowlight = createLowlight()
-// lowlight.register('html', html);
-// lowlight.register('css', css);
-// lowlight.register('js', js);
-// lowlight.register('ts', ts);
-
+// console.log(lowlight.listLanguages())
 
 // lowlight.register('ts', tsLanguageSyntax);
 // lowlight.registerLanguage('html', html);
