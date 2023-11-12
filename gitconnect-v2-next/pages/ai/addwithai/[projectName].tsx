@@ -1,21 +1,13 @@
 import React, { useContext, useState } from 'react';
-import {
-  Button,
-  Paper,
-  TextInput,
-  Textarea,
-  Space,
-  Container,
-} from '@mantine/core';
+import { useRouter } from 'next/router';
+import { Button, Container, Paper, Space, Textarea, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { Configuration, OpenAIApi } from 'openai';
-import { doc, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
-import { AuthContext } from '../../../context/AuthContext';
-import EditableCaseStudy from '../../../components/AiProjectPage/EditableCaseStudy';
-import { useRouter } from 'next/router';
+import { doc, setDoc } from 'firebase/firestore';
 import useSWR from 'swr';
+import EditableCaseStudy from '../../../components/AiProjectPage/EditableCaseStudy';
+import { AuthContext } from '../../../context/AuthContext';
 
 type AiCaseStudyProps = {
   repoId?: string;
@@ -51,9 +43,7 @@ const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
 
   const [outputLanguage, setOutputLanguage] = useState('HTML');
 
-  const [style, setStyle] = useState(
-    'professional, first-person, confident but fun'
-  );
+  const [style, setStyle] = useState('professional, first-person, confident but fun');
 
   const [length, setLength] = useState('medium');
 
@@ -151,62 +141,62 @@ const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
       {/* <Space h={70} /> */}
       <Container mt={70}>
         <Paper
-          radius='md'
+          radius="md"
           withBorder
-          p='lg'
+          p="lg"
           sx={(theme) => ({
             backgroundColor:
               theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
           })}
         >
           <TextInput
-            label='Project Title'
-            placeholder='The name of your project'
+            label="Project Title"
+            placeholder="The name of your project"
             {...form.getInputProps('projectTitle')}
           />
           <Textarea
-            label='Purpose'
-            placeholder='Describe the purposes of the project'
+            label="Purpose"
+            placeholder="Describe the purposes of the project"
             {...form.getInputProps('purpose')}
           />
           <Textarea
-            label='Approach'
-            placeholder='Describe the approach taken'
+            label="Approach"
+            placeholder="Describe the approach taken"
             {...form.getInputProps('approach')}
           />
           <TextInput
-            label='Technology'
-            placeholder='Describe the technology used'
+            label="Technology"
+            placeholder="Describe the technology used"
             {...form.getInputProps('technology')}
           />
           <Textarea
-            label='Challenges'
-            placeholder='Describe the challenges faced'
+            label="Challenges"
+            placeholder="Describe the challenges faced"
             {...form.getInputProps('challenges')}
           />
           <Textarea
-            label='Outcomes'
-            placeholder='Describe the outcomes of the project'
+            label="Outcomes"
+            placeholder="Describe the outcomes of the project"
             {...form.getInputProps('outcomes')}
           />
 
           <Textarea
-            label='Next Steps'
-            placeholder='Describe the next steps for the project'
+            label="Next Steps"
+            placeholder="Describe the next steps for the project"
             {...form.getInputProps('nextSteps')}
           />
           <Textarea
-            label='Length of Output'
-            placeholder='How long should the output be? (Short, Medium, Long)'
+            label="Length of Output"
+            placeholder="How long should the output be? (Short, Medium, Long)"
             {...form.getInputProps('length')}
           />
           <Textarea
-            label='Style of Output'
-            placeholder='What kind of style should the output be? (Casual, Professional, Academic etc)'
+            label="Style of Output"
+            placeholder="What kind of style should the output be? (Casual, Professional, Academic etc)"
             {...form.getInputProps('style')}
           />
 
-          <Button variant='filled' fullWidth mt='md' onClick={handleSubmit}>
+          <Button variant="filled" fullWidth mt="md" onClick={handleSubmit}>
             Generate Case Study{' '}
           </Button>
           {/* <Button type='submit'></Button> */}

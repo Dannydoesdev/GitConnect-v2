@@ -1,17 +1,17 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Card, Center, Container, Group, Paper } from '@mantine/core';
-import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
+import { Link, RichTextEditor, useRichTextEditorContext } from '@mantine/tiptap';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
-import { lowlight } from 'lowlight/lib/core';
-import css from 'highlight.js/lib/languages/css';
+// import { lowlight } from 'lowlight/lib/core'
+// import { lowlight } from 'lowlight';
+import { lowlight } from 'lowlight/lib/common.js';
 import { CustomResizableImage } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/image/customResizableImage';
 import { ResizableMedia } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/resizableMedia';
 // import { notitapEditorClass } from '../../Portfolio/RichTextEditor/proseClassString';
@@ -22,11 +22,13 @@ type RichTextEditorVanillaProps = {
   content?: string | null | undefined;
 };
 
-// lowlight.registerLanguage('ts', tsLanguageSyntax);
-lowlight.registerLanguage('html', html);
-lowlight.registerLanguage('css', css);
-lowlight.registerLanguage('js', js);
-lowlight.registerLanguage('ts', ts);
+// console.log(lowlight.listLanguages())
+
+// lowlight.register('ts', tsLanguageSyntax);
+// lowlight.registerLanguage('html', html);
+// lowlight.registerLanguage('css', css);
+// lowlight.registerLanguage('js', js);
+// lowlight.registerLanguage('ts', ts);
 
 export default function RichTextEditorDisplay({ content }: RichTextEditorVanillaProps) {
   const [editable, setEditable] = useState(false);
@@ -58,6 +60,7 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
           class: 'lowlight',
         },
         lowlight,
+        // highlight,
       }),
       Underline,
       // DBlock,
@@ -115,9 +118,9 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
         >
           <RichTextEditor.Content />
         </RichTextEditor>
-        </Card>
+      </Card>
       {/* </Paper> */}
-     </Container>
+    </Container>
   );
 }
 
