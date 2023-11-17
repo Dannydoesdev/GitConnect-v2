@@ -7,7 +7,7 @@ import {
   determineNextQuestion,
   initializeSessionData,
   processUserMessage,
-} from '@/lib/narrativeLogic';
+} from '@/lib/ai/aiNarrativeLogic';
 
 export const runtime = 'edge';
 
