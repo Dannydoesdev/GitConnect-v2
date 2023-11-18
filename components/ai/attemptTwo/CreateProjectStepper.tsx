@@ -43,7 +43,8 @@ const useStyles = createStyles((theme) => ({
   },
 
   step: {
-    transition: 'transform 150ms ease 0s, border-color 150ms ease 0s, border-width 150ms ease 0s',
+    transition:
+      'transform 150ms ease 0s, border-color 150ms ease 0s, border-width 150ms ease 0s',
 
     '&[data-progress]': {
       transform: 'scale(1.05)',
@@ -53,18 +54,6 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
-
-// function Demo() {
-//   const { classes } = useStyles();
-//   const [active, setActive] = useState(1);
-//   return (
-//     <Stepper classNames={classes} active={active} onStepClick={setActive} breakpoint="sm">
-//       <Stepper.Step label="Step 1" description="Create an account" />
-//       <Stepper.Step label="Step 2" description="Verify email" />
-//       <Stepper.Step label="Step 3" description="Get full access" />
-//     </Stepper>
-//   );
-// }
 
 export const CreateProjectStepper = ({
   totalSteps,
@@ -77,30 +66,19 @@ export const CreateProjectStepper = ({
   const prevStep = () => setCurrentStep((current: number) => Math.max(current - 1, 0));
   const { classes } = useStyles();
   // const [active, setActive] = useState(1);
-  // return (
-  //   <Stepper classNames={classes} active={active} onStepClick={setActive} breakpoint="sm">
-  //     <Stepper.Step label="Step 1" description="Create an account" />
-  //     <Stepper.Step label="Step 2" description="Verify email" />
-  //     <Stepper.Step label="Step 3" description="Get full access" />
-  //   </Stepper>
-  // );
 
   const stepContent = children.find(
-    (child: { props: { step: any, title: any } }) => child.props.step === currentStep
+    (child: { props: { step: any; title: any } }) => child.props.step === currentStep
   );
   // console.log(stepContent.props.title)
   const stepTitles = children.map(
     (child: { props: { title: any } }) => child.props.title
   );
-  // console.log(stepTitles)
-  
-  // const stepTitle = stepTitles[currentStep];
-  // const stepTitle = stepContent.props.title;
 
   return (
     <>
       <Stepper
-        size='xs'
+        size="xs"
         classNames={classes}
         active={currentStep}
         onStepClick={setCurrentStep}
@@ -110,24 +88,46 @@ export const CreateProjectStepper = ({
         {/* Map all titles of steps to labels */}
         {[...Array(totalSteps)].map((_, index) => (
           <Stepper.Step key={index} label={stepTitles[index]} />
-            // label={`Step ${index + 1}`} />
-        ))} 
+          // label={`Step ${index + 1}`} />
+        ))}
 
         {/* <Stepper.Step label={stepTitle} /> */}
-   
       </Stepper>
 
-
       {stepContent}
-
-      {/* <Group position="center" mt="xl">
-        <Button variant="default" onClick={prevStep} disabled={currentStep === 0}>
-          Back
-        </Button>
-        <Button onClick={nextStep} disabled={currentStep === totalSteps - 1}>
-          Next step
-        </Button>
-      </Group> */}
     </>
   );
 };
+
+// return (
+//   <Stepper classNames={classes} active={active} onStepClick={setActive} breakpoint="sm">
+//     <Stepper.Step label="Step 1" description="Create an account" />
+//     <Stepper.Step label="Step 2" description="Verify email" />
+//     <Stepper.Step label="Step 3" description="Get full access" />
+//   </Stepper>
+// );
+
+// console.log(stepTitles)
+
+// const stepTitle = stepTitles[currentStep];
+// const stepTitle = stepContent.props.title;
+
+// function Demo() {
+//   const { classes } = useStyles();
+//   const [active, setActive] = useState(1);
+//   return (
+//     <Stepper classNames={classes} active={active} onStepClick={setActive} breakpoint="sm">
+//       <Stepper.Step label="Step 1" description="Create an account" />
+//       <Stepper.Step label="Step 2" description="Verify email" />
+//       <Stepper.Step label="Step 3" description="Get full access" />
+//     </Stepper>
+//   );
+// }
+// {/* <Group position="center" mt="xl">
+//       <Button variant="default" onClick={prevStep} disabled={currentStep === 0}>
+//         Back
+//       </Button>
+//       <Button onClick={nextStep} disabled={currentStep === totalSteps - 1}>
+//         Next step
+//       </Button>
+//     </Group> */}
