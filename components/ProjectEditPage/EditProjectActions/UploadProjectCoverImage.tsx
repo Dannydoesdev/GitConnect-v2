@@ -2,13 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import { db } from '../../../firebase/clientApp';
 import { AuthContext } from '../../../context/AuthContext';
 import {
-  collection,
   doc,
-  getDoc,
-  getDocs,
-  query,
   setDoc,
-  where,
 } from 'firebase/firestore';
 import { storage } from '../../../firebase/clientApp';
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ProjectFormProvider, useProjectForm } from '@/context/formContext';
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   Stack,
   Textarea,
   TextInput,
+  Text
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
@@ -18,6 +19,15 @@ import { NarrativeEditor } from '@/components/ai/attemptTwo/NarrativeEditor';
 import { StepPanel } from '@/components/ai/attemptTwo/StepPanel';
 import { useAtom } from 'jotai';
 import { aiEditorAtom } from '@/atoms';
+import { modals } from '@mantine/modals';
+import DOMPurify from 'dompurify';
+import { doc, setDoc } from 'firebase/firestore';
+import { notifications } from '@mantine/notifications';
+import { AuthContext } from '@/context/AuthContext';
+import { db } from '@/firebase/clientApp';
+import { IconCross, IconCheck } from '@tabler/icons-react';
+import { useRouter } from 'next/router';
+
 
 const CreateProjectPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -49,13 +59,12 @@ const CreateProjectPage = () => {
     },
   });
 
-  // ...inside your CreateProjectPage or similar component
-  // const [narrativeContent, setNarrativeContent] = useState(''); // State to hold the content
+  const router = useRouter();
+  const { userData } = useContext(AuthContext);
 
-  //  Can be used for realtime streaming
-  // const handleInputChange = useDebouncedCallback(e => {
-  //   complete(e.target.value);
-  // }, 500);
+  const userid = userData?.uid;
+  const repoid = router.query.repoId;
+  const projectName = router.query.repoName;
 
   // The actual number of steps should be the number of StepPanel components you have
   const totalSteps = 6;
@@ -137,6 +146,56 @@ const CreateProjectPage = () => {
     return prompt;
   }
 
+  const handleSaveAndContinue = async (newData : any) => {
+    // Store the project data and answers to the questions in firestore
+      // if ( realtimeEditorContent !== '' ) {
+  
+      if (!textEditorAtom || textEditorAtom == '') {
+        return;
+      }
+      const sanitizedHTML = DOMPurify.sanitize(textEditorAtom, {
+        ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
+      });
+  
+      const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+      try {
+        notifications.show({
+          id: 'load-data',
+          loading: true,
+          title: 'Saving updates',
+          message: 'Updated project is being saved to the database',
+          autoClose: false,
+          withCloseButton: false,
+        });
+        await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
+      } catch (error) {
+        console.log(error);
+        notifications.update({
+          id: 'load-data',
+          color: 'red',
+          title: 'Something went wrong',
+          message: 'Something went wrong, please try again',
+          icon: <IconCross size="1rem" />,
+          autoClose: 2000,
+        });
+      } finally {
+        // setUnsavedChanges(false);
+        notifications.update({
+          id: 'load-data',
+          color: 'teal',
+          title: 'Updates were saved',
+          message: 'Your updates have been saved',
+          icon: <IconCheck size="1rem" />,
+          autoClose: 1000,
+        });
+      }
+  
+      // TODO: New project view page
+      router.push(`/portfolio/edit/${projectName}`);
+    }
+
+
+
   // This function is called when the user proceeds to the next step or requests a narrative
   const handleNextStep = async () => {
     if (currentStep === totalSteps - 1) {
@@ -164,6 +223,28 @@ const CreateProjectPage = () => {
   const handleBackStep = () => {
     setCurrentStep((current) => current - 1);
   };
+
+  // const openModal = (url: string) => {
+  //   modals.openConfirmModal({
+  //     title: 'Unsaved changes',
+  //     centered: true,
+  //     children: (
+  //       <Text size="sm">
+  //         You have unsaved changes. Are you sure you want to leave this page?
+  //       </Text>
+  //     ),
+  //     labels: { confirm: 'Leave without saving', cancel: 'Return to page' },
+  //     onCancel: () => {
+  //       // console.log('Cancel');
+  //       // router.events.on('routeChangeStart', handleRouteChange);
+  //     },
+  //     onConfirm: () => {
+  //       // console.log('Confirmed');
+  //       // setUnsavedChanges(false);
+  //       // router.push(url);
+  //     },
+  //   });
+  // };
 
   // // This function should be called to stream data from GPT-4 and update narrativeContent
   // const streamDataToEditor = async () => {
@@ -214,7 +295,7 @@ const CreateProjectPage = () => {
         </div>
       </ProjectFormProvider>
       <>
-        <Drawer opened={opened} onClose={close} title="Project narrative generation">
+        <Drawer size='xl' opened={opened} onClose={close} title="Project narrative generation">
           <div className="panel-right">
             <NarrativeEditor
               // generatedContent={completion} // Directly pass the completion state to the editor
