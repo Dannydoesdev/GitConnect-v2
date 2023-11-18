@@ -8,11 +8,21 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useAtom } from 'jotai';
+import { aiEditorAtom } from '@/atoms';
 
-export function NarrativeEditor({ generatedContent }: any) {
-  const [content, setContent] = useState(generatedContent);
+// export function NarrativeEditor({ generatedContent }: any) {
+  export function NarrativeEditor() {
+
+  // const [content, setContent] = useState();
   const [editorContent, setEditorContent] = useState('');
+  const [textContentState, setTextContentState] = useAtom(aiEditorAtom);
 
+  useEffect(() => {
+    if (textContentState && textContentState !== editor?.getHTML()) {
+      editor?.commands.setContent(textContentState);
+    }
+  }, [textContentState]);
 
   const editor = useEditor({
     extensions: [
@@ -24,7 +34,7 @@ export function NarrativeEditor({ generatedContent }: any) {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content,
+    // content,
     onUpdate({ editor }) {
       // Update state every time the editor content changes
       setEditorContent(editor.getHTML());
@@ -32,15 +42,15 @@ export function NarrativeEditor({ generatedContent }: any) {
   });
 
   // Sync the editor content with the streamed content
-  useEffect(() => {
-    // if (editor && content !== editor.getHTML()) {
-      editor?.commands.setContent(generatedContent);
-    // }
-  }, [generatedContent, editor]);
+  // useEffect(() => {
+  //   // if (editor && content !== editor.getHTML()) {
+  //     editor?.commands.setContent(generatedContent);
+  //   // }
+  // }, [generatedContent, editor]);
 
-  if (!editor) {
-    return null;
-  }
+  // if (!editor) {
+  //   return null;
+  // }
 
   return (
     <div>
