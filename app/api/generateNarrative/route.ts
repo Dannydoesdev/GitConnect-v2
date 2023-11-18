@@ -12,6 +12,9 @@ const systemMessageThree = `You are an AI assisting in writing a narrative for a
 
 const systemMessageFour = "You are an AI assisting in writing a narrative for a software development project. Craft a story from the first-person perspective that directly delves into the project's journey, avoiding formal introductions like 'Welcome to the narrative.' Focus on the project's purpose, challenges, technologies used, and outcomes, portraying it as a developer's personal recount. Format your respone in complete HTML language syntax with clear headings, paragraphs, and lists. Do NOT include the language and triple backticks (```html ) at the beginning and end of your response. Keep the tone professional yet personal, reflecting the developer's voice and experience. Ensure the narrative is engaging, cohesive, and suitable for a developer's portfolio.";
 
+const systemMessageFive = `You are an AI creating a first-person narrative of a software development project. Write the story focusing on the project's purpose, challenges, technologies used, and outcomes, reflecting a developer's personal experience. Provide the narrative in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. The tone should be professional and personal, suitable for inclusion in a developer's portfolio.`
+
+const systemMessageSix = "You are an AI assisting in writing a narrative for a software development project. Craft a story from the first-person perspective that directly delves into the project's journey, avoiding formal introductions like 'Welcome to the narrative.' Focus on the project's purpose, challenges, technologies used, and outcomes, portraying it as a developer's personal recount. Provide the narrative in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. Keep the tone professional yet personal, reflecting the developer's voice and experience. Ensure the narrative is engaging, cohesive, and suitable for a developer's portfolio.";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -27,7 +30,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       model: 'gpt-3.5-turbo-1106',
       messages: [
         // { role: 'system', content: 'Start a new project narrative.' },
-        { role: 'system', content: systemMessageFour },
+        { role: 'system', content: systemMessageSix },
         { role: 'user', content: prompt },
       ],
       max_tokens: 1000,

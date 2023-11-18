@@ -16,10 +16,14 @@ import { useDebouncedCallback } from 'use-debounce';
 import { CreateProjectStepper } from '@/components/ai/attemptTwo/CreateProjectStepper';
 import { NarrativeEditor } from '@/components/ai/attemptTwo/NarrativeEditor';
 import { StepPanel } from '@/components/ai/attemptTwo/StepPanel';
+import { useAtom } from 'jotai';
+import { aiEditorAtom } from '@/atoms';
 
 const CreateProjectPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [opened, { open, close }] = useDisclosure(false);
+  const [textEditorAtom, setTextEditorAtom] = useAtom(aiEditorAtom);
+
   const {
     complete,
     completion,
@@ -36,6 +40,7 @@ const CreateProjectPage = () => {
       // if (res.status === 429) {
       //   toast.error('You are being rate limited. Please try again later.');
       // }
+
     },
     onFinish: () => {
       // do something with the completion result
@@ -71,6 +76,10 @@ const CreateProjectPage = () => {
   //     liveProjectURL: '',
   //   },
   // });
+  useEffect(() => {
+    // console.log('completion:', completion);
+    setTextEditorAtom(completion);
+  }, [completion]);
 
   const form = useProjectForm({
     initialValues: {
@@ -208,7 +217,7 @@ const CreateProjectPage = () => {
         <Drawer opened={opened} onClose={close} title="Project narrative generation">
           <div className="panel-right">
             <NarrativeEditor
-              generatedContent={completion} // Directly pass the completion state to the editor
+              // generatedContent={completion} // Directly pass the completion state to the editor
             />
           </div>
           {/* Drawer content */}
