@@ -6,6 +6,7 @@ import { RepoDataFull } from '../types/repos';
 export const projectDataAtom = atom<RepoDataFull>({} as RepoDataFull);
 export const textEditorAtom = atom<string | undefined>('');
 export const aiEditorAtom = atom<string | undefined>('');
+export const aiImageAtom = atom<string | undefined>('');
 
 export const unsavedChangesAtom = atom<boolean>(false);
 export const unsavedChangesSettingsAtom = atom<boolean>(false);

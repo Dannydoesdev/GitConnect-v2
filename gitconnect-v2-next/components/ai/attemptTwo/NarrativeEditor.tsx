@@ -1,6 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { aiEditorAtom } from '@/atoms';
+import { AuthContext } from '@/context/AuthContext';
 import { Blockquote, Button, Group } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { RichTextEditor } from '@mantine/tiptap';
 import Highlight from '@tiptap/extension-highlight';
 import Link from '@tiptap/extension-link';
@@ -12,11 +15,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useAtom } from 'jotai';
 import { InfoCircle } from 'tabler-icons-react';
-import { useDisclosure } from '@mantine/hooks';
 import { GenerateCoverImageModal } from './GenerateImage';
-import { AuthContext } from '@/context/AuthContext';
-import { useRouter } from 'next/router';
-
 
 // export function NarrativeEditor({ generatedContent }: any) {
 export function NarrativeEditor() {
@@ -66,17 +65,17 @@ export function NarrativeEditor() {
 
   return (
     <div>
-       <GenerateCoverImageModal
-            // settingsOnly={settingsOnly}
-            // handleNewCoverImage={handleNewCoverImage}
+      <GenerateCoverImageModal
+        // settingsOnly={settingsOnly}
+        // handleNewCoverImage={handleNewCoverImage}
         repoId={repoId}
         userId={userId}
-            // handlePublish={handlePublish}
-            // handleSaveAsDraft={handleSaveAndFinish}
-            // handleSaveSettings={handleSaveSettings}
-            // handleSaveAsDraft={handleSaveAsDraft}
-            opened={opened}
-            open={open}
+        // handlePublish={handlePublish}
+        // handleSaveAsDraft={handleSaveAndFinish}
+        // handleSaveSettings={handleSaveSettings}
+        // handleSaveAsDraft={handleSaveAsDraft}
+        opened={opened}
+        open={open}
         close={close}
       />
       <Blockquote
@@ -111,9 +110,7 @@ export function NarrativeEditor() {
         >
           Generate an image
         </Button>
-        <Button>
-          Save and Continue
-        </Button>
+        <Button>Save and Continue</Button>
       </Group>
     </div>
   );
