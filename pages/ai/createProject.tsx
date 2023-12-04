@@ -33,6 +33,22 @@ const CreateProjectPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [opened, { open, close }] = useDisclosure(false);
   const [textEditorAtom, setTextEditorAtom] = useAtom(aiEditorAtom);
+  const router = useRouter();
+  const { userData } = useContext(AuthContext);
+
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    if (userData?.isPro) {
+      setIsPro(true);
+    }
+  }, [userData]);
+
+  console.log('is user pro:', isPro);
+
+  const apiUrl = isPro ? '/api/generateProject/narrativeGpt4' : '/api/generateProject/narrativeGpt3';
+
+  console.log('apiUrl:', apiUrl)
 
   const {
     complete,
@@ -43,7 +59,8 @@ const CreateProjectPage = () => {
     handleInputChange,
     handleSubmit,
   } = useCompletion({
-    api: '/api/generateNarrative',
+    // api: '/api/generateNarrative',
+    api: apiUrl,
     onResponse: (res) => {
       // trigger something when the response starts streaming in
       // e.g. if the user is rate limited, you can show a toast
@@ -59,8 +76,6 @@ const CreateProjectPage = () => {
     },
   });
 
-  const router = useRouter();
-  const { userData } = useContext(AuthContext);
 
   const userid = userData?.uid;
   const repoid = router.query.repoId;

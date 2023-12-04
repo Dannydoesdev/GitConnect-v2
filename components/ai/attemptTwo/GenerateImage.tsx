@@ -2,15 +2,15 @@
 
 import { use, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { aiEditorAtom } from '@/atoms';
+import { aiEditorAtom, aiImageAtom } from '@/atoms';
 import { Button, Modal, ScrollArea } from '@mantine/core';
 import { useCompletion } from 'ai/react';
 import axios from 'axios';
 import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { useAtom } from 'jotai';
-import { set } from 'lodash';
-import { RequestInfo } from 'undici-types';
+// import { set } from 'lodash';
+// import { RequestInfo } from 'undici-types';
 import { db, storage } from '../../../firebase/clientApp';
 
 export const GenerateCoverImageModal = ({
@@ -22,8 +22,11 @@ export const GenerateCoverImageModal = ({
   close,
 }: any) => {
   const [textContentState, setTextContentState] = useAtom(aiEditorAtom);
+  const [imagePromptState, setImagePromptState] = useAtom(aiImageAtom);
   const [generatedImage, setGeneratedImage] = useState<any>('');
   const [generatedPrompt, setGeneratedPrompt] = useState<any>('');
+  const [revisedPrompt, setRevisedPrompt] = useState<any>('');
+
   const {
     complete,
     completion,
@@ -41,10 +44,13 @@ export const GenerateCoverImageModal = ({
       //   toast.error('You are being rate limited. Please try again later.');
       // }
     },
-    onFinish: async () => {
+    onFinish: async (prompt, completion) => {
+      console.log('Finished generating prompt', prompt);
       console.log('Finished generating prompt', completion);
+      // console.log('Finished atom prompt', imagePromptState);
       // setGeneratedPrompt(completion);
-      handleGenerateImageFromPrompt(generatedPrompt);
+      handleGenerateImageFromPrompt(completion);
+      // handleGenerateImageFromPrompt(generatedPrompt);
 
       // do something with the completion result
       // toast.success('Successfully generated completion!');
@@ -53,10 +59,15 @@ export const GenerateCoverImageModal = ({
   });
 
   useEffect(() => {
-    if (completion) {
-      setGeneratedPrompt(completion);
-    }
+    // console.log('completion:', completion);
+    setImagePromptState(completion);
   }, [completion]);
+
+  // useEffect(() => {
+  //   if (completion) {
+  //     setGeneratedPrompt(completion);
+  //   }
+  // }, [completion]);
 
   const handleGeneratePromptForImage = async () => {
     if (!textContentState) {
@@ -74,37 +85,37 @@ export const GenerateCoverImageModal = ({
   const handleGenerateImageFromPrompt = async (prompt: any) => {
     // if (!textContentState) { return }
     // const prompt = textContentState;
+    const data = {
+      prompt: prompt, // Replace 'prompt' with your string variable
+    }
     try {
-      // Send the user message to the backend via json api call
-      // const response = await fetch('/api/image/generateImage', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     prompt: prompt,
-      //     // systemMessage: systemMessage,
-      //     // model: 'gpt-4',
-      //   }),
-      // }).then((res) => {
-      //   setGeneratedImage(res);
-      //   console.log(res);
-      // });
+      console.log('prompt for image api', prompt)
 
-      // await axios
-      //   .post('/api/ai/generateProject', {
-      //     userMessage: userMessage,
-      //     systemMessage: systemMessage,
-      //     model: 'gpt-4',
-      //   })
       const message = prompt.toString();
-      await axios
-        .post('/api/image/generateImage', {
-        body:  message,
-        // prompt: message,
-      }).then((response) => {
-        setGeneratedImage(response);
-        console.log(response);
+      // console.log('message for image api', message)
+      console.log('Sending data to image api', data)
+      // await axios.post('/api/image/generateImage', data, {
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+        // })
+        await axios.post('/api/ai/generateImage', data, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+      // await axios
+      //   .post('/api/image/generateImage', {
+      //   prompt: prompt,
+      //   // prompt: message,
+      //   })
+          .then((response) => {
+          
+            const generatedImage = response.data.imageUrl;
+            const revisedPrompt = response.data.revisedPrompt;
+            setRevisedPrompt(revisedPrompt);
+        setGeneratedImage(generatedImage);
+        console.log(generatedImage);
       });
 
     } catch (error) {
@@ -178,21 +189,54 @@ export const GenerateCoverImageModal = ({
         <Button onClick={handleGeneratePromptForImage}>Generate Prompt and Image</Button>
         {completion && (
           <>
-            `Generating Image Prompt:
+            Generating Image Prompt:
             <br />
             {completion}
             <br />
             <br />
-            Generating Image:
+            Generating Image...
           </>
         )}
 
         {generatedImage && (
           <Image src={generatedImage} alt="Generated Image" width={500} height={500} />
         )}
+        {revisedPrompt && (
+          <>
+            <br />
+            <br />
+            Revised Prompt used by Dall E:
+            <br />
+            {revisedPrompt}
+          </>
+        )}
+            
       </Modal>
     </>
   );
 };
 
 // ... Rest of your component code
+
+      // Send the user message to the backend via json api call
+      // const response = await fetch('/api/image/generateImage', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     prompt: prompt,
+      //     // systemMessage: systemMessage,
+      //     // model: 'gpt-4',
+      //   }),
+      // }).then((res) => {
+      //   setGeneratedImage(res);
+      //   console.log(res);
+      // });
+
+      // await axios
+      //   .post('/api/ai/generateProject', {
+      //     userMessage: userMessage,
+      //     systemMessage: systemMessage,
+      //     model: 'gpt-4',
+      //   })

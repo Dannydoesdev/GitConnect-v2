@@ -23,6 +23,9 @@ const openai = new OpenAI({
 export async function POST(req: Request, res: NextApiResponse) {
   const { prompt } = await req.json();
 
+  console.log('gpt4 route hit')
+
+
   try {
     // Send the prompt to the OpenAI API for a streamed response
     const response = await openai.chat.completions.create({
@@ -30,10 +33,10 @@ export async function POST(req: Request, res: NextApiResponse) {
       // model: 'gpt-3.5-turbo-1106',
       messages: [
         // { role: 'system', content: 'Start a new project narrative.' },
-        { role: 'system', content: systemMessageSix },
+        { role: 'system', content: systemMessageTwo },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 1000,
+      max_tokens: 800,
       stream: true,
     });
     // console.log('response: ', response)

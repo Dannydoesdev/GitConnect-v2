@@ -23,11 +23,13 @@ const openai = new OpenAI({
 export async function POST(req: Request, res: NextApiResponse) {
   const { prompt } = await req.json();
 
+  console.log('gpt3 route hit')
+
   try {
     // Send the prompt to the OpenAI API for a streamed response
     const response = await openai.chat.completions.create({
-      model: 'gpt-4-1106-preview',
-      // model: 'gpt-3.5-turbo-1106',
+      // model: 'gpt-4-1106-preview',
+      model: 'gpt-3.5-turbo-1106',
       messages: [
         // { role: 'system', content: 'Start a new project narrative.' },
         { role: 'system', content: systemMessageSix },
