@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import OpenAI from 'openai';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
@@ -13,7 +14,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-export async function POST(req: Request, res: NextApiResponse) {
+export async function POST(req: NextRequest) {
   const { prompt } = await req.json();
 
   try {
@@ -36,6 +37,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   } catch (error) {
     console.error(error);
-    res.status(500).end('Internal Server Error');
+    // res.status(500).end('Internal Server Error');
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
