@@ -86,7 +86,8 @@
     "swr": "^2.2.4",
     "tabler-icons-react": "^1.56.0",
     "tippy.js": "^6.3.7",
-    "turndown": "^7.1.2"
+    "turndown": "^7.1.2",
+    "use-debounce": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.3",
