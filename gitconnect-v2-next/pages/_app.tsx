@@ -5,6 +5,7 @@ import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { getCookie, setCookie } from 'cookies-next';
 import { Provider } from 'jotai';
 import { ThemeProvider } from 'next-themes';
@@ -96,6 +97,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
                   <AppContainer>
                     <Component key={router.asPath} {...pageProps} />
                     <Analytics />
+                    <SpeedInsights />
                   </AppContainer>
                 </Provider>
               </AuthProvider>
