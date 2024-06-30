@@ -6,10 +6,10 @@
     "pages/api/ai/generateProject": {
       "maxDuration": 60
     },
-    "/api/ai/generateProject": {
+    "api/ai/generateProject": {
       "maxDuration": 60
     },
-    "/api/generateProject": {
+    "api/generateProject": {
       "maxDuration": 60
     }
   }
