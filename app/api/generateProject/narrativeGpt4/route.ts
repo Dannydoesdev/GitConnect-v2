@@ -18,7 +18,7 @@ const systemMessageFive = `You are an AI creating a first-person narrative of a 
 const systemMessageSix = "You are an AI assisting in writing a narrative for a software development project. Craft a story from the first-person perspective that directly delves into the project's journey, avoiding formal introductions like 'Welcome to the narrative.' Focus on the project's purpose, challenges, technologies used, and outcomes, portraying it as a developer's personal recount. Provide the narrative in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. Keep the tone professional yet personal, reflecting the developer's voice and experience. Ensure the narrative is engaging, cohesive, and suitable for a developer's portfolio.";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+  apiKey: process.env.OPENAI_API_KEY ?? '',
 });
 
 export async function POST(req: NextRequest) {
