@@ -1,12 +1,9 @@
 {
   "functions": {
-    "app/api/generateProject": {
+    "pages/api/ai/**/*.ts": {
       "maxDuration": 60
     },
-    "pages/api/ai/generateProject": {
-      "maxDuration": 60
-    },
-    "api/**/*.ts": {
+    "app/api/**/*.ts": {
       "maxDuration": 60
     }
   }
