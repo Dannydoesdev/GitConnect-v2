@@ -2,17 +2,7 @@
 module.exports = {
   darkMode: 'class',
   mode: 'jit',
-  // content: ['./src/**/*.tsx'],
-  // content: ['./**/*.tsx'],
-  content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-
-  // "./src/utils/**/*.{js,ts,jsx,tsx,mdx}",
-
-  // purge: [
-  //   // './src/**/*.tsx',
-  //   './public/**/*.html',
-  //   './src/**/*.{js,jsx,ts,tsx,vue}'
-  // ],
+  content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}', './app/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {

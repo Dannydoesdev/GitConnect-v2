@@ -3,9 +3,6 @@ import { getCookie, hasCookie, setCookie } from 'cookies-next';
 import { Auth, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
-  // getPremiumStatus,
-  // getPremiumStatusContext,
-// } from '@/lib/stripe/getPremiumStatusTest';
 import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 import { app, auth, db } from '../firebase/clientApp';
 import { getGithubProfileData } from '../lib/github';
@@ -80,31 +77,7 @@ export const AuthProvider = ({ children }: Props) => {
           // console.log('AuthContext userData: ', userData)
 
           setCurrentUser(user);
-        // }
-        // FIXME: This is a hacky way to get the isPro status - store status in cookies until we can get it from the server efficiently at the correct times
-        // console.log('AuthContext requiredData: ', userData)
-
-        // if (!hasCookie('isPro')) {
-        //   console.log('No cookie found')
-        //   await getPremiumStatus(app)
-        //     .then((res) => {
-        //       setCookie('isPro', res, { maxAge: 60 * 60 * 24 * 3 });
-        //       requiredData.isPro = res;
-        //       console.log('AuthContext isPro: ', res)
-        //     })
-        //     .catch((err) => {
-        //       console.log(err);
-        //     });
-        // } else {
-        //   console.log('Cookie found')
-        //   requiredData.isPro = getCookie('isPro');
-        //   console.log('Cookie isPro: ', getCookie('isPro'))
-        // }
-        // console.log('AuthContext requiredData: ', requiredData)
-
-        // set the user data object
      
-
         // check for user id
         const docRef = doc(colRef, user.uid);
 
@@ -188,14 +161,6 @@ export const AuthProvider = ({ children }: Props) => {
     };
   }, [isPro]);
 
-  // if (loading) {
-  //   return (
-  //     <LoadingPage />
-
-  //     // <>Loading...</>
-  //   )
-  //   }
-
   // Passing the currentUser and userData to the context components
   return (
     <AuthContext.Provider
@@ -209,38 +174,3 @@ export const AuthProvider = ({ children }: Props) => {
     </AuthContext.Provider>
   );
 };
-
-// TODO: All of the data duplication on register can be moved to cloud functions
-
-// // add the public profile data to the database
-// const duplicateUserData = {
-//   ...requiredData,
-//   gitconnect_created_at: new Date().toISOString(),
-//   gitconnect_updated_at: new Date().toISOString(),
-//   gitconnect_created_at_unix: Date.now(),
-//   gitconnect_updated_at_unix: Date.now(),
-// };
-
-// await setDoc(
-//   doc(db, `users/${user.uid}/profileData/publicData`),
-//   duplicateUserData
-// ).then(async () => {
-//   // add the github data to the database
-//   const githubPublicProfileData = await getGithubProfileData(
-//     duplicateUserData.userName
-//   );
-
-//   const docRef = doc(db, `users/${user.uid}/profileData/githubData`);
-
-//   await setDoc(
-//     docRef,
-//     {
-//       ...githubPublicProfileData,
-//       gitconnect_created_at: new Date().toISOString(),
-//       gitconnect_updated_at: new Date().toISOString(),
-//       gitconnect_created_at_unix: Date.now(),
-//       gitconnect_updated_at_unix: Date.now(),
-//     },
-//     { merge: true }
-//   );
-// });
