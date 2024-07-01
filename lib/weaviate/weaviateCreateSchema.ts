@@ -3,14 +3,16 @@ import client from './weaviateInitiateClient';
 
 export async function createWeaviateSchema() {
   try {
+    
     // Check if the defined collection already exists
-    const existingSchema = client.collections.get('Projects');
-    const collectionExists = await existingSchema.query.fetchObjects();
+    const collectionProjectsExists = (await client.collections.exists('Projects') || false);
 
     // Cancel creation if an existing collection is found
-    if (collectionExists) {
-      console.log('Weaviate collection already exists - skipping.');
+    if (collectionProjectsExists) {
+      console.log('Weaviate collection "Projects" already exists - skipping.');
       return;
+    } else {
+      console.log('Weaviate collection "Projects" does not exist - creating.');
     }
 
     // Define the collection schema and create it
