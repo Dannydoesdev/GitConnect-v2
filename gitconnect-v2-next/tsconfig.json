@@ -16,12 +16,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      // "@/ui/*": ["./components/ui/*"],
       "@/hooks/*": ["./hooks/*"],
       "@/types/*": ["./types/*"],
       "@/pages/*": ["./pages/*"],
       "@/atoms/*": ["./atoms/*"],
-      // "@/config/*": ["./config/*"],
+      "@/app/*": ["./app/*"],
       "@/styles/*": ["./styles/*"],
       "@/lib/*": ["./lib/*"],
       "@/utils/*": ["./utils/*"],

@@ -10,7 +10,6 @@ import { LoginPage } from "@/components/SignupPages/NewLogin"
 
 const Login = () => {
   // const mixpanel = Mixpanel.init('13152890549909d8a9fe73e4daf06e43');
-  // console.log('hi')
   const { currentUser } = useContext(AuthContext)
   const Router = useRouter()
 
