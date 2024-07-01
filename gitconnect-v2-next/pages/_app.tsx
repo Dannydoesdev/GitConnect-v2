@@ -16,9 +16,8 @@ import { AuthProvider } from '../context/AuthContext';
 import { mantineCache } from '../mantine/cache';
 import { useRouter } from 'next/router';
 import "@fontsource/inter"; 
-// import 'sms.me/inter/inter.css'
 
-// MAY CAUSE ISSUES - just for icons for notitap
+// Previous solution here for future ref - just for icons for notitap
 // import '@unocss/reset/tailwind.css'
 // import 'uno.css'
 
@@ -40,20 +39,19 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     <>
       <Head>
     {/* One way to do external stylesheet - not really recommended: */}
-{/* eslint-disable-next-line @next/next/no-css-tags */}
+    {/* eslint-disable-next-line @next/next/no-css-tags */}
         {/* <link rel="stylesheet" href="/css/styles.css" precedence="default" /> */}
         
         {/* <title>GitConnect;</title> */}
         {/* <!DOCTYPE html> */}
         {/* <title>GitConnect: Your Career Launchpad for Development</title> */}
-        {/* <title>GitConnect: A new space for Developers, by Developers</title> */}
+        {/* <title>GitConnect: A creative space for Developers, by Developers</title> */}
         <title>GitConnect: The Portfolio Platform for Devs</title>
 
         <meta
           property="og:title"
           content="GitConnect: The Portfolio Platform for Devs"
         />
-        {/* <meta property="og:title" content="GitConnect: Your Career Launchpad for Development" /> */}
         <meta
           property="og:image"
           content="https://www.gitconnect.dev/img/favicon/gclogo.png"

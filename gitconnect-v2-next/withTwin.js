@@ -7,6 +7,8 @@ const path = require('path')
 const includedDirs = [
   path.resolve(__dirname, './pages'),
   path.resolve(__dirname, './components'),
+  path.resolve(__dirname, './app'),
+
 ]
 
 module.exports = function withTwin(nextConfig) {
