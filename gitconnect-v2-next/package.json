@@ -88,7 +88,8 @@
     "tabler-icons-react": "^1.56.0",
     "tippy.js": "^6.3.7",
     "turndown": "^7.2.0",
-    "use-debounce": "^10.0.1"
+    "use-debounce": "^10.0.1",
+    "weaviate-client": "^3.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",

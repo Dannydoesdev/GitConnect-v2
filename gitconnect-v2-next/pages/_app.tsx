@@ -13,9 +13,9 @@ import '../styles/globals.css';
 import '../styles/tiptap.scss';
 import { AppContainer } from '../components/AppContainer';
 import { AuthProvider } from '../context/AuthContext';
-import { mantineCache } from '../mantine/cache';
 import { useRouter } from 'next/router';
 import "@fontsource/inter"; 
+import axios from 'axios';
 
 // Previous solution here for future ref - just for icons for notitap
 // import '@unocss/reset/tailwind.css'
@@ -34,6 +34,21 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
       maxAge: 60 * 60 * 24 * 30,
     });
   };
+
+  useEffect(() => {
+
+    // Run the Weaviate createSchema function on startup - checks if the schema exists and creates it if it doesn't
+    const initializeSchema = async () => {
+      try {
+        await axios.get('/api/weaviate/weaviateSchemaSetup');
+        console.log('Schema setup API called');
+      } catch (error) {
+        console.error('Error calling schema setup API:', error);
+      }
+    };
+
+    initializeSchema();
+  }, []);
 
   return (
     <>
