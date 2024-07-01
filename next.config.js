@@ -19,6 +19,10 @@ module.exports = withTwin({
       }
     ],
   },
+ // TODO: Resolve large page data bytes in home page - below is the experimental config to ignore build error
+  // experimental: {
+  //   largePageDataBytes: 150 * 10000,
+  // },
 })
 
 // Old integration before withTwin.js (for tailwindcss)
