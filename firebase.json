@@ -36,10 +36,10 @@
     }
   },
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "./firebase/emulator/firestore.rules",
+    "indexes": "./firebase/emulator/firestore.indexes.json"
   },
   "storage": {
-    "rules": "storage.rules"
+    "rules": "./firebase/emulator/storage.rules"
   }
 }
