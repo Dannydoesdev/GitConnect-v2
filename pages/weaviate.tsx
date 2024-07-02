@@ -30,7 +30,7 @@ import DOMPurify from 'dompurify';
           console.log(`fetchReadme response: ${response.data}`)
           console.log(`length of readme response: ${(JSON.stringify(response.data).length)}`)
           // console.log(`response.data: ${response.data}`)
-          // setReadme(response.data);
+          setReadme(response.data);
 
           newProjectObject = {
             ...newProjectObject,

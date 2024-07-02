@@ -8,6 +8,10 @@ export type WeaviateObject = {
 };
 
 const weaviateUploadData = async (userProjectData: any, repoId?: string) => {
+  console.log('Weaviate Upload Data function called with data:', userProjectData);
+
+  // const sanitizedProjectData = await sanitizeAndTrimData(userProjectData);
+
   repoId = repoId || '519774186';
   try {
     const projectsCollection = client.collections.get('Projects');
