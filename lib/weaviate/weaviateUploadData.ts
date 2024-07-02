@@ -7,7 +7,7 @@ export type WeaviateObject = {
   readme: string;
 };
 
-const weaviateUploadData = async (userProjectData: any, repoId?: string) => {
+const weaviateUploadData = async (userProjectData: WeaviateObject, repoId?: string) => {
   console.log('Weaviate Upload Data function called with data:', userProjectData);
 
   // const sanitizedProjectData = await sanitizeAndTrimData(userProjectData);
