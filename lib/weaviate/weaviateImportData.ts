@@ -3,12 +3,12 @@ import DOMPurify from 'dompurify';
 import client from './weaviateInitiateClient';
 import { useEffect, useState } from 'react';
 
-const importData = async () => {
+const weaviateImportData = async () => {
 
   // Hardcoding test data temporarily
   const userId = 'bO4o8u9IskNbFk2wXZmjtJhAYkR2';
   const userName = 'dannydoesdev';
-  const repoName = 'gitconnect-v2'
+  const repoName = 'gitconnect'
   const repoId = '519774186';
   const repoIdTwo = '572895196';
   const repoNameTwo = 'starwars-search-api'
@@ -22,7 +22,7 @@ const importData = async () => {
     const handleImportReadme = async () => {
 
       const readmeUrl = `/api/profiles/projects/edit/readme`;
-      axios
+      await axios
         .get(readmeUrl, {
           params: {
             owner: userName,
@@ -44,7 +44,7 @@ const importData = async () => {
   }, []);
   
   // Object to be inserted into Weaviate - this will be replaced with the actual data
-  let dataObjects = [
+  let newProjectObject = [
     {
       name: 'GitConnect',
       description: 'GitConnect is a platform for developers to showcase their projects and connect with other developers.',
@@ -53,12 +53,17 @@ const importData = async () => {
     },
   ];
 
-  const weaviateProjectsCollection = client.collections.get('Projects');
+  if (readme) {
+    console.log('Readme content:', readme);
+    return { newProjectObject };
+  }
 
-  const response = await weaviateProjectsCollection.data.insertMany(dataObjects);
+  // const weaviateProjectsCollection = client.collections.get('Projects');
 
-  console.log(response);
+  // const response = await weaviateProjectsCollection.data.insertMany(dataObjects);
+
+  // console.log(response);
 
 };
 
-export default importData;
+export default weaviateImportData;;
