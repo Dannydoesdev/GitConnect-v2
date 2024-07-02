@@ -3,7 +3,9 @@ import axios from 'axios';
 import DOMPurify from 'dompurify';
  
   export default function Weaviate(){
-  const [readme, setReadme] = useState('');
+    const [readme, setReadme] = useState('');
+    const [uploadResponse, setUploadResponse] = useState('');
+
 
   let newProjectObject = {
     name: 'GitConnect',
@@ -64,6 +66,12 @@ import DOMPurify from 'dompurify';
       console.error('Error uploading to Weaviate:', error);
     }
   };
+    
+    const fetchResponse = async () => {
+      const response = await axios.get('/api/weaviate/generateResponse');
+      console.log('Generated response from Weaviate:', response.data);
+      setUploadResponse(response.data);
+    }
 
   // if (!readme) {
   //   return <div className="flex h-screen justify-center items-center">Loading...</div>;
@@ -71,9 +79,11 @@ import DOMPurify from 'dompurify';
 
   return (
     <>
-      <div className="flex mt-14 justify-center items-center">
+      <div className="flex-col mt-14 justify-center items-center">
         <h1>Weaviate</h1>
         <button onClick={uploadToWeaviate}>Upload to Weaviate</button>
+        <button onClick={fetchResponse}>Fetch Response</button>
+        <div>{uploadResponse}</div>
       </div>
     </>
   );
