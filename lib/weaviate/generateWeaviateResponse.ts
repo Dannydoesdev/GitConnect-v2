@@ -9,7 +9,7 @@ const generateWeaviateResponse = async (query?: string, repoId?: string) => {
       ['GitHub project'],
       {
         singlePrompt: `Generate a detailed project description using the following details: {name}, {description}, and {readme}`,
-      },
+      }, // FIXME: Note - utilising tags isn't working in the prompt
       {
         limit: 1,
       }
