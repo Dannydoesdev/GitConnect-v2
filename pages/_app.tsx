@@ -35,21 +35,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     });
   };
 
-  useEffect(() => {
-
-    // Run the Weaviate createSchema function on startup - checks if the schema exists and creates it if it doesn't
-    const initializeSchema = async () => {
-      try {
-        await axios.get('/api/weaviate/weaviateSchemaSetup');
-        console.log('Schema setup API called');
-      } catch (error) {
-        console.error('Error calling schema setup API:', error);
-      }
-    };
-
-    initializeSchema();
-  }, []);
-
   return (
     <>
       <Head>
