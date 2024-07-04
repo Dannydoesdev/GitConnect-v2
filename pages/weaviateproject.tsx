@@ -4,7 +4,8 @@ import axios from 'axios';
 import removeMarkdown from 'remove-markdown';
 import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
-import type { WeaviateRepoData } from '../types/weaviate';
+import type { WeaviateRepoData, WeaviateRepoUploadData } from '../types/weaviate';
+
 
 interface ShowRepoProps {
   repo: RepoDataFull;
@@ -86,7 +87,7 @@ const WeaviateProject: React.FC = () => {
   const [existingRepos, setExistingRepos] = useState<string[]>([]);
   const [selectedRepos, setSelectedRepos] = useState<string[]>([]);
   const [userAvatar, setUserAvatar] = useState<string>('');
-  const [selectedReposWeaviateData, setSelectedReposWeaviateData] = useState<WeaviateRepoData[]>(
+  const [selectedReposWeaviateData, setSelectedReposWeaviateData] = useState<WeaviateRepoUploadData[]>(
     []
   );
   const router = useRouter();
@@ -134,14 +135,14 @@ const WeaviateProject: React.FC = () => {
         },
       });
 
-      console.log(`Readme fetched for ${userName}/${repoName}`);
-      console.log(`fetchReadme response: ${response.data}`);
-      console.log(`length of readme response: ${JSON.stringify(response.data).length}`);
+      // console.log(`Readme fetched for ${userName}/${repoName}`);
+      // console.log(`fetchReadme response: ${response.data}`);
+      // console.log(`length of readme response: ${JSON.stringify(response.data).length}`);
 
       // Remove markdown syntax and newlines
       const cleanedReadme = cleanMarkdown(response.data);
-      console.log(`cleanedReadme: ${cleanedReadme}`);
-      console.log(`length of cleanedReadme: ${JSON.stringify(cleanedReadme).length}`);
+      // console.log(`cleanedReadme: ${cleanedReadme}`);
+      // console.log(`length of cleanedReadme: ${JSON.stringify(cleanedReadme).length}`);
 
       return cleanedReadme;
     } catch (error) {
@@ -183,7 +184,7 @@ const WeaviateProject: React.FC = () => {
   const handleSubmit = async () => {
     console.log('Selected Repos:', selectedRepos);
 
-    const selectedRepoFullData: WeaviateRepoData[] = await Promise.all(
+    const selectedReposFullData: WeaviateRepoUploadData[] = await Promise.all(
       repoData
         ?.filter((repo) => selectedRepos.includes(repo.id.toString()))
         .map(async (repo) => {
@@ -206,9 +207,31 @@ const WeaviateProject: React.FC = () => {
           };
         }) || []
     );
-    console.log('Selected Repo Full Data:', selectedRepoFullData);
-    setSelectedReposWeaviateData(selectedRepoFullData);
+    // console.log('Selected Repo Full Data:', selectedReposFullData);
+    setSelectedReposWeaviateData(selectedReposFullData);
+    uploadToWeaviate(selectedReposFullData);
   };
+
+
+  const uploadToWeaviate = async (projectData: WeaviateRepoUploadData[]) => {
+ 
+    console.log(`Uploading project data to Weaviate from client: ${projectData}`)
+
+    try {
+      const response = await axios.post('/api/weaviate/weaviateBulkUploadRoute', projectData);
+      console.log('Response from Weaviate:', response.data);
+      // setUploadResponse(response.data);
+    } catch (error) {
+      console.error('Error uploading to Weaviate:', error);
+    }
+  };
+    
+    // const fetchResponse = async () => {
+    //   const response = await axios.get('/api/weaviate/generateResponse');
+    //   console.log('Generated response from Weaviate:', response.data);
+    //   setUploadResponse(response.data);
+    // }
+
 
   return (
     <div className="container mt-14 mx-auto py-8 text-gray-900 dark:text-white">

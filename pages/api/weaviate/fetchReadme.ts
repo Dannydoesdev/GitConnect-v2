@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       owner: owner.toString(),
       repo: repo.toString(),
       mediaType: {
-        format: 'raw',  // Fetch README as plain text TODO: Strip markdown syntax further if needed
+        format: 'raw', // fetch the raw markdown content
       },
     });
     res.status(200).json( readme );
