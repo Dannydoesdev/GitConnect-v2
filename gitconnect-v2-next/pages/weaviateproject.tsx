@@ -90,6 +90,11 @@ const WeaviateProject: React.FC = () => {
   const [selectedReposWeaviateData, setSelectedReposWeaviateData] = useState<WeaviateRepoUploadData[]>(
     []
   );
+  const [query, setQuery] = useState<string>('');
+  const [uploadResponse, setUploadResponse] = useState<string>('');
+  const [reposUploaded, setReposUploaded] = useState<boolean>(false);
+
+
   const router = useRouter();
 
   const selectRepo = (repoId: string) => {
@@ -208,8 +213,8 @@ const WeaviateProject: React.FC = () => {
         }) || []
     );
     // console.log('Selected Repo Full Data:', selectedReposFullData);
-    setSelectedReposWeaviateData(selectedReposFullData);
-    uploadToWeaviate(selectedReposFullData);
+    await uploadToWeaviate(selectedReposFullData);
+    // setSelectedReposWeaviateData(selectedReposFullData);
   };
 
 
@@ -223,15 +228,69 @@ const WeaviateProject: React.FC = () => {
       // setUploadResponse(response.data);
     } catch (error) {
       console.error('Error uploading to Weaviate:', error);
-    }
+    } finally {
+      setReposUploaded(true);
+    } 
   };
     
-    // const fetchResponse = async () => {
-    //   const response = await axios.get('/api/weaviate/generateResponse');
-    //   console.log('Generated response from Weaviate:', response.data);
-    //   setUploadResponse(response.data);
-    // }
+  const handleFetchResponse = async (query: string) => {
+      console.log(`Fetching response from Weaviate for query: ${query} and username ${username}`);
+      const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
+        params: {
+          username: username,
+          query: query,
+        },
+      });
+      
+      console.log('Generated response from Weaviate:', response.data);
+      setUploadResponse(response.data);
+  }
+  
 
+
+  if (reposUploaded) {
+    return (
+      <div className="container mt-14 mx-auto py-8 text-gray-900 dark:text-white">
+      <div className="text-center">
+        {userAvatar && (
+          <img
+            src={userAvatar}
+            alt="User Avatar"
+            className="mx-auto rounded-full w-24 h-24 mb-4"
+          />
+        )}
+        <h1 className="text-3xl font-bold mb-4">Weaviate Project</h1>
+        <div className="mb-4">
+            <input
+              // id='weaviate-query'
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Ask your repositories anything"
+
+            className="border border-gray-300 dark:border-gray-800 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg"
+          />
+            <button
+            onClick={() => handleFetchResponse(query)}  
+            // id='weaviate-query'
+            // onClick={fetchRepos}
+            className="ml-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-neutral-50 dark:text-neutal-300 border-none px-4 py-2 rounded-md"
+          >
+            Fetch Response
+          </button>
+          </div>
+          
+        </div>
+        {uploadResponse && (
+          <div className="text-center mt-8">
+            <h2 className="text-xl font-semibold mb-4">Weaviate Response</h2>
+            <p className="text-lg text-gray-800 dark:text-gray-200">{uploadResponse}</p>
+          </div>
+        )}
+        </div>
+
+    )
+  }
 
   return (
     <div className="container mt-14 mx-auto py-8 text-gray-900 dark:text-white">
