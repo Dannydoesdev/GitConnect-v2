@@ -139,10 +139,6 @@ const WeaviateProject: React.FC = () => {
         },
       });
 
-      // console.log(`Readme fetched for ${userName}/${repoName}`);
-      // console.log(`fetchReadme response: ${response.data}`);
-      // console.log(`length of readme response: ${JSON.stringify(response.data).length}`);
-
       // Remove markdown syntax and newlines
       const cleanedReadme = cleanMarkdown(response.data);
       // console.log(`cleanedReadme: ${cleanedReadme}`);
