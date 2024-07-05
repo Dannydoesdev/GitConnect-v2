@@ -5,19 +5,33 @@ export async function generateDynamicResponse(
   query: string,
   repoName?: string
 ) {
+  console.log(
+    'generateDynamicResponse function called with username:',
+    username,
+    'and query:',
+    query
+  );
+
   let myCollection = client.collections.get('ProjectsGpt3');
   // let myCollection = client.collections.get('ProjectsGpt4');
 
   const inerpretedQuery = `Perform the following query on the user ${username}'s stored github repositories - ${query}`;
+  console.log(`Query: ${inerpretedQuery}`);
 
   const result = await myCollection.generate.nearText(
-    `${username}`,
+    `${username} github repositories`,
     {
       groupedTask: inerpretedQuery,
-      groupedProperties: ['name', 'description', 'readme', 'tags', 'username'],
+      groupedProperties: [
+        'name',
+        'description',
+        'readme',
+        'username',
+        // 'language_breakdown_percent',
+      ],
     },
     {
-      limit: 10,
+      limit: 3,
       filters: myCollection.filter.byProperty('username').equal(username),
       // returnProperties: ['name', 'description', 'readme', 'tags'],
     }
@@ -43,7 +57,7 @@ export async function generateProjectDescription(username: string, reponame: str
   const response = await myCollection.generate.nearText(
     `${reponame}`,
     {
-      singlePrompt: `Write a comprehensive project description suitable for a software developer's portfolio page for the project named ${reponame}: using the following details: {name}, {description}, {readme}, {username}`,
+      singlePrompt: `Using HTML formatting, write a comprehensive project description suitable for a software developer's portfolio page for the project named ${reponame}: using the following details: {name}, {description}, {readme}, {username}`,
     },
     {
       limit: 1,
