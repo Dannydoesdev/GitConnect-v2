@@ -17,13 +17,11 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconCross, IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import axios from 'axios';
-import { disable } from 'mixpanel-browser';
 import removeMarkdown from 'remove-markdown';
-import EditableCaseStudy from '@/components/AiProjectPage/EditableCaseStudy';
+import EditableOutput from '@/components/Weaviate/TextOutputEditor';
 import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
 import type { WeaviateRepoUploadData } from '../types/weaviate';
@@ -113,6 +111,7 @@ const WeaviateProject: React.FC = () => {
   const [uploadResponse, setUploadResponse] = useState<string>('');
   const [reposUploaded, setReposUploaded] = useState<boolean>(false);
   const [summaryResponse, setSummaryResponse] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     // Run the Weaviate createSchema function on startup - checks if the schema exists and creates it if it doesn't
@@ -140,12 +139,20 @@ const WeaviateProject: React.FC = () => {
   const fetchRepos = async () => {
     try {
       const returnedRepoData = await getGithubReposWithUsername(username);
-      setRepoData(returnedRepoData);
       if (returnedRepoData && returnedRepoData.length > 0) {
+        setError('');
+        setRepoData(returnedRepoData);
         setUserAvatar(returnedRepoData[0].owner.avatar_url);
+      }
+      if (!returnedRepoData) {
+        setRepoData([]);
+        setError('Error fetching data - check username and try again.');
+        throw new Error('No repos found for the entered username.');
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+      // setRepoData([]);
+      // setError('Error fetching data - check username and try again.');
     }
   };
 
@@ -306,10 +313,15 @@ const WeaviateProject: React.FC = () => {
             </Blockquote>
           </Group>
           <Space h="lg" />
+          {error && (
+            <Text size="lg" color="red" className="mx-auto">
+              {error}
+            </Text>
+          )}
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleFetchResponse(query);
             }}
           >
             <Group position="center">
@@ -317,12 +329,14 @@ const WeaviateProject: React.FC = () => {
                 data-autofocus
                 label="Repo Query"
                 placeholder="Ask your repositories anything"
+                size="md"
+                radius="md"
                 onChange={(e) => setQuery(e.target.value)}
               />
               <Button
                 mt="xl"
-                size="xs"
-                radius="lg"
+                size="sm"
+                radius="md"
                 color="teal"
                 onClick={() => handleFetchResponse(query)}
               >
@@ -330,20 +344,39 @@ const WeaviateProject: React.FC = () => {
               </Button>
             </Group>
           </form>
-          {selectedReposWeaviateData.length > 0 &&
-            selectedReposWeaviateData.map((repo) => {
-              return (
-                <Button
-                  key={repo.repoid}
-                  onClick={() => handleFetchProjectSummary(repo.name)}
-                  size="md"
-                  radius="md"
-                  color="teal"
-                >
-                  Generate Summary for {repo.name}
-                </Button>
-              );
-            })}
+          <Space h="xl" />
+          <Space h="xl" />
+          <Text align="center" mb="xs" weight={500}>
+            Generate summary buttons:
+          </Text>
+
+          <Group position="center">
+            <SimpleGrid
+              cols={3}
+              spacing="lg"
+              breakpoints={[
+                { maxWidth: 980, cols: 3, spacing: 'md' },
+                { maxWidth: 755, cols: 2, spacing: 'sm' },
+                { maxWidth: 600, cols: 1, spacing: 'sm' },
+              ]}
+            >
+              {selectedReposWeaviateData.length > 0 &&
+                selectedReposWeaviateData.map((repo) => {
+                  return (
+                    <Button
+                      key={repo.repoid}
+                      onClick={() => handleFetchProjectSummary(repo.name)}
+                      size="sm"
+                      radius="md"
+                      // color="cyan"
+                    >
+                      Summary for {repo.name}
+                    </Button>
+                  );
+                })}
+            </SimpleGrid>
+          </Group>
+          <Space h="xl" />
           {uploadResponse && (
             <Paper
               radius="md"
@@ -354,7 +387,7 @@ const WeaviateProject: React.FC = () => {
                   theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
               })}
             >
-              <EditableCaseStudy aiGeneratedContent={uploadResponse} />
+              <EditableOutput generatedContent={uploadResponse} />
             </Paper>
           )}
           {summaryResponse && (
@@ -367,7 +400,7 @@ const WeaviateProject: React.FC = () => {
                   theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
               })}
             >
-              <EditableCaseStudy aiGeneratedContent={summaryResponse} />
+              <EditableOutput generatedContent={summaryResponse} />
             </Paper>
           )}
         </Container>
@@ -391,6 +424,12 @@ const WeaviateProject: React.FC = () => {
                 steps.
               </Blockquote>
             </Group>
+            {error && (
+              <Text size="md" color="red" align="center">
+                {error}
+              </Text>
+            )}
+
             <Space h="lg" />
             <form
               onSubmit={(e) => {
@@ -398,19 +437,19 @@ const WeaviateProject: React.FC = () => {
                 fetchRepos();
               }}
             >
-              <Group position="center" align='flex-end' spacing='xl'>
+              <Group position="center" align="flex-end" spacing="xl">
                 <TextInput
                   data-autofocus
                   description="Enter a Github Username to start"
                   // label="Github Username"
                   // placeholder="Dannydoesdev"
                   placeholder="GitHub username"
-                  size='md'
-                  radius='md'
+                  size="md"
+                  radius="md"
                   onChange={(e) => setUsername(e.target.value)}
                 />
                 <Button
-                  mb='xxs'
+                  mb="xxs"
                   size="sm"
                   radius="md"
                   color="teal"
