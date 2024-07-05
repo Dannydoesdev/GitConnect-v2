@@ -6,7 +6,6 @@ import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
 import type { WeaviateRepoData, WeaviateRepoUploadData } from '../types/weaviate';
 
-
 interface ShowRepoProps {
   repo: RepoDataFull;
   existingRepos: string[];
@@ -87,13 +86,13 @@ const WeaviateProject: React.FC = () => {
   const [existingRepos, setExistingRepos] = useState<string[]>([]);
   const [selectedRepos, setSelectedRepos] = useState<string[]>([]);
   const [userAvatar, setUserAvatar] = useState<string>('');
-  const [selectedReposWeaviateData, setSelectedReposWeaviateData] = useState<WeaviateRepoUploadData[]>(
-    []
-  );
+  const [selectedReposWeaviateData, setSelectedReposWeaviateData] = useState<
+    WeaviateRepoUploadData[]
+  >([]);
   const [query, setQuery] = useState<string>('');
   const [uploadResponse, setUploadResponse] = useState<string>('');
   const [reposUploaded, setReposUploaded] = useState<boolean>(false);
-
+  const [summaryResponse, setSummaryResponse] = useState<string>('');
 
   const router = useRouter();
 
@@ -213,73 +212,104 @@ const WeaviateProject: React.FC = () => {
         }) || []
     );
     // console.log('Selected Repo Full Data:', selectedReposFullData);
+    setSelectedReposWeaviateData(selectedReposFullData);
     await uploadToWeaviate(selectedReposFullData);
-    // setSelectedReposWeaviateData(selectedReposFullData);
   };
 
-
   const uploadToWeaviate = async (projectData: WeaviateRepoUploadData[]) => {
- 
-    console.log(`Uploading project data to Weaviate from client: ${projectData}`)
+    console.log(`Uploading project data to Weaviate from client: ${projectData}`);
 
     try {
-      const response = await axios.post('/api/weaviate/weaviateBulkUploadRoute', projectData);
+      const response = await axios.post(
+        '/api/weaviate/weaviateBulkUploadRoute',
+        projectData
+      );
       console.log('Response from Weaviate:', response.data);
       // setUploadResponse(response.data);
     } catch (error) {
       console.error('Error uploading to Weaviate:', error);
     } finally {
       setReposUploaded(true);
-    } 
+    }
   };
-    
-  const handleFetchResponse = async (query: string) => {
-      console.log(`Fetching response from Weaviate for query: ${query} and username ${username}`);
-      const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
-        params: {
-          username: username,
-          query: query,
-        },
-      });
-      
-      console.log('Generated response from Weaviate:', response.data);
-      setUploadResponse(response.data);
-  }
-  
 
+  const handleFetchResponse = async (query: string) => {
+    console.log(
+      `Fetching response from Weaviate for query: ${query} and username ${username}`
+    );
+    const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
+      params: {
+        username: username,
+        query: query,
+      },
+    });
+
+    console.log('Generated response from Weaviate:', response.data);
+    setUploadResponse(response.data);
+  };
+
+  const handleFetchProjectSummary = async (reponame: string) => {
+    console.log(
+      `Fetching summary from Weaviate for repo:${reponame} and username ${username}`
+    );
+    const response = await axios.get('/api/weaviate/weaviateGenerateDescriptionRoute', {
+      params: {
+        username: username,
+        reponame: reponame,
+      },
+    });
+
+    console.log('Generated response from Weaviate:', response.data);
+    setSummaryResponse(response.data);
+  };
 
   if (reposUploaded) {
     return (
       <div className="container mt-14 mx-auto py-8 text-gray-900 dark:text-white">
-      <div className="text-center">
-        {userAvatar && (
-          <img
-            src={userAvatar}
-            alt="User Avatar"
-            className="mx-auto rounded-full w-24 h-24 mb-4"
-          />
-        )}
-        <h1 className="text-3xl font-bold mb-4">Weaviate Project</h1>
-        <div className="mb-4">
+        <div className="text-center">
+          {userAvatar && (
+            <img
+              src={userAvatar}
+              alt="User Avatar"
+              className="mx-auto rounded-full w-24 h-24 mb-4"
+            />
+          )}
+          <h1 className="text-3xl font-bold mb-4">Weaviate Project</h1>
+
+          <div className="mb-4">
             <input
               // id='weaviate-query'
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ask your repositories anything"
-
-            className="border border-gray-300 dark:border-gray-800 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg"
-          />
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ask your repositories anything"
+              className="border border-gray-300 dark:border-gray-800 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg"
+            />
             <button
-            onClick={() => handleFetchResponse(query)}  
-            // id='weaviate-query'
-            // onClick={fetchRepos}
-            className="ml-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-neutral-50 dark:text-neutal-300 border-none px-4 py-2 rounded-md"
-          >
-            Fetch Response
-          </button>
+              onClick={() => handleFetchResponse(query)}
+              // id='weaviate-query'
+              // onClick={fetchRepos}
+              className="ml-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-neutral-50 dark:text-neutal-300 border-none px-4 py-2 rounded-md"
+            >
+              Fetch Response
+            </button>
           </div>
-          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {selectedReposWeaviateData.length > 0 &&
+              selectedReposWeaviateData.map((repo) => (
+                <div>
+                <button
+                  key={repo.repoid}
+                  onClick={() => handleFetchProjectSummary(repo.name)}
+                  // id='weaviate-query'
+                  // onClick={fetchRepos}
+                  className="ml-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-neutral-50 dark:text-neutal-300 border-none px-4 py-2 rounded-md"
+                >
+                  Generate Summary for {repo.name}
+                  </button>
+                  </div>
+              ))}
+          </div>
         </div>
         {uploadResponse && (
           <div className="text-center mt-8">
@@ -287,9 +317,14 @@ const WeaviateProject: React.FC = () => {
             <p className="text-lg text-gray-800 dark:text-gray-200">{uploadResponse}</p>
           </div>
         )}
-        </div>
-
-    )
+        {summaryResponse && (
+          <div className="text-center mt-8">
+            <h2 className="text-xl font-semibold mb-4">Weaviate Response</h2>
+            <p className="text-lg text-gray-800 dark:text-gray-200">{summaryResponse}</p>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -309,7 +344,6 @@ const WeaviateProject: React.FC = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter GitHub username"
-
             className="border border-gray-300 dark:border-gray-800 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg"
           />
           <button

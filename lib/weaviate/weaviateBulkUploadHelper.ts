@@ -5,7 +5,9 @@ import { generateUuid5 } from 'weaviate-client';
 const weaviateBulkUploadHelper = async (userProjectData: WeaviateRepoUploadData[]) => {
 
   try {
-    const projectsCollection = client.collections.get('ProjectsNew');
+    const projectsCollection = client.collections.get('ProjectsGpt3');
+    // const projectsCollection = client.collections.get('ProjectsGpt4');
+
     const projectsToUpload = [];
 
     console.log(`Before check, there are ${userProjectData.length} projects to Weaviate`);
