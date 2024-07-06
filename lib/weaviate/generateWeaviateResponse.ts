@@ -15,11 +15,12 @@ export async function generateDynamicResponse(
   let myCollection = client.collections.get('ProjectsGpt3');
   // let myCollection = client.collections.get('ProjectsGpt4');
 
-  const inerpretedQuery = `Perform the following query on the user ${username}'s stored github repositories - ${query}`;
+
+  const inerpretedQuery = `Respond using HTML formatting - write a comprehensive answer to the following query on the user ${username}'s stored github repositories - ${query}`;
   console.log(`Query: ${inerpretedQuery}`);
 
   const result = await myCollection.generate.nearText(
-    `${username} github repositories`,
+    `${username}, ${query}`,
     {
       groupedTask: inerpretedQuery,
       groupedProperties: [
@@ -36,7 +37,7 @@ export async function generateDynamicResponse(
       // returnProperties: ['name', 'description', 'readme', 'tags'],
     }
   );
-
+  console.log(`full response: ${JSON.stringify(result, null, 2)}`)
   console.log(result.generated);
   return result.generated;
 }
@@ -54,10 +55,15 @@ export async function generateProjectDescription(username: string, reponame: str
 
   // singlePrompt: `Write a comprehensive project description suitable for a software developer's portfolio page for the project named {${reponame}}: using the following details: {name}, {description}, {readme}, {language_breakdown_percent}, {username}, {star_count}, {fork_count}`,
 
+
+  const interpretedQuery = `You are an AI assisting in writing a narrative for a software development project which they can use in their portfolio. Craft a story from the first-person perspective for the user ${username}'s github project named ${reponame}. Your answer should directly delve into the project's journey, avoiding formal introductions like 'Welcome to the narrative.' Focus on the project's purpose, challenges, technologies used, and outcomes, portraying it as a developer's personal recount. Provide the narrative in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. Keep the tone professional yet personal, reflecting the developer's voice and experience. Ensure the narrative is engaging, cohesive, professional, and informative, and is suitable for a developer's portfolio.`
+
   const response = await myCollection.generate.nearText(
     `${reponame}`,
     {
-      singlePrompt: `Using HTML formatting, write a comprehensive project description suitable for a software developer's portfolio page for the project named ${reponame}: using the following details: {name}, {description}, {readme}, {username}`,
+      singlePrompt: `Act as an expert in writing narratives for software development projects. Craft a story from the first-person perspective for the user ${username}'s github project named ${reponame} which they can use in their portfolio. Focus on the project's purpose, challenges, technologies used, and outcomes, portraying it as a developer's personal recount. Provide the narrative in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. Keep the tone professional yet personal, reflecting the developer's voice and experience. Ensure the narrative is engaging, cohesive, professional, and informative, and is suitable for a developer's portfolio. Utilise the following details to create this narrative: {name}, {description}, {readme}, {username}`,
+      // singlePrompt: `Respond using HTML formatting - write a comprehensive and compelling project description suitable for a software developer's portfolio page on the user ${username}'s github project named ${reponame} `,
+      // using the following details: {name}, {description}, {readme}, {username}`,
     },
     {
       limit: 1,
