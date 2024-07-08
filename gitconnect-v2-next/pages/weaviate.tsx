@@ -603,7 +603,7 @@ const WeaviateProject: React.FC = () => {
                     })}
                   />
                   <Button
-                    mt="xs"
+                    mt="xl"
                     size="md"
                     radius="md"
                     color="teal"
@@ -614,6 +614,9 @@ const WeaviateProject: React.FC = () => {
                 </Group>
               </form>
             </Paper>
+            <Space h='xl' />
+            <Space h='xl'/>
+
             <Group position='center' mt='xl'>
             <Button
               mt="xs"

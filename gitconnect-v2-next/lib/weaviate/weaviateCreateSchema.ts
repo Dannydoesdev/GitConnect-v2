@@ -95,8 +95,9 @@ export async function createWeaviateSchema() {
         }),
       ],
       generative: generative.openAI({
-        model: 'gpt-3.5-turbo',
-        maxTokens: 500,
+        // model: 'gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo-1106',
+        maxTokens: 1200,
       }),
     };
     await client.collections.create(collectionObjNew);
@@ -203,7 +204,7 @@ export async function createGpt4Schema() {
       }),
     };
     await client.collections.create(collectionObjNew);
-    console.log(`Collection "ProjectsNew" created!`);
+    console.log(`Collection "ProjectsGpt4" created!`);
   } catch (error) {
     console.error('Error creating collection:', error);
   }
