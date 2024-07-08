@@ -575,7 +575,7 @@ export const AppContainer = ({ children }, props) => {
           height: '100vg',
           paddingLeft: '0px',
           paddingRight: '0px',
-          marginBottom: '20px',
+          // marginBottom: '20px', // causing scroll bar to appear
         },
       }}
       // boolean fixed = fixed on every single page
