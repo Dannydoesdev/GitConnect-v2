@@ -91,20 +91,20 @@ export async function createWeaviateSchema() {
         vectorizer.text2VecOpenAI({
           name: 'Projects_vector',
           model: 'text-embedding-3-small',
+          dimensions: 1536,
         }),
       ],
       generative: generative.openAI({
         model: 'gpt-3.5-turbo',
-        maxTokens: 800,
+        maxTokens: 500,
       }),
     };
     await client.collections.create(collectionObjNew);
-    console.log(`Collection "ProjectsNew" created!`);
+    console.log(`Collection "ProjectsGpt3" created!`);
   } catch (error) {
     console.error('Error creating collection:', error);
   }
 }
-
 
 
 export async function createGpt4Schema() {

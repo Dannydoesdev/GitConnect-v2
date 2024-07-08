@@ -24,6 +24,7 @@ import { notifications } from '@mantine/notifications';
 import { IconInfoCircle } from '@tabler/icons-react';
 import axios from 'axios';
 import removeMarkdown from 'remove-markdown';
+import { deleteWeaviateSchema } from '@/lib/weaviate/weaviateDeleteSchema';
 import TextConversationOutput from '@/components/Weaviate/TextConversationOutput';
 import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
@@ -126,6 +127,15 @@ const WeaviateProject: React.FC = () => {
 
     initializeSchema();
   }, []);
+
+  const deleteCollections = async () => {
+    try {
+      await axios.get('/api/weaviate/weaviateSchemaDelete');
+      console.log('Weaviate schema deleted and recreated');
+    } catch (error) {
+      console.error('Error deleting Weaviate schema:', error);
+    }
+  };
 
   const selectRepo = (repoId: string) => {
     setSelectedRepos([...selectedRepos, repoId]);
@@ -319,6 +329,8 @@ const WeaviateProject: React.FC = () => {
       setError('');
     }
   };
+
+
 
   if (reposUploaded) {
     return (
@@ -602,6 +614,17 @@ const WeaviateProject: React.FC = () => {
                 </Group>
               </form>
             </Paper>
+            <Group position='center' mt='xl'>
+            <Button
+              mt="xs"
+              size="md"
+              radius="md"
+              color="red"
+              onClick={() => deleteCollections()}
+            >
+              Dev use only - Delete + Recreate Weaviate schemas
+              </Button>
+              </Group>
           </>
         )}
 
