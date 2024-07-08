@@ -6,10 +6,10 @@
   "rules": {
     "@next/next/no-html-link-for-pages": "off",
     "react/jsx-key": "off",
-    // "react-hooks/exhaustive-deps": "off",
-    // "jsx-a11y/alt-text": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "jsx-a11y/alt-text": "off",
     "react/no-unescaped-entities": "off",
-    // "react-hooks/rules-of-hooks": "off",
+    "react-hooks/rules-of-hooks": "off",
     "@next/next/no-img-element": "off"
   }
 }
