@@ -9,6 +9,7 @@ import {
   Checkbox,
   Container,
   Group,
+  Image,
   Paper,
   SimpleGrid,
   Space,
@@ -16,12 +17,14 @@ import {
   Text,
   Textarea,
   TextInput,
+  Title,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconInfoCircle } from '@tabler/icons-react';
 import axios from 'axios';
 import removeMarkdown from 'remove-markdown';
-import EditableOutput from '@/components/Weaviate/TextOutputEditor';
+import TextConversationOutput from '@/components/Weaviate/TextConversationOutput';
 import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
 import type { WeaviateRepoUploadData } from '../types/weaviate';
@@ -71,11 +74,6 @@ const ShowRepo: React.FC<ShowRepoProps> = ({
               Forked
             </Badge>
           )}
-          {/* : (
-            <Badge size="xs" color="green" variant="light">
-              Not forked
-            </Badge>
-          )} */}
         </Group>
         <Text truncate size="sm" color="dimmed">
           {repoDesc ? repoDesc : 'No description found'}
@@ -84,7 +82,6 @@ const ShowRepo: React.FC<ShowRepoProps> = ({
         <Text size="xs" color="dimmed">
           {repoLicense ? repoLicense.name : 'No license found'}
         </Text>
-        {/* <div className="flex justify-center mt-4"> */}
         <Group mb="xs" mt="lg" position="center">
           <Checkbox
             checked={isSelected}
@@ -109,9 +106,12 @@ const WeaviateProject: React.FC = () => {
   >([]);
   const [query, setQuery] = useState<string>('');
   const [uploadResponse, setUploadResponse] = useState<string>('');
+  const [conversationLog, setConversationLog] = useState('');
   const [reposUploaded, setReposUploaded] = useState<boolean>(false);
   const [summaryResponse, setSummaryResponse] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
 
   useEffect(() => {
     // Run the Weaviate createSchema function on startup - checks if the schema exists and creates it if it doesn't
@@ -151,8 +151,6 @@ const WeaviateProject: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      // setRepoData([]);
-      // setError('Error fetching data - check username and try again.');
     }
   };
 
@@ -180,8 +178,6 @@ const WeaviateProject: React.FC = () => {
 
       // Remove markdown syntax and newlines
       const cleanedReadme = cleanMarkdown(response.data);
-      // console.log(`cleanedReadme: ${cleanedReadme}`);
-      // console.log(`length of cleanedReadme: ${JSON.stringify(cleanedReadme).length}`);
 
       return cleanedReadme;
     } catch (error) {
@@ -260,48 +256,113 @@ const WeaviateProject: React.FC = () => {
         projectData
       );
       console.log('Response from Weaviate:', response.data);
-    } catch (error) {
-      console.error('Error uploading to Weaviate:', error);
+    } catch (err: any) {
+      setError(`Failed to fetch response from Weaviate - ${err.response.data.error}`);
+      console.error(err);
     } finally {
       setReposUploaded(true);
+      setError('');
     }
   };
 
   const handleFetchResponse = async (query: string) => {
-    console.log(
-      `Fetching response from Weaviate for query: ${query} and username ${username}`
-    );
-    const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
-      params: {
-        username: username,
-        query: query,
-      },
-    });
+    try {
+      console.log(
+        `Fetching response from Weaviate for query: ${query} and username ${username}`
+      );
+      // Append query to conversation log - no line break if prevLog is empty
+      setConversationLog(
+        (prevLog) =>
+          `${prevLog ? `${prevLog}<br/>` : ''}<strong>Query:</strong> ${query}<br/>`
+      );
+      // setConversationLog(
+      //   (prevLog) => `${prevLog}<br/><strong>Query:</strong> ${query}<br/>`
+      // );
 
-    console.log('Generated response from Weaviate:', response.data);
-    setUploadResponse(response.data);
+      const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
+        params: { username, query },
+      });
+
+      console.log('Generated response from Weaviate:', response.data);
+      // Append response to conversation log
+      setConversationLog(
+        (prevLog) => `${prevLog}<br><strong>Response:</strong> ${response.data}<br/><br/>`
+      );
+    } catch (err: any) {
+      setError(`Failed to fetch response from Weaviate - ${err.response.data.error}`);
+      console.error(err);
+    } finally {
+      setError('');
+      setQuery('');
+    }
   };
 
   const handleFetchProjectSummary = async (reponame: string) => {
-    console.log(
-      `Fetching summary from Weaviate for repo:${reponame} and username ${username}`
-    );
-    const response = await axios.get('/api/weaviate/weaviateGenerateDescriptionRoute', {
-      params: {
-        username: username,
-        reponame: reponame,
-      },
-    });
+    try {
+      console.log(
+        `Fetching summary from Weaviate for repo:${reponame} and username ${username}`
+      );
+      const response = await axios.get('/api/weaviate/weaviateGenerateDescriptionRoute', {
+        params: { username, reponame },
+      });
 
-    console.log('Generated response from Weaviate:', response.data);
-    setSummaryResponse(response.data);
+      console.log('Generated response from Weaviate:', response.data);
+      // Append summary response to conversation log
+      setConversationLog(
+        (prevLog) =>
+          `${prevLog ? `${prevLog}<br/>` : ''}<strong>Summary for ${reponame}:</strong> ${response.data}<br/><br/>`
+      );
+    } catch (err: any) {
+      setError(`Failed to fetch summary from Weaviate - ${err.response.data.error}`);
+      console.error(err);
+    } finally {
+      setError('');
+    }
   };
 
   if (reposUploaded) {
     return (
       <>
-        <Container mt={70}>
+        <Container
+          mt={80}
+          size="lg"
+          p="lg"
+          sx={(theme) => ({
+            backgroundColor:
+              theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+          })}
+        >
+          <Group position="center" spacing="md" align="center">
+            <Stack spacing="xs" align="center">
+              <Image
+                src="/img/weaviate/weaviate-logo.png"
+                alt="Weaviate Logo"
+                height={130}
+              />
+              <Title order={3} weight="bolder">
+                Weaviate
+              </Title>
+            </Stack>
+            <Title order={3} weight="bolder">
+              X
+            </Title>
+            <Stack spacing="xxs" align="center">
+              <Image
+                src={dark ? '/img/gc-sml.webp' : '/img/gitconnect-white.png'}
+                alt="GitConnect Logo"
+                height={130}
+              />
+              <Title order={3}>GitConnect;</Title>
+            </Stack>
+          </Group>
+          <Space h="xl" />
+          <Space h="xl" />
+          {/* <Space h="lg" /> */}
+
           <Group position="center">
+            <Title order={2}>Generative GitSearch</Title>
+          </Group>
+          <Group position="center" mt={30}>
             <Blockquote
               cite="- GitConnect tips"
               color="indigo"
@@ -313,96 +374,123 @@ const WeaviateProject: React.FC = () => {
             </Blockquote>
           </Group>
           <Space h="lg" />
+
           {error && (
-            <Text size="lg" color="red" className="mx-auto">
-              {error}
-            </Text>
+            <>
+              {/* <Space h="sm" /> */}
+              <Text size="md" color="red" align="center" weight="bold">
+                {`Failed to fetch response from Weaviate - Appending full error for debugging purposes:`}
+                <br />
+              </Text>
+              <Text size="md" color="red" align="center">
+                {error}
+              </Text>
+              <Space h="xl" />
+              <Space h="md" />
+            </>
           )}
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
+          <Paper
+            radius="sm"
+            withBorder
+            shadow="md"
+            // px="xl"
+            sx={(theme) => ({
+              backgroundColor:
+                theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
+            })}
           >
-            <Group position="center">
-              <Textarea
-                data-autofocus
-                label="Repo Query"
-                placeholder="Ask your repositories anything"
-                size="md"
-                radius="md"
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <Button
-                mt="xl"
-                size="sm"
-                radius="md"
-                color="teal"
-                onClick={() => handleFetchResponse(query)}
-              >
-                Query Weaviate
-              </Button>
-            </Group>
-          </form>
+            <TextConversationOutput newContent={conversationLog} />
+          </Paper>
+          <Space h="xl" />
+          <Paper
+            radius="md"
+            withBorder
+            shadow="sm"
+            p="xl"
+            sx={(theme) => ({
+              backgroundColor:
+                theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+            })}
+          >
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <Group position="center">
+                <Textarea
+                  data-autofocus
+                  label="Repo Query"
+                  id="query-input"
+                  placeholder="Ask your repositories anything"
+                  size="lg"
+                  w="70%"
+                  radius="md"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  styles={(theme) => ({
+                    label: {
+                      fontWeight: 'bold',
+                    },
+                  })}
+                />
+                <Button
+                  mt="xl"
+                  size="md"
+                  id="query-input"
+                  radius="md"
+                  color="teal"
+                  onClick={() => handleFetchResponse(query)}
+                >
+                  Query Weaviate
+                </Button>
+              </Group>
+            </form>
+            <Space h="lg" />
+          </Paper>
           <Space h="xl" />
           <Space h="xl" />
-          <Text align="center" mb="xs" weight={500}>
-            Generate summary buttons:
-          </Text>
+          <Paper
+            radius="md"
+            withBorder
+            shadow="sm"
+            p="xl"
+            sx={(theme) => ({
+              backgroundColor:
+                theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+            })}
+          >
+            <Text align="center" mb="xs" weight={600}>
+              Generate summary buttons:
+            </Text>
 
-          <Group position="center">
-            <SimpleGrid
-              cols={3}
-              spacing="lg"
-              breakpoints={[
-                { maxWidth: 980, cols: 3, spacing: 'md' },
-                { maxWidth: 755, cols: 2, spacing: 'sm' },
-                { maxWidth: 600, cols: 1, spacing: 'sm' },
-              ]}
-            >
-              {selectedReposWeaviateData.length > 0 &&
-                selectedReposWeaviateData.map((repo) => {
-                  return (
-                    <Button
-                      key={repo.repoid}
-                      onClick={() => handleFetchProjectSummary(repo.name)}
-                      size="sm"
-                      radius="md"
-                      // color="cyan"
-                    >
-                      Summary for {repo.name}
-                    </Button>
-                  );
-                })}
-            </SimpleGrid>
-          </Group>
-          <Space h="xl" />
-          {uploadResponse && (
-            <Paper
-              radius="md"
-              withBorder
-              p="lg"
-              sx={(theme) => ({
-                backgroundColor:
-                  theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-              })}
-            >
-              <EditableOutput generatedContent={uploadResponse} />
-            </Paper>
-          )}
-          {summaryResponse && (
-            <Paper
-              radius="md"
-              withBorder
-              p="lg"
-              sx={(theme) => ({
-                backgroundColor:
-                  theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-              })}
-            >
-              <EditableOutput generatedContent={summaryResponse} />
-            </Paper>
-          )}
+            <Group position="center">
+              <SimpleGrid
+                cols={3}
+                spacing="lg"
+                breakpoints={[
+                  { maxWidth: 980, cols: 3, spacing: 'md' },
+                  { maxWidth: 755, cols: 2, spacing: 'sm' },
+                  { maxWidth: 600, cols: 1, spacing: 'sm' },
+                ]}
+              >
+                {selectedReposWeaviateData.length > 0 &&
+                  selectedReposWeaviateData.map((repo) => {
+                    return (
+                      <Button
+                        key={repo.repoid}
+                        onClick={() => handleFetchProjectSummary(repo.name)}
+                        size="md"
+                        radius="md"
+                        // color="cyan"
+                      >
+                        Summary for {repo.name}
+                      </Button>
+                    );
+                  })}
+              </SimpleGrid>
+            </Group>
+          </Paper>
         </Container>
       </>
     );
@@ -410,9 +498,43 @@ const WeaviateProject: React.FC = () => {
 
   return (
     <>
-      <Container mt={90} fluid>
+      <Container mt={80} size="lg" p="lg">
+        <Group position="center" spacing="md" align="center">
+          <Stack spacing="xs" align="center">
+            <Image
+              src="/img/weaviate/weaviate-logo.png"
+              alt="Weaviate Logo"
+              height={130}
+            />
+            <Title order={3} weight="bolder">
+              Weaviate
+            </Title>
+          </Stack>
+          <Title order={3} weight="bolder">
+            X
+          </Title>
+          <Stack spacing="xxs" align="center">
+            <Image
+              src={dark ? '/img/gc-sml.webp' : '/img/gitconnect-white.png'}
+              alt="GitConnect Logo"
+              height={130}
+            />
+            <Title order={3}>GitConnect;</Title>
+          </Stack>
+        </Group>
+        <Space h="xl" />
+        <Space h="xl" />
+        <Space h="lg" />
+
+        <Group position="center">
+          <Title order={2}>Generative GitSearch</Title>
+        </Group>
+
         {repoData && repoData.length == 0 && (
           <>
+            <Space h="xl" />
+            <Space h="lg" />
+
             <Group position="center">
               <Blockquote
                 cite="- GitConnect tips"
@@ -425,52 +547,73 @@ const WeaviateProject: React.FC = () => {
               </Blockquote>
             </Group>
             {error && (
-              <Text size="md" color="red" align="center">
-                {error}
-              </Text>
+              <>
+                <Space h="lg" />
+                <Text size="md" color="red" align="center">
+                  {error}
+                </Text>
+                <Space h="lg" />
+              </>
             )}
+            <Space h="lg" />
 
             <Space h="lg" />
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                fetchRepos();
-              }}
+            <Paper
+              radius="md"
+              withBorder
+              shadow="sm"
+              p="xl"
+              mx="lg"
+              sx={(theme) => ({
+                backgroundColor:
+                  theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+              })}
             >
-              <Group position="center" align="flex-end" spacing="xl">
-                <TextInput
-                  data-autofocus
-                  description="Enter a Github Username to start"
-                  // label="Github Username"
-                  // placeholder="Dannydoesdev"
-                  placeholder="GitHub username"
-                  size="md"
-                  radius="md"
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                <Button
-                  mb="xxs"
-                  size="sm"
-                  radius="md"
-                  color="teal"
-                  onClick={() => fetchRepos()}
-                >
-                  Fetch Repos
-                </Button>
-              </Group>
-            </form>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  fetchRepos();
+                }}
+              >
+                <Group position="center" align="center" spacing="xl">
+                  <TextInput
+                    data-autofocus
+                    placeholder="GitHub username"
+                    size="lg"
+                    label="Enter a Github Username"
+                    radius="md"
+                    onChange={(e) => setUsername(e.target.value)}
+                    w="40%"
+                    styles={(theme) => ({
+                      label: {
+                        fontWeight: 600,
+                      },
+                    })}
+                  />
+                  <Button
+                    mt="xs"
+                    size="md"
+                    radius="md"
+                    color="teal"
+                    onClick={() => fetchRepos()}
+                  >
+                    Fetch Repos
+                  </Button>
+                </Group>
+              </form>
+            </Paper>
           </>
         )}
 
         <Text size="lg" className="mx-auto"></Text>
         <Stack align="center" mt={90} spacing="lg">
-          <Space h="xl" />
+          {/* <Space h="xl" /> */}
           {repoData && repoData.length > 0 && (
             <>
               {userAvatar && (
                 <Avatar
                   className="mx-auto"
-                  radius="xl"
+                  radius="lg"
                   size="xl"
                   src={userAvatar}
                   alt="User Avatar"
