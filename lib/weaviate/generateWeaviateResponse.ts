@@ -16,7 +16,7 @@ export async function generateDynamicResponse(
   // let myCollection = client.collections.get('ProjectsGpt4');
 
 
-  const inerpretedQuery = `Respond using HTML formatting - write a comprehensive answer to the following query on the user ${username}'s stored github repositories - ${query}`;
+  const inerpretedQuery = `Write a comprehensive answer to the following query on the user ${username}'s github repositories. Respond using HTML formatting in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. The query is - ${query}`;
   console.log(`Query: ${inerpretedQuery}`);
 
   const hybridResult = await myCollection.generate.hybrid(
