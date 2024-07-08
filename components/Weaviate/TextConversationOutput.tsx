@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Container, Group } from '@mantine/core';
 import { Link, RichTextEditor, useRichTextEditorContext } from '@mantine/tiptap';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
@@ -21,6 +21,7 @@ lowlight.registerLanguage('ts', tsLanguageSyntax);
 
 function TextConversationOutput({ newContent }: CaseStudyProps) {
   const [existingContent, setExistingContent] = useState('');
+  const editorContainerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -48,20 +49,32 @@ function TextConversationOutput({ newContent }: CaseStudyProps) {
     onUpdate({ editor }) {
       // Update state every time the editor content changes
       setExistingContent(editor.getHTML());
-      editor.commands.selectTextblockEnd();
-      editor.commands.scrollIntoView();
+      // editor.commands.selectTextblockEnd();
+      // editor.commands.scrollIntoView();
     },
   });
 
   useEffect(() => {
-    if (editor) {
+    if (editor && newContent) {
       // Append new content to existing content
-      editor.commands.setContent(existingContent + newContent);
-      editor.commands.selectTextblockEnd();
-      // Scroll to the bottom of the editor
-      editor.commands.scrollIntoView();
+      const combinedContent = existingContent + newContent;
+      editor.commands.setContent(combinedContent); // false to not trigger onUpdate
+      //  setExistingContent(combinedContent);
+
+      //  editor.commands.setContent(existingContent + newContent);
+      // Ensure we scroll to the bottom after setting content
+      setTimeout(() => {
+        editor.commands.selectTextblockEnd();
+
+        editor.commands.focus('end');
+        editor.commands.scrollIntoView();
+      }, 100);
+      // editor.commands.selectTextblockEnd();
+      // // Scroll to the bottom of the editor
+      // editor.commands.scrollIntoView();
     }
-  }, [newContent, editor, existingContent]);
+  }, [newContent, editor]);
+
 
   return (
     <div>
@@ -74,6 +87,9 @@ function TextConversationOutput({ newContent }: CaseStudyProps) {
             w="100%"
             styles={(theme) => ({
               root: {
+                border: 0,
+              },
+              content: {
                 border: 0,
                 height: '30vh',
                 overflowY: 'auto',
