@@ -1,5 +1,4 @@
 import { Octokit } from "@octokit/rest";
-import { Endpoints } from '@octokit/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
