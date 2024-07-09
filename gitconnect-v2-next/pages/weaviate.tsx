@@ -21,10 +21,9 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconCheck, IconCross, IconInfoCircle } from '@tabler/icons-react';
 import axios from 'axios';
 import removeMarkdown from 'remove-markdown';
-import { deleteWeaviateSchema } from '@/lib/weaviate/weaviateDeleteSchema';
 import TextConversationOutput from '@/components/Weaviate/TextConversationOutput';
 import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
@@ -261,6 +260,15 @@ const WeaviateProject: React.FC = () => {
     console.log(`Uploading project data to Weaviate from client: ${projectData}`);
 
     try {
+      notifications.show({
+        id: 'upload-to-weaviate',
+        loading: true,
+        withBorder: true,
+        title: 'Uploading to Weaviate...',
+        message: 'Selected repos are being uploaded to Weaviate',
+        autoClose: false,
+        withCloseButton: false,
+      });
       const response = await axios.post(
         '/api/weaviate/weaviateBulkUploadRoute',
         projectData
@@ -269,14 +277,41 @@ const WeaviateProject: React.FC = () => {
     } catch (err: any) {
       setError(`Failed to fetch response from Weaviate - ${err.response.data.error}`);
       console.error(err);
+      notifications.update({
+        id: 'upload-to-weaviate',
+        color: 'red',
+        withBorder: true,
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
     } finally {
       setReposUploaded(true);
       setError('');
+      notifications.update({
+        id: 'upload-to-weaviate',
+        color: 'teal',
+        withBorder: true,
+        title: 'Upload successful',
+        message: 'Selected repos have been uploaded',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 1000,
+      });
     }
   };
 
   const handleFetchResponse = async (query: string) => {
     try {
+      notifications.show({
+        id: 'fetch-response',
+        loading: true,
+        title: 'Sending query to Weaviate...',
+        message: 'Query is being sent to Weaviate for response generation',
+        autoClose: false,
+        withBorder: true,
+        withCloseButton: false,
+      });
       console.log(
         `Fetching response from Weaviate for query: ${query} and username ${username}`
       );
@@ -301,14 +336,41 @@ const WeaviateProject: React.FC = () => {
     } catch (err: any) {
       setError(`Failed to fetch response from Weaviate - ${err.response.data.error}`);
       console.error(err);
+      notifications.update({
+        id: 'fetch-response',
+        color: 'red',
+        title: 'Something went wrong',
+        withBorder: true,
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
     } finally {
       setError('');
       setQuery('');
+      notifications.update({
+        id: 'fetch-response',
+        color: 'teal',
+        title: 'Query successful',
+        withBorder: true,
+        message: 'Response has been generated',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 1000,
+      });
     }
   };
 
   const handleFetchProjectSummary = async (reponame: string) => {
     try {
+      notifications.show({
+        id: 'fetch-project-summary',
+        loading: true,
+        withBorder: true,
+        title: 'Generating summary...',
+        message: 'Generating summary for project - this can take a while',
+        autoClose: false,
+        withCloseButton: false,
+      });
       console.log(
         `Fetching summary from Weaviate for repo:${reponame} and username ${username}`
       );
@@ -325,12 +387,28 @@ const WeaviateProject: React.FC = () => {
     } catch (err: any) {
       setError(`Failed to fetch summary from Weaviate - ${err.response.data.error}`);
       console.error(err);
+      notifications.update({
+        id: 'fetch-project-summary',
+        color: 'red',
+        title: 'Something went wrong',
+        withBorder: true,
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
     } finally {
       setError('');
+      notifications.update({
+        id: 'fetch-project-summary',
+        color: 'teal',
+        withBorder: true,
+        title: 'Summary generation successful',
+        message: 'Your project summary has been generated',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 1000,
+      });
     }
   };
-
-
 
   if (reposUploaded) {
     return (
@@ -614,20 +692,20 @@ const WeaviateProject: React.FC = () => {
                 </Group>
               </form>
             </Paper>
-            <Space h='xl' />
-            <Space h='xl'/>
+            <Space h="xl" />
+            <Space h="xl" />
 
-            <Group position='center' mt='xl'>
-            <Button
-              mt="xs"
-              size="md"
-              radius="md"
-              color="red"
-              onClick={() => deleteCollections()}
-            >
-              Dev use only - Delete + Recreate Weaviate schemas
+            <Group position="center" mt="xl">
+              <Button
+                mt="xs"
+                size="md"
+                radius="md"
+                color="red"
+                onClick={() => deleteCollections()}
+              >
+                Dev use only - Delete + Recreate Weaviate schemas
               </Button>
-              </Group>
+            </Group>
           </>
         )}
 
