@@ -29,75 +29,13 @@ import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
 import type { WeaviateRepoUploadData } from '../types/weaviate';
 
-interface ShowRepoProps {
-  repo: RepoDataFull;
-  selectRepo: (repoId: string) => void;
-  deselectRepo: (repoId: string) => void;
-  isSelected: boolean;
-}
-
-const ShowRepo: React.FC<ShowRepoProps> = ({
-  repo,
-  selectRepo,
-  deselectRepo,
-  isSelected,
-}) => {
-  const {
-    name: repoName,
-    fork: isForked,
-    html_url: repoUrl,
-    description: repoDesc,
-    license: repoLicense,
-  } = repo;
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      selectRepo(repo.id.toString());
-      // selectRepo(repo);
-    } else {
-      deselectRepo(repo.id.toString());
-    }
-  };
-
-  return (
-    <>
-      <Card shadow="sm" mb="xs" p="lg" radius="md" withBorder>
-        <Group display="flex" noWrap position="apart" mt="md" mb="xs">
-          <Link href={repoUrl} passHref legacyBehavior>
-            <Text underline component="a" target="_blank" weight={500}>
-              {repoName}
-            </Text>
-          </Link>
-
-          {isForked && (
-            <Badge size="xs" color="grape" variant="light">
-              Forked
-            </Badge>
-          )}
-        </Group>
-        <Text truncate size="sm" color="dimmed">
-          {repoDesc ? repoDesc : 'No description found'}
-        </Text>
-        <Space h="xs" />
-        <Text size="xs" color="dimmed">
-          {repoLicense ? repoLicense.name : 'No license found'}
-        </Text>
-        <Group mb="xs" mt="lg" position="center">
-          <Checkbox
-            checked={isSelected}
-            onChange={handleCheckboxChange}
-            label="Add to Weaviate"
-            color="lime"
-            // size='xs'
-          />
-        </Group>
-      </Card>
-    </>
-  );
-};
+// Renders the WeaviateProject component.
+// This component allows the user to interact with the Weaviate API by fetching GitHub repositories,
+// selecting repositories to upload to Weaviate, and generating responses based on user queries.
 
 const WeaviateProject: React.FC = () => {
-  const [username, setUsername] = useState('');
+  // State variables
+  const [username, setUsername] = useState<string>('');
   const [repoData, setRepoData] = useState<RepoDataFull[] | null>([]);
   const [selectedRepos, setSelectedRepos] = useState<string[]>([]);
   const [userAvatar, setUserAvatar] = useState<string>('');
@@ -105,20 +43,20 @@ const WeaviateProject: React.FC = () => {
     WeaviateRepoUploadData[]
   >([]);
   const [query, setQuery] = useState<string>('');
-  const [uploadResponse, setUploadResponse] = useState<string>('');
   const [conversationLog, setConversationLog] = useState('');
   const [reposUploaded, setReposUploaded] = useState<boolean>(false);
-  const [summaryResponse, setSummaryResponse] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { colorScheme } = useMantineColorScheme();
+
+  // Check for dark mode - logos are updated based on color scheme
   const dark = colorScheme === 'dark';
 
   useEffect(() => {
-    // Run the Weaviate createSchema function on startup - checks if the schema exists and creates it if it doesn't
+    // Run the Weaviate createSchema function on startup
+    // Checks if the relevent schemas exists and creates them if they don't
     const initializeSchema = async () => {
       try {
         await axios.get('/api/weaviate/weaviateSchemaSetup');
-        console.log('Schema setup API called');
       } catch (error) {
         console.error('Error calling schema setup API:', error);
       }
@@ -127,19 +65,50 @@ const WeaviateProject: React.FC = () => {
     initializeSchema();
   }, []);
 
+  // For dev purposes - deletes and recreates Weaviate collections
   const deleteCollections = async () => {
     try {
+      notifications.show({
+        id: 'delete-schema',
+        loading: true,
+        withBorder: true,
+        title: 'Deleting & recreating Weaviate Collectionse...',
+        message: 'Weaviate schema is being deleted and recreated',
+        autoClose: false,
+        withCloseButton: false,
+      });
       await axios.get('/api/weaviate/weaviateSchemaDelete');
       console.log('Weaviate schema deleted and recreated');
     } catch (error) {
       console.error('Error deleting Weaviate schema:', error);
+      notifications.update({
+        id: 'delete-schema',
+        color: 'red',
+        withBorder: true,
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size="1rem" />,
+        autoClose: 2000,
+      });
+    } finally {
+      notifications.update({
+        id: 'delete-schema',
+        color: 'teal',
+        withBorder: true,
+        title: 'Collection deletion successful',
+        message: 'Collections have been deleted and recreated',
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
     }
   };
 
+  // Adds a repository to the selectedRepos state when selected
   const selectRepo = (repoId: string) => {
     setSelectedRepos([...selectedRepos, repoId]);
   };
 
+  // Removes a repository from the selectedRepos state when deselected
   const deselectRepo = (repoId: string) => {
     setSelectedRepos(selectedRepos.filter((id) => id !== repoId));
   };
@@ -163,14 +132,14 @@ const WeaviateProject: React.FC = () => {
     }
   };
 
-  // Utility function to clean markdown and newlines
+  // Utility function to clean markdown and newlines from readme content
   const cleanMarkdown = (rawText: string) => {
     const strippedMarkdown = removeMarkdown(rawText);
     const cleanedText = strippedMarkdown.replace(/\n/g, ' ');
     return cleanedText;
   };
 
-  // Utility function to fetch readme content
+  // Utility function to fetch readme content for a given Github repository based on username and repo name
   const fetchReadme = async (
     userName: string,
     repoName: string
@@ -195,7 +164,7 @@ const WeaviateProject: React.FC = () => {
     }
   };
 
-  // Utility function to fetch language breakdown usage in repo by percentage
+  // Utility function to fetch language breakdown usage in repo and return as an array of string with language and percentage
   const fetchLanguages = async (
     languagesUrl?: string | null
   ): Promise<string[] | null> => {
@@ -226,8 +195,6 @@ const WeaviateProject: React.FC = () => {
 
   // Transform selected repos into Weaviate data object - runs helper utilities for readme and languages
   const handleSubmit = async () => {
-    console.log('Selected Repos:', selectedRepos);
-
     const selectedReposFullData: WeaviateRepoUploadData[] = await Promise.all(
       repoData
         ?.filter((repo) => selectedRepos.includes(repo.id.toString()))
@@ -251,14 +218,12 @@ const WeaviateProject: React.FC = () => {
           };
         }) || []
     );
-    // console.log('Selected Repo Full Data:', selectedReposFullData);
     setSelectedReposWeaviateData(selectedReposFullData);
     await uploadToWeaviate(selectedReposFullData);
   };
 
+  // Uploads the transformed repo data to Weaviate
   const uploadToWeaviate = async (projectData: WeaviateRepoUploadData[]) => {
-    console.log(`Uploading project data to Weaviate from client: ${projectData}`);
-
     try {
       notifications.show({
         id: 'upload-to-weaviate',
@@ -269,11 +234,7 @@ const WeaviateProject: React.FC = () => {
         autoClose: false,
         withCloseButton: false,
       });
-      const response = await axios.post(
-        '/api/weaviate/weaviateBulkUploadRoute',
-        projectData
-      );
-      console.log('Response from Weaviate:', response.data);
+      await axios.post('/api/weaviate/weaviateBulkUploadRoute', projectData);
     } catch (err: any) {
       setError(`Failed to fetch response from Weaviate - ${err.response.data.error}`);
       console.error(err);
@@ -301,6 +262,7 @@ const WeaviateProject: React.FC = () => {
     }
   };
 
+  // Sends a query to Weaviate and generates a response.
   const handleFetchResponse = async (query: string) => {
     try {
       notifications.show({
@@ -312,23 +274,17 @@ const WeaviateProject: React.FC = () => {
         withBorder: true,
         withCloseButton: false,
       });
-      console.log(
-        `Fetching response from Weaviate for query: ${query} and username ${username}`
-      );
+
       // Append query to conversation log - no line break if prevLog is empty
       setConversationLog(
         (prevLog) =>
           `${prevLog ? `${prevLog}<br/>` : ''}<strong>Query:</strong> ${query}<br/>`
       );
-      // setConversationLog(
-      //   (prevLog) => `${prevLog}<br/><strong>Query:</strong> ${query}<br/>`
-      // );
 
       const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
         params: { username, query },
       });
 
-      console.log('Generated response from Weaviate:', response.data);
       // Append response to conversation log
       setConversationLog(
         (prevLog) => `${prevLog}<br><strong>Response:</strong> ${response.data}<br/><br/>`
@@ -360,6 +316,7 @@ const WeaviateProject: React.FC = () => {
     }
   };
 
+  // Fetches a summary for a project
   const handleFetchProjectSummary = async (reponame: string) => {
     try {
       notifications.show({
@@ -371,14 +328,11 @@ const WeaviateProject: React.FC = () => {
         autoClose: false,
         withCloseButton: false,
       });
-      console.log(
-        `Fetching summary from Weaviate for repo:${reponame} and username ${username}`
-      );
+
       const response = await axios.get('/api/weaviate/weaviateGenerateDescriptionRoute', {
         params: { username, reponame },
       });
 
-      console.log('Generated response from Weaviate:', response.data);
       // Append summary response to conversation log
       setConversationLog(
         (prevLog) =>
@@ -410,6 +364,7 @@ const WeaviateProject: React.FC = () => {
     }
   };
 
+  // Render the query page when repos have been uploaded
   if (reposUploaded) {
     return (
       <>
@@ -467,7 +422,6 @@ const WeaviateProject: React.FC = () => {
 
           {error && (
             <>
-              {/* <Space h="sm" /> */}
               <Text size="md" color="red" align="center" weight="bold">
                 {`Failed to fetch response from Weaviate - Appending full error for debugging purposes:`}
                 <br />
@@ -586,6 +540,7 @@ const WeaviateProject: React.FC = () => {
     );
   }
 
+  // Render the repo selection pages when no repos have been uploaded
   return (
     <>
       <Container mt={80} size="lg" p="lg">
@@ -699,11 +654,12 @@ const WeaviateProject: React.FC = () => {
               <Button
                 mt="xs"
                 size="md"
+                w="50%"
                 radius="md"
                 color="red"
                 onClick={() => deleteCollections()}
               >
-                Dev use only - Delete + Recreate Weaviate schemas
+                Delete + Recreate Weaviate Collections
               </Button>
             </Group>
           </>
@@ -776,5 +732,75 @@ const WeaviateProject: React.FC = () => {
     </>
   );
 };
+
+
+// Card component to display repo data and allow selection TODO: extract to separate component
+interface ShowRepoProps {
+  repo: RepoDataFull;
+  selectRepo: (repoId: string) => void;
+  deselectRepo: (repoId: string) => void;
+  isSelected: boolean;
+}
+
+const ShowRepo: React.FC<ShowRepoProps> = ({
+  repo,
+  selectRepo,
+  deselectRepo,
+  isSelected,
+}) => {
+  const {
+    name: repoName,
+    fork: isForked,
+    html_url: repoUrl,
+    description: repoDesc,
+    license: repoLicense,
+  } = repo;
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      selectRepo(repo.id.toString());
+      // selectRepo(repo);
+    } else {
+      deselectRepo(repo.id.toString());
+    }
+  };
+
+  return (
+    <>
+      <Card shadow="sm" mb="xs" p="lg" radius="md" withBorder>
+        <Group display="flex" noWrap position="apart" mt="md" mb="xs">
+          <Link href={repoUrl} passHref legacyBehavior>
+            <Text underline component="a" target="_blank" weight={500}>
+              {repoName}
+            </Text>
+          </Link>
+
+          {isForked && (
+            <Badge size="xs" color="grape" variant="light">
+              Forked
+            </Badge>
+          )}
+        </Group>
+        <Text truncate size="sm" color="dimmed">
+          {repoDesc ? repoDesc : 'No description found'}
+        </Text>
+        <Space h="xs" />
+        <Text size="xs" color="dimmed">
+          {repoLicense ? repoLicense.name : 'No license found'}
+        </Text>
+        <Group mb="xs" mt="lg" position="center">
+          <Checkbox
+            checked={isSelected}
+            onChange={handleCheckboxChange}
+            label="Add to Weaviate"
+            color="lime"
+            // size='xs'
+          />
+        </Group>
+      </Card>
+    </>
+  );
+};
+
 
 export default WeaviateProject;
