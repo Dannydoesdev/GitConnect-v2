@@ -13,9 +13,9 @@ import '../styles/globals.css';
 import '../styles/tiptap.scss';
 import { AppContainer } from '../components/AppContainer';
 import { AuthProvider } from '../context/AuthContext';
-import { mantineCache } from '../mantine/cache';
 import { useRouter } from 'next/router';
 import "@fontsource/inter"; 
+import axios from 'axios';
 
 // Previous solution here for future ref - just for icons for notitap
 // import '@unocss/reset/tailwind.css'
