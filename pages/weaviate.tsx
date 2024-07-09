@@ -29,6 +29,10 @@ import { getGithubReposWithUsername } from '../lib/github';
 import { RepoDataFull } from '../types/repos';
 import type { WeaviateRepoUploadData } from '../types/weaviate';
 
+
+// NOTE - Significant re-factor underway using pages/weaviateproject.tsx - reference that file for cleaner and up to date component / function structuring
+
+
 // Renders the WeaviateProject component.
 // This component allows the user to interact with the Weaviate API by fetching GitHub repositories,
 // selecting repositories to upload to Weaviate, and generating responses based on user queries.

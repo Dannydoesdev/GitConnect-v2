@@ -8,8 +8,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Extract project data from request body
   const projectData = req.body;
 
-  console.log('projectData in bulk upload API handler:', projectData);
-
   try {
     // Upload project data to Weaviate helper function
    await weaviateBulkUploadHelper(projectData);

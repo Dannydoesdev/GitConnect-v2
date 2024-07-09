@@ -19,9 +19,9 @@ type CaseStudyProps = {
 
 lowlight.registerLanguage('ts', tsLanguageSyntax);
 
+// Renders a TipTap Text Editor component for displaying & keeping track of generated content
 function TextConversationOutput({ newContent }: CaseStudyProps) {
   const [existingContent, setExistingContent] = useState('');
-  const editorContainerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -73,7 +73,6 @@ function TextConversationOutput({ newContent }: CaseStudyProps) {
       <Container p="lg" fluid>
         <Group position="center">
           <RichTextEditor
-            // p='lg'
             mt={10}
             editor={editor}
             w="100%"

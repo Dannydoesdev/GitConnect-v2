@@ -1,22 +1,11 @@
 import client from './weaviateInitiateClient';
 
-export async function generateDynamicResponse(
-  username: string,
-  query: string,
-  repoName?: string
-) {
-  console.log(
-    'generateDynamicResponse function called with username:',
-    username,
-    'and query:',
-    query
-  );
-
+// Generate a 'dynamic' response (based on free text query from Weaviate
+export async function generateDynamicResponse(username: string, query: string) {
   let myCollection = client.collections.get('ProjectsGpt3');
-  // let myCollection = client.collections.get('ProjectsGpt4');
 
+  // Inject query into pre-formatted helper text
   const inerpretedQuery = `Write a comprehensive but succinct answer to the following query on the user ${username}'s github repositories. Respond using HTML formatting in plain HTML format, using clear headings, paragraphs, and lists where relevant. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. The query is - ${query}`;
-  console.log(`Query: ${inerpretedQuery}`);
 
   const result = await myCollection.generate.nearText(
     `${username}, ${query}`,
@@ -36,32 +25,19 @@ export async function generateDynamicResponse(
       // returnProperties: ['name', 'description', 'readme', 'tags'],
     }
   );
-  // console.log(`full response: ${JSON.stringify(result, null, 2)}`);
-  // console.log(result.generated);
+
   return result.generated;
 }
 
+// Generate a project summary of a specific repo from Weaviate
 export async function generateProjectDescription(username: string, reponame: string) {
-  console.log(
-    'generateProjectDescription function called with username:',
-    username,
-    'and reponame:',
-    reponame
-  );
-
   let myCollection = client.collections.get('ProjectsGpt3');
-  // let myCollection = client.collections.get('ProjectsGpt4');
 
-  // singlePrompt: `Write a comprehensive project description suitable for a software developer's portfolio page for the project named {${reponame}}: using the following details: {name}, {description}, {readme}, {language_breakdown_percent}, {username}, {star_count}, {fork_count}`,
-
-  // const interpretedQuery = `You are an AI assisting in writing a narrative for a software development project which they can use in their portfolio. Craft a story from the first-person perspective for the user ${username}'s github project named ${reponame}. Your answer should directly delve into the project's journey, avoiding formal introductions like 'Welcome to the narrative.' Focus on the project's purpose, challenges, technologies used, and outcomes, portraying it as a developer's personal recount. Provide the narrative in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. Keep the tone professional yet personal, reflecting the developer's voice and experience. Ensure the narrative is engaging, cohesive, professional, and informative, and is suitable for a developer's portfolio.`;
-
+  // Inject query into pre-formatted helper text
   const hybridResponse = await myCollection.generate.hybrid(
     `${reponame}`,
     {
       singlePrompt: `Act as an expert in writing narratives for software development projects. Craft a compehensive, compelling and engaging overview for the user ${username}'s github project named ${reponame} which would be suitable for someone trying to understand the project or that the owner could use in their developer portfolio. Focus on the project's purpose, challenges, technologies used, and outcomes. Provide the narrative in plain HTML format, using clear headings, paragraphs, and lists. Avoid any Markdown syntax like triple backticks; only use standard HTML tags. Keep the tone professional yet personal, reflecting the developer's voice and experience. Ensure the explanation is engaging, cohesive, professional, and informative, and is suitable for a developer's portfolio. Utilise the following details to create this narrative: {name}, {description}, {readme}, {username}`,
-      // singlePrompt: `Respond using HTML formatting - write a comprehensive and compelling project description suitable for a software developer's portfolio page on the user ${username}'s github project named ${reponame} `,
-      // using the following details: {name}, {description}, {readme}, {username}`,
     },
     {
       alpha: 0.5,
@@ -71,17 +47,11 @@ export async function generateProjectDescription(username: string, reponame: str
     }
   );
 
-  // for (const obj of response.objects) {
-  //   console.log(obj.properties['name']);
-  //   console.log(`Generated output: ${obj.generated}`);
-  // }
   return hybridResponse.objects[0].generated;
-  // return response.objects[0].generated;
 }
 
 export async function generateUserWorkSummary(username: string) {
   let myCollection = client.collections.get('ProjectsGpt3');
-  // let myCollection = client.collections.get('ProjectsGpt4');
 
   const result = await myCollection.generate.nearText(
     [`${username}`],
@@ -95,6 +65,6 @@ export async function generateUserWorkSummary(username: string) {
     }
   );
 
-  console.log(result.generated);
+  // console.log(result.generated);
   return result.generated;
 }
