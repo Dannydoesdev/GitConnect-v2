@@ -95,7 +95,6 @@ export async function createWeaviateSchema() {
         }),
       ],
       generative: generative.openAI({
-        // model: 'gpt-3.5-turbo',
         model: 'gpt-3.5-turbo-1106',
         maxTokens: 1200,
       }),
@@ -210,58 +209,6 @@ export async function createGpt4Schema() {
   }
 }
 
-export default createWeaviateSchema;
-
-
-  //   // Define the collection schema and create it
-  //   const collectionObj = {
-  //     name: 'Projects',
-  //     properties: [
-  //       {
-  //         name: 'name',
-  //         dataType: 'text' as const,
-  //         description: 'The name of the project',
-  //         tokenization: 'lowercase' as const,
-  //         vectorizePropertyName: true,
-  //       },
-  //       {
-  //         name: 'description',
-  //         dataType: 'text' as const,
-  //         description: 'Description of the project',
-  //         tokenization: 'whitespace' as const,
-  //         vectorizePropertyName: false,
-  //       },
-  //       {
-  //         name: 'tags',
-  //         dataType: 'text[]' as const,
-  //         description: 'Tags related to the project',
-  //         tokenization: 'lowercase' as const,
-  //         vectorizePropertyName: false,
-  //       },
-  //       {
-  //         name: 'readme',
-  //         dataType: 'text' as const,
-  //         description: 'README content of the project',
-  //         tokenization: 'whitespace' as const,
-  //         vectorizePropertyName: false,
-  //       },
-  //     ],
-  //     vectorizers: [
-  //       vectorizer.text2VecOpenAI({
-  //         name: 'Projects_vector',
-  //         model: 'text-embedding-3-small',
-  //       }),
-  //     ],
-  //     generative: generative.openAI(),
-  //   };
-
-  //   await client.collections.create(collectionObj);
-
-  //   console.log(`Collection "Projects" created!`);
-  // } catch (error) {
-  //   console.error('Error creating collection:', error);
-  // }
-// }
 
 export async function createReposSchema() {
   try {
@@ -271,7 +218,6 @@ export async function createReposSchema() {
     // Cancel creation if an existing collection is found
     if (collectionReposExists) {
       console.log('Weaviate collection "Repos" already exist - skipping.');
-      // createThirdSchema();
       return;
     } else {
       console.log('Weaviate collection "Repos" does not exist - creating.');
@@ -335,3 +281,4 @@ export async function createReposSchema() {
   }
 }
 
+export default createWeaviateSchema;
