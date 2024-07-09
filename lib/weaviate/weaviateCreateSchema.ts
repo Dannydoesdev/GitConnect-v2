@@ -200,7 +200,7 @@ export async function createGpt4Schema() {
       ],
       generative: generative.openAI({
         model: 'gpt-4-1106-preview',
-        maxTokens: 800,
+        maxTokens: 1200,
       }),
     };
     await client.collections.create(collectionObjNew);
