@@ -49,8 +49,6 @@ function TextConversationOutput({ newContent }: CaseStudyProps) {
     onUpdate({ editor }) {
       // Update state every time the editor content changes
       setExistingContent(editor.getHTML());
-      // editor.commands.selectTextblockEnd();
-      // editor.commands.scrollIntoView();
     },
   });
 
@@ -59,19 +57,13 @@ function TextConversationOutput({ newContent }: CaseStudyProps) {
       // Append new content to existing content
       const combinedContent = existingContent + newContent;
       editor.commands.setContent(combinedContent); // false to not trigger onUpdate
-      //  setExistingContent(combinedContent);
 
-      //  editor.commands.setContent(existingContent + newContent);
-      // Ensure we scroll to the bottom after setting content
+      // Ensure we scroll to the bottom after setting content - NOTE: not working currently
       setTimeout(() => {
         editor.commands.selectTextblockEnd();
-
         editor.commands.focus('end');
         editor.commands.scrollIntoView();
       }, 100);
-      // editor.commands.selectTextblockEnd();
-      // // Scroll to the bottom of the editor
-      // editor.commands.scrollIntoView();
     }
   }, [newContent, editor]);
 
