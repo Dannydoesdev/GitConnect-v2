@@ -1,18 +1,18 @@
 # GitConnect-v2
 
 ## The Portfolio creation and sharing hub for Developers
----
 
+---
 ## Live site
 
 ### [Find the live site by clicking here](https://www.gitconnect.dev/)
 
-### Note that 'v2' is actively under construction - and I am aiming to move into 'beta' within Q1 2023
 ---
 ## Contact
 
 ### You can find me at [Linkedin](https://www.linkedin.com/in/danieltmcgee/)
 ### Please reach out if you want to contribute to this project! Very open to it
+
 --- 
 ## Introduction
 
