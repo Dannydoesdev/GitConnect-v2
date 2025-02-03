@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 // import Router from 'next/router';
 import { useRouter } from 'next/router';
+import { AuthContext } from '@/context/AuthContext';
 import { app, auth } from '@/firebase/clientApp';
 import { Dialog, Disclosure, RadioGroup } from '@headlessui/react';
 import {
@@ -39,7 +40,6 @@ import { IconBrandDiscord, IconBrandGithub } from '@tabler/icons-react';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import mixpanel from 'mixpanel-browser';
 import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
-import { AuthContext } from '@/context/AuthContext';
 import { getCheckoutUrlTest } from '@/lib/stripe/stripePaymentTest';
 
 const navigation = [
@@ -214,7 +214,7 @@ export default function LandingPage() {
   // const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [frequency, setFrequency] = useState(pricing.frequencies[0]);
-  
+
   const { userData, currentUser } = useContext(AuthContext);
 
   // const { currentUser } = useContext(AuthContext)
@@ -227,18 +227,16 @@ export default function LandingPage() {
   }, [userData]);
 
   const upgradeToPremiumMonthly = async () => {
-
     const priceId = 'price_1O8cptCT5BNNo8lFuDcGOAcM';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
   const upgradeToPremiumAnnual = async () => {
-
-     const priceId = 'price_1O8cq0CT5BNNo8lFWd3e5TYy';
+    const priceId = 'price_1O8cq0CT5BNNo8lFWd3e5TYy';
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
-  
+
   const signupHandler = useCallback(
     async (e: any) => {
       e.preventDefault();
@@ -282,8 +280,7 @@ export default function LandingPage() {
 
   return (
     // <div className="bg-white">
-          <div className="bg-gray-900">
-
+    <div className="bg-gray-900">
       <main>
         {/* Hero section */}
         <div className="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
@@ -468,6 +465,10 @@ export default function LandingPage() {
         </div>
 
         {/* NEW PRICING SECTION */}
+        {/* NOTE: Nested comments created using cmd + alt + '/' - nestedcomments ext  */}
+
+    {/*   
+       <>
         <div className="mx-auto mt-16 max-w-7xl px-6 sm:mt-32 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-base font-semibold leading-7 text-indigo-400">Pricing</h1>
@@ -475,17 +476,17 @@ export default function LandingPage() {
               A plan for &nbsp;every&nbsp; dev. <br />
               <br />
               Lock in a launch discount and help shape the future of GitConnect.{' '}
-              {/* Pricing plans for teams of&nbsp;all&nbsp;sizes */}
+              /~ Pricing plans for teams of&nbsp;all&nbsp;sizes ~/
             </p>
           </div>
           <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-300">
             Our aim is make GitConnect the best platform possible for devs. <br />
             For helping us to achieve that goal, pro users will get a chance to influence the
             roadmap and have a say in what features we build next - especially early on.
-            {/* We want every dev to be able to get a great portfolio with GitConnect, your feedback is . */}
-            {/* can support us just by using the platform and providing feedback. */}
-            {/* Choose an affordable plan that’s packed with the best features for engaging
-            your audience, creating customer loyalty, and driving sales. */}
+            /~ We want every dev to be able to get a great portfolio with GitConnect, your feedback is . ~/
+            /~ can support us just by using the platform and providing feedback. ~/
+            /~ Choose an affordable plan that’s packed with the best features for engaging
+            your audience, creating customer loyalty, and driving sales. ~/
           </p>
           <div className="mt-16 flex justify-center">
             <RadioGroup
@@ -533,19 +534,19 @@ export default function LandingPage() {
                   ) : null}
                 </div>
                 <p className="mt-4 text-sm leading-6 text-gray-300">{tier.description}</p>
-                {/* ... other tier details ... */}
+                /~ ... other tier details ... ~/
                 <p className="mt-6 flex items-baseline gap-x-1">
-                  {/* Check if the tier is "Pro" and apply discounts */}
+                  /~ Check if the tier is "Pro" and apply discounts ~/
                   {tier.name.includes('Pro') ? (
                     <>
                       <span className="text-4xl font-bold tracking-tight text-gray-300 line-through">
-                        {/* ${tier.price[frequency.value]}{' '} */}
+                        /~ ${tier.price[frequency.value]}{' '} ~/
                         ${tier.price[frequency.value as 'monthly' | 'annually']}{' '}
 
-                        {/* Assuming this is the original price */}
+                        /~ Assuming this is the original price ~/
                       </span>
                       <span className="ml-2 text-4xl font-bold tracking-tight text-white">
-                        {/* ${tier.discountedPrice[frequency.value]}{' '} */}
+                        /~ ${tier.discountedPrice[frequency.value]}{' '} ~/
 
                         ${tier.discountedPrice && tier.discountedPrice[frequency.value as 'monthly' | 'annually']}{' '} 
                
@@ -557,7 +558,7 @@ export default function LandingPage() {
                   ) : (
                     <>
                       <span className="text-4xl font-bold tracking-tight text-white">
-                          {/* {tier.price[frequency.value]} */}
+                          /~ {tier.price[frequency.value]} ~/
                           {tier.price[frequency.value as 'monthly' | 'annually']}{' '}
                       </span>
                       <span className="text-sm font-semibold leading-6 text-gray-300">
@@ -650,7 +651,7 @@ export default function LandingPage() {
                   role="list"
                   className="mt-8 space-y-3 text-sm leading-6 text-gray-300 xl:mt-10"
                 >
-                  {/* Conditional rendering for the heading */}
+                  /~ Conditional rendering for the heading ~/
                   {tier.name.includes('Basic') && (
                     <p className="text-md font-bold uppercase my-4">Includes:</p>
                   )}
@@ -722,7 +723,10 @@ export default function LandingPage() {
             </Button>
           </Link>
         </Group>
+        </>       
+        */}
 
+        {/* YOUR FEEDBACK / DISCORD SECTION */}
         <Space h={100} />
         <div className="bg-white py-16 sm:py-24">
           <div className="sm:px-6 lg:px-60">
