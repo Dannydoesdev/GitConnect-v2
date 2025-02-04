@@ -90,6 +90,7 @@ function TipTapEditor({ repoId, repoName }: TipTapProps) {
 
   const editor = useEditor({
     editable,
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         codeBlock: false,

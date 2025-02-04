@@ -42,6 +42,7 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
 
   const editor = useEditor({
     editable,
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         codeBlock: false,
