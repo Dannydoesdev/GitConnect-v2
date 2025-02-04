@@ -138,6 +138,7 @@ RichTextEditorVanillaProps) {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content: initialContent,
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,

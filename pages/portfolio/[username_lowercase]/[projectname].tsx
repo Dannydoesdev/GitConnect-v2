@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Button, Center, Chip, Group, ScrollArea, Space, Stack, Title } from '@mantine/core';
+import { Button, Center, Chip, Group, Stack } from '@mantine/core';
 import useSWR from 'swr';
 import {
   getProjectTextEditorContent,
@@ -14,6 +14,7 @@ import { ProjectPageDynamicHero } from '@/components/ProjectPage/ProjectPageDyna
 import RichTextEditorDisplay from '@/components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 import { unstarProject, starProject } from '@/lib/stars';
 import axios from 'axios';
+import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 
 
 export async function getStaticProps({ params }: any) {
@@ -53,258 +54,237 @@ export async function getStaticPaths() {
   };
 }
 
-// Define your interfaces here
 interface ProjectProps {
   projects: any;
   textContent: any;
 }
 
 interface ProjectData {
-  // Define the properties of ProjectData here
   [key: string]: any;
 }
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function Project({ projects: initialProjects, textContent: initialTextContent }: ProjectProps) {
-  const { currentUser, userData, loading } = useContext(AuthContext);
+  // 1. All hooks at the top level
   const router = useRouter();
-  const { projectname } = router.query;
-
-  if (router.isFallback) {
-    return <LoadingPage />;
-  }
-
-  const { data: fetchProject, error: projectsError } = useSWR(`/api/portfolio/getSingleProject?projectname=${projectname}`, fetcher, initialProjects);
-
-  // FIXME: test both strategies below:
-
-  const { data: fetchTextContent, error: textContentError } = useSWR(`/api/portfolio/getTextEditorContent?userId=${initialProjects[0]?.userId}&repoId=${initialProjects[0]?.id}`, fetcher, initialTextContent);
-
-  // const { data: fetchTextContent, error: textContentError } = useSWR(`/api/projects/getProjectTextEditorContent?userId=${fetchProject[0]?.userId}&repoId=${fetchProject[0]?.id}`, fetcher, initialTextContent);
-
-
-  // TODO: assess if this is a good idea or causes more loading time than needed
-  // if (!fetchProject && !fetchTextContent) {
-  //   return <LoadingPage />;
-  // }
-
-  // if (projectsError) { console.log('SWR Failed to load projects') }
-  // if (textContentError) { console.log('SWR Failed to load project text content') }
-
-  // if (projectsError) return <div>Failed to load projects</div>;
-  // if (textContentError) return <div>Failed to load project text content</div>;
-
-  const projects = fetchProject ?? initialProjects ?? null;
-  const textContent = fetchTextContent?.data ?? initialTextContent ?? null;
-
+  const { currentUser, userData, loading } = useContext(AuthContext);
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
   const [repoOwner, setRepoOwner] = useState<string>('');
   const [starCount, setStarCount] = useState(0);
-
   const [isActiveTab, setIsActiveTab] = useState(true);
-  // const [lastUpdated, setLastUpdated] = useState(Date.now());
   const [lastUpdated, setLastUpdated] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // 2. Get query parameters
+  const projectname = router.query.projectname as string;
 
-useEffect(() => {
-  const handleVisibilityChange = () => {
-    setIsActiveTab(!document.hidden);
-  };
+  // 3. SWR setup
+  const projectKey = projectname ? `/api/portfolio/getSingleProject?projectname=${projectname}` : null;
+  const textContentKey = initialProjects?.[0] 
+    ? `/api/portfolio/getTextEditorContent?userId=${initialProjects[0].userId}&repoId=${initialProjects[0].id}` 
+    : null;
 
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+  const { data: fetchProject, error: projectsError } = useSWR(projectKey, fetcher, {
+    fallbackData: initialProjects,
+    revalidateOnMount: true
+  });
 
-  return () => {
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-  };
-}, []);
+  const { data: fetchTextContent, error: textContentError } = useSWR(textContentKey, fetcher, {
+    fallbackData: initialTextContent,
+    revalidateOnMount: true
+  });
 
-useEffect(() => {
-  setLastUpdated(Date.now());
-  // setLastUpdated(0);
-}, [projectname]);
+  // 4. All useEffects together
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsActiveTab(!document.hidden);
+    };
 
-useEffect(() => {
-  if (loading) {
-    // console.log('authcontext loading is true')
-    return; // If user data is still loading, exit early
-  }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
-  if (!projectname || !isActiveTab || Date.now() - lastUpdated < 10000) {
-    return; // Exit early if conditions are not met
-  }
+  useEffect(() => {
+    setLastUpdated(Date.now());
+  }, [projectname]);
 
-  const project = projects[0] || null;
+  useEffect(() => {
+    if (loading || !userData) return;
+    setIsLoading(false);
+  }, [loading, userData]);
 
-  if (project && userData) {
+  useEffect(() => {
+    if (loading || !projectname || !isActiveTab || Date.now() - lastUpdated < 10000) {
+      return;
+    }
+
+    const projects = fetchProject || initialProjects;
+    const project = projects?.[0];
+
+    if (!project || !userData) return;
+
     setUserHasStarred(project.stars ? project.stars.includes(userData.userId) : false);
     setStarCount(project.stars ? project.stars.length : 0);
-  }
 
-  const handleIncrementView = async (userId: string, repoId: string) => {
-    if (!projects || !userData || projects?.length === 0) return;
+    const handleIncrementView = async (userId: string, repoId: string) => {
+      if (!projects || !userData || projects.length === 0) return;
+      if (userId === userData.userId && project.views && project.views > 1) return;
 
-    // const project = projects[0] || null;
-    if (userId === userData.userId && projects[0].views && projects[0].views > 1) return;
-
-    try {
-      const response = await axios.post('/api/projects/incrementView', { userId, repoId });
-    
-      if (response.status !== 200) {
-        throw new Error(response.data.message);
+      try {
+        const response = await axios.post('/api/projects/incrementView', { userId, repoId });
+        if (response.status === 200) {
+          setLastUpdated(Date.now());
+        }
+      } catch (error) {
+        console.error('Error incrementing view count:', error);
       }
-      // console.log('incrementing view count')
-      // await axios.post('/api/projects/incrementView', {
-      //   userId: userId,
-      //   repoId: repoId,
-      // });
-      setLastUpdated(Date.now());
-    } catch (error: any) {
-      // console.error('Error incrementing view count:', error.message);
-    }
-  };
+    };
 
-  if (project && userData && projects[0].userId && projectname) {
-    const userId = project?.userId;
-    const repoId = project?.id as string;
-
-    if (!currentUser || currentUser.uid !== projects[0].userId) {
-      setRepoOwner(userId);
-      handleIncrementView(userId, repoId);
+    if (project.userId && (!currentUser || currentUser.uid !== project.userId)) {
+      setRepoOwner(project.userId);
+      handleIncrementView(project.userId, project.id);
     }
+  }, [projectname, userData, fetchProject, initialProjects, loading, isActiveTab, lastUpdated, currentUser]);
+
+  // 5. Early returns
+  if (router.isFallback || isLoading) {
+    return <LoadingPage />;
   }
-}, [projectname, userData, projects, loading, isActiveTab, lastUpdated, currentUser]);
 
+  if (projectsError || textContentError) {
+    return <div>Error loading project data</div>;
+  }
 
+  const projects = fetchProject || initialProjects;
+  const textContent = fetchTextContent?.data || initialTextContent;
+
+  if (!projects) {
+    return <LoadingPage />;
+  }
+
+  // 6. Event handlers
   const handleStarClick = async () => {
-    if (!userData || !projects || projects?.length === 0) return;
+    if (!userData || !projects || projects.length === 0) return;
 
     const userId = userData.userId;
     const ownerId = projects[0]?.userId;
     const repoId = projects[0]?.id;
 
     if (userHasStarred) {
-      await unstarProject(userId as string, ownerId as string, repoId);
+      await unstarProject(userId, ownerId, repoId);
       setUserHasStarred(false);
-      setStarCount(starCount - 1);
+      setStarCount(prev => prev - 1);
     } else {
-      await starProject(userId as string, ownerId as string, repoId);
+      await starProject(userId, ownerId, repoId);
       setUserHasStarred(true);
-      setStarCount(starCount + 1);
+      setStarCount(prev => prev + 1);
     }
-
-  //   // Manually refresh data after update
-  // const updatedProjectData = await fetchProjectDataFromFirebase(); // Replace with your actual fetch function
-  // setUserHasStarred(updatedProjectData.stars ? updatedProjectData.stars.includes(userData.userId) : false);
-
   };
 
-  if (projects) {
-    // const project = projects[0]|| null;
-
-    return (
-      <>
-        <ProjectPageDynamicHero props={projects} />
-        {projects[0]?.username_lowercase === userData.username_lowercase && (
-
-        // {/* {projects[0]?.userId === userData.userId && ( */}
-          <Group position="center">
-            <Stack>
-              {projects[0].hidden === true && (
-                <>
-                  <Chip
-                    mt={30}
-                    mb={-10}
-                    checked={false}
-                    variant="filled"
-                    size="md"
-                    styles={(theme) => ({
-                      root: {
-                        pointerEvents: 'none',
-                      },
-                      label: {
-                        backgroundColor:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.indigo[5]
-                            : theme.colors.gray[5],
-                        color:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.white
-                            : theme.colors.gray[1],
-                      },
-                    })}
-                  >
-                    Draft Project - Edit to publish
-                  </Chip>
-                </>
-              )}
-              <br />
-              <Button
-                component="a"
-                size="lg"
-                radius="md"
-                onClick={() => router.push(`/portfolio/edit/${projects[0]?.reponame_lowercase}`)}
-
-                // onClick={() => router.push(`/portfolio/testedit/${projects[0]?.id}`)}
-                className="mx-auto"
-                color="gray"
-                mt="xs"
-                variant="outline"
-                styles={(theme) => ({
-                  root: {
-                    border:
-                      theme.colorScheme === 'dark'
-                        ? 'white solid 1px'
-                        : 'darkblue solid 3px',
-
-                    width: '100%',
-                    [theme.fn.smallerThan('sm')]: {
-                      width: '100%',
+  // 7. Render
+  return (
+    <>
+      <ProjectPageDynamicHero props={projects} />
+      {projects[0]?.username_lowercase === userData.username_lowercase && (
+        <Group position="center">
+          <Stack>
+            {projects[0].hidden === true && (
+              <>
+                <Chip
+                  mt={30}
+                  mb={-10}
+                  checked={false}
+                  variant="filled"
+                  size="md"
+                  styles={(theme) => ({
+                    root: {
+                      pointerEvents: 'none',
                     },
-                    '&:hover': {
+                    label: {
                       backgroundColor:
                         theme.colorScheme === 'dark'
-                          ? theme.colors.dark[4]
-                          : theme.colors.blue[9],
+                          ? theme.colors.indigo[5]
+                          : theme.colors.gray[5],
+                      color:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.white
+                          : theme.colors.gray[1],
                     },
-                  },
-                })}
-              >
-                Edit Project
-              </Button>
-
-            </Stack>
-          </Group>
-        )}
-
-        {userData.userId && (
-          <Center>
+                  })}
+                >
+                  Draft Project - Edit to publish
+                </Chip>
+              </>
+            )}
+            <br />
             <Button
               component="a"
-              onClick={handleStarClick}
-              variant="filled"
               size="lg"
               radius="md"
-              mt={40}
+              onClick={() => router.push(`/portfolio/edit/${projects[0]?.reponame_lowercase}`)}
               className="mx-auto"
-              sx={(theme) => ({
-                // subscribe to color scheme changes
-                backgroundColor:
-                  theme.colorScheme === 'dark'
-                    ? theme.colors.dark[5]
-                    : theme.colors.blue[6],
+              color="gray"
+              mt="xs"
+              variant="outline"
+              styles={(theme) => ({
+                root: {
+                  border:
+                    theme.colorScheme === 'dark'
+                      ? 'white solid 1px'
+                      : 'darkblue solid 3px',
+
+                  width: '100%',
+                  [theme.fn.smallerThan('sm')]: {
+                    width: '100%',
+                  },
+                  '&:hover': {
+                    backgroundColor:
+                      theme.colorScheme === 'dark'
+                        ? theme.colors.dark[4]
+                        : theme.colors.blue[9],
+                  },
+                },
               })}
             >
-              {userHasStarred ? 'Unstar' : 'Star'} Project
+              Edit Project
             </Button>
-          </Center>
-        )}
+          </Stack>
+        </Group>
+      )}
 
-        <ProjectPageDynamicContent props={projects} stars={starCount} />
+      {userData.userId && (
+        <Center>
+          <Button
+            component="a"
+            onClick={handleStarClick}
+            variant="filled"
+            size="lg"
+            radius="md"
+            mt={40}
+            className="mx-auto"
+            sx={(theme) => ({
+              backgroundColor:
+                theme.colorScheme === 'dark'
+                  ? theme.colors.dark[5]
+                  : theme.colors.blue[6],
+            })}
+          >
+            {userHasStarred ? 'Unstar' : 'Star'} Project
+          </Button>
+        </Center>
+      )}
 
-        {textContent && <RichTextEditorDisplay content={textContent} />}
-      </>
-    );
-  }
+      <ProjectPageDynamicContent props={projects} stars={starCount} />
+
+      {textContent && <RichTextEditorDisplay content={textContent} />}
+
+      {/* {projects[0]?.username_lowercase === userData.username_lowercase && (
+        <ProfilePageUserPanel props={projects[0]} currentUser={projects[0].userId === userData.userId} />
+      )} */}
+    </>
+  );
 }
 

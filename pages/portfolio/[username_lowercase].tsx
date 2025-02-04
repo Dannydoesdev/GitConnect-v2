@@ -66,334 +66,201 @@ interface PortfolioProps {
   initialProfile: any;
 }
 
+
+  // 1. Extract Head component to avoid duplication
+  const PageHead = ({ profile, username_lowercase }: any) => (
+    <Head>
+      <title>
+        {`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Portfolio`}
+      </title>
+      <meta
+        name="description"
+        content={`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s portfolio page`}
+      />
+    </Head>
+  );
+
+  // 2. Extract ProfilePanel component
+  const ProfilePanel = ({ profile, isCurrentUser }: any) => (
+    profile ? (
+      <ProfilePageUserPanel 
+        props={profile} 
+        currentUser={isCurrentUser} 
+      />
+    ) : (
+      <LoadingPage />
+    )
+  );
+
+  // 3. Extract ProjectTabs component
+const ProjectTabs = ({ isCurrentUser, activeTab, setActiveTab, publishedProjects, draftProjects }: any) => (
+
+    isCurrentUser ? (
+      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+        <Tabs.List>
+          <Tabs.Tab value="first">Projects</Tabs.Tab>
+          <Tabs.Tab value="second" color="orange">
+            Drafts
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="first">
+          <Space h={20} />
+          <Grid.Col>
+            <ProfilePageProjectGrid 
+              currentUser={isCurrentUser} 
+              projectType={'published'} 
+              projects={publishedProjects} 
+            />
+          </Grid.Col>
+        </Tabs.Panel>
+        <Tabs.Panel value="second">
+          <Space h={20} />
+          <Grid.Col>
+            <ProfilePageProjectGrid 
+              currentUser={isCurrentUser} 
+              projectType={'drafts'} 
+              projects={draftProjects} 
+            />
+          </Grid.Col>
+        </Tabs.Panel>
+      </Tabs>
+    ) : (
+      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+        <Tabs.List>
+          <Tabs.Tab value="first">Projects</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="first">
+          <Space h={20} />
+          <Grid.Col>
+            <ProfilePageProjectGrid projects={publishedProjects} />
+          </Grid.Col>
+        </Tabs.Panel>
+      </Tabs>
+    )
+  );
+
+
+
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
-  const { userData } = useContext(AuthContext);
+  // All hooks at the top level
+  const [activeTab, setActiveTab] = useState('first');
+  const {userData } = useContext(AuthContext);
   const router = useRouter();
   const { username_lowercase } = router.query;
-
-
-  const isCurrentUser =
-    username_lowercase &&
-    userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
-      ? true
-      : false;
-
-      // const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
-
-      // useEffect(() => {
-      //     if (username_lowercase && userData.userName) {
-      //         setIsCurrentUser(userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase());
-      //     }
-      // }, [username_lowercase, userData.userName]);
-      
-
-  const [formData, setFormData] = useAtom(formDataAtom);
-
-  if (router.isFallback) {
-    return <LoadingPage />;
-  }
-  const { data: fetchProfile, error: profileError } = useSWR(
-    `/api/portfolio/getUserProfile?username=${username_lowercase}`,
-    fetcher,
-    initialProfile
-  );
-
-  const { data: fetchProjects, error: projectsError } = useSWR(
-    `/api/portfolio/getUserProjects?username=${username_lowercase}`,
-    fetcher,
-    initialProjects
-  );
-
-  const projects = fetchProjects ?? initialProjects ?? null;
-  const profile = fetchProfile ?? initialProfile ?? null;
-  const [activeTab, setActiveTab] = useState<string | null>('first');
-
-  useEffect(() => {
-    if (profile) {
-      setFormData(profile);
+  
+  // export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
+  //   const { userData } = useContext(AuthContext);
+  //   const router = useRouter();
+  //   const { username_lowercase } = router.query;
+  
+  
+    const isCurrentUser =
+      username_lowercase &&
+      userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
+        ? true
+        : false;
+  
+    const [formData, setFormData] = useAtom(formDataAtom);
+  
+    if (router.isFallback) {
+      return <LoadingPage />;
     }
-  }, [profile]);
-
-  useEffect(() => {
-    // console.log('formData in page route: ', formData);
-  }, [formData]);
-
-  // const { data: fetchProjects } = useSWR(
-  //   `/api/portfolio/getUserProjects?username=${username}`,
-  //   fetcher,
-  //   initialProjects
-  // );
-
-  // TODO: assess if this is a good idea or causes more loading time than needed
-  // if (!fetchProfile && !fetchProjects) {
-  //   return <LoadingPage />;
-  // }
-
-  // if (profileError) return <div>Failed to load profile</div>;
-  // if (projectsError) return <div>Failed to load projects</div>;
-
-
- 
-
-
-  const draftProjecs = projects?.filter((project: any) => {
-    return project.docData.hidden === true;
-  });
-
-  // if (!draftProjecs || draftProjecs.length === 0) {
-  //   console.log(`${username_lowercase} has no draft project or a bug  - draft projects returns:`)
-  //   console.log('draft project = ', draftProjecs)
-  // }
-
-  // console.log('Draft projects: ');
-  // console.log(draftProjecs);
-
-  let publishedProjects = projects?.filter((project: any) => {
-    return project.docData.hidden === false || project.docData.hidden === undefined;
-  });
-
-  // if (!publishedProjects || publishedProjects.length === 0) {
-  //   console.log(`${username_lowercase} has no published project or a bug  - published projects returns:`)
-  //   console.log('published project = ', publishedProjects)
-  // }
-
-  // console.log('Published projects: ');
-  // console.log(publishedProjects);
-
-  // console.log('length appearance # before return:')
-
-  // console.log(publishedProjects.length)
-
- 
-
-    const sortProjects = (projects: any) => {
-
-    return projects.sort((a: any, b: any) => {
-
-    // const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
-      // Sort by portfolio_order if both projects have it
-      if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
-        return a.docData.portfolio_order - b.docData.portfolio_order;
+    const { data: fetchProfile, error: profileError } = useSWR(
+      `/api/portfolio/getUserProfile?username=${username_lowercase}`,
+      fetcher,
+      initialProfile
+    );
+  
+    const { data: fetchProjects, error: projectsError } = useSWR(
+      `/api/portfolio/getUserProjects?username=${username_lowercase}`,
+      fetcher,
+      initialProjects
+    );
+  
+    const projects = fetchProjects ?? initialProjects ?? null;
+    const profile = fetchProfile ?? initialProfile ?? null;
+    // const [activeTab, setActiveTab] = useState<string | null>('first');
+  
+    useEffect(() => {
+      if (profile) {
+        setFormData(profile);
       }
-      // If only one project has portfolio_order, it should come first
-      if ('portfolio_order' in a.docData) return -1;
-      if ('portfolio_order' in b.docData) return 1;
+    }, [profile]);
 
-      // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
-      const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
-      const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
-      if (dateA && dateB) {
-        // Convert dates to timestamps and compare
-        // Note that newer dates should come first, hence the subtraction b - a
-        return new Date(dateB).getTime() - new Date(dateA).getTime();
-      }
-      if (dateA) return -1;
-      if (dateB) return 1;
-
-      // If none of the dates are available, sort by id (assuming higher ids are newer)
-      // Convert the ids to numbers if they are strings that represent numbers
-      const idA = +a.docData.id;
-      const idB = +b.docData.id;
-      return idB - idA; // Sort in descending order
+    const draftProjects = projects?.filter((project: any) => {
+      return project.docData.hidden === true;
+    });
+  
+  
+    let publishedProjects = projects?.filter((project: any) => {
+      return project.docData.hidden === false || project.docData.hidden === undefined;
     });
 
-    // return sortedPublishedProjects;
-  };
-
-
-  const draftProjectsLength = draftProjecs ? draftProjecs.length : 0;
-  const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
-
-  // useEffect(() => {
-  //   if (publishedProjects === 0) { return };
-  //   const sorted = sortProjects(projects);
-  //   setSortedProjects()
-  //   // setProjectOrder(sorted);
-  //   // setSortedPublishedProjects(sorted);
-  //   // console.log('sorted: ', sorted);
-  // }, [projects]);
-
-  if (publishedProjectsLength > 0) {
-    publishedProjects = sortProjects(publishedProjects);
-  }
-  // console.log(`${username_lowercase}s draftprojects new length`, draftProjectsLength);
-  // console.log(`${username_lowercase}s publishedprojects new length`, publishedProjectsLength);
-
-  if (draftProjectsLength === 0 || publishedProjectsLength === 0) {
-    // NOTE: NO PROJECTS RETURNED VERSION
-    // console.log('no projects returned version')
-    return (
-      <>
-        <Head>
-          <title>{`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Portfolio`}</title>
-          <meta
-            name="description"
-            content={`${(profile?.name && profile.name.length >> 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s portfolio page`}
-          />
-        </Head>
-          {/* <title>{`${profile?.name ?? username_lowercase ?? 'GitConnect'
-            }'s Portfolio`}</title> */}
-        {/* // <meta
-          //   name="description"
-          //   content={`${profile?.name ?? username_lowercase ?? 'GitConnect'
-          //     }'s portfolio page`}
-          // /> */}
-        <Container size="xl" my="md">
-          <Space h={60} />
-          <Group position="center">
-            <Grid grow gutter={35}>
-              <Grid.Col sm={12} md={4}>
-                {profile && (
-                  <ProfilePageUserPanel props={profile} currentUser={isCurrentUser} />
-                )}
-              </Grid.Col>
-              <Grid.Col span={8}>
-                <Grid gutter="md">
-                  <Grid.Col>
-                  {isCurrentUser ? (
-                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                        <Tabs.List>
-                          <Tabs.Tab value="first">Projects</Tabs.Tab>
-                          <Tabs.Tab value="second" color="orange">
-                            Drafts
-                          </Tabs.Tab>
-                        </Tabs.List>
-                        <Tabs.Panel value="first">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                        <Tabs.Panel value="second">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjecs} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                      </Tabs>
-                    ) : (
-                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                        <Tabs.List>
-                          <Tabs.Tab value="first">Projects</Tabs.Tab>
-                        </Tabs.List>
-                        <Tabs.Panel value="first">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePageProjectGrid projects={publishedProjects} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                      </Tabs>
-                    )}
-
-                  </Grid.Col>
-                </Grid>
-              </Grid.Col>
-            </Grid>
-          </Group>
-        </Container>
-      </>
-    );
-  } else
+      const sortProjects = (projects: any) => {
   
-    // const sorted = sortProjects(publishedProjects);
+      return projects.sort((a: any, b: any) => {
+  
+      // const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
+        // Sort by portfolio_order if both projects have it
+        if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
+          return a.docData.portfolio_order - b.docData.portfolio_order;
+        }
+        // If only one project has portfolio_order, it should come first
+        if ('portfolio_order' in a.docData) return -1;
+        if ('portfolio_order' in b.docData) return 1;
+  
+        // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
+        const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
+        const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
+        if (dateA && dateB) {
+          // Convert dates to timestamps and compare
+          // Note that newer dates should come first, hence the subtraction b - a
+          return new Date(dateB).getTime() - new Date(dateA).getTime();
+        }
+        if (dateA) return -1;
+        if (dateB) return 1;
+  
+        // If none of the dates are available, sort by id (assuming higher ids are newer)
+        // Convert the ids to numbers if they are strings that represent numbers
+        const idA = +a.docData.id;
+        const idB = +b.docData.id;
+        return idB - idA; // Sort in descending order
+      });
+  
+      // return sortedPublishedProjects;
+    };
+  
+  
+    const draftProjectsLength = draftProjects ? draftProjects.length : 0;
+    const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
+  
+    if (publishedProjectsLength > 0) {
+      publishedProjects = sortProjects(publishedProjects);
+    }
 
-    return (
+  // Render logic
+  return (
     <>
-       <Head>
-          <title>{`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Portfolio`}</title>
-          <meta
-            name="description"
-            content={`${(profile?.name && profile.name.length >> 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s portfolio page`}
-          />
-        </Head>
-    
-
-      {/* <Container fluid mx="md" my="md"> */}
-      {/* <Container size="xl" mx="md" my="md" > */}
-      <Container size="xl" mt={0}
-        // sx={(theme) => ({
-          
-    
-        //   '@media (max-width: 1200px)': {
-        //     marginTop: '70px',
-        //   },
-        //   '@media (max-width: 1100px)': {
-        //     marginTop: '0px',
-        //   },
-
-
-        // })}
-      >
-      {/* <Space h={10} />
-      <MediaQuery
-      query="(max-width: 1200px) and (min-width: 1200px)"
-      styles={{ fontSize: rem(20), '&:hover': { backgroundColor: 'silver' } }}
-        >
-
-             </MediaQuery> */}
-        <Group position="center">
-     
-
-        <Space h={60} />
+      <PageHead profile={profile} username_lowercase={username_lowercase} />
+        <Container size="xl" mt={0}>
+      <Group position="center">
+          <Space h={60} />
           <Grid grow gutter={35}>
-
-            {/* <Grid.Col sm={12} md={3} lg={2}> */}
             <Grid.Col sm={12} md={4}>
-              {profile &&
-                // FIXME: NEW PROFILE PANEL SIMPLIFIED FOR VIEW ONLY
-                (isCurrentUser ? (
-                  <ProfilePageUserPanel props={profile} currentUser={true} />
-                ) : (
-                  <ProfilePageUserPanel props={profile} currentUser={false} />
-                ))}
+              <ProfilePanel profile={profile} isCurrentUser={isCurrentUser} />
             </Grid.Col>
-            {projects && (
-              // <Grid.Col md={9} lg={10}>
-              <Grid.Col span={8}>
-                <Grid gutter="md">
-                  <Grid.Col>
-                    {/* NOTE: If current user owns profile - show drafts etc */}
-                    {isCurrentUser ? (
-                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                        <Tabs.List>
-                          <Tabs.Tab value="first">Projects</Tabs.Tab>
-                          <Tabs.Tab value="second" color="orange">
-                            Drafts
-                          </Tabs.Tab>
-                        </Tabs.List>
-                        <Tabs.Panel value="first">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'published'} projects={publishedProjects} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                        <Tabs.Panel value="second">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePageProjectGrid currentUser={isCurrentUser} projectType={'drafts'} projects={draftProjecs} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                      </Tabs>
-                    ) : (
-                      <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
-                        <Tabs.List>
-                          <Tabs.Tab value="first">Projects</Tabs.Tab>
-                        </Tabs.List>
-                        <Tabs.Panel value="first">
-                          <Space h={20} />
-                          <Grid.Col>
-                            <ProfilePageProjectGrid projects={publishedProjects} />
-                          </Grid.Col>
-                        </Tabs.Panel>
-                      </Tabs>
-                    )}
-                  </Grid.Col>
-                </Grid>
-              </Grid.Col>
-            )}
+            <Grid.Col span={8}>
+              <Grid gutter="md">
+                <Grid.Col>
+                  <ProjectTabs isCurrentUser={isCurrentUser} activeTab={activeTab} setActiveTab={setActiveTab} publishedProjects={publishedProjects} draftProjects={draftProjects} />
+                </Grid.Col>
+              </Grid>
+            </Grid.Col>
           </Grid>
         </Group>
-      </Container>
+        </Container>
+
     </>
   );
-}
+    
+  }
