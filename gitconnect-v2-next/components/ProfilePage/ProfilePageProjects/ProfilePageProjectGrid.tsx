@@ -17,64 +17,12 @@ import {
 import { ProfilePageProjectCard } from './ProfilePageProjectCard';
 
 const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => {
-  // const { classes, theme } = useStyles();
-
-  const [sortedProjects, setSortedProjects] = useState<any>(null);
-  // const [projects, setProjects] = useState<any>(null)
-
-  // useEffect(() => {
-
-  //   // const userName = userData.userName
-  //   // console.log(userName)
-
-  //   const URL = `/api/profiles/projects/all`;
-  //   axios.get(URL)
-  //     .then((response) => {
-  //       console.log(response.data)
-  //       setProjects(response.data)
-  //     })
-  // const sortProjects = (projects: any) => {
-
-  //   return projects.sort((a: any, b: any) => {
-
-  //   // const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
-  //     // Sort by portfolio_order if both projects have it
-  //     if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
-  //       return a.docData.portfolio_order - b.docData.portfolio_order;
-  //     }
-  //     // If only one project has portfolio_order, it should come first
-  //     if ('portfolio_order' in a.docData) return -1;
-  //     if ('portfolio_order' in b.docData) return 1;
-
-  //     // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
-  //     const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
-  //     const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
-  //     if (dateA && dateB) {
-  //       // Convert dates to timestamps and compare
-  //       // Note that newer dates should come first, hence the subtraction b - a
-  //       return new Date(dateB).getTime() - new Date(dateA).getTime();
-  //     }
-  //     if (dateA) return -1;
-  //     if (dateB) return 1;
-
-  //     // If none of the dates are available, sort by id (assuming higher ids are newer)
-  //     // Convert the ids to numbers if they are strings that represent numbers
-  //     const idA = +a.docData.id;
-  //     const idB = +b.docData.id;
-  //     return idB - idA; // Sort in descending order
-  //   });
-
-  //   // return sortedPublishedProjects;
-  // };
+ 
   const projectsLength = projects ? projects.length : 0;
 
-
-  // }, [])
-  // console.log(projects);
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
   }
-  // console.log(projects.length)
 
   if (projectsLength === 0) {
     return (
