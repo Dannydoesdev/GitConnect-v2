@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Box, Button, Container, Group, Overlay, Text, Title } from '@mantine/core';
 import { correctImageGetter } from '../../../lib/correctImageGetter';
 import useStyles from './ProjectPageDynamicHero.styles';
+import { useState, useEffect } from 'react';
 
 export function ProjectPageDynamicHero(props: any) {
   const { classes } = useStyles();
@@ -26,6 +27,12 @@ export function ProjectPageDynamicHero(props: any) {
   // console.log('liveUrl', project.liveUrl);
   // console.log('repoUrl', project.repoUrl);
   // console.log('html_url', project.html_url);
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     // <Group className={classes.hero} sx={{ backgroundImage: project.coverImage ? `url(${project.coverImage})` : '' }}>
@@ -134,6 +141,14 @@ export function ProjectPageDynamicHero(props: any) {
             </Link>
           )}
         </Group>
+        {/* {mounted && (
+          <Link 
+            href={`/portfolio/${username_lowercase}/${projectname}#`}
+            passHref 
+            legacyBehavior
+          >
+          </Link>
+        )} */}
         {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
         Check it out!
       </Button> */}

@@ -7,6 +7,7 @@ import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 import { app, auth, db } from '../firebase/clientApp';
 import { getGithubProfileData } from '../lib/github';
 import { AuthData } from '../types';
+import  LoadingPage  from '@/components/LoadingPage/LoadingPage';
 
 // Add a new document with a generated id.
 // Create the context to store user data
@@ -25,10 +26,8 @@ const colRef = collection(db, 'users');
 // Using 'any' type for now
 export const AuthProvider = ({ children }: Props) => {
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  // const [isPro, setIsPro] = useState<boolean>(false);
-  const [isPro, setIsPro] = useState<boolean | null>(null); // Initialize with null
-
+  const [loading, setLoading] = useState(true);
+  const [isPro, setIsPro] = useState<boolean | null>(null);
   const [userData, setUserData] = useState<AuthData>({
     userProviderId: '',
     userId: '',
@@ -38,29 +37,18 @@ export const AuthProvider = ({ children }: Props) => {
     displayName: '',
     userEmail: '',
     userPhotoLink: '',
-    isPro: false, // Add isPro to userData
+    isPro: false,
   });
 
   useEffect(() => {
-    let unsubscribePremiumStatus: any = null; // To hold the unsubscribe function
+    let unsubscribePremiumStatus: any = null;
 
     const unsubscribe = onAuthStateChanged(auth, async (user: any) => {
-      // Listen for state changes on the auth object
-      // onAuthStateChanged(auth, async (user: any) => {
-
-      if (user) {
-
-        // if dev environment use test stripe
-        // if (process.env.NODE_ENV === 'development') {
-          // unsubscribePremiumStatus = await getPremiumStatusTest(app, setIsPro); // Set up premium status listener
-        // } else {
-          unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro); // Set up premium status listener
-        // }
-        // FIXME - only load userData if isPro is not null
-
-        // if (isPro !== null) { // Update userData only when isPro is not null
-
-          const requiredData: any = {
+      try {
+        if (user) {
+          unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro);
+          
+          const requiredData: AuthData = {
             userProviderId: user.providerData[0].providerId,
             userId: user.uid,
             userName: user.reloadUserInfo.screenName,
@@ -69,107 +57,48 @@ export const AuthProvider = ({ children }: Props) => {
             displayName: user.displayName,
             userEmail: user.email,
             userPhotoLink: user.photoURL,
-            isPro,
-            // isPro: isPro,
+            isPro: isPro ?? false,
           };
 
           setUserData(requiredData);
-          // console.log('AuthContext userData: ', userData)
-
           setCurrentUser(user);
-     
-        // check for user id
-        const docRef = doc(colRef, user.uid);
-
-        // check if user exists in db
-        const checkUserExists = await getDoc(docRef);
-
-        // if exists when logging in or registering - don't add
-        if (checkUserExists.exists()) {
-          // if they don't exist - use the server auth to add
         } else {
-          // console.log('user not added yet... adding')
-          const newUserData = {
-            ...requiredData,
-            gitconnect_created_at: new Date().toISOString(),
-            gitconnect_updated_at: new Date().toISOString(),
-            gitconnect_created_at_unix: Date.now(),
-            gitconnect_updated_at_unix: Date.now(),
-          };
-
-          // use the firebase auth provided uid as id for new user
-          await setDoc(doc(colRef, user.uid), newUserData)
-            .then(async (cred) => {
-              // Get full github profile data
-              const githubPublicProfileData = await getGithubProfileData(
-                requiredData.userName
-              );
-
-              // add the public profile data to the database
-              const githubProfileDataForFirestore = {
-                ...requiredData,
-                ...githubPublicProfileData,
-                gitconnect_created_at: new Date().toISOString(),
-                gitconnect_updated_at: new Date().toISOString(),
-                gitconnect_created_at_unix: Date.now(),
-                gitconnect_updated_at_unix: Date.now(),
-              };
-              const docRef = doc(db, `users/${user.uid}/profileData/publicData`);
-
-              await setDoc(
-                docRef,
-                {
-                  ...githubProfileDataForFirestore,
-                },
-                { merge: true }
-              ).then(async () => {
-                // TODO: Remove the below code once githubdata is deprecated
-                const docRef = doc(db, `users/${user.uid}/profileData/githubData`);
-
-                await setDoc(
-                  docRef,
-                  {
-                    ...githubPublicProfileData,
-                    gitconnect_created_at: new Date().toISOString(),
-                    gitconnect_updated_at: new Date().toISOString(),
-                    gitconnect_created_at_unix: Date.now(),
-                    gitconnect_updated_at_unix: Date.now(),
-                  },
-                  { merge: true }
-                );
-              });
-            })
-            .catch((error) => {
-              console.log('Error adding document: ', error);
-            });
+          setIsPro(false);
+          setCurrentUser(null);
+          setUserData({
+            userProviderId: '',
+            userId: '',
+            userName: '',
+            username_lowercase: '',
+            githubId: '',
+            displayName: '',
+            userEmail: '',
+            userPhotoLink: '',
+            isPro: false,
+          });
         }
-      } else {
-        setIsPro(false); // Reset premium status if user logs out
-        if (unsubscribePremiumStatus) {
-          unsubscribePremiumStatus(); // Remove listener
-        }
-        setCurrentUser(null);
+      } catch (error) {
+        console.error('Auth state change error:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
-      unsubscribe(); // Unsubscribe from auth changes
+      unsubscribe();
       if (unsubscribePremiumStatus) {
-        unsubscribePremiumStatus(); // Unsubscribe from premium status changes
+        unsubscribePremiumStatus();
       }
     };
   }, [isPro]);
 
-  // Passing the currentUser and userData to the context components
+  // Don't render children until initial loading is complete
+  if (loading) {
+    return <LoadingPage />;
+  }
+
   return (
-    <AuthContext.Provider
-      value={{
-        currentUser,
-        userData,
-        loading,
-      }}
-    >
+    <AuthContext.Provider value={{ currentUser, userData, loading }}>
       {children}
     </AuthContext.Provider>
   );
