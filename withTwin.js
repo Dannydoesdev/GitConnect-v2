@@ -2,22 +2,22 @@
 
 // The folders containing files importing twin.macro
 // const includedDirs = [path.resolve(__dirname, './')]
-const path = require('path')
+const path = require('path');
 
 const includedDirs = [
   path.resolve(__dirname, './pages'),
   path.resolve(__dirname, './components'),
   path.resolve(__dirname, './app'),
-
-]
+];
 
 module.exports = function withTwin(nextConfig) {
   return {
     ...nextConfig,
     webpack(config, options) {
-      const { dev, isServer } = options
-      config.module = config.module || {}
-      config.module.rules = config.module.rules || []
+      const { dev, isServer } = options;
+
+      config.module = config.module || {};
+      config.module.rules = config.module.rules || [];
 
       config.module.rules.push({
         test: /\.(tsx|ts)$/,
@@ -46,7 +46,7 @@ module.exports = function withTwin(nextConfig) {
             },
           },
         ],
-      })
+      });
 
       if (!isServer) {
         config.resolve.fallback = {
@@ -56,14 +56,14 @@ module.exports = function withTwin(nextConfig) {
           path: false,
           os: false,
           crypto: false,
-        }
+        };
       }
 
       if (typeof nextConfig.webpack === 'function') {
-        return nextConfig.webpack(config, options)
+        return nextConfig.webpack(config, options);
       } else {
-        return config
+        return config;
       }
     },
-  }
-}
+  };
+};
