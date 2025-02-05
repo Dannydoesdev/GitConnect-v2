@@ -813,7 +813,7 @@ export default function EditPortfolioProject({
       .then((response) => {
         setTextEditor('');
 
-        DOMPurify.addHook('uponSanitizeElement', (currentNode: Element, data) => {
+        DOMPurify.addHook('uponSanitizeElement', (currentNode: any, data: any) => {
           if (data.tagName === 'a' && currentNode.classList.contains('heading-link')) {
             // Create a text node with the anchor's content
             const textContent = currentNode.textContent || ''; // Fallback to empty string if null
