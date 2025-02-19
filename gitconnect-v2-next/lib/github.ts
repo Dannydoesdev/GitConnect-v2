@@ -1,5 +1,7 @@
 import { Octokit } from '@octokit/rest';
 
+//  More info on getByUsername octokit: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
+
 export async function getGithubProfileData(username: string) {
   const octokit = new Octokit();
 
@@ -12,6 +14,7 @@ export async function getGithubProfileData(username: string) {
   }
 }
 
+//  More info on listForUser octokit: https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user
 export async function getGithubReposWithUsername(username: string) {
   const octokit = new Octokit();
 
