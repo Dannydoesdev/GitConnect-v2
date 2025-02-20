@@ -22,13 +22,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const trimmedUserData = {
       userName: githubUserData?.login,
-      avatar_url: githubUserData?.avatar_url,
-      html_url: githubUserData?.html_url,
-      name: githubUserData?.name,
-      company: githubUserData?.company,
-      location: githubUserData?.location,
-      email: githubUserData?.email,
-      bio: githubUserData?.bio,
+      githubId: githubUserData?.id,
+      avatar_url: githubUserData?.avatar_url ?? '',
+      html_url: githubUserData?.html_url ?? '',
+      name: githubUserData?.name ?? '',
+      company: githubUserData?.company ?? '',
+      location: githubUserData?.location ?? '',
+      email: githubUserData?.email ?? '',
+      bio: githubUserData?.bio ?? '',
     }
     
 
