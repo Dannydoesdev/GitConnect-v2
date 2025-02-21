@@ -177,7 +177,7 @@ const createPortfolioWithUsernameOnly = () => {
               hidden: true,
               userId: userid,
               // userName: profileData?.userName,
-              // username_lowercase: profileData?.userName?.toLowerCase(),
+              username_lowercase: profileData?.userName?.toLowerCase(),
               gitconnect_created_at: new Date().toISOString(),
               gitconnect_updated_at: new Date().toISOString(),
               gitconnect_created_at_unix: Date.now(),
