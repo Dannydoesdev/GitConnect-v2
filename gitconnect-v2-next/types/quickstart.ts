@@ -21,6 +21,7 @@ export interface QuickstartRepoUploadData {
   description: string | null;
   tags?: string[];
   repoid: number;
+  id?: number;
   readme?: string | null;
   html_url?: string;
   license?: RepoLicense | string | null;

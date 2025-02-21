@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           id: repo.id, // intentionally left in twice for testing
           repoid: repo.id,
           name: repo.name,
-          username: repo.owner?.login,
+          userName: repo.owner?.login,
           description: repo.description ?? '',
           tags: repo.topics ?? [],
           license: repo.license?.name ?? '',
@@ -55,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           main_language: repo.language ?? '',
           url: repo.html_url ?? '',
           html_url: repo.html_url ?? '',
+          languages_url: repo.languages_url ?? '',
         };
       }) || []
 
