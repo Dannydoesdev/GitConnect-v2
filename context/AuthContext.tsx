@@ -51,17 +51,18 @@ export const AuthProvider = ({ children }: Props) => {
 
           // If user is anonymous, set basic userData
           if (user.isAnonymous) {
-            setUserData({
-              userProviderId: 'anonymous',
-              userId: user.uid,
-              userName: 'anonymous',
-              username_lowercase: 'anonymous',
-              githubId: '',
-              displayName: 'Anonymous User',
-              userEmail: '',
-              userPhotoLink: '',
-              isPro: true,
-            });
+            setUserData(user)
+            // setUserData({
+            //   userProviderId: 'anonymous',
+            //   userId: user.uid,
+            //   userName: 'anonymous',
+            //   username_lowercase: 'anonymous',
+            //   githubId: '',
+            //   displayName: 'Anonymous User',
+            //   userEmail: '',
+            //   userPhotoLink: '',
+            //   isPro: true,
+            // });
           } else {
             unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro);
 
