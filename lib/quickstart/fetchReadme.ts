@@ -12,7 +12,7 @@ export const fetchReadme = async (
   userName: string,
   repoName: string
 ): Promise<string | null> => {
-  const readmeUrl = `/api/weaviate/fetchReadme`;
+  const readmeUrl = `/api/quickstart/fetchReadme`;
 
   try {
     const response = await axios.get(readmeUrl, {

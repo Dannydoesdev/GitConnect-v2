@@ -24,7 +24,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { getGenerativeModel, getVertexAI } from 'firebase/vertexai';
 import { InfoCircle } from 'tabler-icons-react';
 // import { WeaviateRepoUploadData } from '../types/weaviate';
-import { QuickstartRepoUploadData, RepoDataFull } from '@/types/quickstart';
+import { QuickstartRepoUploadData, RepoDataFull, QuickstartRepoData } from '@/types/quickstart';
 import { fetchLanguages } from '@/lib/quickstart/fetchLanguages';
 import { fetchReadme } from '@/lib/quickstart/fetchReadme';
 // import { uploadToWeaviate } from '@/lib/weaviate/uploadToWeaviate';
@@ -66,14 +66,13 @@ const createPortfolioWithUsernameOnly = () => {
   const [username, setUsername] = useState<string>('');
   // const { repoData, userAvatar, error, fetchRepos } = useFetchRepos();
   const [selectedRepos, setSelectedRepos] = useState<string[]>([]);
-  const [selectedReposWeaviateData, setSelectedReposWeaviateData] = useState<
-    QuickstartRepoUploadData[]
-  >([]);
   const [query, setQuery] = useState<string>('');
   const [conversationLog, setConversationLog] = useState('');
   const [reposUploaded, setReposUploaded] = useState<boolean>(false);
+  // const [repoData, setRepoData] = useState<RepoDataFull[] | null>([]);
   const [repoData, setRepoData] = useState<RepoDataFull[] | null>([]);
-  const [profileData, setProfileData] = useState([]);
+
+  const [profileData, setProfileData] = useState<any>([]);
   const [userAvatar, setUserAvatar] = useState<string>('');
   const [error, setError] = useState<string>('');
   const { userData, isAnonymous } = useContext(AuthContext);
@@ -109,6 +108,118 @@ const createPortfolioWithUsernameOnly = () => {
       return null;
     } finally {
     }
+  };
+
+  const handleSaveUserAndRepos = async () => {
+    const saveProjectUrl = `/api/quickstart/saveRepo`;
+    const saveProfileUrl = `/api/quickstart/saveProfile`;
+
+    const userid = userData.uid;
+
+    try {
+
+  
+
+      if (!profileData || profileData.length === 0) {
+        console.log('No profile data to save - exiting');
+        return;
+      }
+      
+      const customProfileData = {
+        ...profileData,
+        userId: userid,
+        isPro: false,
+        userPhotoLink: profileData.avatar_url,
+        displayName: profileData.name,
+        username_lowercase: profileData?.userName?.toLowerCase(),
+        gitconnect_created_at: new Date().toISOString(),
+        gitconnect_updated_at: new Date().toISOString(),
+        gitconnect_created_at_unix: Date.now(),
+        gitconnect_updated_at_unix: Date.now(),
+    
+      }
+
+
+      console.log(`saving profile data for user: ${userid}`);
+      console.log(`custom profile data:`);
+      console.log(customProfileData);
+    
+      // Save profile data
+      await axios.post(saveProfileUrl, { userid: userid, profileData: customProfileData });
+
+    } catch (error) {
+      console.error(error);
+    }
+
+
+    try {
+
+      if (!repoData || repoData.length === 0) {
+        console.log('No repo data to save - exiting');
+        return;
+      }
+
+      console.log('selected Repo names to save:');
+      console.log(selectedRepos);
+
+
+      const selectedReposToSave = await Promise.all(
+        repoData?.filter((repo) => selectedRepos.includes(repo.id.toString()))
+          .map(async (repo) => {
+            const readme = await fetchReadme(username, repo.name);
+            const languages = await fetchLanguages(repo.languages_url);
+            return {
+
+              readme: readme ?? '',
+              language_breakdown_percent: languages ?? [],
+              reponame_lowercase: repo?.name.toLowerCase(),
+              ...repo,
+              hidden: true,
+              userId: userid,
+              userName: profileData?.userName,
+              username_lowercase: profileData?.userName?.toLowerCase(),
+              gitconnect_created_at: new Date().toISOString(),
+              gitconnect_updated_at: new Date().toISOString(),
+              gitconnect_created_at_unix: Date.now(),
+              gitconnect_updated_at_unix: Date.now(),
+
+              // repoid: repo.id,
+              // name: repo.name,
+              // username: repo.owner?.login,
+              // description: repo.description ?? '',
+              // tags: repo.topics ?? [],
+              // license: repo.license?.name ?? '',
+              // readme: readme ?? '',
+              // fork_count: repo.forks_count ?? 0,
+              // star_count: repo.stargazers_count ?? 0,
+              // open_issues_count: repo.open_issues_count ?? 0,
+              // main_language: repo.language ?? '',
+              // language_breakdown_percent: languages ?? [],
+              // url: repo.html_url ?? '',
+            };
+          }) || []
+        );
+      
+      console.log('full data of repos to save:')
+      console.log(selectedReposToSave)
+      
+
+      selectedReposToSave.forEach(async (repo) => {
+        console.log('sending repo to api:');
+        console.log(repo);
+      await axios.post(saveProjectUrl, {userid: userid, projectData: repo, userName: profileData?.userName, repoName: repo.name, repoid: repo.id});
+    
+      });
+
+      // Save projects - need to loop
+      // await Promise.all(selectedReposToSave.map((repo) => axios.post(saveProjectUrl, repo)));
+
+  
+
+    } catch (error) {
+      console.error(error);
+    };
+
   };
 
   // useEffect(() => {
@@ -177,8 +288,8 @@ const createPortfolioWithUsernameOnly = () => {
   // const createAnonymousUser = async (username: string) => {
   const createAnonymousUser = async (trimmedUserData: any) => {
     console.log('creating anonymous user');
-    console.log('data received in createAnonymousUser:')
-    console.log(trimmedUserData)
+    console.log('data received in createAnonymousUser:');
+    console.log(trimmedUserData);
 
     try {
       // Check if we have an existing anonymous UID in localStorage
@@ -206,14 +317,14 @@ const createPortfolioWithUsernameOnly = () => {
           gitconnect_created_at_unix: Date.now(),
           gitconnect_updated_at_unix: Date.now(),
           githubId: trimmedUserData.githubId,
-          hidden: true,
+          // hidden: true,
           userId: anonymousUid,
           userName: trimmedUserData.userName,
           username_lowercase: trimmedUserData?.userName?.toLowerCase(),
           isPro: false,
           userPhotoLink: trimmedUserData.avatar_url,
           displayName: trimmedUserData.name,
-          userEmail: trimmedUserData.email,
+          // userEmail: trimmedUserData.email,
           // createdAt: new Date().toISOString(),
           // lastLogin: new Date().toISOString()
         },
@@ -379,12 +490,12 @@ const createPortfolioWithUsernameOnly = () => {
   //       }) || []
   //   );
 
-  //   setSelectedReposWeaviateData(selectedReposFullData);
-  //   const result: boolean = await uploadToWeaviate(selectedReposFullData);
+    // setSelectedReposWeaviateData(selectedReposFullData);
+    // const result: boolean = await uploadToWeaviate(selectedReposFullData);
 
-  //   if (result === true) {
-  //     setReposUploaded(true);
-  //   }
+    // if (result === true) {
+    //   setReposUploaded(true);
+    // }
   // };
 
   // // Sends user query to Weaviate handle the response
@@ -718,7 +829,7 @@ const createPortfolioWithUsernameOnly = () => {
             selectedRepos={selectedRepos}
             selectRepo={selectRepo}
             deselectRepo={deselectRepo}
-            // handleSubmit={handleSubmit}
+            handleSubmit={handleSaveUserAndRepos}
             userAvatar={userAvatar}
             username={username}
           />
