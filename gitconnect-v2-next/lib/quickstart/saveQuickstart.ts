@@ -3,7 +3,7 @@
 
 import { db } from '@/firebase/clientApp';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { fetchReadme } from './fetchReadme';
+import { fetchReadme, fetchReadmeNoapi } from './fetchReadme';
 import { fetchLanguages } from './fetchLanguages';
 
 // Saving as anonymous
@@ -27,9 +27,13 @@ export async function saveQuickstartProject(
 
   // Run extra server functions for readme and langauges etc:
 
-  const readme = await fetchReadme(userName, repoName);
+  const readme = await fetchReadmeNoapi(userName, repoName);
   const languages = await fetchLanguages(projectData.languages_url);
 
+  console.log('readme in saveQuickstartProject:');
+  console.log(readme);
+  console.log('languages in saveQuickstartProject:');
+  console.log(languages);
 
   // CHECK IF THIS PARENTDOC THING IS NEEDED:
   const docRef = doc(db, `usersAnonymous/${userid}/repos/${repoid}/projectData/mainContent`);
@@ -51,8 +55,8 @@ export async function saveQuickstartProject(
         ...fullProjectData,
         // userId: userid,
         // repoId: repoid,
-        username_lowercase: userName.toLowerCase(),
-        reponame_lowercase: repoName.toLowerCase(),
+        // username_lowercase: userName.toLowerCase(),
+        // reponame_lowercase: repoName.toLowerCase(),
       },
       { merge: true }
     );
