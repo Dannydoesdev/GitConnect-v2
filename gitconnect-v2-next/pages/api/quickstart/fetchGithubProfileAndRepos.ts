@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       trimmedRepoData = returnedRepoData.map((repo) => {
         return {
           id: repo.id, // intentionally left in twice for testing
-          repoid: repo.id,
+          repoId: repo.id,
           name: repo.name,
           userName: repo.owner?.login,
           description: repo.description ?? '',

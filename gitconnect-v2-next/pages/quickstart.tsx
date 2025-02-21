@@ -166,18 +166,18 @@ const createPortfolioWithUsernameOnly = () => {
       const selectedReposToSave = await Promise.all(
         repoData?.filter((repo) => selectedRepos.includes(repo.id.toString()))
           .map(async (repo) => {
-            const readme = await fetchReadme(username, repo.name);
-            const languages = await fetchLanguages(repo.languages_url);
+            // const readme = await fetchReadme(username, repo.name);
+            // const languages = await fetchLanguages(repo.languages_url);
             return {
 
-              readme: readme ?? '',
-              language_breakdown_percent: languages ?? [],
+              // readme: readme ?? '',
+              // language_breakdown_percent: languages ?? [],
               reponame_lowercase: repo?.name.toLowerCase(),
               ...repo,
               hidden: true,
               userId: userid,
-              userName: profileData?.userName,
-              username_lowercase: profileData?.userName?.toLowerCase(),
+              // userName: profileData?.userName,
+              // username_lowercase: profileData?.userName?.toLowerCase(),
               gitconnect_created_at: new Date().toISOString(),
               gitconnect_updated_at: new Date().toISOString(),
               gitconnect_created_at_unix: Date.now(),
