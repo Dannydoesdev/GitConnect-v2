@@ -3,6 +3,8 @@
 
 import { db } from '@/firebase/clientApp';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { fetchReadme } from './fetchReadme';
+import { fetchLanguages } from './fetchLanguages';
 
 // Saving as anonymous
 
@@ -22,6 +24,13 @@ export async function saveQuickstartProject(
   console.log('projectData in saveQuickstartProject:');
   console.log(projectData);
 
+
+  // Run extra server functions for readme and langauges etc:
+
+  const readme = await fetchReadme(userName, repoName);
+  const languages = await fetchLanguages(projectData.languages_url);
+
+
   // CHECK IF THIS PARENTDOC THING IS NEEDED:
   const docRef = doc(db, `usersAnonymous/${userid}/repos/${repoid}/projectData/mainContent`);
   const parentDocRef = doc(db, `usersAnonymous/${userid}/repos/${repoid}`);
@@ -29,12 +38,19 @@ export async function saveQuickstartProject(
   // Need to do a 'foreach' loop or map
 
   try {
+      
+  const fullProjectData = {
+    ...projectData,
+    readme: readme,
+    language_breakdown_percent: languages,
+  }
+
     await setDoc(
       docRef,
       {
-        ...projectData,
-        userId: userid,
-        repoId: repoid,
+        ...fullProjectData,
+        // userId: userid,
+        // repoId: repoid,
         username_lowercase: userName.toLowerCase(),
         reponame_lowercase: repoName.toLowerCase(),
       },
