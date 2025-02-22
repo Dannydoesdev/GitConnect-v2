@@ -1,0 +1,381 @@
+import React, { use, useContext, useEffect, useState } from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useAtom } from 'jotai';
+import { 
+  quickstartStateAtom, 
+  quickstartDraftProjectsAtom, 
+  quickstartPublishedProjectsAtom 
+} from '@/atoms/quickstartAtoms';
+import { AuthContext } from '@/context/AuthContext';
+import {
+  Button,
+  Container,
+  Grid,
+  Group,
+  MediaQuery,
+  Paper,
+  Space,
+  Tabs,
+  Text,
+} from '@mantine/core';
+// import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
+import useSWR from 'swr';
+import LoadingPage from '@/components/LoadingPage/LoadingPage';
+import ProfilePageProjectGrid from '@/components/Quickstart/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
+import ProfilePageUserPanel from '@/components/Quickstart/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
+
+// import { Link } from 'tabler-icons-react';
+
+// export const getStaticProps: GetStaticProps = async ({ params }) => {
+//   // const { username_lowercase } = params as { username_lowercase: string };
+//   const { username_lowercase, anonymousId } = params as {
+//     username_lowercase: string;
+//     anonymousId?: string;
+//   };
+
+//   const projectData = await getAllUserProjectsWithUsernameLowercase(username_lowercase);
+
+//   let profileData;
+
+//   if (projectData && projectData[0]) {
+//     profileData = await getProfileDataWithFirebaseIdNew(projectData[0].docData.userId);
+//   } else {
+//     profileData = await getProfileDataWithUsernameLowercase(username_lowercase);
+//   }
+
+//   const initialProjects = projectData ?? null;
+//   const initialProfile = Array.isArray(profileData)
+//     ? (profileData[0]?.docData ?? null)
+//     : (profileData?.docData ?? null);
+
+//   return {
+//     props: {
+//       initialProjects,
+//       initialProfile,
+//       isQuickstart: !!anonymousId, // Set based on presence of anonymousId
+//     },
+//     revalidate: 5,
+//   };
+// };
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const usernamesLowercaseArr = await getAllProfileUsernamesLowercase();
+//   // console.log('usernamesLowercaseArr: ', usernamesLowercaseArr)
+
+//   const paths = usernamesLowercaseArr.map((username_lowercase: any) => ({
+//     params: { username_lowercase: username_lowercase.usernameLowercase },
+//   }));
+
+//   return {
+//     paths,
+//     fallback: true,
+//   };
+// };
+
+// const fetcher = (url: RequestInfo | URL) => fetch(url).then((res) => res.json());
+
+
+// 1. Extract Head component to avoid duplication
+const PageHead = ({ profile, username_lowercase }: any) => (
+  <Head>
+    <title>
+      {`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Portfolio`}
+    </title>
+    <meta
+      name="description"
+      content={`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s portfolio page`}
+    />
+  </Head>
+);
+
+// 2. Extract ProfilePanel component
+const ProfilePanel = ({ profile, isCurrentUser }: any) =>
+  profile ? (
+    <ProfilePageUserPanel props={profile} currentUser={isCurrentUser} />
+  ) : (
+    <LoadingPage />
+  );
+
+// 3. Extract ProjectTabs component
+const ProjectTabs = ({
+  isCurrentUser,
+  activeTab,
+  setActiveTab,
+  publishedProjects,
+  draftProjects,
+}: any) =>
+  isCurrentUser ? (
+    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+      <Tabs.List>
+        <Tabs.Tab value="first">Projects</Tabs.Tab>
+        <Tabs.Tab value="second" color="orange">
+          Drafts
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="first">
+        <Space h={20} />
+        <Grid.Col>
+          <ProfilePageProjectGrid
+            currentUser={isCurrentUser}
+            projectType={'published'}
+            projects={publishedProjects}
+          />
+        </Grid.Col>
+      </Tabs.Panel>
+      <Tabs.Panel value="second">
+        <Space h={20} />
+        <Grid.Col>
+          <ProfilePageProjectGrid
+            currentUser={isCurrentUser}
+            projectType={'drafts'}
+            projects={draftProjects}
+          />
+        </Grid.Col>
+      </Tabs.Panel>
+    </Tabs>
+  ) : (
+    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+      <Tabs.List>
+        <Tabs.Tab value="first">Projects</Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="first">
+        <Space h={20} />
+        <Grid.Col>
+          <ProfilePageProjectGrid projects={publishedProjects} />
+        </Grid.Col>
+      </Tabs.Panel>
+    </Tabs>
+  );
+
+
+interface PortfolioProps {
+  initialProjects: any;
+  initialProfile: any;
+  isQuickstart?: boolean;
+}
+
+export default function Portfolio({ isQuickstart }: { isQuickstart?: boolean }) {
+// export default function Portfolio({
+//   initialProjects,
+//   initialProfile,
+//   isQuickstart,
+// }: PortfolioProps) {
+  // All hooks at the top level
+
+  const [activeTab, setActiveTab] = useState('second');
+  const { userData } = useContext(AuthContext);
+  const router = useRouter();
+  // const { username_lowercase } = router.query;
+  // const { username_lowercase, anonymousId } = router.query;
+  // const [formData, setFormData] = useAtom(formDataAtom);
+
+  // Use Jotai for state management
+  const [quickstartState] = useAtom(quickstartStateAtom);
+  const [draftProjects] = useAtom(quickstartDraftProjectsAtom);
+  const [publishedProjects] = useAtom(quickstartPublishedProjectsAtom);
+
+
+  console.log('quickstartState: ', quickstartState);
+  console.log('profile: ', quickstartState.profile);
+  console.log('draftProjects: ', draftProjects);
+  console.log('publishedProjects: ', publishedProjects);
+
+  // Use quickstart state if available, otherwise use props
+  const profile = quickstartState.profile;
+
+  // const projects = initialProjects ?? null;
+  // const profile = initialProfile ?? null;
+
+  if (router.isFallback) {
+    return <LoadingPage />;
+  }
+
+  const isCurrentUser = true; // For quickstart, user is always "current"
+
+  // const isCurrentUser =
+  //   username_lowercase &&
+  //   userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
+  //     ? true
+  //     : false;
+
+  // Only use SWR for non-quickstart portfolios
+  // const { data: fetchProfile } = useSWR(
+  //   !isQuickstart ? `/api/portfolio/getUserProfile?username=${username_lowercase}` : null,
+  //   fetcher,
+  //   { fallbackData: initialProfile }
+  // );
+
+  // const { data: fetchProjects } = useSWR(
+  //   !isQuickstart
+  //     ? `/api/portfolio/getUserProjects?username=${username_lowercase}`
+  //     : null,
+  //   fetcher,
+  //   { fallbackData: initialProjects }
+  // );
+
+  // Use the data directly
+  // const projects = isQuickstart ? initialProjects : (fetchProjects ?? initialProjects);
+  // const profile = isQuickstart ? initialProfile : (fetchProfile ?? initialProfile);
+
+
+  //   const profileEndpoint = isQuickstart
+  //   ? `/api/quickstart/getUserProfile?anonymousId=${anonymousId}`
+  //   : `/api/portfolio/getUserProfile?username=${username_lowercase}`;
+
+  // const projectsEndpoint = isQuickstart
+  //   ? `/api/quickstart/getUserProjects?anonymousId=${anonymousId}`
+  //   : `/api/portfolio/getUserProjects?username=${username_lowercase}`;
+
+  // // Use SWR with the determined endpoints
+  // const { data: fetchProfile, error: profileError } = useSWR(
+  //   username_lowercase || anonymousId ? profileEndpoint : null,
+  //   fetcher,
+  //   { fallbackData: initialProfile }
+  // );
+
+  // const { data: fetchProjects, error: projectsError } = useSWR(
+  //   username_lowercase || anonymousId ? projectsEndpoint : null,
+  //   fetcher,
+  //   { fallbackData: initialProjects }
+  // );
+
+  //   // export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
+  // //   const { userData } = useContext(AuthContext);
+  // //   const router = useRouter();
+  // //   const { username_lowercase } = router.query;
+  // // Define the API endpoints unconditionally
+
+  //    // Modify the data fetching to handle both regular and quickstart portfolios
+  // const { data: fetchProfile, error: profileError } = useSWR(
+  //   isQuickstart
+  //     ? `/api/quickstart/getUserProfile?anonymousId=${router.query.anonymousId}`
+  //     : `/api/portfolio/getUserProfile?username=${username_lowercase}`,
+  //   fetcher,
+  //   initialProfile
+  // );
+
+  // const { data: fetchProjects, error: projectsError } = useSWR(
+  //   isQuickstart
+  //     ? `/api/quickstart/getUserProjects?anonymousId=${router.query.anonymousId}`
+  //     : `/api/portfolio/getUserProjects?username=${username_lowercase}`,
+  //   fetcher,
+  //   initialProjects
+  // );
+
+  // const { data: fetchProfile, error: profileError } = useSWR(
+  //   `/api/portfolio/getUserProfile?username=${username_lowercase}`,
+  //   fetcher,
+  //   initialProfile
+  // );
+
+  // const { data: fetchProjects, error: projectsError } = useSWR(
+  //   `/api/portfolio/getUserProjects?username=${username_lowercase}`,
+  //   fetcher,
+  //   initialProjects
+  // );
+
+  // const projects = fetchProjects ?? initialProjects ?? null;
+  // const profile = fetchProfile ?? initialProfile ?? null;
+  // const [activeTab, setActiveTab] = useState<string | null>('first');
+
+  // Add a banner for quickstart portfolios
+
+  const QuickstartBanner = () =>
+    isQuickstart ? (
+      <Paper p="md" mb="lg" withBorder>
+        <Group position="apart">
+          <Text>This is a draft portfolio. Create an account to publish it!</Text>
+          <Button component={Link} href="/signup">
+            Sign Up
+          </Button>
+        </Group>
+      </Paper>
+    ) : null;
+
+  // useEffect(() => {
+  //   if (profile) {
+  //     // setFormData(profile);
+  //   }
+  // }, [profile]);
+
+  // const draftProjects = projects?.filter((project: any) => {
+  //   return project.docData.hidden === true;
+  // });
+
+  // let publishedProjects = projects?.filter((project: any) => {
+  //   return project.docData.hidden === false || project.docData.hidden === undefined;
+  // });
+
+  const sortProjects = (projects: any) => {
+    return projects.sort((a: any, b: any) => {
+      // const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
+      // Sort by portfolio_order if both projects have it
+      if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
+        return a.docData.portfolio_order - b.docData.portfolio_order;
+      }
+      // If only one project has portfolio_order, it should come first
+      if ('portfolio_order' in a.docData) return -1;
+      if ('portfolio_order' in b.docData) return 1;
+
+      // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
+      const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
+      const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
+      if (dateA && dateB) {
+        // Convert dates to timestamps and compare
+        // Note that newer dates should come first, hence the subtraction b - a
+        return new Date(dateB).getTime() - new Date(dateA).getTime();
+      }
+      if (dateA) return -1;
+      if (dateB) return 1;
+
+      // If none of the dates are available, sort by id (assuming higher ids are newer)
+      // Convert the ids to numbers if they are strings that represent numbers
+      const idA = +a.docData.id;
+      const idB = +b.docData.id;
+      return idB - idA; // Sort in descending order
+    });
+
+    // return sortedPublishedProjects;
+  };
+
+  // const draftProjectsLength = draftProjects ? draftProjects.length : 0;
+  // const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
+
+  // if (publishedProjectsLength > 0) {
+  //   publishedProjects = sortProjects(publishedProjects);
+  // }
+
+  // Render logic
+  return (
+    <>
+      {/* <PageHead profile={profile} username_lowercase={username_lowercase} /> */}
+      <PageHead profile={profile} username_lowercase={profile?.username_lowercase} />
+      <Container size="xl" mt={0}>
+        <QuickstartBanner />
+        <Group position="center">
+          <Space h={60} />
+          <Grid grow gutter={35}>
+            <Grid.Col sm={12} md={4}>
+              <ProfilePanel profile={profile} isCurrentUser={isCurrentUser} />
+            </Grid.Col>
+            <Grid.Col span={8}>
+              <Grid gutter="md">
+                <Grid.Col>
+                  <ProjectTabs
+                    isCurrentUser={isCurrentUser}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    publishedProjects={publishedProjects}
+                    draftProjects={draftProjects}
+                  />
+                </Grid.Col>
+              </Grid>
+            </Grid.Col>
+          </Grid>
+        </Group>
+      </Container>
+    </>
+  );
+}
