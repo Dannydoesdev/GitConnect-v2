@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import router from 'next/router';
+import { quickstartStateAtom } from '@/atoms/quickstartAtoms';
 // Test VertexAI Implementation
 import { auth, db, vertexAI } from '@/firebase/clientApp';
 // import useFetchRepos from '@/hooks/weaviate/useFetchRepos';
@@ -22,15 +23,20 @@ import axios from 'axios';
 import { signInAnonymously } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { getGenerativeModel, getVertexAI } from 'firebase/vertexai';
+// import { create } from 'lodash';
+import { useAtom } from 'jotai';
 import { InfoCircle } from 'tabler-icons-react';
 // import { WeaviateRepoUploadData } from '../types/weaviate';
-import { QuickstartRepoUploadData, RepoDataFull, QuickstartRepoData } from '@/types/quickstart';
+import {
+  QuickstartRepoData,
+  QuickstartRepoUploadData,
+  RepoDataFull,
+} from '@/types/quickstart';
 import { fetchLanguages } from '@/lib/quickstart/fetchLanguages';
 import { fetchReadme } from '@/lib/quickstart/fetchReadme';
 // import { uploadToWeaviate } from '@/lib/weaviate/uploadToWeaviate';
 import Header from '@/components/Quickstart/Header';
 import RepoSelection from '@/components/Quickstart/RepoSelection';
-import TextConversationOutput from '@/components/Quickstart/TextConversationOutput';
 import { AuthContext } from '../context/AuthContext';
 
 // Test VertexAI Implementation
@@ -77,6 +83,8 @@ const createPortfolioWithUsernameOnly = () => {
   const [error, setError] = useState<string>('');
   const { userData, isAnonymous } = useContext(AuthContext);
 
+  const [quickstartState, setQuickstartState] = useAtom(quickstartStateAtom);
+
   console.log('userData on load:');
   console.log(userData);
   console.log('is Anonymous on load ?:' + isAnonymous);
@@ -116,110 +124,131 @@ const createPortfolioWithUsernameOnly = () => {
 
     const userid = userData.uid;
 
+    //  set ProfileData to upload
+    if (!profileData || profileData.length === 0) {
+      console.log('No profile data to save - exiting');
+      return;
+    }
+
+    // Create anonymous user and save basic data
+    // await createAnonymousUser(profileData);
+
+    const customProfileData = {
+      ...profileData,
+      userId: userid,
+      isPro: false,
+      userPhotoLink: profileData.avatar_url,
+      displayName: profileData.name,
+      username_lowercase: profileData?.userName?.toLowerCase(),
+      gitconnect_created_at: new Date().toISOString(),
+      gitconnect_updated_at: new Date().toISOString(),
+      gitconnect_created_at_unix: Date.now(),
+      gitconnect_updated_at_unix: Date.now(),
+    };
+
+    // Set repoData to upload
+    if (!repoData || repoData.length === 0) {
+      console.log('No repo data to save - exiting');
+      return;
+    }
+
+    console.log('selected Repo names to save:');
+    console.log(selectedRepos);
+
+    const selectedReposToSave = await Promise.all(
+      repoData
+        ?.filter((repo) => selectedRepos.includes(repo.id.toString()))
+        .map(async (repo) => {
+          // const readme = await fetchReadme(username, repo.name);
+          // const languages = await fetchLanguages(repo.languages_url);
+          return {
+            reponame_lowercase: repo?.name.toLowerCase(),
+            ...repo,
+            hidden: true,
+            userId: userid,
+            username_lowercase: profileData?.userName?.toLowerCase(),
+            gitconnect_created_at: new Date().toISOString(),
+            gitconnect_updated_at: new Date().toISOString(),
+            gitconnect_created_at_unix: Date.now(),
+            gitconnect_updated_at_unix: Date.now(),
+          };
+        }) || []
+    );
+    // console.log('full data of repos to save:');
+    // console.log(selectedReposToSave);
+
+    // Upload Profile data to Firestore
     try {
-
-  
-
-      if (!profileData || profileData.length === 0) {
-        console.log('No profile data to save - exiting');
-        return;
-      }
-      
-      const customProfileData = {
-        ...profileData,
-        userId: userid,
-        isPro: false,
-        userPhotoLink: profileData.avatar_url,
-        displayName: profileData.name,
-        username_lowercase: profileData?.userName?.toLowerCase(),
-        gitconnect_created_at: new Date().toISOString(),
-        gitconnect_updated_at: new Date().toISOString(),
-        gitconnect_created_at_unix: Date.now(),
-        gitconnect_updated_at_unix: Date.now(),
-    
-      }
-
-
       console.log(`saving profile data for user: ${userid}`);
       console.log(`custom profile data:`);
       console.log(customProfileData);
-    
-      // Save profile data
-      await axios.post(saveProfileUrl, { userid: userid, profileData: customProfileData });
 
+      // Save profile data
+      await axios.post(saveProfileUrl, {
+        userid: userid,
+        profileData: customProfileData,
+      });
     } catch (error) {
       console.error(error);
     }
 
+    // Upload Project data to Firestore
 
     try {
-
-      if (!repoData || repoData.length === 0) {
-        console.log('No repo data to save - exiting');
-        return;
-      }
-
-      console.log('selected Repo names to save:');
-      console.log(selectedRepos);
-
-
-      const selectedReposToSave = await Promise.all(
-        repoData?.filter((repo) => selectedRepos.includes(repo.id.toString()))
-          .map(async (repo) => {
-            // const readme = await fetchReadme(username, repo.name);
-            // const languages = await fetchLanguages(repo.languages_url);
-            return {
-
-              // readme: readme ?? '',
-              // language_breakdown_percent: languages ?? [],
-              reponame_lowercase: repo?.name.toLowerCase(),
-              ...repo,
-              hidden: true,
-              userId: userid,
-              // userName: profileData?.userName,
-              username_lowercase: profileData?.userName?.toLowerCase(),
-              gitconnect_created_at: new Date().toISOString(),
-              gitconnect_updated_at: new Date().toISOString(),
-              gitconnect_created_at_unix: Date.now(),
-              gitconnect_updated_at_unix: Date.now(),
-
-              // repoid: repo.id,
-              // name: repo.name,
-              // username: repo.owner?.login,
-              // description: repo.description ?? '',
-              // tags: repo.topics ?? [],
-              // license: repo.license?.name ?? '',
-              // readme: readme ?? '',
-              // fork_count: repo.forks_count ?? 0,
-              // star_count: repo.stargazers_count ?? 0,
-              // open_issues_count: repo.open_issues_count ?? 0,
-              // main_language: repo.language ?? '',
-              // language_breakdown_percent: languages ?? [],
-              // url: repo.html_url ?? '',
-            };
-          }) || []
-        );
-      
-      console.log('full data of repos to save:')
-      console.log(selectedReposToSave)
-      
-
       selectedReposToSave.forEach(async (repo) => {
         console.log('sending repo to api:');
         console.log(repo);
-      await axios.post(saveProjectUrl, {userid: userid, projectData: repo, userName: profileData?.userName, repoName: repo.name, repoid: repo.id});
-    
+        await axios.post(saveProjectUrl, {
+          userid: userid,
+          projectData: repo,
+          userName: profileData?.userName,
+          repoName: repo.name,
+          repoid: repo.id,
+        });
       });
-
-      // Save projects - need to loop
-      // await Promise.all(selectedReposToSave.map((repo) => axios.post(saveProjectUrl, repo)));
-
-  
-
     } catch (error) {
       console.error(error);
-    };
+    } finally {
+      // try {
+      //   // After saving is complete, redirect to the quickstart portfolio
+      //   const anonymousUid = userData.uid;
+      //   router.push(`/quickstart/${anonymousUid}`);
+      // } catch (error) {
+      //   console.error(error);
+      // }
+    }
 
+    // Send through the router to the quickstart portfolio
+    try {
+      // After saving is complete, redirect to the quickstart portfolio
+      const anonymousUid = userData.uid;
+
+      // Set the quickstart state in Jotai
+      setQuickstartState({
+        profile: customProfileData,
+        projects: selectedReposToSave,
+        isQuickstart: true,
+        anonymousId: anonymousUid,
+      });
+
+      // Simple navigation without query params
+      router.push(`/quickstart/${anonymousUid}`);
+
+      // // Create a state object with all the necessary data
+      // const portfolioState = {
+      //   profile: customProfileData,
+      //   projects: selectedReposToSave,
+      //   isQuickstart: true
+      // };
+
+      // // Use router.push with state
+      // router.push({
+      //   pathname: `/quickstart/${anonymousUid}`,
+      //   query: { state: JSON.stringify(portfolioState) }
+      // });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // useEffect(() => {
@@ -308,7 +337,6 @@ const createPortfolioWithUsernameOnly = () => {
       localStorage.setItem('anonymousUid', anonymousUid);
       console.log(`New anonymous ID created and stored: ${anonymousUid}`);
 
-      // You might want to initialize the user's document in Firestore here
       await setDoc(
         doc(db, 'usersAnonymous', anonymousUid),
         {
@@ -490,12 +518,12 @@ const createPortfolioWithUsernameOnly = () => {
   //       }) || []
   //   );
 
-    // setSelectedReposWeaviateData(selectedReposFullData);
-    // const result: boolean = await uploadToWeaviate(selectedReposFullData);
+  // setSelectedReposWeaviateData(selectedReposFullData);
+  // const result: boolean = await uploadToWeaviate(selectedReposFullData);
 
-    // if (result === true) {
-    //   setReposUploaded(true);
-    // }
+  // if (result === true) {
+  //   setReposUploaded(true);
+  // }
   // };
 
   // // Sends user query to Weaviate handle the response

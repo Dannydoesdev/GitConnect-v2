@@ -15,7 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Extract project data from request body
   const { projectData, userid, repoid, userName, repoName } = req.body;
 
-  // Run extra server functions for readme and langauges etc:
+  // Run extra server functions for readme and langauges etc
+  // NOTE - moved to saveQuickstartProject function
 
   // const readme = await fetchReadme(userName, repoName);
   // const languages = await fetchLanguages(projectData.languages_url);
