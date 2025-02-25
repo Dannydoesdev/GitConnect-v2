@@ -126,8 +126,8 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                         githubTitle={project.name}
                         customTitle={project.projectTitle}
                         avatar={project.avatar_url}
-                        profileUrl={`/portfolio/${project.username_lowercase}`}
-                        link={`/portfolio/${project.username_lowercase}/${project.reponame_lowercase}`}
+                        profileUrl={`/quickstart/${project.userId}`}
+                        link={`/quickstart/${project.userId}/${project.id}`}
                       />
                     </Grid.Col>
                     <Grid.Col span={5}>

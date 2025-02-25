@@ -177,6 +177,31 @@ const createPortfolioWithUsernameOnly = () => {
     // console.log('full data of repos to save:');
     // console.log(selectedReposToSave);
 
+    // FIXME TEST: Save all project data to jotai:
+
+    const selectedReposToSaveWithReadme = await Promise.all(
+      repoData
+        ?.filter((repo) => selectedRepos.includes(repo.id.toString()))
+        .map(async (repo) => {
+          const readme = await fetchReadme(username, repo.name);
+          const languages = await fetchLanguages(repo.languages_url);
+          return {
+            reponame_lowercase: repo?.name.toLowerCase(),
+            ...repo,
+            readme: readme,
+            language_breakdown_percent: languages,
+            hidden: true,
+            userId: userid,
+            username_lowercase: profileData?.userName?.toLowerCase(),
+            gitconnect_created_at: new Date().toISOString(),
+            gitconnect_updated_at: new Date().toISOString(),
+            gitconnect_created_at_unix: Date.now(),
+            gitconnect_updated_at_unix: Date.now(),
+          };
+        }) || []
+    );
+
+
     // Upload Profile data to Firestore
     try {
       console.log(`saving profile data for user: ${userid}`);
@@ -226,7 +251,7 @@ const createPortfolioWithUsernameOnly = () => {
       // Set the quickstart state in Jotai
       setQuickstartState({
         profile: customProfileData,
-        projects: selectedReposToSave,
+        projects: selectedReposToSaveWithReadme,
         isQuickstart: true,
         anonymousId: anonymousUid,
       });
