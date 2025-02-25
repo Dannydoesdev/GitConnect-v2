@@ -15,10 +15,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       owner: owner.toString(),
       repo: repo.toString(),
       mediaType: {
-        format: 'raw', // fetch the raw markdown content
+        format: 'html', // fetch the raw markdown content
       },
     });
-    res.status(200).json( readme );
+    // res.status(200).json(readme);
+    
+    res.setHeader('Content-Type', 'text/html');
+    // console.log(readme.data.content)
+
+    res.status(200).send(readme);
   } catch (error) {
     console.error('Error fetching README from GitHub:', error);
     res.status(500).json({ error: 'Error fetching README from GitHub' });
