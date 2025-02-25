@@ -45,20 +45,14 @@ export function ProfilePageProjectCard({
 
   const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 768) : '/img/gitconnect.webp';
 
-  // console.log(imageUrl)
-  // console.log(link)
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
   }
   const githubTitleFormatted = githubTitle ? replaceUnderscoresAndDashes(githubTitle) : '';
 
-  // console.log(image)
-  // const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
   return (
     <>
       <Link href={link} passHref legacyBehavior>
-        {/* <Group> */}
-        {/* <Image src={image ? image : ''} width={800} height={350} alt='' /> */}
 
         <Card
           p='xl'
@@ -107,37 +101,9 @@ export function ProfilePageProjectCard({
 
           <div className={classes.overlay} />
 
-          {/* <div className={classes.content}>
-            <div>
-              <Text size='lg' pb='md' className={classes.title} weight={500}>
-                {customTitle || githubTitleFormatted}
-              </Text>
-            </div>
-          </div> */}
         </Card>
       </Link>
-      {/* <Group position='apart' spacing='xs' mt='sm'>
-        <Center>
-            <Avatar
-              component='a'
-              radius='xl'
-              size={24}
-              mr='xs'
-              src={avatar}
-              styles={() => ({
-                root: {
-                  position: 'relative',
-                  top: '-55px',
-                  left: '25px',
-                },
-              })}
-            />
 
-            <Text component='a' size='sm' inline className={classes.author}>
-              {author}
-            </Text>
-        </Center>
-      </Group> */}
     </>
   );
 }

@@ -2,6 +2,7 @@ import { url } from 'inspector';
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { formDataAtom } from '@/atoms';
+import { AuthContext } from '@/context/AuthContext';
 import {
   ActionIcon,
   Avatar,
@@ -81,7 +82,6 @@ import {
   SiTypescript,
   SiVuedotjs,
 } from 'react-icons/si';
-import { AuthContext } from '@/context/AuthContext';
 import { updateProfileDataGithub } from '@/lib/profiles';
 import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
 
@@ -202,37 +202,6 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
 
   // const [formData, setFormData] = useState({})
   const [formData, setFormData] = useAtom(formDataAtom);
-  // Simplified State Management
-  // const [formData, setFormData] = useState({
-  //   bio: '',
-  //   location: '',
-  //   name: '',
-  //   headline: '',
-  //   skills: [],
-  //   company: '',
-  //   position: '',
-  //   techStack: [],
-  //   website: '',
-  //   profileTags: [],
-  //   githubUrl: '',
-  //   gitlabUrl: '',
-  //   linkedinUrl: '',
-  //   twitterUrl: '',
-  //   mediumUrl: '',
-  //   hashnodeUrl: '',
-  //   codepenUrl: '',
-  //   dribbbleUrl: '',
-  //   behanceUrl: '',
-  //   devToUrl: '',
-  //   youtubeUrl: '',
-  //   twitchUrl: '',
-  //   discordUrl: '',
-  //   stackoverflowUrl: '',
-  //   facebookUrl: '',
-  //   instagramUrl: '',
-  //   openToWork: false,
-  //   // visibleToPublic: false,
-  // });
 
   // Function to handle saving changes
   const handleSaveChanges = async (newData: any) => {
@@ -244,18 +213,6 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
       close();
     });
   };
-  // useEffect(() => {
-  //   console.log('Server-side formData:', formData);
-  //   console.log('Server-side props:', props);
-  // }, []);
-
-  // useEffect(() => {
-    // console.log('Client-side formData:', formData);
-    // console.log('Client-side props:', props);
-  // }, []);
-
-  // Safely retrieve the first name
-  // const firstName = props.name && props.name.split(' ')[0];
 
   // Determine the display name based on the presence of a first name
 
@@ -387,38 +344,6 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
               <Badge color="teal" size="lg" radius="lg" w="70%" variant="light">
                 Open to Work
               </Badge>
-
-              {/* <Badge
-                mx="xl"
-                py="md"
-                w="70%"
-                // fullWidth
-                size="lg"
-                radius="lg"
-                variant="gradient"
-                // gradient={{ from: '#047453', to: '#467b00', deg: 105 }}
-//     background: linear-gradient(105deg, #11b182 0%, #66b103 100%);
-                gradient={{ from: '#11b182', to: '#66b103', deg: 105 }}
-
-                //     background: linear-gradient(105deg, #11b182 0%, #467b00 100%);
-                // background: linear-gradient(105deg, #11b182 0%, #ceff07 100%);
-                // background: linear-gradient(105deg, #11b182 0%, #bfee00 100%);
-
-                // gradient={{ from: '#647f00', to: '#016243fc', deg: 93 }}
-
-
-                // gradient={{ from: 'lime', to: 'teal', deg: 105 }}
-
-                // linear-gradient(105deg, #047453 0%, #467b00 100%)
-                // linear-gradient(93deg, #647f00 0%, #016243fc 100%)
-                // rgb(4 116 83) 0%, rgb(70 123 0) 100%
-                // gradient={{ from: 'indigo', to: 'cyan' }}
-              >
-               
-                Available for work
-              </Badge> */}
-
-              {/* {firstName ? `${firstName} is available for work` : 'Open to work'} */}
             </Center>
             <Space h={18} />
             {/* <Text ta="center" fz="lg" weight={500} mt="md">
@@ -446,25 +371,7 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
 
         {/* Tech Stack */}
         {formData.techStack && formData.techStack.length > 0 ? (
-          // <Stack align="center" spacing="lg">
           <>
-            {/* <Badge color="gray" radius="md" size="lg" variant="outline">
-              {firstName ? `${firstName}'s Tech Stack` : 'Tech Stack'}
-            </Badge> */}
-            {/* <Spoiler
-              ta="center"
-              // fw={500}
-              maxHeight={120}
-              showLabel="Show full stack"
-              hideLabel="Hide"
-              styles={{
-                control: {
-                  marginTop: 5,
-                  fontWeight: 500,
-                  // },
-                },
-              }}
-            > */}
             <Group spacing="sm">
               <>
                 {formData.techStack.map((tech) => {
@@ -472,12 +379,6 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
                   // const IconComponent = iconMap[tech];
 
                   return (
-                    // <Badge key={tech} radius="md" variant="outline">
-                    //   {/* {IconComponent && <IconComponent />} {tech} */}
-                    //   {IconComponent}  &nbsp; {tech}
-                    // </Badge>
-                    // <Badge key={tech} pl={10}  radius="sm" variant="outline" leftSection={IconComponent}>
-
                     // NOTE: I like the dot style bagdes but not the dot itself - hence the root style change
                     // See OG code: https://github.com/mantinedev/mantine/blob/cdf1179358c6d4591f5de76a2a41935ff4c91ec6/src/mantine-core/src/Badge/Badge.styles.ts#L49C3-L49C3
                     <Badge
@@ -504,9 +405,6 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
                       })}
                     >
                       {tech}
-
-                      {/* {IconComponent && <IconComponent />} {tech} */}
-                      {/* {IconComponent}  &nbsp; */}
                     </Badge>
                   );
                 })}
@@ -524,10 +422,6 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
                   // const IconComponent = iconMap[tech];
 
                   return (
-                    // <Badge key={tech} radius="md" variant="outline">
-                    //   {IconComponent}  &nbsp; {tech}
-                    // </Badge>
-
                     // NOTE: I like the dot style bagdes but not the dot itself - hence the root style change
                     // See OG code: https://github.com/mantinedev/mantine/blob/cdf1179358c6d4591f5de76a2a41935ff4c91ec6/src/mantine-core/src/Badge/Badge.styles.ts#L49C3-L49C3
                     <Badge
@@ -686,17 +580,6 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
         )}
 
         {/* Website Button */}
-        {/* <Space h={15} />
-
-        <Divider
-          my="lg"
-          size="xs"
-          label="Links"
-          labelPosition="left"
-          labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
-        /> */}
-
-        {/* Website Button */}
         {formData.website ? (
           <Link href={formData.website} passHref legacyBehavior>
             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
@@ -810,414 +693,3 @@ const skillsBadge = (skills: string[]) => {
 };
 
 export default ProfilePageUserPanel;
-
-// interface ProfilePageUserPanelProps {
-//   props: {
-//     bio?: string;
-//     html_url: string;
-//     avatar_url?: string;
-//     name: string;
-//     email: string;
-//     location?: string;
-//     login: string;
-//     public_repos?: number;
-//     headline?: string;
-//     company?: string;
-//     position?: string;
-//     techStack?: string[];
-//     skills?: string[];
-//     website?: string;
-//     profileTags?: string[];
-//     githubUrl?: string;
-//     gitlabUrl?: string;
-//     linkedinUrl?: string;
-//     twitterUrl?: string;
-//     mediumUrl?: string;
-//     hashnodeUrl?: string;
-//     codepenUrl?: string;
-//     dribbbleUrl?: string;
-//     behanceUrl?: string;
-//     devToUrl?: string;
-//     youtubeUrl?: string;
-//     twitchUrl?: string;
-//     discordUrl?: string;
-//     stackoverflowUrl?: string;
-//     facebookUrl?: string;
-//     instagramUrl?: string;
-//     openToWork?: boolean;
-//     visibleToPublic?: boolean;
-//   };
-//   currentUser?: boolean;
-// }
-// export const ProfilePageUserPanelNew: React.FC<ProfilePageUserPanelProps> = ({ props, currentUser }) => {
-
-// // export default function ProfilePageUserPanelNew({
-// //   props,
-// //   currentUser,
-// // }: ProfilePageUserPanelProps) {
-//   const { userData } = useContext(AuthContext);
-//   const userId = userData.userId;
-//   const [editMode, setEditMode] = useState(false);
-//   const [updatedBio, setUpdatedBio] = useState('');
-//   const [updatedLocation, setUpdatedLocation] = useState('');
-//   const [updatedName, setUpdatedName] = useState('');
-//   const [updatedHeadline, setUpdatedHeadline] = useState('');
-//   const [updatedCompany, setUpdatedCompany] = useState('');
-//   const [updatedPosition, setUpdatedPosition] = useState('');
-//   const [updatedTechStack, setUpdatedTechStack] = useState<string[]>([]);
-//   const [updatedWebsite, setUpdatedWebsite] = useState('');
-//   const [updatedProfileTags, setUpdatedProfileTags] = useState<string[]>([]);
-//   const [updatedGithubUrl, setUpdatedGithubUrl] = useState('');
-//   const [updatedGitlabUrl, setUpdatedGitlabUrl] = useState('');
-//   const [updatedLinkedinUrl, setUpdatedLinkedinUrl] = useState('');
-//   const [updatedTwitterUrl, setUpdatedTwitterUrl] = useState('');
-//   const [updatedMediumUrl, setUpdatedMediumUrl] = useState('');
-//   const [updatedDribbbleUrl, setUpdatedDribbbleUrl] = useState('');
-//   const [updatedBehanceUrl, setUpdatedBehanceUrl] = useState('');
-//   const [updatedDevtoUrl, setUpdatedDevtoUrl] = useState('');
-//   const [updatedHashnodeUrl, setUpdatedHashnodeUrl] = useState('');
-//   const [updatedCodepenUrl, setUpdatedCodepenUrl] = useState('');
-//   const [updatedYoutubeUrl, setUpdatedYoutubeUrl] = useState('');
-//   const [updatedTwitchUrl, setUpdatedTwitchUrl] = useState('');
-//   const [updatedDiscordUrl, setUpdatedDiscordUrl] = useState('');
-//   const [updatedStackoverflowUrl, setUpdatedStackoverflowUrl] = useState('');
-//   const [updatedFacebookUrl, setUpdatedFacebookUrl] = useState('');
-//   const [updatedInstagramUrl, setUpdatedInstagramUrl] = useState('');
-//   const [updatedPinterestUrl, setUpdatedPinterestUrl] = useState('');
-//   const [updatedOpenToWork, setUpdatedOpenToWork] = useState(false);
-//   const [updatedVisibleToPublic, setUpdatedVisibleToPublic] = useState(false);
-//   // const [updatedSkills, setUpdatedSkills] = useState([])
-//   const [updatedSkills, setUpdatedSkills] = useState<string[]>([]);
-
-//   const [opened, { open, close }] = useDisclosure(false);
-
-//   const {
-//     bio,
-//     html_url,
-//     avatar_url,
-//     login,
-//     public_repos,
-//     skills,
-//     location,
-//     name,
-//     headline,
-//     company,
-//     position,
-//     techStack,
-//     website,
-//     profileTags,
-//     githubUrl,
-//     gitlabUrl,
-//     linkedinUrl,
-//     twitterUrl,
-//     mediumUrl,
-//     hashnodeUrl,
-//     codepenUrl,
-//     dribbbleUrl,
-//     behanceUrl,
-//     devToUrl,
-//     youtubeUrl,
-//     twitchUrl,
-//     discordUrl,
-//     stackoverflowUrl,
-//     facebookUrl,
-//     instagramUrl,
-//     openToWork,
-//     visibleToPublic,
-//   } = props;
-
-//   function handleEditMode() {
-//     // console.log('edit mode')
-//     setEditMode(!editMode);
-//   }
-
-//   function handleCancelChanges() {
-//     close();
-//   }
-
-//   // TODO - can extract firebase communication to parent & ensure it's a secure fn
-//   async function handleSaveChanges(formData: any) {
-//     // Exit if not current user
-//     if (!currentUser) {
-//       return;
-//     }
-
-//     // console.log(form.values)
-//     // const { bio, location, name } = form.values;
-//     const {
-//       bio,
-//       location,
-//       name,
-//       headline,
-//       skills,
-//       company,
-//       position,
-//       techStack,
-//       website,
-//       profileTags,
-//       githubUrl,
-//       gitlabUrl,
-//       linkedinUrl,
-//       twitterUrl,
-//       mediumUrl,
-//       hashnodeUrl,
-//       codepenUrl,
-//       dribbbleUrl,
-//       behanceUrl,
-//       devToUrl,
-//       youtubeUrl,
-//       twitchUrl,
-//       discordUrl,
-//       stackoverflowUrl,
-//       facebookUrl,
-//       instagramUrl,
-//       openToWork,
-//       visibleToPublic,
-//     } = formData;
-
-//     // console.log(formData);
-//     // console.log('formData in parent component')
-//     // console.log(bio)
-
-//     // Send data to Firebase, maps into DB & update state to show new static values instantly
-
-//     // TODO: Re-enable upload to firebase when ready
-//     await updateProfileDataGithub(userId, formData).then(() => {
-//       // console.log('Added to DB');
-
-//       setUpdatedBio(bio);
-//       setUpdatedLocation(location);
-//       setUpdatedName(name);
-//       setUpdatedHeadline(headline);
-//       setUpdatedCompany(company);
-//       setUpdatedPosition(position);
-//       setUpdatedTechStack(techStack);
-//       setUpdatedWebsite(website);
-//       setUpdatedProfileTags(profileTags);
-//       setUpdatedGithubUrl(githubUrl);
-//       setUpdatedGitlabUrl(gitlabUrl);
-//       setUpdatedLinkedinUrl(linkedinUrl);
-//       setUpdatedTwitterUrl(twitterUrl);
-//       setUpdatedMediumUrl(mediumUrl);
-//       setUpdatedHashnodeUrl(hashnodeUrl);
-//       setUpdatedCodepenUrl(codepenUrl);
-//       setUpdatedDribbbleUrl(dribbbleUrl);
-//       setUpdatedBehanceUrl(behanceUrl);
-//       setUpdatedDevtoUrl(devToUrl);
-//       setUpdatedYoutubeUrl(youtubeUrl);
-//       setUpdatedTwitchUrl(twitchUrl);
-//       setUpdatedDiscordUrl(discordUrl);
-//       setUpdatedStackoverflowUrl(stackoverflowUrl);
-//       setUpdatedFacebookUrl(facebookUrl);
-//       setUpdatedInstagramUrl(instagramUrl);
-//       setUpdatedOpenToWork(openToWork);
-//       setUpdatedVisibleToPublic(visibleToPublic);
-//       setUpdatedSkills(skills);
-
-//       setEditMode(!editMode);
-
-//       close();
-//     });
-//   }
-
-//   return (
-//     <>
-//       <ProfilePageUserPanelSettings
-//         props={props}
-//         open={open}
-//         close={close}
-//         opened={opened}
-//         handleCancelChanges={handleCancelChanges}
-//         handleSaveChanges={handleSaveChanges}
-//         currentUser={currentUser}
-//       />
-
-//       <Paper
-//         radius="md"
-//         withBorder
-//         p="lg"
-//         sx={(theme) => ({
-//           backgroundColor:
-//             theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-//         })}
-//       >
-//         <Avatar src={avatar_url} size={120} radius={120} mx="auto" />
-//         <Text ta="center" fz="lg" weight={500} mt="md">
-//           {updatedName ? updatedName : name}
-//         </Text>
-//         <Text ta="center" c="dimmed" fz="sm">
-//           {login}
-//           {location && ' • '} {updatedLocation ? updatedLocation : location}
-//         </Text>
-//         {/* <Link href={html_url} passHref legacyBehavior>
-//           <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//             GitHub Page
-//           </Button>
-//         </Link> */}
-//         {updatedWebsite && (
-//           <Link href={updatedWebsite} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               Website
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedGithubUrl && (
-//           <Link href={updatedGithubUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaGithub /> &nbsp;Github
-//               {/* <img src="/path/to/github/logo" alt="Github" /> Github */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedGitlabUrl && (
-//           <Link href={updatedGitlabUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaGitlab /> &nbsp;Gitlab
-//               {/* <img src="/path/to/gitlab/logo" alt="Gitlab" /> Gitlab */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedLinkedinUrl && (
-//           <Link href={updatedLinkedinUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaLinkedin /> &nbsp;Linkedin
-//               {/* <img src="/path/to/linkedin/logo" alt="Linkedin" /> Linkedin */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedTwitterUrl && (
-//           <Link href={updatedTwitterUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaTwitter /> &nbsp;Twitter
-//               {/* <img src="/path/to/twitter/logo" alt="Twitter" /> Twitter */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedMediumUrl && (
-//           <Link href={updatedMediumUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaMedium /> &nbsp;Medium
-//               {/* <img src="/path/to/medium/logo" alt="Medium" /> Medium */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedHashnodeUrl && (
-//           <Link href={updatedHashnodeUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaHashnode /> &nbsp;Hashnode
-//               {/* <img src="/path/to/hashnode/logo" alt="Hashnode" /> Hashnode */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedCodepenUrl && (
-//           <Link href={updatedCodepenUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaCodepen /> &nbsp;Codepen
-//               {/* <img src="/path/to/codepen/logo" alt="Codepen" /> Codepen */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedDevtoUrl && (
-//           <Link href={updatedDevtoUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <FaDev /> &nbsp;Dev.to
-//               {/* <img src="/path/to/devto/logo" alt="Dev.to" /> Dev.to */}
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedOpenToWork && (
-//           <Text ta="center" fz="lg" weight={500} mt="md">
-//             Open to Work: {updatedOpenToWork ? 'Yes' : 'No'}
-//           </Text>
-//         )}
-//         {updatedSkills && updatedSkills.length > 0 && (
-//           <Text ta="center" fz="lg" weight={500} mt="md">
-//             Skills: {updatedSkills.join(', ')}
-//           </Text>
-//         )}
-//         {updatedYoutubeUrl && (
-//           <Link href={updatedYoutubeUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/youtube/logo" alt="Youtube" /> Youtube
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedTwitchUrl && (
-//           <Link href={updatedTwitchUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/twitch/logo" alt="Twitch" /> Twitch
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedDiscordUrl && (
-//           <Link href={updatedDiscordUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/discord/logo" alt="Discord" /> Discord
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedInstagramUrl && (
-//           <Link href={updatedInstagramUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/instagram/logo" alt="Instagram" /> Instagram
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedDribbbleUrl && (
-//           <Link href={updatedDribbbleUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/dribbble/logo" alt="Dribbble" /> Dribbble
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedBehanceUrl && (
-//           <Link href={updatedBehanceUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/behance/logo" alt="Behance" /> Behance
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedStackoverflowUrl && (
-//           <Link href={updatedStackoverflowUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/stackoverflow/logo" alt="Stackoverflow" /> Stackoverflow
-//             </Button>
-//           </Link>
-//         )}
-//         {updatedFacebookUrl && (
-//           <Link href={updatedFacebookUrl} passHref legacyBehavior>
-//             <Button component="a" target="_blank" variant="default" fullWidth mt="md">
-//               <img src="/path/to/facebook/logo" alt="Facebook" /> Facebook
-//             </Button>
-//           </Link>
-//         )}
-
-//         {updatedVisibleToPublic && (
-//           <Text ta="center" fz="lg" weight={500} mt="md">
-//             Profile Visible to Public: {updatedVisibleToPublic ? 'Yes' : 'No'}
-//           </Text>
-//         )}
-//       </Paper>
-//       {currentUser && (
-//         <Button variant="filled" fullWidth mt="md" onClick={open}>
-//           Edit Profile
-//         </Button>
-//       )}
-//       {bio && (
-//         <Paper
-//           radius="md"
-//           withBorder
-//           p="lg"
-//           sx={(theme) => ({
-//             backgroundColor:
-//               theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-//           })}
-//         >
-//           <Text ta="center" fz="lg" weight={500} mt="md">
-//             {updatedBio ? updatedBio : bio}
-//           </Text>
-//         </Paper>
-//       )}
-//     </>
-//   );
-// }
