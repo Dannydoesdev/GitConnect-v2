@@ -1,16 +1,7 @@
 import axios from 'axios';
-import removeMarkdown from 'remove-markdown';
 import { Octokit } from '@octokit/rest';
 import DOMPurify from 'isomorphic-dompurify';
 
-
-
-
-// Remove markdown syntax and newlines - OLD
-export const cleanMarkdown = (rawText: any) => {
-  const strippedMarkdown = removeMarkdown(rawText);
-  return strippedMarkdown.replace(/\n/g, ' ');
-};
 
 export const cleanReadme = (readme: any) => {
   // First, configure DOMPurify with stricter options
@@ -64,7 +55,7 @@ export const cleanReadme = (readme: any) => {
                      .replace(/\sitemprop="[^"]*"/g, '');
 }
 
-
+// Utilising this version as it runs on the server
 export const fetchReadmeNoapi = async (
   userName: string,
   repoName: string
@@ -92,14 +83,11 @@ export const fetchReadmeNoapi = async (
 
     return cleanedReadme;
   
-
   } catch (error) {
     console.error('Error fetching README from GitHub:', error);
     return null;
   }
-
 }
-
 
 // Utility function to fetch readme content for a given Github repository based on username and repo name
 export const fetchReadme = async (
@@ -122,3 +110,9 @@ export const fetchReadme = async (
     return null;
   }
 };
+
+// Remove markdown syntax and newlines - OLD
+// export const cleanMarkdown = (rawText: any) => {
+//   const strippedMarkdown = removeMarkdown(rawText);
+//   return strippedMarkdown.replace(/\n/g, ' ');
+// };
