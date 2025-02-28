@@ -82,7 +82,8 @@ import {
   SiTypescript,
   SiVuedotjs,
 } from 'react-icons/si';
-import { updateProfileDataGithub } from '@/lib/profiles';
+// import { updateProfileDataGithub } from '@/lib/profiles';
+import { updateQuickstartProfileData } from '@/lib/quickstart/saveEditData';
 import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
 
 interface IconMap {
@@ -208,7 +209,7 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
     if (!currentUser) return;
     // console.log('formData in save changes', newData);
     setFormData(newData);
-    await updateProfileDataGithub(userId, newData).then(() => {
+    await updateQuickstartProfileData(userId, newData).then(() => {
       // Update UI or show success message
       close();
     });
