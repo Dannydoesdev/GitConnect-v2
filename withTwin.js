@@ -28,13 +28,27 @@ module.exports = function withTwin(nextConfig) {
             loader: 'babel-loader',
             options: {
               sourceMaps: dev,
+              // Updated version from https://medium.com/@ianenrico1/set-up-a-next-js-project-with-tailwindcss-and-twin-macro-191ae518dd29
+              // Also reflected here: https://www.elvisduru.com/blog/twin-macro-use-tailwind-and-css-in-js-in-a-nextjs-app
               presets: [
                 [
-                  '@babel/preset-react',
-                  { runtime: 'automatic', importSource: '@emotion/react' },
                   'next/babel',
+                  {
+                    'preset-react': {
+                      runtime: 'automatic',
+                      importSource: '@emotion/react',
+                    },
+                  },
                 ],
               ],
+              // OLD - not causing any issues but not sure if syntax is correct
+              // presets: [
+              //   [
+              //     '@babel/preset-react',
+              //     { runtime: 'automatic', importSource: '@emotion/react' },
+              //     'next/babel',
+              //   ],
+              // ],
               plugins: [
                 require.resolve('babel-plugin-twin'),
                 require.resolve('babel-plugin-macros'),
