@@ -12,7 +12,7 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       sortedProjects,
     },
-    revalidate: 1,
+    revalidate: 3600,
   };
 };
 

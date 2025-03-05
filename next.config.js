@@ -18,6 +18,11 @@ module.exports = withTwin({
         pathname: '/**',
       }
     ],
+    domains: ['firebasestorage.googleapis.com'],
+    deviceSizes: [640, 768, 1024, 1280, 1536],
+    imageSizes: [200, 400],  // Smaller sizes, as deviceSizes covers the larger ones
+    formats: ['image/webp'],
+    minimumCacheTTL: 2592000, // 30 days
   },
  // TODO: Resolve large page data bytes in home page - below is the experimental config to ignore build error
   // experimental: {
