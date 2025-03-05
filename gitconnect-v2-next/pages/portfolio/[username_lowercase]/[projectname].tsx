@@ -15,6 +15,7 @@ import RichTextEditorDisplay from '@/components/ProjectPage/RichTextEditorDispla
 import { unstarProject, starProject } from '@/lib/stars';
 import axios from 'axios';
 import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
+import { triggerRevalidationWithCooldown } from '@/utils/revalidation';
 
 
 export async function getStaticProps({ params }: any) {
@@ -173,14 +174,26 @@ export default function Project({ projects: initialProjects, textContent: initia
     const ownerId = projects[0]?.userId;
     const repoId = projects[0]?.id;
 
-    if (userHasStarred) {
-      await unstarProject(userId, ownerId, repoId);
-      setUserHasStarred(false);
-      setStarCount(prev => prev - 1);
-    } else {
-      await starProject(userId, ownerId, repoId);
-      setUserHasStarred(true);
-      setStarCount(prev => prev + 1);
+    // Optimistic update
+    const isCurrentlyStarred = userHasStarred;
+    const currentStarCount = projects[0]?.stars;
+    setUserHasStarred(!isCurrentlyStarred);
+    setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
+
+    try {
+      if (isCurrentlyStarred) {
+        await unstarProject(userId, ownerId, repoId);
+      } else {
+        await starProject(userId, ownerId, repoId);
+      }
+
+      // Trigger revalidation after successful star/unstar
+      await triggerRevalidationWithCooldown();
+    } catch (error) {
+      // Revert optimistic updates on error
+      console.error('Failed to update star status:', error);
+      setUserHasStarred(isCurrentlyStarred);
+      setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
     }
   };
 

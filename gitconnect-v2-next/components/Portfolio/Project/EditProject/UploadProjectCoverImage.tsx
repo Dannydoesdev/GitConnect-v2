@@ -89,11 +89,7 @@ export function UploadProjectCoverImage(
   };
 
   async function sendImageToFirebase(file: any) {
-    // console.log(file);
-    // Get the file extension
     const extension = file.name.split('.').pop();
-    // console.log(extension);
-
     const storageRef = ref(
       storage,
       `users/${userId}/repos/${repoId}/images/coverImage/${file.name}`
@@ -125,37 +121,49 @@ export function UploadProjectCoverImage(
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
             const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
             const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-            // const urlOnlyRef =
-            // Generate sizes
-            const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'];
+            
+            // Match the exact sizes configured in the Firebase resizer extension
+            // const sizes = [200, 400, 768, 1024, 2000, 4000];
+            const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000', '4000x4000'];
             const coverImageMeta = {
               name: file.name,
               extension,
               sizes,
+              lastModified: new Date().toISOString()
             };
-            // console.log(coverImageMeta)
+
+            // getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            //   const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
+            //   const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
+            //   // const urlOnlyRef =
+            //   // Generate sizes
+            //   const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'];
+            //   const coverImageMeta = {
+            //     name: file.name,
+            //     extension,
+            //     sizes,
+            //   };
 
             await setDoc(
               docRef,
-              { coverImageMeta: coverImageMeta, coverImage: downloadURL },
+              { 
+                coverImageMeta, 
+                coverImage: downloadURL
+              },
               { merge: true }
             );
             await setDoc(
               parentStorageRef,
               {
-                coverImageMeta: coverImageMeta,
-                coverImage: downloadURL,
+                coverImageMeta,
+                coverImage: downloadURL
               },
               { merge: true }
             );
 
             setImgUrl(downloadURL);
             handleNewCoverImage(downloadURL);
-            // console.log(`URL to stored img: ${downloadURL}`);
           });
-          // .then(() => {
-          //   router.reload();
-          // });
         }
       );
     } catch (error) {

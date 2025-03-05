@@ -27,7 +27,7 @@ export function HomePageProjectCard({
 }: ImageCardProps) {
   const { classes, theme } = useStyles();
 
-  const imageUrl = image && typeof image === 'string' ? correctImageGetter(image, 2000) : '/img/gc-sml.webp';
+  const imageUrl = image && typeof image === 'string' ? correctImageGetter(image, 768) : '/img/gc-sml.webp';
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
@@ -55,20 +55,21 @@ export function HomePageProjectCard({
               left: 0,
               right: 0,
               bottom: 0,
-              // backgroundSize: 'cover',
               transition: 'transform 500ms ease',
             })}
           >
             <Image
-              // src={image ? image : '/img/gitconnect.jpg'}
               src={imageUrl}
               className='image'
               style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
-              sizes='(max-width: 768px) 100vw, (max-width: 520) 50vw, 33vw'
-              fill={true}
-              quality={95}
-              alt=''
+              sizes='(max-width: 768px) 100vw, (max-width: 1079px) 50vw, (max-width: 1500px) 33vw, 25vw'
+              width={768}
+              height={768}
+              quality={75}
               priority={index && index <= 6 ? true : false}
+              alt={customTitle || githubTitleFormatted || 'Project thumbnail'}
+              placeholder="blur"
+              blurDataURL="/img/gc-sml.webp"
             />
           </Box>
           <div className={classes.overlay} />
