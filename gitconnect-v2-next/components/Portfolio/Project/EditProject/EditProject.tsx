@@ -609,6 +609,13 @@ export default function EditPortfolioProject({
 
       await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
       // close();
+
+       // Trigger revalidation of the homepage
+       const revalidateRes = await fetch(`/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`);
+       if (!revalidateRes.ok) {
+         console.warn('Failed to revalidate homepage');
+       }
+
     } catch (error) {
       console.log(error);
       notifications.update({

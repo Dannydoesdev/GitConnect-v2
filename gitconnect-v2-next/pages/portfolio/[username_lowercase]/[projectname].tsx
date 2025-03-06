@@ -1,22 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { triggerHomepageRevalidation } from '@/utils/revalidation';
 import { Button, Center, Chip, Group, Stack } from '@mantine/core';
-import useSWR from 'swr';
+import axios from 'axios';
+import useSWR, { mutate } from 'swr';
 import {
-  getProjectTextEditorContent,
   getAllUserAndProjectNameCombinationsLowercase,
+  getProjectTextEditorContent,
   getSingleProjectByNameLowercase,
 } from '@/lib/projects';
-import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import { AuthContext } from '../../../context/AuthContext';
+import { starProject, unstarProject } from '@/lib/stars';
+import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 import ProjectPageDynamicContent from '@/components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '@/components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import RichTextEditorDisplay from '@/components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
-import { unstarProject, starProject } from '@/lib/stars';
-import axios from 'axios';
-import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
-import { triggerRevalidationWithCooldown } from '@/utils/revalidation';
-
+import LoadingPage from '../../../components/LoadingPage/LoadingPage';
+import { AuthContext } from '../../../context/AuthContext';
 
 export async function getStaticProps({ params }: any) {
   const { projectname } = params;
@@ -46,7 +45,10 @@ export async function getStaticPaths() {
 
   type pathName = { username_lowercase?: string; projectname?: string };
   const paths = pathNames.map((path: pathName) => ({
-    params: { username_lowercase: path.username_lowercase, projectname: path.projectname },
+    params: {
+      username_lowercase: path.username_lowercase,
+      projectname: path.projectname,
+    },
   }));
 
   return {
@@ -64,9 +66,12 @@ interface ProjectData {
   [key: string]: any;
 }
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function Project({ projects: initialProjects, textContent: initialTextContent }: ProjectProps) {
+export default function Project({
+  projects: initialProjects,
+  textContent: initialTextContent,
+}: ProjectProps) {
   // 1. All hooks at the top level
   const router = useRouter();
   const { currentUser, userData, loading } = useContext(AuthContext);
@@ -81,20 +86,26 @@ export default function Project({ projects: initialProjects, textContent: initia
   const projectname = router.query.projectname as string;
 
   // 3. SWR setup
-  const projectKey = projectname ? `/api/portfolio/getSingleProject?projectname=${projectname}` : null;
-  const textContentKey = initialProjects?.[0] 
-    ? `/api/portfolio/getTextEditorContent?userId=${initialProjects[0].userId}&repoId=${initialProjects[0].id}` 
+  const projectKey = projectname
+    ? `/api/portfolio/getSingleProject?projectname=${projectname}`
+    : null;
+  const textContentKey = initialProjects?.[0]
+    ? `/api/portfolio/getTextEditorContent?userId=${initialProjects[0].userId}&repoId=${initialProjects[0].id}`
     : null;
 
   const { data: fetchProject, error: projectsError } = useSWR(projectKey, fetcher, {
     fallbackData: initialProjects,
-    revalidateOnMount: true
+    revalidateOnMount: true,
   });
 
-  const { data: fetchTextContent, error: textContentError } = useSWR(textContentKey, fetcher, {
-    fallbackData: initialTextContent,
-    revalidateOnMount: true
-  });
+  const { data: fetchTextContent, error: textContentError } = useSWR(
+    textContentKey,
+    fetcher,
+    {
+      fallbackData: initialTextContent,
+      revalidateOnMount: true,
+    }
+  );
 
   // 4. All useEffects together
   useEffect(() => {
@@ -135,7 +146,10 @@ export default function Project({ projects: initialProjects, textContent: initia
       if (userId === userData.userId && project.views && project.views > 1) return;
 
       try {
-        const response = await axios.post('/api/projects/incrementView', { userId, repoId });
+        const response = await axios.post('/api/projects/incrementView', {
+          userId,
+          repoId,
+        });
         if (response.status === 200) {
           setLastUpdated(Date.now());
         }
@@ -148,7 +162,16 @@ export default function Project({ projects: initialProjects, textContent: initia
       setRepoOwner(project.userId);
       handleIncrementView(project.userId, project.id);
     }
-  }, [projectname, userData, fetchProject, initialProjects, loading, isActiveTab, lastUpdated, currentUser]);
+  }, [
+    projectname,
+    userData,
+    fetchProject,
+    initialProjects,
+    loading,
+    isActiveTab,
+    lastUpdated,
+    currentUser,
+  ]);
 
   // 5. Early returns
   if (router.isFallback || isLoading) {
@@ -166,27 +189,38 @@ export default function Project({ projects: initialProjects, textContent: initia
     return <LoadingPage />;
   }
 
-  // Original star/unstar function
+  // Original star/unstar function - ADDING IN some revalidation improvements
   const handleStarClick = async () => {
     if (!userData || !projects || projects.length === 0) return;
 
     const userId = userData.userId;
     const ownerId = projects[0]?.userId;
     const repoId = projects[0]?.id;
-
-    if (userHasStarred) {
-      await unstarProject(userId, ownerId, repoId);
-      setUserHasStarred(false);
-      setStarCount(prev => prev - 1);
-    } else {
-      await starProject(userId, ownerId, repoId);
-      setUserHasStarred(true);
-      setStarCount(prev => prev + 1);
+    try {
+      if (userHasStarred) {
+        setUserHasStarred(false);
+        setStarCount((prev) => prev - 1);
+        await unstarProject(userId, ownerId, repoId);
+     
+      } else {
+        setUserHasStarred(true);
+        setStarCount((prev) => prev + 1);
+        await starProject(userId, ownerId, repoId);
+   
+      }
+      // Trigger revalidation for homepage and project page to update relevant counts when successful
+      await triggerHomepageRevalidation();
+      await mutate(projectKey);
+    } catch (error) {
+      // Revert optimistic updates on error
+      console.error('Failed to update star status:', error);
+      // setUserHasStarred(userHasStarred);
+      // setStarCount(prev => userHasStarred ? prev - 1 : prev + 1);
     }
   };
 
   // FIXME: check this out later - New star/unstar function
-  
+
   // const handleStarClick = async () => {
   //   if (!userData || !projects || projects.length === 0) return;
 
@@ -257,7 +291,9 @@ export default function Project({ projects: initialProjects, textContent: initia
               component="a"
               size="lg"
               radius="md"
-              onClick={() => router.push(`/portfolio/edit/${projects[0]?.reponame_lowercase}`)}
+              onClick={() =>
+                router.push(`/portfolio/edit/${projects[0]?.reponame_lowercase}`)
+              }
               className="mx-auto"
               color="gray"
               mt="xs"
@@ -320,4 +356,3 @@ export default function Project({ projects: initialProjects, textContent: initia
     </>
   );
 }
-
