@@ -166,7 +166,7 @@ export default function Project({ projects: initialProjects, textContent: initia
     return <LoadingPage />;
   }
 
-  // 6. Event handlers
+  // Original star/unstar function
   const handleStarClick = async () => {
     if (!userData || !projects || projects.length === 0) return;
 
@@ -174,28 +174,48 @@ export default function Project({ projects: initialProjects, textContent: initia
     const ownerId = projects[0]?.userId;
     const repoId = projects[0]?.id;
 
-    // Optimistic update
-    const isCurrentlyStarred = userHasStarred;
-    const currentStarCount = projects[0]?.stars;
-    setUserHasStarred(!isCurrentlyStarred);
-    setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
-
-    try {
-      if (isCurrentlyStarred) {
-        await unstarProject(userId, ownerId, repoId);
-      } else {
-        await starProject(userId, ownerId, repoId);
-      }
-
-      // Trigger revalidation after successful star/unstar
-      await triggerRevalidationWithCooldown();
-    } catch (error) {
-      // Revert optimistic updates on error
-      console.error('Failed to update star status:', error);
-      setUserHasStarred(isCurrentlyStarred);
-      setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
+    if (userHasStarred) {
+      await unstarProject(userId, ownerId, repoId);
+      setUserHasStarred(false);
+      setStarCount(prev => prev - 1);
+    } else {
+      await starProject(userId, ownerId, repoId);
+      setUserHasStarred(true);
+      setStarCount(prev => prev + 1);
     }
   };
+
+  // FIXME: check this out later - New star/unstar function
+  
+  // const handleStarClick = async () => {
+  //   if (!userData || !projects || projects.length === 0) return;
+
+  //   const userId = userData.userId;
+  //   const ownerId = projects[0]?.userId;
+  //   const repoId = projects[0]?.id;
+
+  //   // Optimistic update
+  //   const isCurrentlyStarred = userHasStarred;
+  //   const currentStarCount = projects[0]?.stars;
+  //   setUserHasStarred(!isCurrentlyStarred);
+  //   setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
+
+  //   try {
+  //     if (isCurrentlyStarred) {
+  //       await unstarProject(userId, ownerId, repoId);
+  //     } else {
+  //       await starProject(userId, ownerId, repoId);
+  //     }
+
+  //     // Trigger revalidation after successful star/unstar
+  //     await triggerRevalidationWithCooldown();
+  //   } catch (error) {
+  //     // Revert optimistic updates on error
+  //     console.error('Failed to update star status:', error);
+  //     setUserHasStarred(isCurrentlyStarred);
+  //     setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
+  //   }
+  // };
 
   // 7. Render
   return (
