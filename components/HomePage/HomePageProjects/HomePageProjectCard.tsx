@@ -63,8 +63,12 @@ export function HomePageProjectCard({
               className='image'
               style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
               sizes='(max-width: 768px) 100vw, (max-width: 1079px) 50vw, (max-width: 1500px) 33vw, 25vw'
-              width={768}
-              height={768}
+                //  sizes='(max-width: 768px) 100vw, (max-width: 520px) 50vw, 33vw'
+              fill={true}
+              // width={768}
+              // height={768}
+              // width={800}
+              // height={600}
               quality={75}
               priority={index && index <= 6 ? true : false}
               alt={customTitle || githubTitleFormatted || 'Project thumbnail'}
