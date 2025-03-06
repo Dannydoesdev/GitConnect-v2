@@ -18,7 +18,7 @@ module.exports = withTwin({
         pathname: '/**',
       }
     ],
-    domains: ['firebasestorage.googleapis.com'],
+    // domains: ['firebasestorage.googleapis.com'],
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [200, 400],  // Smaller sizes, as deviceSizes covers the larger ones
     formats: ['image/webp'],
