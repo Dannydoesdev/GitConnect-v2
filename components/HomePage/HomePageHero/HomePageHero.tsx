@@ -186,18 +186,18 @@ export function HeroLanding() {
               {/* portfolio platform for devs. */}
               {/* <span className={classes.beta}>[beta]</span> */}
             </Title>
-            <Title className={classes.titleTwo}>
+            {/* <Title className={classes.titleTwo}>
               <span>the </span> global creative platform for devs
-              {/* <span className={classes.beta}>[beta]</span> */}
-            </Title>
+            </Title> */}
             <Text className={classes.description} size="xl" mt="xs">
-              Create your portfolio <span className={classes.emphasis}>in minutes</span>,
-              not days - <span className={classes.emphasisTwo}>for free.</span>
+              Create your portfolio <span className={classes.emphasis}>in minutes - </span>
+                not days
+                <span className={classes.emphasisTwo}>- for free.</span>
               <br />
               {/* Share what you've been building with the world */}
-              Show off what you're building to peers, clients & employers.
+              Share what you're building with peers, clients & employers.
               <br />
-              <span className={classes.emphasisThree}>..or to your mum!</span>
+              {/* <span className={classes.emphasisThree}>..or to your mum!</span> */}
               {/* Share what you're building with peers, employers, <br />or even with mum. */}
               {/* Join a worldwide network of your devs
                 create a portfolio in minutes, not days - for free. */}
@@ -272,7 +272,7 @@ export function HeroLanding() {
                     Learn more
                   </Text>
                 </Link>
-                <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
+                {/* <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
                   <Text
                     component="a"
                     target="_blank"
@@ -291,7 +291,7 @@ export function HeroLanding() {
                   >
                     Join the Discord
                   </Text>
-                </Link>
+                </Link> */}
               </Group>
             </Stack>
             {/* </Group> */}

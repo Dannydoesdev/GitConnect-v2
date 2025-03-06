@@ -1,4 +1,4 @@
-export async function triggerRevalidationWithCooldown() {
+export async function triggerHomepageRevalidation() {
   if (typeof window === 'undefined') return false;
 
   try {

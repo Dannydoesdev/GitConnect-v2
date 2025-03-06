@@ -24,8 +24,8 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
     return input.replace(/[_-]/g, ' ');
   }
 
-  console.log('ProfilePageProjectGrid projects:');
-  console.log(projects);
+  // console.log('ProfilePageProjectGrid projects:');
+  // console.log(projects);
 
   if (projectsLength === 0) {
     return (
