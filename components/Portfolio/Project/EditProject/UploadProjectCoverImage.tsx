@@ -129,7 +129,7 @@ export function UploadProjectCoverImage(
               name: file.name,
               extension,
               sizes,
-              lastModified: new Date().toISOString()
+              // lastModified: new Date().toISOString()
             };
 
             // getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
@@ -147,7 +147,7 @@ export function UploadProjectCoverImage(
             await setDoc(
               docRef,
               { 
-                coverImageMeta, 
+                coverImageMeta: coverImageMeta, 
                 coverImage: downloadURL
               },
               { merge: true }
@@ -155,7 +155,7 @@ export function UploadProjectCoverImage(
             await setDoc(
               parentStorageRef,
               {
-                coverImageMeta,
+                coverImageMeta: coverImageMeta,
                 coverImage: downloadURL
               },
               { merge: true }
