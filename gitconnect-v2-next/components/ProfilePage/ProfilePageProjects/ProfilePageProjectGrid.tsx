@@ -24,6 +24,9 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
     return input.replace(/[_-]/g, ' ');
   }
 
+  // console.log('ProfilePageProjectGrid projects:');
+  // console.log(projects);
+
   if (projectsLength === 0) {
     return (
       <Group>
@@ -125,8 +128,8 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                         index={index}
                         githubTitle={project.docData.name}
                         customTitle={project.docData.projectTitle}
-                        avatar={project.docData.owner.avatar_url}
-                        author={project.docData.owner.login}
+                        // avatar={project.docData.owner.avatar_url}
+                        // author={project.docData.owner.login}
                         views={1}
                         comments={2}
                         profileUrl={`/portfolio/${project.docData.username_lowercase}`}

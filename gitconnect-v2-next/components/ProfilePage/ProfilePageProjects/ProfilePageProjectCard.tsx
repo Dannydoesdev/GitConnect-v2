@@ -37,6 +37,7 @@ export function ProfilePageProjectCard({
     return input.replace(/[_-]/g, ' ');
   }
   const githubTitleFormatted = githubTitle ? replaceUnderscoresAndDashes(githubTitle) : '';
+  
 
   // console.log(image)
   // const imageUrl = (typeof image === 'string' && image) ? image : '/img/gitconnect.jpg';
@@ -136,8 +137,8 @@ interface ProfilePageProjectCardProps {
   profileUrl: string;
   githubTitle: string;
   customTitle?: string;
-  author: string;
-  avatar: string;
+  author?: string;
+  avatar?: string;
   views: number;
   comments: number;
 }

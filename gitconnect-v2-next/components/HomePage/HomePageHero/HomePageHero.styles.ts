@@ -128,7 +128,7 @@ export default createStyles((theme) => ({
 },
 
   emphasisTwo: {
-    fontWeight: 650,
+    fontWeight: 500,
   },
 
   emphasis: {
@@ -139,7 +139,7 @@ export default createStyles((theme) => ({
     // fontSize: 30,
     // fontStyle: 'italic',
 
-    fontWeight: 700,
+    fontWeight: 500,
     // fontStyle: 'italic',
     // textAlign: 'center',
     // reverse: true,
