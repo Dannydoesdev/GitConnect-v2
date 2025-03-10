@@ -1,6 +1,6 @@
 import { getGithubProfileData, getGithubReposWithUsername } from "@/lib/github";
-import { fetchLanguages } from "@/lib/wv/fetchLanguages";
-import { fetchReadme } from "@/lib/wv/fetchReadme";
+// import { fetchLanguages } from "@/lib/quickstart/fetchLanguages";
+// import { fetchReadme } from "@/lib/quickstart/fetchReadme";
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
