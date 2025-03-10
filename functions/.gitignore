@@ -12,6 +12,8 @@ node_modules/
 **/.log
 .log
 *.log
+pubsub-debug.log
+firestore-debug.log
 
 # sensitive info
 .env

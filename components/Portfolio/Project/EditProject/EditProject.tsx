@@ -238,9 +238,6 @@ export default function EditPortfolioProject({
   // If so - they can publish
 
   async function handlePublish(formData: FormData) {
-    // if ( realtimeEditorContent !== '' ) {
-
-    // const canPublish = await isAllowedToPublishProject(userid, repoid);
     const canPublish = await isAllowedToPublishProject({ userId: userid, repo: repoid });
 
     if (!canPublish) {
@@ -332,6 +329,8 @@ export default function EditPortfolioProject({
           autoClose: false,
           withCloseButton: false,
         });
+        
+        // Save to Firebase
         await setDoc(
           docRef,
           {
@@ -343,20 +342,21 @@ export default function EditPortfolioProject({
           },
           { merge: true }
         );
-        //
+        
         await setDoc(
           parentDocRef,
           { ...formData, hidden: false, visibleToPublic: true },
           { merge: true }
         );
+
+        // Trigger revalidation of the homepage
+        const revalidateRes = await fetch(`/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`);
+        if (!revalidateRes.ok) {
+          console.warn('Failed to revalidate homepage');
+        }
+        
         setUnsavedChanges(false);
         setUnsavedChangesSettings(false);
-        // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
-
-        // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
-        // console.log(formData)
-        // console.log('publishing');
-        // close();
       } catch (error) {
         console.log(error);
         notifications.update({
@@ -609,6 +609,13 @@ export default function EditPortfolioProject({
 
       await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
       // close();
+
+       // Trigger revalidation of the homepage
+       const revalidateRes = await fetch(`/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`);
+       if (!revalidateRes.ok) {
+         console.warn('Failed to revalidate homepage');
+       }
+
     } catch (error) {
       console.log(error);
       notifications.update({
