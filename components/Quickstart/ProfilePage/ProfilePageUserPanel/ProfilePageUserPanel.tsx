@@ -189,6 +189,10 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
   props,
   currentUser,
 }) => {
+
+  console.log('props in ProfilePageUserPanel');
+  console.log(props);
+
   const { userData } = useContext(AuthContext);
   const userId = userData.uid;
   const [opened, { open, close }] = useDisclosure(false);
