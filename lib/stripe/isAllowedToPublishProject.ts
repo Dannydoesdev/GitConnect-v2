@@ -20,11 +20,11 @@ export const isAllowedToPublishProjectContext = async (
   repo: any,
   isPro: any
 ) => {
-  console.log(`isAllowedToPublishProject check - userId: ${userId} repo: ${repo}`);
+  // console.log(`isAllowedToPublishProject check - userId: ${userId} repo: ${repo}`);
 
   // const [isPro, setIsPro] = useState(false);
   if (isPro) {
-    console.log('isAllowedToPublishProject - user is pro');
+    // console.log('isAllowedToPublishProject - user is pro');
     return true;
   }
   // useEffect(() => {
@@ -48,18 +48,18 @@ export const isAllowedToPublishProjectContext = async (
 
   const q = query(coll, where('hidden', '==', 'false'), where('id', '!=', repo));
   const snapshot = await getCountFromServer(q);
-  console.log('count of published projects: ', snapshot.data().count);
+  // console.log('count of published projects: ', snapshot.data().count);
 
   // If user has published 3 or more projects and is not pro, return false
   if (snapshot.data().count >= 3 && !isPro) {
-    console.log(
-      'isAllowedToPublishProject false - user has published 3 projects and is not pro'
-    );
+    // console.log(
+    //   'isAllowedToPublishProject false - user has published 3 projects and is not pro'
+    // );
     return false;
   } else {
-    console.log(
-      'isAllowedToPublishProject true - user has published less than 3 projects or is pro'
-    );
+    // console.log(
+    //   'isAllowedToPublishProject true - user has published less than 3 projects or is pro'
+    // );
     return true;
   }
 };
@@ -67,7 +67,7 @@ export const isAllowedToPublishProjectContext = async (
 export const isAllowedToPublishProject = async (userId: any, repo: any) => {
   const { userData } = useContext(AuthContext);
 
-  console.log(`isAllowedToPublishProject check - userId: ${userId} repo: ${repo}`);
+  // console.log(`isAllowedToPublishProject check - userId: ${userId} repo: ${repo}`);
 
   const [isPro, setIsPro] = useState(false);
 
@@ -86,7 +86,7 @@ export const isAllowedToPublishProject = async (userId: any, repo: any) => {
     // checkPremium();
   }, [userData]);
 
-  console.log('isAllowedToPublishProject isPro: ', isPro);
+  // console.log('isAllowedToPublishProject isPro: ', isPro);
 
   // const q = query(collectionGroup(db, 'repos'), where('hidden', '==', false));
   // const querySnapshot = await getDocs(q);
@@ -94,18 +94,18 @@ export const isAllowedToPublishProject = async (userId: any, repo: any) => {
 
   const q = query(coll, where('hidden', '==', 'false'), where('id', '!=', repo));
   const snapshot = await getCountFromServer(q);
-  console.log('count of published projects: ', snapshot.data().count);
+  // console.log('count of published projects: ', snapshot.data().count);
 
   // If user has published 3 or more projects and is not pro, return false
   if (snapshot.data().count >= 3 && !isPro) {
-    console.log(
-      'isAllowedToPublishProject false - user has published 3 projects and is not pro'
-    );
+    // console.log(
+    //   'isAllowedToPublishProject false - user has published 3 projects and is not pro'
+    // );
     return false;
   } else {
-    console.log(
-      'isAllowedToPublishProject true - user has published less than 3 projects or is pro'
-    );
+    // console.log(
+    //   'isAllowedToPublishProject true - user has published less than 3 projects or is pro'
+    // );
     return true;
   }
 };
