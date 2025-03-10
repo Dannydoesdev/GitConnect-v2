@@ -19,11 +19,11 @@ interface ProfilePageProjectCardProps {
   index?: number;
   link: string;
   image: string;
-  profileUrl: string;
-  githubTitle: string;
+  profileUrl?: string;
+  githubTitle?: string;
   customTitle?: string;
   author?: string;
-  avatar: string;
+  avatar?: string;
   views?: number;
   comments?: number;
 }
