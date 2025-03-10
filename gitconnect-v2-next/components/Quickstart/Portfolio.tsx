@@ -167,9 +167,6 @@ export default function Portfolio({ isQuickstart }: { isQuickstart?: boolean }) 
   const [activeTab, setActiveTab] = useState('second');
   const { userData } = useContext(AuthContext);
   const router = useRouter();
-  // const { username_lowercase } = router.query;
-  // const { username_lowercase, anonymousId } = router.query;
-  // const [formData, setFormData] = useAtom(formDataAtom);
 
   // Use Jotai for state management
   const [quickstartState] = useAtom(quickstartStateAtom);
@@ -185,8 +182,6 @@ export default function Portfolio({ isQuickstart }: { isQuickstart?: boolean }) 
   // Use quickstart state if available, otherwise use props
   const profile = quickstartState.profile;
 
-  // const projects = initialProjects ?? null;
-  // const profile = initialProfile ?? null;
 
   if (router.isFallback) {
     return <LoadingPage />;
@@ -194,93 +189,6 @@ export default function Portfolio({ isQuickstart }: { isQuickstart?: boolean }) 
 
   const isCurrentUser = true; // For quickstart, user is always "current"
 
-  // const isCurrentUser =
-  //   username_lowercase &&
-  //   userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
-  //     ? true
-  //     : false;
-
-  // Only use SWR for non-quickstart portfolios
-  // const { data: fetchProfile } = useSWR(
-  //   !isQuickstart ? `/api/portfolio/getUserProfile?username=${username_lowercase}` : null,
-  //   fetcher,
-  //   { fallbackData: initialProfile }
-  // );
-
-  // const { data: fetchProjects } = useSWR(
-  //   !isQuickstart
-  //     ? `/api/portfolio/getUserProjects?username=${username_lowercase}`
-  //     : null,
-  //   fetcher,
-  //   { fallbackData: initialProjects }
-  // );
-
-  // Use the data directly
-  // const projects = isQuickstart ? initialProjects : (fetchProjects ?? initialProjects);
-  // const profile = isQuickstart ? initialProfile : (fetchProfile ?? initialProfile);
-
-
-  //   const profileEndpoint = isQuickstart
-  //   ? `/api/quickstart/getUserProfile?anonymousId=${anonymousId}`
-  //   : `/api/portfolio/getUserProfile?username=${username_lowercase}`;
-
-  // const projectsEndpoint = isQuickstart
-  //   ? `/api/quickstart/getUserProjects?anonymousId=${anonymousId}`
-  //   : `/api/portfolio/getUserProjects?username=${username_lowercase}`;
-
-  // // Use SWR with the determined endpoints
-  // const { data: fetchProfile, error: profileError } = useSWR(
-  //   username_lowercase || anonymousId ? profileEndpoint : null,
-  //   fetcher,
-  //   { fallbackData: initialProfile }
-  // );
-
-  // const { data: fetchProjects, error: projectsError } = useSWR(
-  //   username_lowercase || anonymousId ? projectsEndpoint : null,
-  //   fetcher,
-  //   { fallbackData: initialProjects }
-  // );
-
-  //   // export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
-  // //   const { userData } = useContext(AuthContext);
-  // //   const router = useRouter();
-  // //   const { username_lowercase } = router.query;
-  // // Define the API endpoints unconditionally
-
-  //    // Modify the data fetching to handle both regular and quickstart portfolios
-  // const { data: fetchProfile, error: profileError } = useSWR(
-  //   isQuickstart
-  //     ? `/api/quickstart/getUserProfile?anonymousId=${router.query.anonymousId}`
-  //     : `/api/portfolio/getUserProfile?username=${username_lowercase}`,
-  //   fetcher,
-  //   initialProfile
-  // );
-
-  // const { data: fetchProjects, error: projectsError } = useSWR(
-  //   isQuickstart
-  //     ? `/api/quickstart/getUserProjects?anonymousId=${router.query.anonymousId}`
-  //     : `/api/portfolio/getUserProjects?username=${username_lowercase}`,
-  //   fetcher,
-  //   initialProjects
-  // );
-
-  // const { data: fetchProfile, error: profileError } = useSWR(
-  //   `/api/portfolio/getUserProfile?username=${username_lowercase}`,
-  //   fetcher,
-  //   initialProfile
-  // );
-
-  // const { data: fetchProjects, error: projectsError } = useSWR(
-  //   `/api/portfolio/getUserProjects?username=${username_lowercase}`,
-  //   fetcher,
-  //   initialProjects
-  // );
-
-  // const projects = fetchProjects ?? initialProjects ?? null;
-  // const profile = fetchProfile ?? initialProfile ?? null;
-  // const [activeTab, setActiveTab] = useState<string | null>('first');
-
-  // Add a banner for quickstart portfolios
 
   const QuickstartBanner = () =>
     isQuickstart ? (
@@ -294,58 +202,6 @@ export default function Portfolio({ isQuickstart }: { isQuickstart?: boolean }) 
       </Paper>
     ) : null;
 
-  // useEffect(() => {
-  //   if (profile) {
-  //     // setFormData(profile);
-  //   }
-  // }, [profile]);
-
-  // const draftProjects = projects?.filter((project: any) => {
-  //   return project.docData.hidden === true;
-  // });
-
-  // let publishedProjects = projects?.filter((project: any) => {
-  //   return project.docData.hidden === false || project.docData.hidden === undefined;
-  // });
-
-  const sortProjects = (projects: any) => {
-    return projects.sort((a: any, b: any) => {
-      // const sortedPublishedProjects = publishedProjects.sort((a: any, b: any) => {
-      // Sort by portfolio_order if both projects have it
-      if ('portfolio_order' in a.docData && 'portfolio_order' in b.docData) {
-        return a.docData.portfolio_order - b.docData.portfolio_order;
-      }
-      // If only one project has portfolio_order, it should come first
-      if ('portfolio_order' in a.docData) return -1;
-      if ('portfolio_order' in b.docData) return 1;
-
-      // If neither project has a portfolio_order, sort by gitconnect_updated_at or updated_at
-      const dateA = a.docData.gitconnect_updated_at || a.docData.updated_at;
-      const dateB = b.docData.gitconnect_updated_at || b.docData.updated_at;
-      if (dateA && dateB) {
-        // Convert dates to timestamps and compare
-        // Note that newer dates should come first, hence the subtraction b - a
-        return new Date(dateB).getTime() - new Date(dateA).getTime();
-      }
-      if (dateA) return -1;
-      if (dateB) return 1;
-
-      // If none of the dates are available, sort by id (assuming higher ids are newer)
-      // Convert the ids to numbers if they are strings that represent numbers
-      const idA = +a.docData.id;
-      const idB = +b.docData.id;
-      return idB - idA; // Sort in descending order
-    });
-
-    // return sortedPublishedProjects;
-  };
-
-  // const draftProjectsLength = draftProjects ? draftProjects.length : 0;
-  // const publishedProjectsLength = publishedProjects ? publishedProjects.length : 0;
-
-  // if (publishedProjectsLength > 0) {
-  //   publishedProjects = sortProjects(publishedProjects);
-  // }
 
   // Render logic
   return (
