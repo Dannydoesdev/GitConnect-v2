@@ -6,7 +6,7 @@ export async function getAllUserProjectsWithAnonymousId(anonymousId: string) {
 
   // const projectDocs = collection(db, `usersAnonymous/${anonymousId}/repos`);
   const projectQuery = query(
-    collection(db, `usersAnonymous/${anonymousId}/repos`)
+    collection(db, `usersAnonymous/${anonymousId}/reposAnonymous`)
   );
   const querySnapshot = await getDocs(projectQuery);
   if (querySnapshot.empty) {

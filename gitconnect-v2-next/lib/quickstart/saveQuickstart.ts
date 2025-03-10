@@ -25,7 +25,7 @@ export async function saveQuickstartProject(
   console.log(projectData);
 
   // Check if doc exists and is filled - if so, skip creation
-  const projectDataDocRef = doc(db, `usersAnonymous/${userid}/repos/${repoid}`);
+  const projectDataDocRef = doc(db, `usersAnonymous/${userid}/reposAnonymous/${repoid}`);
   const projectDataDocSnap = await getDoc(projectDataDocRef);
 
   if (projectDataDocSnap.exists()) {
@@ -39,11 +39,11 @@ export async function saveQuickstartProject(
 
     // CHECK IF THIS PARENTDOC THING IS NEEDED:
 
-    const parentDocRef = doc(db, `usersAnonymous/${userid}/repos/${repoid}`);
+    const parentDocRef = doc(db, `usersAnonymous/${userid}/reposAnonymous/${repoid}`);
 
     const docRef = doc(
       db,
-      `usersAnonymous/${userid}/repos/${repoid}/projectData/mainContent`
+      `usersAnonymous/${userid}/reposAnonymous/${repoid}/projectData/mainContent`
     );
 
     // Need to do a 'foreach' loop or map

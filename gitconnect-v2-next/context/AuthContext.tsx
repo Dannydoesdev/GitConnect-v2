@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: Props) => {
 
           // If user is anonymous, set basic userData
           if (user.isAnonymous) {
-            setUserData(user)
+            setUserData({...user, userId: user.uid});
             // setUserData({
             //   userProviderId: 'anonymous',
             //   userId: user.uid,
