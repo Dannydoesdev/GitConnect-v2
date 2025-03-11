@@ -7,7 +7,20 @@ import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import { app, auth, db } from '../firebase/clientApp';
 import { getGithubProfileData } from '../lib/github';
-import { AuthData } from '../types';
+// import { AuthData } from '../types';
+
+export type AuthData = {
+  userProviderId?: string;
+  userId?: string;
+  userName?: string | null;
+  username_lowercase?: string | null;
+  githubId?: string | null;
+  displayName?: string | null;
+  userEmail?: string | null;
+  userPhotoLink?: string | null;
+  isPro?: boolean;
+  isAnonymous?: boolean;
+}
 
 // Anonymous signup docs: https://firebase.google.com/docs/auth/web/anonymous-auth?hl=en&authuser=0
 
@@ -38,84 +51,134 @@ export const AuthProvider = ({ children }: Props) => {
     userEmail: '',
     userPhotoLink: '',
     isPro: false,
+    isAnonymous: true,
   });
 
   useEffect(() => {
     let unsubscribePremiumStatus: any = null;
 
     const unsubscribe = onAuthStateChanged(auth, async (user: any) => {
-      try {
-        if (user) {
-          // Check anonymous status
-          setIsAnonymous(user.isAnonymous);
+      // try {
+      // Check if user is anonymous
+      if (user && user.isAnonymous == false) {
 
-          // If user is anonymous, set basic userData
-          if (user.isAnonymous) {
-            setUserData({...user, userId: user.uid});
-            // setUserData({
-            //   userProviderId: 'anonymous',
-            //   userId: user.uid,
-            //   userName: 'anonymous',
-            //   username_lowercase: 'anonymous',
-            //   githubId: '',
-            //   displayName: 'Anonymous User',
-            //   userEmail: '',
-            //   userPhotoLink: '',
-            //   isPro: true,
-            // });
-          } else {
-            unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro);
+          // if dev environment use test stripe
+        // if (process.env.NODE_ENV === 'development') {
+          // unsubscribePremiumStatus = await getPremiumStatusTest(app, setIsPro); // Set up premium status listener
+        // } else {
+          unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro); // Set up premium status listener
+        // }
+        // FIXME - only load userData if isPro is not null
 
-            const requiredData: AuthData = {
-              userProviderId: user.providerData[0].providerId,
-              userId: user.uid,
-              userName: user.reloadUserInfo.screenName,
-              username_lowercase: user.reloadUserInfo.screenName.toLowerCase(),
-              githubId: user.providerData[0].uid,
-              displayName: user.displayName,
-              userEmail: user.email,
-              userPhotoLink: user.photoURL,
-              isPro: isPro ?? false,
-            };
+        // if (isPro !== null) { // Update userData only when isPro is not null
 
-            setUserData(requiredData);
-          }
+        const requiredData: any = {
+          userProviderId: user.providerData[0].providerId,
+          userId: user.uid,
+          userName: user.reloadUserInfo.screenName,
+          username_lowercase: user.reloadUserInfo.screenName.toLowerCase(),
+          githubId: user.providerData[0].uid,
+          displayName: user.displayName,
+          userEmail: user.email,
+          userPhotoLink: user.photoURL,
+          isPro: isPro ?? false,
+          isAnonymous: false,
+        };
 
-          setCurrentUser(user);
+        setUserData(requiredData);
+        // console.log('AuthContext userData: ', userData)
+
+        setCurrentUser(user);
+
+        // check for user id
+        const docRef = doc(colRef, user.uid);
+
+        // check if user exists in db
+        const checkUserExists = await getDoc(docRef);
+
+        // if exists when logging in or registering - don't add
+        if (checkUserExists.exists()) {
+          // if they don't exist - use the server auth to add
         } else {
-          setIsPro(false);
-          setCurrentUser(null);
-          setUserData({
-            userProviderId: '',
-            userId: '',
-            userName: '',
-            username_lowercase: '',
-            githubId: '',
-            displayName: '',
-            userEmail: '',
-            userPhotoLink: '',
-            isPro: false,
-          });
+          // console.log('user not added yet... adding')
+          const newUserData = {
+            ...requiredData,
+            gitconnect_created_at: new Date().toISOString(),
+            gitconnect_updated_at: new Date().toISOString(),
+            gitconnect_created_at_unix: Date.now(),
+            gitconnect_updated_at_unix: Date.now(),
+          };
+
+          // use the firebase auth provided uid as id for new user
+          await setDoc(doc(colRef, user.uid), newUserData)
+            .then(async (cred) => {
+              // Get full github profile data
+              if (requiredData.userName) {
+                const githubPublicProfileData = await getGithubProfileData(
+                  requiredData.userName
+                );
+                // add the public profile data to the database
+                const githubProfileDataForFirestore = {
+                  ...requiredData,
+                  ...githubPublicProfileData,
+                  gitconnect_created_at: new Date().toISOString(),
+                  gitconnect_updated_at: new Date().toISOString(),
+                  gitconnect_created_at_unix: Date.now(),
+                  gitconnect_updated_at_unix: Date.now(),
+                };
+                const docRef = doc(db, `users/${user.uid}/profileData/publicData`);
+
+                await setDoc(
+                  docRef,
+                  {
+                    ...githubProfileDataForFirestore,
+                  },
+                  { merge: true }
+                );
+                // .then(async () => {
+                // TODO: Remove the below code once githubdata is deprecated
+                // const docRef = doc(db, `users/${user.uid}/profileData/githubData`);
+
+                // await setDoc(
+                //   docRef,
+                //   {
+                //     ...githubPublicProfileData,
+                //     gitconnect_created_at: new Date().toISOString(),
+                //     gitconnect_updated_at: new Date().toISOString(),
+                //     gitconnect_created_at_unix: Date.now(),
+                //     gitconnect_updated_at_unix: Date.now(),
+                //   },
+                //   { merge: true }
+                // );
+                // });
+              }
+            })
+            .catch((error) => {
+              console.log('Error adding document: ', error);
+            });
         }
-      } catch (error) {
-        console.error('Auth state change error:', error);
-      } finally {
-        setLoading(false);
+      } else if (user && user.isAnonymous == true) {
+        setIsAnonymous(true);
+        setUserData({ ...user, userId: user.uid });
+        setCurrentUser(user);
+      } else {
+        setIsPro(false); // Reset premium status if user logs out
+        if (unsubscribePremiumStatus) {
+          unsubscribePremiumStatus(); // Remove listener
+        }
+        setCurrentUser(null);
       }
+      setLoading(false);
+      // }
     });
 
     return () => {
-      unsubscribe();
+      unsubscribe(); // Unsubscribe from auth changes
       if (unsubscribePremiumStatus) {
-        unsubscribePremiumStatus();
+        unsubscribePremiumStatus(); // Unsubscribe from premium status changes
       }
     };
   }, [isPro]);
-
-  // Don't render children until initial loading is complete
-  if (loading) {
-    return <LoadingPage />;
-  }
 
   return (
     <AuthContext.Provider value={{ currentUser, isAnonymous, userData, loading }}>
@@ -124,7 +187,47 @@ export const AuthProvider = ({ children }: Props) => {
   );
 };
 
-//  OLD
+// ------------------- REVERT MAR 2025 FOR MAJOR ISSUE -------------------
+
+  //         setCurrentUser(user);
+  //       } else {
+  //         setIsPro(false);
+  //         setCurrentUser(null);
+  //         setUserData({
+  //           userProviderId: '',
+  //           userId: '',
+  //           userName: '',
+  //           username_lowercase: '',
+  //           githubId: '',
+  //           displayName: '',
+  //           userEmail: '',
+  //           userPhotoLink: '',
+  //           isPro: false,
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error('Auth state change error:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   });
+
+  //   return () => {
+  //     unsubscribe();
+  //     if (unsubscribePremiumStatus) {
+  //       unsubscribePremiumStatus();
+  //     }
+  //   };
+  // }, [isPro]);
+
+  // Don't render children until initial loading is complete
+  // if (loading) {
+  //   return <LoadingPage />;
+  // }
+
+
+
+// ------------------- OLDER -------------------
 
 // // Add a new document with a generated id.
 // // Create the context to store user data
