@@ -144,27 +144,23 @@ const ProjectTabs = ({ isCurrentUser, activeTab, setActiveTab, publishedProjects
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
   // All hooks at the top level
   const [activeTab, setActiveTab] = useState('first');
-  const {userData } = useContext(AuthContext);
+  const { userData, currentUser } = useContext(AuthContext);
   const router = useRouter();
   const { username_lowercase } = router.query;
-  
-  // export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
-  //   const { userData } = useContext(AuthContext);
-  //   const router = useRouter();
-  //   const { username_lowercase } = router.query;
-  
-  
+
+  if (router.isFallback) {
+    return <LoadingPage />;
+  }
+
     const isCurrentUser =
       username_lowercase &&
-      userData.userName.toLowerCase() === username_lowercase.toString().toLowerCase()
+      userData.userName?.toLowerCase() === username_lowercase.toString().toLowerCase()
         ? true
         : false;
   
     const [formData, setFormData] = useAtom(formDataAtom);
   
-    if (router.isFallback) {
-      return <LoadingPage />;
-    }
+
     const { data: fetchProfile, error: profileError } = useSWR(
       `/api/portfolio/getUserProfile?username=${username_lowercase}`,
       fetcher,
