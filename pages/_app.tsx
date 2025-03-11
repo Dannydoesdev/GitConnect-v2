@@ -27,6 +27,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const router = useRouter()
  
   const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
+  const [isClient, setIsClient] = useState(false);
+
+  // This effect runs only on the client after hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
@@ -81,11 +87,23 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
               <AuthProvider>
                 {/* <AuthProviderAnonymous> */}
                 <Provider>
-                  <AppContainer>
+                  {/* Introducing the following change to prevent hydration errors - but needs full testing */}
+                {isClient ? (
+                    <AppContainer>
+                      <Component key={router.asPath} {...pageProps} />
+                      <Analytics />
+                      <SpeedInsights />
+                    </AppContainer>
+                  ) : (
+                    <div style={{ visibility: 'hidden' }}>
+                      <Component key={router.asPath} {...pageProps} />
+                    </div>
+                  )}
+                  {/* <AppContainer>
                     <Component key={router.asPath} {...pageProps} />
                     <Analytics />
                     <SpeedInsights />
-                  </AppContainer>
+                  </AppContainer> */}
                   </Provider>
                   {/* </AuthProviderAnonymous> */}
               </AuthProvider>
