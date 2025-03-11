@@ -1,12 +1,3 @@
-// import { GetStaticPaths, GetStaticProps } from 'next';
-// import Portfolio from '../portfolio/[username_lowercase]'; // Import the main Portfolio component
-// import { useRouter } from 'next/router';
-// import { db } from '@/firebase/clientApp';
-// import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-// import { useAtom } from 'jotai';
-// import { quickstartPublishedProjectsAtom, quickstartStateAtom } from '@/atoms/quickstartAtoms';
-// import Portfolio from '@/components/Quickstart/Portfolio';
-
 import React, { use, useContext, useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
@@ -30,7 +21,6 @@ import {
   Text,
 } from '@mantine/core';
 import { useAtom } from 'jotai';
-import { initial } from 'lodash';
 // import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import useSWR from 'swr';
 import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
@@ -110,7 +100,7 @@ const ProjectTabs = ({
     </Tabs>
   );
 
-const fetcher = (url: RequestInfo | URL) => fetch(url).then((res) => res.json());
+// const fetcher = (url: RequestInfo | URL) => fetch(url).then((res) => res.json());
 
 interface PortfolioProps {
   initialProjects?: any;
@@ -125,11 +115,24 @@ export default function QuickstartPortfolio({
   initialProjects,
   initialProfile,
 }: PortfolioProps) {
+  console.log(`Quickstart portfolio page called - Initial Client Profile fetched: ${JSON.stringify(initialProfile)}`);
+
+  console.log(
+    `Quickstart portfolio page called -  Initial projects on client fetched: ${JSON.stringify(initialProjects)}`
+  );
   const [activeTab, setActiveTab] = useState('second');
   const { userData } = useContext(AuthContext);
   const router = useRouter();
   const [profile, setProfile] = useState(initialProfile);
-  // const [projects, setProjects] = useState(initialProjects);
+  const [projects, setProjects] = useState(initialProjects);
+  // const [projects, setProjects] = useState([]);
+  const [draftProjects, setDraftProjects] = useState([]);
+  const [publishedProjects, setPublishedProjects] = useState([]);
+
+  // Add router.isReady check to prevent hydration errors
+  if (!router.isReady) {
+    return <LoadingPage />;
+  }
 
   console.log(`QuickstartPortfolio - anonymousId: ${anonymousId}`);
   console.log(`QuickstartPortfolio - isQuickstart: ${isQuickstart}`);
@@ -142,46 +145,55 @@ console.log(initialProjects)
   const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
   const [publishedProjectsAtom] = useAtom(quickstartPublishedProjectsAtom);
 
-  initialProjects = initialProjects.map((project: any) => {
-    return project.docData;
-  });
+console.log(`QuickstartPortfolio - quickstartState:`);
+  console.log(quickstartState);
+  console.log(`QuickstartPortfolio - draftProjectsAtom:`);
+  console.log(draftProjectsAtom);
+  console.log(`QuickstartPortfolio - publishedProjectsAtom:`);
+  console.log(publishedProjectsAtom);
 
   // Use quickstart state if available, otherwise use props
   // const profile = quickstartState.profile;
 
   // If quickstart state projects & profile exist - rely on them
   // Else rely on initial props (from Firebase)
-  // useEffect(() => {
-  //   if (quickstartState.profile) {
-  //     console.log('QuickstartPortfolio - quickstartState.profile exists');
-  //     setProfile(quickstartState.profile);
-  //   }
+  useEffect(() => {
+    // Process initialProjects if they exist
+    if (initialProjects && initialProjects.length > 0) {
+      console.log('QuickstartPortfolio - initialProjects exists - length: ' + initialProjects.length);
+      
+      // Map the projects to extract docData
+      const processedProjects = initialProjects.map((project: any) => {
+        return project.docData;
+      });
+      
+      // Set the main projects state
+      setProjects(processedProjects);
+      
+      // Determine draft and published projects based on atom state or processed projects
+      const drafts = draftProjectsAtom.length > 0
+        ? draftProjectsAtom
+        : processedProjects.filter((project: any) => {
+            return project.hidden === true;
+          });
+      
+      const published = publishedProjectsAtom.length > 0
+        ? publishedProjectsAtom
+        : processedProjects.filter((project: any) => {
+            return project.hidden === false || project.hidden === undefined;
+          });
+      
+      // Set the draft and published projects states
+      setDraftProjects(drafts);
+      setPublishedProjects(published);
+    }
 
-  //   // Removing as state defaults to initial state
-  //   // else if (initialProfile) {
-  //   //   setProfile(initialProfile);
-  //   // }
-
-  //   // Removing as projects are handled lower down
-  //   // if (quickstartState.projects) {
-  //   //   setProjects(quickstartState.projects);
-  //   // }
-
-  //   // Removing as state defaults to initial state
-  //   // else if (initialProjects) {
-  //   //   setProjects(initialProjects);
-  //   // }
-
-  //   // if (initialProfile && !quickstartState.profile) {
-  //   //   setProfile(initialProfile);
-  //   // } else if (quickstartState.profile) {
-  //   //   setProfile(quickstartState.profile);
-  //   // }
-
-  //   // if (initialProjects && !quickstartState.projects) {
-  //   //   setProjects(initialProjects);
-  //   // }
-  // }, [initialProfile, initialProjects]);
+    // Set profile if it exists
+    if (initialProfile) {
+      console.log('QuickstartPortfolio - initialProfile exists');
+      setProfile(initialProfile);
+    }
+  }, [initialProfile, initialProjects, draftProjectsAtom, publishedProjectsAtom, quickstartState]);
 
   if (quickstartState.anonymousId !== anonymousId) {
     console.log(
@@ -208,32 +220,26 @@ console.log(initialProjects)
   //   return project.docData;
   // });
 
-  
-
-
-  const draftProjects =
-    draftProjectsAtom.length > 0
-      ? draftProjectsAtom
-      : initialProjects?.filter((project: any) => {
-          return project.hidden === true;
-        });
-
-  const publishedProjects =
-    publishedProjectsAtom.length > 0
-      ? publishedProjectsAtom
-      : initialProjects?.filter((project: any) => {
-          return project.hidden === false || project.hidden === undefined;
-        });
+  // These project filtering operations have been moved to the useEffect hook
+  // for better state management and to avoid redundant calculations
 
   console.log('draftProjects: ', draftProjects);
   console.log('publishedProjects: ', publishedProjects);
 
-  // If no quickstart state exists and no initial state, show loading
+  // Reorganized loading checks in logical order
+  // 1. Check if router is ready (already added above)
+  // 2. Check if page is in fallback state
+  if (router.isFallback) {
+    return <LoadingPage />;
+  }
+
+  // 3. Check if we have the required state and data
   if (!quickstartState.isQuickstart && !initialProfile && !initialProjects) {
     return <LoadingPage />;
   }
 
-  if (router.isFallback) {
+  // 4. Check if profile and projects are loaded
+  if (!profile && !projects) {
     return <LoadingPage />;
   }
 
@@ -251,16 +257,16 @@ console.log(initialProjects)
 
   const isCurrentUser = true; // For quickstart, user is always "current"
 
-  const QuickstartBanner = () => (
-    <Paper p="md" mb="lg" withBorder>
-      <Group position="apart">
-        <Text>This is a draft portfolio. Create an account to publish it!</Text>
-        <Button component={Link} href="/signup">
-          Sign Up
-        </Button>
-      </Group>
-    </Paper>
-  );
+  // const QuickstartBanner = () => (
+  //   <Paper p="md" mb="lg" withBorder>
+  //     <Group position="apart">
+  //       <Text>This is a draft portfolio. Create an account to publish it!</Text>
+  //       <Button component={Link} href="/signup">
+  //         Sign Up
+  //       </Button>
+  //     </Group>
+  //   </Paper>
+  // );
 
   // Render logic
   return (
@@ -268,7 +274,7 @@ console.log(initialProjects)
       {/* <PageHead profile={profile} username_lowercase={username_lowercase} /> */}
       <PageHead profile={profile} username_lowercase={profile?.username_lowercase} />
       <Container size="xl" mt={0}>
-        <QuickstartBanner />
+        {/* <QuickstartBanner /> */}
         <Group position="center">
           <Space h={60} />
           <Grid grow gutter={35}>

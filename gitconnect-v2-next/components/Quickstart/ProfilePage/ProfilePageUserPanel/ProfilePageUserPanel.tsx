@@ -154,7 +154,8 @@ interface ProfilePageUserPanelProps {
     email: string;
     publicEmail?: string;
     location?: string;
-    login: string;
+    login?: string;
+    userName?: string;
     public_repos?: number;
     headline?: string;
     company?: string;
@@ -185,10 +186,10 @@ interface ProfilePageUserPanelProps {
   currentUser?: boolean;
 }
 
-const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
+const ProfilePageUserPanel = ({
   props,
   currentUser,
-}) => {
+}: ProfilePageUserPanelProps) => {
 
   console.log('props in ProfilePageUserPanel');
   console.log(props);
@@ -242,7 +243,7 @@ const ProfilePageUserPanel: React.FC<ProfilePageUserPanelProps> = ({
           {formData.name || props.name}
         </Text>
         <Text ta="center" c="dimmed" fz="sm">
-          {props.login}
+          {props.userName}
           {props.location && ' • '} {formData.location || props.location}
         </Text>
 

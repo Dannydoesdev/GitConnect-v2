@@ -156,7 +156,8 @@ interface ProfilePageUserPanelSettingsProps {
     email: string;
     publicEmail?: string;
     location?: string;
-    login: string;
+    login?: string;
+    userName?: string;
     public_repos?: number;
     headline?: string;
     company?: string;
