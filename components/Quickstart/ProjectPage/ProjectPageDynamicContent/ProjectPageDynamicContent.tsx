@@ -30,7 +30,7 @@ import useStyles from './ProjectPageDynamicContent.styles';
 
 export default function ProjectPageDynamicContent({project}: any) {
   const { classes, theme } = useStyles();
-  console.log('project in ProjectPageDynamicContent:', project);
+  // console.log('project in ProjectPageDynamicContent:', project);
 
   // const project = props.props[0];
   const stars = project.stars;

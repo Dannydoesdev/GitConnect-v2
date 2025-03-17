@@ -225,8 +225,8 @@ export const AppContainer = ({ children }, props) => {
   }, [userData]);
 
 
-  console.log(`userData: ${userData}`);
-  console.log(userData)
+  // console.log(`userData: ${userData}`);
+  // console.log(userData)
   // const premiumButton = () => {
   //   <Group position="center">
   //     <Button onClick={open}>Open centered Modal</Button>

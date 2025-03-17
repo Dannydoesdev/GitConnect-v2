@@ -4,8 +4,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-  console.log('save Profile API route called - data received:')
-  console.log(req.body)
+  // console.log('save Profile API route called - data received:')
+  // console.log(req.body)
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Extract project data from request body
   const { userid, profileData } = req.body;
 
-  console.log(`userid: ${userid}, profileData: ${profileData}`)
+  // console.log(`userid: ${userid}, profileData: ${profileData}`)
 
   try { 
 

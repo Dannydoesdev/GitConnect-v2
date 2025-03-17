@@ -8,7 +8,7 @@ export async function updateQuickstartProfileData(id: string, data: any) {
 
   // NOTE - this is the function for updating profile changes to firestore for quickstart ONLY
 
-  const publicDataDocRef = doc(db, `usersAnonymous/${id}/profileData/publicData`);
+  const publicDataDocRef = doc(db, `usersAnonymous/${id}/profileDataAnonymous/publicData`);
   await setDoc(publicDataDocRef, { ...data }, { merge: true })
 
   // I am duplicating this logic to publicData and githubData while we deprecate githubData
