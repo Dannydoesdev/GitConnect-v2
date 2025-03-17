@@ -86,21 +86,28 @@ export function SignupPage() {
 
       try {
         // Attempt popup OAuth
-        const result = await signInWithPopup(auth, provider);
-        const credential: any = GithubAuthProvider.credentialFromResult(result);
-        const user = result.user;
-        const userId = user.uid;
+        // const result = await signInWithPopup(auth, provider);
+        // const credential: any = GithubAuthProvider.credentialFromResult(result);
+        // const user = result.user;
+        // const userId = user.uid;
 
-        if (process.env.NODE_ENV === 'development') {
-          // mixpanel tracking code for development
-        } else {
-          mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
-          mixpanel.identify(userId);
+        // Attempt popup OAuth
+        await signInWithPopup(auth, provider).then((result) => {
+          const credential: any = GithubAuthProvider.credentialFromResult(result);
+          const user = result.user;
+          const userId = user.uid;
 
-          mixpanel.track('Signed up', {
-            'Signup Type': 'GitHub',
-          });
-        }
+          if (process.env.NODE_ENV === 'development') {
+            // mixpanel tracking code for development
+          } else {
+            mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
+            mixpanel.identify(userId);
+
+            mixpanel.track('Signed up', {
+              'Signup Type': 'GitHub',
+            });
+          }
+        });
         // AuthContext and the parent component will handle the rest
       } catch (error) {
         console.log(error);
