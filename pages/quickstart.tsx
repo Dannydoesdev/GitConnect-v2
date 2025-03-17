@@ -50,9 +50,9 @@ const createPortfolioWithUsernameOnly = () => {
 
   const [quickstartState, setQuickstartState] = useAtom(quickstartStateAtom);
 
-  console.log('userData on load:');
-  console.log(userData);
-  console.log('is Anonymous on load ?:' + isAnonymous);
+  // console.log('userData on load:');
+  // console.log(userData);
+  // console.log('is Anonymous on load ?:' + isAnonymous);
 
   // Fetch all public repos for the entered username from GitHub with API helper
   const fetchUserAndRepos = async (username: string) => {
@@ -153,7 +153,7 @@ const createPortfolioWithUsernameOnly = () => {
           return {
             reponame_lowercase: repo?.name.toLowerCase(),
             ...repo,
-            readme: readme,
+            htmlOutput: readme,
             language_breakdown_percent: languages,
             hidden: true,
             userId: userid,

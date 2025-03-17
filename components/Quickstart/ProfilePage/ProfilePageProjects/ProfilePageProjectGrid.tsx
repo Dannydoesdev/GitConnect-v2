@@ -21,7 +21,7 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
   const projectsLength = projects ? projects.length : 0;
 
   function replaceUnderscoresAndDashes(input: string): string {
-    console.log('input: ', input);
+    // console.log('input: ', input);
     return (input && input.length > 0) ? input.replace(/[_-]/g, ' ') : '';
     // return input.replace(/[_-]/g, ' ');
   }

@@ -27,18 +27,18 @@ export async function getSingleQuickstartProject(anonymousId: string, repoId: st
   // console.log(`fetching singleProjectData for anonymousId: ${anonymousId} and repoId: ${repoId}`)
 
   const intId = parseInt(repoId);
-  const docRef = doc(db, `usersAnonymous/${anonymousId}/reposAnonymous/${intId}/projectData/mainContent`)
+  const docRef = doc(db, `usersAnonymous/${anonymousId}/reposAnonymous/${intId}/projectDataAnonymous/mainContent`)
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
     const docData = { ...docSnap.data() };
-    const { readme, ...projectDataWithoutReadme } = docData;
+    const { htmlOutput, ...projectDataWithoutReadme } = docData;
 
     // console.log('projectData WithoutReadme in fetch fn:')
     // console.log(projectDataWithoutReadme)
     return {
       projectData: projectDataWithoutReadme,
-      readme: readme || null
+      readme: htmlOutput || null
     };
   } else {
     console.log(`No repo found with userid: ${anonymousId} and repoid: ${repoId}`);
