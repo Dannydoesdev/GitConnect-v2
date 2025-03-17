@@ -210,7 +210,7 @@ const GetRepos = () => {
         message: `Project Page Created - Redirecting`,
         color: 'green',
         icon: <IconCheck size="1.5rem" />,
-        autoClose: 4500,
+        autoClose: 5000,
         withCloseButton: true,
       });
     };
