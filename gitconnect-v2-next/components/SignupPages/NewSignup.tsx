@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
@@ -16,7 +16,9 @@ import {
 import { IconBrandGithub } from '@tabler/icons-react';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import mixpanel from 'mixpanel-browser';
-import { auth } from '../../firebase/clientApp';
+import { auth, db } from '../../firebase/clientApp';
+import { doc, getDoc } from 'firebase/firestore';
+import { AuthContext } from '../../context/AuthContext';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -73,13 +75,10 @@ const useStyles = createStyles((theme) => ({
 
 export function SignupPage() {
   const { classes } = useStyles();
-
   const Router = useRouter();
 
   mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
 
-  // Don't re-render the Github provider until the router changes (eg user is pushed home)
-  // const loginHandler = useCallback(async () => {
   const signupHandler = useCallback(
     async (e: any) => {
       e.preventDefault();
@@ -87,18 +86,19 @@ export function SignupPage() {
 
       try {
         // Attempt popup OAuth
+        // const result = await signInWithPopup(auth, provider);
+        // const credential: any = GithubAuthProvider.credentialFromResult(result);
+        // const user = result.user;
+        // const userId = user.uid;
+
+        // Attempt popup OAuth
         await signInWithPopup(auth, provider).then((result) => {
           const credential: any = GithubAuthProvider.credentialFromResult(result);
           const user = result.user;
           const userId = user.uid;
 
           if (process.env.NODE_ENV === 'development') {
-            // mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
-            // mixpanel.identify(userId);
-
-            // mixpanel.track('Signed In', {
-            //   'Signup Type': 'GitHub',
-            // });
+            // mixpanel tracking code for development
           } else {
             mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
             mixpanel.identify(userId);
@@ -108,24 +108,10 @@ export function SignupPage() {
             });
           }
         });
-        // .then(() => {
-        // Push to portfolio creation page
-
-        // push to home after auth
-        // Router.push('/', undefined, { shallow: true });
-        // });
-
-        // This gives you a GitHub Access Token. You can use
-        // Attempt popup OAuth
-        // await signInWithPopup(auth, provider).then(() => {
-        // push to home after auth
-        // Router.push('/');
-        // });
+        // AuthContext and the parent component will handle the rest
       } catch (error) {
         console.log(error);
-        // alert(error)
-      } finally {
-        Router.push('/addproject');
+        Router.push('/'); // Fallback to home page on error
       }
     },
     [Router]
