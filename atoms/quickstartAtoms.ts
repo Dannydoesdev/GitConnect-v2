@@ -67,3 +67,67 @@ export const quickstartDraftProjectsAtom = atom(
 export const quickstartPublishedProjectsAtom = atom(
   (get) => get(quickstartStateAtom).projects.filter(p => !p.hidden)
 );
+
+
+
+
+interface ProfileFormData {
+  bio?: string;
+  location?: string;
+  name?: string;
+  headline?: string;
+  skills?: string[];
+  company?: string;
+  position?: string;
+  techStack?: string[];
+  website?: string;
+  profileTags?: string[];
+  githubUrl?: string;
+  gitlabUrl?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  mediumUrl?: string;
+  hashnodeUrl?: string;
+  codepenUrl?: string;
+  dribbbleUrl?: string;
+  behanceUrl?: string;
+  devToUrl?: string;
+  youtubeUrl?: string;
+  twitchUrl?: string;
+  discordUrl?: string;
+  stackoverflowUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  openToWork?: boolean;
+  [key: string]: any; // This allows you to add arbitrary fields
+}
+
+export const quickstartProfilePanelForm = atom<ProfileFormData>({
+  bio: '',
+  location: '',
+  name: '',
+  headline: '',
+  skills: [],
+  company: '',
+  position: '',
+  techStack: [],
+  website: '',
+  profileTags: [],
+  githubUrl: '',
+  gitlabUrl: '',
+  linkedinUrl: '',
+  twitterUrl: '',
+  mediumUrl: '',
+  hashnodeUrl: '',
+  codepenUrl: '',
+  dribbbleUrl: '',
+  behanceUrl: '',
+  devToUrl: '',
+  youtubeUrl: '',
+  twitchUrl: '',
+  discordUrl: '',
+  stackoverflowUrl: '',
+  facebookUrl: '',
+  instagramUrl: '',
+  openToWork: false,
+});

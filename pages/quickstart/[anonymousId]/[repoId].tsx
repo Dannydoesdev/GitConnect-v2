@@ -1,58 +1,139 @@
-
 // pages/quickstart/[repoid].tsx
+import { useEffect, useState } from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useAtom } from 'jotai';
-import { 
-  quickstartStateAtom, 
-  quickstartDraftProjectsAtom, 
-  quickstartPublishedProjectsAtom 
+import {
+  quickstartDraftProjectsAtom,
+  quickstartPublishedProjectsAtom,
+  quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
 import { Button, Center, Group, Paper, Stack, Text } from '@mantine/core';
+import { useAtom } from 'jotai';
+import { getSingleQuickstartProject } from '@/lib/quickstart/getSavedProjects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
-import Link from 'next/link';
-
 // Import simplified versions of the components we need
 // import ProjectPageDynamicHero from '@/components/Quickstart/ProjectPageDynamicHero';
 // import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPageDynamicContent';
 import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '@/components/Quickstart/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import RichTextEditorDisplay from '@/components/Quickstart/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
-import { GetStaticProps, GetStaticPaths } from 'next';
 
-export default function QuickstartProject({ repoId }: { repoId: string }) {
+export default function QuickstartProject({
+  repoId,
+  initialProject,
+  initialReadme,
+}: {
+  repoId: string;
+  initialProject: any;
+  initialReadme: any;
+}) {
   // const router = useRouter();
   // const { repoId } = router.query;
 
-  console.log(`repoid in static props: ${repoId}`);
-  
+  // console.log(`repoid in static props: ${repoId}`);
+  // console.log('initialProject in static props:');
+  // console.log(initialProject);
+  // console.log('initialReadme in static props:');
+  // console.log(initialReadme);
+  const router = useRouter();
+
+  // const [allProjects, setAllProjects] = useState()
+  const [project, setProject] = useState(initialProject);
+  const [readme, setReadme] = useState(initialReadme);
+
+  // Add router.isReady check to prevent hydration errors
+  if (!router.isReady) {
+    return <LoadingPage />;
+  }
   // Get state from Jotai
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjects] = useAtom(quickstartDraftProjectsAtom);
   const [publishedProjects] = useAtom(quickstartPublishedProjectsAtom);
 
-  // If no quickstart state exists, redirect to start
-  if (!quickstartState.isQuickstart) {
+  // If quickstart state project exists - rely on them
+  // Else rely on initial props (from Firebase)
+  useEffect(() => {
+    if (draftProjects && publishedProjects && initialProject) {
+      // console.log('useEffect checks:');
+      // console.log(`draftProject atom exists? ${draftProjects}`);
+      // console.log(`draftProject atom length? ${draftProjects.length}`);
+      // console.log(`draftProject atom exists? ${publishedProjects}`);
+      // console.log(`draftProject atom length? ${publishedProjects.length}`);
 
-    console.log('no quickstart state!!');
-    console.log('logging anything in atoms:')
-    console.log('quickstart state:', quickstartState);
-    console.log('draft projects:', draftProjects);
-    console.log('published projects:', publishedProjects);
-    return <LoadingPage />;
-  }
+      // console.log(`initialProject exists?`);
+      // console.log(initialProject);
+      // !!Object.entries(initialProject).length;
+      // const hasKeys = ;
+      // console.log(`initialProject length? ${Object.keys(initialProject).length}`);
+    }
+    if (
+      (draftProjects && draftProjects.length > 0) ||
+      (publishedProjects && publishedProjects.length > 0)
+    ) {
+      // console.log('atom projects found - assigning');
+      // Find the project from our atoms
+      const allProjects = [...draftProjects, ...publishedProjects];
+      const thisProject = allProjects.find((p) => p.id == repoId);
+      setProject(thisProject);
+
+      if (thisProject.readme && thisProject.readme?.length > 0) {
+        // console.log('Readme found in project atom - setting');
+        setReadme(thisProject.readme);
+      }
+      // console.log('this Project length' + thisProject.length);
+    } else if (initialProject && Object.keys(initialProject).length > 0) {
+      // console.log('no project atoms found - initial Project found, assigning');
+      // console.log(
+      //   'QuickstartProject - initialProjects exists - length: ' + initialProject.length
+      // );
+      setProject(initialProject);
+    } else {
+      // console.log('No project atom or firebase project found!!');
+    }
+
+    // Set profile if it exists
+    // if (initialProfile) {
+    //   console.log('QuickstartPortfolio - initialProfile exists');
+    //   setProfile(initialProfile);
+    // }
+  }, [draftProjects, publishedProjects, initialProject]);
+
+  // If no quickstart state exists, redirect to start
+  // if (!quickstartState.isQuickstart) {
+  //   console.log('no quickstart state!!');
+  //   console.log('logging anything in atoms:');
+  //   // console.log('quickstart state:', quickstartState);
+  //   console.log('draft projects atom:', draftProjects);
+  //   console.log('published projects atom:', publishedProjects);
+  //   // return <LoadingPage />;
+  // }
 
   // Find the project from our atoms
-  const allProjects = [...draftProjects, ...publishedProjects];
-  const project = allProjects.find(p => p.id == repoId);
+  // const allProjects = [...draftProjects, ...publishedProjects];
+  // const project = allProjects.find((p) => p.id == repoId);
 
-  console.log('found project in state')
-  console.log(project);
-
-  if (!project) {
-    console.log(' project not found in state');
-    console.log('project state:', allProjects);
+  if (router.isFallback) {
     return <LoadingPage />;
   }
+
+  // 3. Check if we have the required state and data
+  if (!quickstartState.isQuickstart && !initialProject) {
+    return <LoadingPage />;
+  }
+
+  // 4. Check if profile and projects are loaded
+  if (!project) {
+    // console.log('project not found');
+    // console.log('project state:', allProjects);
+    return <LoadingPage />;
+  }
+
+  // console.log('found project before render:');
+  // console.log(project);
+
+  // console.log('found readme before render:');
+  // console.log(readme ? readme : '');
 
   return (
     <>
@@ -70,12 +151,14 @@ export default function QuickstartProject({ repoId }: { repoId: string }) {
         </Paper>
       )} */}
 
-      <ProjectPageDynamicContent 
-        project={project}
-      />
+      <ProjectPageDynamicContent project={project} />
 
-      {project.readme && (
-        <RichTextEditorDisplay content={project.readme} />
+      {readme ? (
+        <RichTextEditorDisplay content={readme} />
+      ) : initialReadme ? (
+        <RichTextEditorDisplay content={readme} />
+      ) : (
+        <></>
       )}
 
       {/* Add sign up prompt at bottom */}
@@ -84,12 +167,7 @@ export default function QuickstartProject({ repoId }: { repoId: string }) {
           <Text size="lg" weight={500}>
             Want to edit this project or create more?
           </Text>
-          <Button
-            component={Link}
-            href="/signup"
-            size="lg"
-            color="teal"
-          >
+          <Button component={Link} href="/signup" size="lg" color="teal">
             Create Your Account
           </Button>
         </Stack>
@@ -98,17 +176,26 @@ export default function QuickstartProject({ repoId }: { repoId: string }) {
   );
 }
 
-
 // getStaticProps only needed for direct URL access
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { repoId } = params as { repoId: string };
-  
-  // ... fetch data if needed for direct URL access ...
-  
+  const { anonymousId, repoId } = params as { anonymousId: string; repoId: string };
+
+  // console.log(`Quickstart project page static params - repo ID received: ${repoId}`);
+  // console.log(
+  //   `Quickstart project page static params - Anonymous ID received: ${anonymousId}`
+  // );
+
+  const { projectData, readme } = await getSingleQuickstartProject(anonymousId, repoId);
+
+  // console.log('project Data (without readme) in staticProps:');
+  // console.log(projectData);
+
   return {
     props: {
+      initialProject: projectData ?? null,
+      initialReadme: readme ?? null,
+      isQuickstart: true,
       repoId,
-      isQuickstart: true
     },
     revalidate: 5,
   };
@@ -123,6 +210,39 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
+// Logic to access URLs without quickstart state - need to add checks to
+
+// export const getStaticProps: GetStaticProps = async ({ params }) => {
+//   const { anonymousId } = params as { anonymousId: string };
+//   console.log(`Quickstart portfolio page called - anonymous ID received: ${anonymousId}`);
+
+//   const profileData = await getProfileDataWithAnonymousId(anonymousId);
+//   const projectData = await getAllUserProjectsWithAnonymousId(anonymousId);
+//   console.log(`Quickstart portfolio page called - profile fetched: ${JSON.stringify(profileData)}`);
+
+//   console.log(
+//     `Quickstart portfolio page called - projects fetched: ${JSON.stringify(projectData)}`
+//   );
+
+//   const initialProjects = projectData ?? null;
+//   const initialProfile = Array.isArray(profileData)
+//   ? profileData[0]?.docData ?? null
+//   : profileData?.docData ?? null;
+//   // const initialProfile = profileData ?? null;
+//   // If we found data, set it in props and update quickstart state
+
+//   return {
+//     props: {
+//       // initialState: {
+//       initialProfile,
+//       initialProjects,
+//       isQuickstart: true,
+//       anonymousId,
+//       // },
+//     },
+//     revalidate: 5,
+//   };
+// };
 
 // OLD
 
@@ -143,7 +263,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // import { unstarProject, starProject } from '@/lib/stars';
 // import axios from 'axios';
 // import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
-
 
 // export async function getStaticProps({ params }: any) {
 //   const { projectname } = params;
@@ -209,8 +328,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 //   // 3. SWR setup
 //   const projectKey = projectname ? `/api/portfolio/getSingleProject?projectname=${projectname}` : null;
-//   const textContentKey = initialProjects?.[0] 
-//     ? `/api/portfolio/getTextEditorContent?userId=${initialProjects[0].userId}&repoId=${initialProjects[0].id}` 
+//   const textContentKey = initialProjects?.[0]
+//     ? `/api/portfolio/getTextEditorContent?userId=${initialProjects[0].userId}&repoId=${initialProjects[0].id}`
 //     : null;
 
 //   const { data: fetchProject, error: projectsError } = useSWR(projectKey, fetcher, {
@@ -415,4 +534,3 @@ export const getStaticPaths: GetStaticPaths = async () => {
 //     </>
 //   );
 // }
-
