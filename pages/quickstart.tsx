@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
 import router from 'next/router';
 import { quickstartStateAtom } from '@/atoms/quickstartAtoms';
 // Test VertexAI Implementation
@@ -20,7 +21,7 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck, IconCross, IconInfoCircle } from '@tabler/icons-react';
 import axios from 'axios';
 import { signInAnonymously } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getGenerativeModel, getVertexAI } from 'firebase/vertexai';
 // import { create } from 'lodash';
 import { useAtom } from 'jotai';
@@ -35,7 +36,6 @@ import { fetchReadme } from '@/lib/quickstart/fetchReadme';
 import Header from '@/components/Quickstart/Header';
 import RepoSelection from '@/components/Quickstart/RepoSelection';
 import { AuthContext } from '../context/AuthContext';
-
 
 const createPortfolioWithUsernameOnly = () => {
   // State variables
@@ -89,6 +89,10 @@ const createPortfolioWithUsernameOnly = () => {
 
     const userid = userData.uid;
 
+    if (!userid) {
+      console.log('NO USER ID - RETURNING');
+      return;
+    }
     //  set ProfileData to upload
     if (!profileData || profileData.length === 0) {
       console.log('No profile data to save - exiting');
@@ -166,7 +170,6 @@ const createPortfolioWithUsernameOnly = () => {
         }) || []
     );
 
-
     // Upload Profile data to Firestore
     try {
       // console.log(`saving profile data for user: ${userid}`);
@@ -243,7 +246,6 @@ const createPortfolioWithUsernameOnly = () => {
     }
   };
 
-
   // Adds a repository to the selectedRepos state when selected
   const selectRepo = (repoId: string) => {
     setSelectedRepos([...selectedRepos, repoId]);
@@ -262,56 +264,179 @@ const createPortfolioWithUsernameOnly = () => {
     // console.log('data received in createAnonymousUser:');
     // console.log(trimmedUserData);
 
-    try {
-      // Check if we have an existing anonymous UID in localStorage
-      const existingUid = localStorage.getItem('anonymousUid');
+    // REVERTING TO SIGNOUT FOR NOW - TOO COMPLICATED
+    await auth.signOut();
 
-      if (existingUid) {
-        console.log('Found existing anonymous user:', existingUid);
-        return existingUid;
+    // Check if we have an existing anonymous UID in localStorage
+    const existingUid = localStorage.getItem('anonymousUid');
+
+    if (existingUid) {
+      try {
+        console.log(`existing user found in local storage with ID: ${existingUid}`);
+        if (auth.currentUser) {
+          console.log(`AND User currently logged in with id: ${auth.currentUser.uid}`);
+          //A user is already signed in, check if it's the correct anonymous user.
+          if (auth.currentUser.uid === existingUid) {
+            console.log('User already signed in and is the correct anonymous user.');
+            return existingUid;
+          } else {
+            console.log(
+              'User already signed in, but is not the correct anonymous user. Signing out and attempting to re-authenticate.'
+            );
+            // await auth.signOut();
+          }
+        } else {
+          console.log(
+            'user found in localStorage but no user authenticated with Firebase Auth - logging in'
+          );
+        }
+
+        signInAnonymously(auth)
+          .then(async (userCredential) => {
+            const user = userCredential.user;
+            if (user.uid === existingUid) {
+              console.log('Anonymous user re-authenticated successfully.');
+              // User is successfully signed in.
+              const userDoc = doc(db, 'usersAnonymous', existingUid);
+              const checkUserExists = await getDoc(userDoc);
+              if (checkUserExists.exists()) {
+                const existingData = checkUserExists.data();
+                if (existingData.userId === existingUid) {
+                  console.log(
+                    'user data exists in firebase and has the same uid - all good'
+                  );
+                  return existingUid;
+                } else {
+                  console.log(
+                    'user data exists in firebase but has a different uid - figure out how to handle'
+                  );
+                  console.log('testing logout and re run:');
+                  await auth.signOut();
+                  createAnonymousUser(trimmedUserData);
+                  return;
+                }
+              } else {
+                await setDoc(
+                  doc(db, 'usersAnonymous', existingUid),
+                  {
+                    gitconnect_created_at: new Date().toISOString(),
+                    gitconnect_updated_at: new Date().toISOString(),
+                    gitconnect_created_at_unix: Date.now(),
+                    gitconnect_updated_at_unix: Date.now(),
+                    githubId: trimmedUserData.githubId,
+                    // hidden: true,
+                    userId: existingUid,
+                    userName: trimmedUserData.userName,
+                    username_lowercase: trimmedUserData?.userName?.toLowerCase(),
+                    isPro: false,
+                    userPhotoLink: trimmedUserData.avatar_url,
+                    displayName: trimmedUserData.name,
+                    // userEmail: trimmedUserData.email,
+                    // createdAt: new Date().toISOString(),
+                    // lastLogin: new Date().toISOString()
+                  },
+                  { merge: true }
+                );
+                return existingUid;
+              }
+            } else {
+              console.log(
+                'Stored anonymous UID does not match the new signed-in user - Updating localStorage and saving to Firebase.'
+              );
+              // localStorage.removeItem('anonymousUid'); //Clear out invalid uid.
+              localStorage.setItem('anonymousUid', user.uid);
+              await setDoc(
+                doc(db, 'usersAnonymous', user.uid),
+                {
+                  gitconnect_created_at: new Date().toISOString(),
+                  gitconnect_updated_at: new Date().toISOString(),
+                  gitconnect_created_at_unix: Date.now(),
+                  gitconnect_updated_at_unix: Date.now(),
+                  githubId: trimmedUserData.githubId,
+                  // hidden: true,
+                  userId: user.uid,
+                  userName: trimmedUserData.userName,
+                  username_lowercase: trimmedUserData?.userName?.toLowerCase(),
+                  isPro: false,
+                  userPhotoLink: trimmedUserData.avatar_url,
+                  displayName: trimmedUserData.name,
+                  // userEmail: trimmedUserData.email,
+                  // createdAt: new Date().toISOString(),
+                  // lastLogin: new Date().toISOString()
+                },
+                { merge: true }
+              );
+
+              return user.uid;
+            }
+          })
+          .catch((error) => {
+            console.error('Error re-authenticating anonymous user:', error);
+            // Handle authentication errors (e.g., network issues).
+          });
+      } catch (error) {
+        console.error('Error creating anonymous user:', error);
+        throw error;
+      } finally {
+        // console.log('userData after anonymous signup');
+        // console.log(userData);
+        // console.log('is Anonymous after anonymous signup?:' + isAnonymous);
       }
+    } else {
+      try {
+        console.log('no existing user found in localStorage - Creating');
+        //   console.log('Found existing anonymous user:', existingUid);
+        //   const userDoc = doc(db, 'usersAnonymous', existingUid);
+        //   const checkUserExists = await getDoc(userDoc);
+        //   if (checkUserExists.exists()) {
+        //     const userCredential = await signInAnonymously(auth);
+        //     const anonymousUid = userCredential.user.uid;
+        //     return anonymousUid;
+        //   } else {
+        //   }
+        // }
 
-      // If no existing user, create a new anonymous user
-      const userCredential = await signInAnonymously(auth);
-      const anonymousUid = userCredential.user.uid;
+        // If no existing user, create a new anonymous user
+        const userCredential = await signInAnonymously(auth);
+        const anonymousUid = userCredential.user.uid;
 
-      // Store the UID in localStorage
-      localStorage.setItem('anonymousUid', anonymousUid);
-      console.log(`New anonymous ID created and stored: ${anonymousUid}`);
+        // Store the UID in localStorage
+        localStorage.setItem('anonymousUid', anonymousUid);
+        console.log(`New anonymous ID created and stored: ${anonymousUid}`);
 
-      await setDoc(
-        doc(db, 'usersAnonymous', anonymousUid),
-        {
-          gitconnect_created_at: new Date().toISOString(),
-          gitconnect_updated_at: new Date().toISOString(),
-          gitconnect_created_at_unix: Date.now(),
-          gitconnect_updated_at_unix: Date.now(),
-          githubId: trimmedUserData.githubId,
-          // hidden: true,
-          userId: anonymousUid,
-          userName: trimmedUserData.userName,
-          username_lowercase: trimmedUserData?.userName?.toLowerCase(),
-          isPro: false,
-          userPhotoLink: trimmedUserData.avatar_url,
-          displayName: trimmedUserData.name,
-          // userEmail: trimmedUserData.email,
-          // createdAt: new Date().toISOString(),
-          // lastLogin: new Date().toISOString()
-        },
-        { merge: true }
-      );
+        await setDoc(
+          doc(db, 'usersAnonymous', anonymousUid),
+          {
+            gitconnect_created_at: new Date().toISOString(),
+            gitconnect_updated_at: new Date().toISOString(),
+            gitconnect_created_at_unix: Date.now(),
+            gitconnect_updated_at_unix: Date.now(),
+            githubId: trimmedUserData.githubId,
+            // hidden: true,
+            userId: anonymousUid,
+            userName: trimmedUserData.userName,
+            username_lowercase: trimmedUserData?.userName?.toLowerCase(),
+            isPro: false,
+            userPhotoLink: trimmedUserData.avatar_url,
+            displayName: trimmedUserData.name,
+            // userEmail: trimmedUserData.email,
+            // createdAt: new Date().toISOString(),
+            // lastLogin: new Date().toISOString()
+          },
+          { merge: true }
+        );
 
-      return anonymousUid;
-    } catch (error) {
-      console.error('Error creating anonymous user:', error);
-      throw error;
-    } finally {
-      // console.log('userData after anonymous signup');
-      // console.log(userData);
-      // console.log('is Anonymous after anonymous signup?:' + isAnonymous);
+        return anonymousUid;
+      } catch (error) {
+        console.error('Error creating anonymous user:', error);
+        throw error;
+      } finally {
+        // console.log('userData after anonymous signup');
+        // console.log(userData);
+        // console.log('is Anonymous after anonymous signup?:' + isAnonymous);
+      }
     }
   };
-
 
   // Close the notification when the router changes
   useEffect(() => {
@@ -323,7 +448,6 @@ const createPortfolioWithUsernameOnly = () => {
       router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [router]);
-
 
   // Render the repo selection pages when no repos have been uploaded
   return (
@@ -396,6 +520,22 @@ const createPortfolioWithUsernameOnly = () => {
                 >
                   Fetch Repos
                 </Button>
+                {auth.currentUser && auth.currentUser.uid && (
+                  <Link
+                    // if user is anonymous - use uid
+                    // href={userData.isAnonymous ? `/quickstart/${userData.uid}` : `/portfolio/${userData.
+                    //   username_lowercase}`}
+                    // href={`/portfolio/${userData.username_lowercase}`}
+                    href={`/quickstart/${auth.currentUser.uid}`}
+                    passHref
+                    legacyBehavior
+                  >
+                    <Button component="a" mt="xl" size="md" radius="md" color="yellow">
+                      Visit Existing Quickstart
+                    </Button>
+                  </Link>
+                )}
+
                 {/* <Button
                   mt="xl"
                   size="md"
@@ -429,8 +569,6 @@ const createPortfolioWithUsernameOnly = () => {
 
 export default createPortfolioWithUsernameOnly;
 
-
-
 // Possible idea - VertexAI Implementation
 
 // Initialize the generative model with a model that supports your use case
@@ -455,435 +593,432 @@ export default createPortfolioWithUsernameOnly;
 
 // run();
 
-
 //  CLEANING UP OLD CODE:
 
 // Previous anonymous user creation and repo upload:
 
+// const createAnonymousUser = async () => {
+//   console.log('creating anonymous user');
+//   try {
+//     // AUTH
+//     const userCredential = await signInAnonymously(auth);
+//     //   .then((result) => {
+//     //   console.log(`sign in results:`)
+//     //   console.log(result)
+//     // })  //Anonymous Sign-In
+//     const anonymousUid = userCredential.user.uid;
 
-  // const createAnonymousUser = async () => {
-  //   console.log('creating anonymous user');
-  //   try {
-  //     // AUTH
-  //     const userCredential = await signInAnonymously(auth);
-  //     //   .then((result) => {
-  //     //   console.log(`sign in results:`)
-  //     //   console.log(result)
-  //     // })  //Anonymous Sign-In
-  //     const anonymousUid = userCredential.user.uid;
+//     console.log(`anonymous ID: ${anonymousUid}`);
 
-  //     console.log(`anonymous ID: ${anonymousUid}`);
+//     // await setDoc(doc(db, "usersAnonymous", anonymousUid), {
+//     // profile: githubData.profile,
+//     // projects: githubData.projects,
+//     // });
 
-  //     // await setDoc(doc(db, "usersAnonymous", anonymousUid), {
-  //     // profile: githubData.profile,
-  //     // projects: githubData.projects,
-  //     // });
+//     // Store anonymousUid in local storage or session for later retrieval
+//     // localStorage.setItem("anonymousUid", anonymousUid);
+//   } catch (error) {
+//     console.error('Error creating anonymous user:', error);
+//     // Handle errors appropriately
+//   } finally {
+//     console.log('userData after anonymous signup');
+//     console.log(userData);
+//     console.log('is Anonymous after anonymous signup?:' + isAnonymous);
+//   }
+// };
 
-  //     // Store anonymousUid in local storage or session for later retrieval
-  //     // localStorage.setItem("anonymousUid", anonymousUid);
-  //   } catch (error) {
-  //     console.error('Error creating anonymous user:', error);
-  //     // Handle errors appropriately
-  //   } finally {
-  //     console.log('userData after anonymous signup');
-  //     console.log(userData);
-  //     console.log('is Anonymous after anonymous signup?:' + isAnonymous);
-  //   }
-  // };
+// Need to do a 'foreach' loop or map
 
-  // Need to do a 'foreach' loop or map
+// const addRepo = async (repo: RepoDataFull) => {
+//   const reponame_lowercase = repo.name.toLowerCase();
 
-  // const addRepo = async (repo: RepoDataFull) => {
-  //   const reponame_lowercase = repo.name.toLowerCase();
-
-  //   // console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
-  //   try {
-  //     notifications.show({
-  //       id: 'adding-repo',
-  //       loading: true,
-  //       title: 'Creating portfolio',
-  //       message: `Adding ${repo.name} to your portfolio`,
-  //       color: 'cyan',
-  //       icon: <InfoCircle size="1.5rem" />,
-  //       autoClose: false,
-  //       withCloseButton: false,
-  //     });
-  //     await setDoc(
-  //       doc(db, `usersAnonymous/${userId}/repos/${repo.id}`),
-  //       {
-  //         ...repo,
-  //         userId,
-  //         hidden: true,
-  //         userName: userName,
-  //         username_lowercase: userName.toLowerCase(),
-  //         reponame_lowercase: repo.name.toLowerCase(),
-  //         gitconnect_created_at: new Date().toISOString(),
-  //         gitconnect_updated_at: new Date().toISOString(),
-  //         gitconnect_created_at_unix: Date.now(),
-  //         gitconnect_updated_at_unix: Date.now(),
-  //       },
-  //       { merge: true }
-  //     ).then(() => {
-  //       // ADDING BELOW FOR JOTAI TEST
-  //       setProjectData(repo);
-  //     });
-  //     // .then(() => {
-  //     // console.log('Project Data Atom');
-  //     // console.log(projectDataState);
-  //     // console.log('Repo Data');
-  //     // console.log(repo);
-  //   } catch (err) {
-  //     console.error(err);
-  //     notifications.update({
-  //       id: 'adding-repo',
-  //       color: 'red',
-  //       title: 'Something went wrong',
-  //       message: 'Something went wrong, please try again',
-  //       icon: <IconCross size="1rem" />,
-  //       autoClose: 2000,
-  //     });
-  //   } finally {
-  //     notifications.update({
-  //       id: 'adding-repo',
-  //       loading: false,
-  //       title: `${repo.name} added successfully`,
-  //       message: `Loading project page`,
-  //       color: 'green',
-  //       icon: <IconCheck size="1.5rem" />,
-  //       autoClose: 3000,
-  //     });
-  //   }
-  //   setTimeout(() => {
-  //     router.push(
-  //       {
-  //         pathname: `/portfolio/edit/${reponame_lowercase}`,
-  //         query: {
-  //           name: repo.name,
-  //           username_lowercase: userName.toLowerCase(),
-  //           reponame_lowercase: repo.name.toLowerCase(),
-  //           description: repo.description,
-  //           url: repo.html_url,
-  //           userId: userId,
-  //           newRepoParam: JSON.stringify(true),
-  //         },
-  //       },
-  //       `/portfolio/edit/${reponame_lowercase}`
-  //     );
-  //   }, 200);
-  // };
-
+//   // console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
+//   try {
+//     notifications.show({
+//       id: 'adding-repo',
+//       loading: true,
+//       title: 'Creating portfolio',
+//       message: `Adding ${repo.name} to your portfolio`,
+//       color: 'cyan',
+//       icon: <InfoCircle size="1.5rem" />,
+//       autoClose: false,
+//       withCloseButton: false,
+//     });
+//     await setDoc(
+//       doc(db, `usersAnonymous/${userId}/repos/${repo.id}`),
+//       {
+//         ...repo,
+//         userId,
+//         hidden: true,
+//         userName: userName,
+//         username_lowercase: userName.toLowerCase(),
+//         reponame_lowercase: repo.name.toLowerCase(),
+//         gitconnect_created_at: new Date().toISOString(),
+//         gitconnect_updated_at: new Date().toISOString(),
+//         gitconnect_created_at_unix: Date.now(),
+//         gitconnect_updated_at_unix: Date.now(),
+//       },
+//       { merge: true }
+//     ).then(() => {
+//       // ADDING BELOW FOR JOTAI TEST
+//       setProjectData(repo);
+//     });
+//     // .then(() => {
+//     // console.log('Project Data Atom');
+//     // console.log(projectDataState);
+//     // console.log('Repo Data');
+//     // console.log(repo);
+//   } catch (err) {
+//     console.error(err);
+//     notifications.update({
+//       id: 'adding-repo',
+//       color: 'red',
+//       title: 'Something went wrong',
+//       message: 'Something went wrong, please try again',
+//       icon: <IconCross size="1rem" />,
+//       autoClose: 2000,
+//     });
+//   } finally {
+//     notifications.update({
+//       id: 'adding-repo',
+//       loading: false,
+//       title: `${repo.name} added successfully`,
+//       message: `Loading project page`,
+//       color: 'green',
+//       icon: <IconCheck size="1.5rem" />,
+//       autoClose: 3000,
+//     });
+//   }
+//   setTimeout(() => {
+//     router.push(
+//       {
+//         pathname: `/portfolio/edit/${reponame_lowercase}`,
+//         query: {
+//           name: repo.name,
+//           username_lowercase: userName.toLowerCase(),
+//           reponame_lowercase: repo.name.toLowerCase(),
+//           description: repo.description,
+//           url: repo.html_url,
+//           userId: userId,
+//           newRepoParam: JSON.stringify(true),
+//         },
+//       },
+//       `/portfolio/edit/${reponame_lowercase}`
+//     );
+//   }, 200);
+// };
 
 // WV Stuff:
 
-  // useEffect(() => {
-  //   // Run the Weaviate createSchema function on startup
-  //   // Checks if the relevent schemas exists and creates them if they don't
-  //   const initializeSchema = async () => {
-  //     try {
-  //       await axios.get('/api/weaviate/weaviateSchemaSetup');
-  //     } catch (error) {
-  //       console.error('Error calling schema setup API:', error);
-  //     }
-  //   };
+// useEffect(() => {
+//   // Run the Weaviate createSchema function on startup
+//   // Checks if the relevent schemas exists and creates them if they don't
+//   const initializeSchema = async () => {
+//     try {
+//       await axios.get('/api/weaviate/weaviateSchemaSetup');
+//     } catch (error) {
+//       console.error('Error calling schema setup API:', error);
+//     }
+//   };
 
-  //   initializeSchema();
-  // }, []);
+//   initializeSchema();
+// }, []);
 
-  // For dev purposes - deletes and recreates Weaviate collections
-  // const deleteCollections = async () => {
-  //   try {
-  //     await axios.get('/api/weaviate/weaviateSchemaDelete');
-  //     notifications.show({
-  //       id: 'delete-schema',
-  //       loading: true,
-  //       withBorder: true,
-  //       title: 'Deleting & recreating Weaviate Collectionse...',
-  //       message: 'Weaviate schema is being deleted and recreated',
-  //       autoClose: false,
-  //       withCloseButton: false,
-  //     });
-  //   } catch (error) {
-  //     console.error('Error deleting Weaviate schema:', error);
-  //     notifications.update({
-  //       id: 'delete-schema',
-  //       color: 'red',
-  //       withBorder: true,
-  //       title: 'Something went wrong',
-  //       message: 'Something went wrong, please try again',
-  //       icon: <IconCross size="1rem" />,
-  //       autoClose: 2000,
-  //     });
-  //   } finally {
-  //     notifications.update({
-  //       id: 'delete-schema',
-  //       color: 'teal',
-  //       withBorder: true,
-  //       title: 'Collection deletion successful',
-  //       message: 'Collections have been deleted and recreated',
-  //       icon: <IconCheck size="1rem" />,
-  //       autoClose: 2000,
-  //     });
-  //   }
-  // };
+// For dev purposes - deletes and recreates Weaviate collections
+// const deleteCollections = async () => {
+//   try {
+//     await axios.get('/api/weaviate/weaviateSchemaDelete');
+//     notifications.show({
+//       id: 'delete-schema',
+//       loading: true,
+//       withBorder: true,
+//       title: 'Deleting & recreating Weaviate Collectionse...',
+//       message: 'Weaviate schema is being deleted and recreated',
+//       autoClose: false,
+//       withCloseButton: false,
+//     });
+//   } catch (error) {
+//     console.error('Error deleting Weaviate schema:', error);
+//     notifications.update({
+//       id: 'delete-schema',
+//       color: 'red',
+//       withBorder: true,
+//       title: 'Something went wrong',
+//       message: 'Something went wrong, please try again',
+//       icon: <IconCross size="1rem" />,
+//       autoClose: 2000,
+//     });
+//   } finally {
+//     notifications.update({
+//       id: 'delete-schema',
+//       color: 'teal',
+//       withBorder: true,
+//       title: 'Collection deletion successful',
+//       message: 'Collections have been deleted and recreated',
+//       icon: <IconCheck size="1rem" />,
+//       autoClose: 2000,
+//     });
+//   }
+// };
 
-  // Transform selected repos into Weaviate data object - runs helper utilities for readme and languages
-  // const handleSubmit = async () => {
-  //   const selectedReposFullData: QuickstartRepoUploadData[] = await Promise.all(
-  //     repoData
-  //       ?.filter((repo) => selectedRepos.includes(repo.id.toString()))
-  //       .map(async (repo) => {
-  //         const readme = await fetchReadme(username, repo.name);
-  //         const languages = await fetchLanguages(repo.languages_url);
-  //         return {
-  //           repoid: repo.id,
-  //           name: repo.name,
-  //           username: repo.owner?.login,
-  //           description: repo.description ?? '',
-  //           tags: repo.topics ?? [],
-  //           license: repo.license?.name ?? '',
-  //           readme: readme ?? '',
-  //           fork_count: repo.forks_count ?? 0,
-  //           star_count: repo.stargazers_count ?? 0,
-  //           open_issues_count: repo.open_issues_count ?? 0,
-  //           main_language: repo.language ?? '',
-  //           language_breakdown_percent: languages ?? [],
-  //           url: repo.html_url ?? '',
-  //         };
-  //       }) || []
-  //   );
+// Transform selected repos into Weaviate data object - runs helper utilities for readme and languages
+// const handleSubmit = async () => {
+//   const selectedReposFullData: QuickstartRepoUploadData[] = await Promise.all(
+//     repoData
+//       ?.filter((repo) => selectedRepos.includes(repo.id.toString()))
+//       .map(async (repo) => {
+//         const readme = await fetchReadme(username, repo.name);
+//         const languages = await fetchLanguages(repo.languages_url);
+//         return {
+//           repoid: repo.id,
+//           name: repo.name,
+//           username: repo.owner?.login,
+//           description: repo.description ?? '',
+//           tags: repo.topics ?? [],
+//           license: repo.license?.name ?? '',
+//           readme: readme ?? '',
+//           fork_count: repo.forks_count ?? 0,
+//           star_count: repo.stargazers_count ?? 0,
+//           open_issues_count: repo.open_issues_count ?? 0,
+//           main_language: repo.language ?? '',
+//           language_breakdown_percent: languages ?? [],
+//           url: repo.html_url ?? '',
+//         };
+//       }) || []
+//   );
 
-  // setSelectedReposWeaviateData(selectedReposFullData);
-  // const result: boolean = await uploadToWeaviate(selectedReposFullData);
+// setSelectedReposWeaviateData(selectedReposFullData);
+// const result: boolean = await uploadToWeaviate(selectedReposFullData);
 
-  // if (result === true) {
-  //   setReposUploaded(true);
-  // }
-  // };
+// if (result === true) {
+//   setReposUploaded(true);
+// }
+// };
 
-  // // Sends user query to Weaviate handle the response
-  // const handleFetchResponse = async (query: string) => {
-  //   try {
-  //     notifications.show({
-  //       id: 'fetch-response',
-  //       loading: true,
-  //       title: 'Sending query to Weaviate...',
-  //       message: 'Query is being sent to Weaviate for response generation',
-  //       autoClose: false,
-  //       withBorder: true,
-  //       withCloseButton: false,
-  //     });
+// // Sends user query to Weaviate handle the response
+// const handleFetchResponse = async (query: string) => {
+//   try {
+//     notifications.show({
+//       id: 'fetch-response',
+//       loading: true,
+//       title: 'Sending query to Weaviate...',
+//       message: 'Query is being sent to Weaviate for response generation',
+//       autoClose: false,
+//       withBorder: true,
+//       withCloseButton: false,
+//     });
 
-  //     // Append query to conversation log - no line break if prevLog is empty
-  //     setConversationLog(
-  //       (prevLog) =>
-  //         `${prevLog ? `${prevLog}<br/>` : ''}<strong>Query:</strong> ${query}<br/>`
-  //     );
+//     // Append query to conversation log - no line break if prevLog is empty
+//     setConversationLog(
+//       (prevLog) =>
+//         `${prevLog ? `${prevLog}<br/>` : ''}<strong>Query:</strong> ${query}<br/>`
+//     );
 
-  //     const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
-  //       params: { username, query },
-  //     });
+//     const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
+//       params: { username, query },
+//     });
 
-  //     // Append response to conversation log
-  //     setConversationLog(
-  //       (prevLog) => `${prevLog}<br><strong>Response:</strong> ${response.data}<br/><br/>`
-  //     );
-  //   } catch (err: any) {
-  //     notifications.update({
-  //       id: 'fetch-response',
-  //       color: 'red',
-  //       title: 'Something went wrong',
-  //       withBorder: true,
-  //       message: 'Something went wrong, please try again',
-  //       icon: <IconCross size="1rem" />,
-  //       autoClose: 2000,
-  //     });
-  //   } finally {
-  //     setQuery('');
-  //     notifications.update({
-  //       id: 'fetch-response',
-  //       color: 'teal',
-  //       title: 'Query successful',
-  //       withBorder: true,
-  //       message: 'Response has been generated',
-  //       icon: <IconCheck size="1rem" />,
-  //       autoClose: 1000,
-  //     });
-  //   }
-  // };
+//     // Append response to conversation log
+//     setConversationLog(
+//       (prevLog) => `${prevLog}<br><strong>Response:</strong> ${response.data}<br/><br/>`
+//     );
+//   } catch (err: any) {
+//     notifications.update({
+//       id: 'fetch-response',
+//       color: 'red',
+//       title: 'Something went wrong',
+//       withBorder: true,
+//       message: 'Something went wrong, please try again',
+//       icon: <IconCross size="1rem" />,
+//       autoClose: 2000,
+//     });
+//   } finally {
+//     setQuery('');
+//     notifications.update({
+//       id: 'fetch-response',
+//       color: 'teal',
+//       title: 'Query successful',
+//       withBorder: true,
+//       message: 'Response has been generated',
+//       icon: <IconCheck size="1rem" />,
+//       autoClose: 1000,
+//     });
+//   }
+// };
 
-  // // Fetches a summary for a project using Weaviate helpers
-  // const handleFetchProjectSummary = async (reponame: string) => {
-  //   try {
-  //     notifications.show({
-  //       id: 'fetch-project-summary',
-  //       loading: true,
-  //       withBorder: true,
-  //       title: 'Generating summary...',
-  //       message: 'Generating summary for project - this can take a while',
-  //       autoClose: false,
-  //       withCloseButton: false,
-  //     });
+// // Fetches a summary for a project using Weaviate helpers
+// const handleFetchProjectSummary = async (reponame: string) => {
+//   try {
+//     notifications.show({
+//       id: 'fetch-project-summary',
+//       loading: true,
+//       withBorder: true,
+//       title: 'Generating summary...',
+//       message: 'Generating summary for project - this can take a while',
+//       autoClose: false,
+//       withCloseButton: false,
+//     });
 
-  //     const response = await axios.get('/api/weaviate/weaviateGenerateDescriptionRoute', {
-  //       params: { username, reponame },
-  //     });
+//     const response = await axios.get('/api/weaviate/weaviateGenerateDescriptionRoute', {
+//       params: { username, reponame },
+//     });
 
-  //     // Append summary response to conversation log
-  //     setConversationLog(
-  //       (prevLog) =>
-  //         `${prevLog ? `${prevLog}<br/>` : ''}<strong>Summary for ${reponame}:</strong> ${response.data}<br/><br/>`
-  //     );
-  //   } catch (err: any) {
-  //     notifications.update({
-  //       id: 'fetch-project-summary',
-  //       color: 'red',
-  //       title: 'Something went wrong',
-  //       withBorder: true,
-  //       message: 'Something went wrong, please try again',
-  //       icon: <IconCross size="1rem" />,
-  //       autoClose: 2000,
-  //     });
-  //   } finally {
-  //     notifications.update({
-  //       id: 'fetch-project-summary',
-  //       color: 'teal',
-  //       withBorder: true,
-  //       title: 'Summary generation successful',
-  //       message: 'Your project summary has been generated',
-  //       icon: <IconCheck size="1rem" />,
-  //       autoClose: 1000,
-  //     });
-  //   }
-  // };
+//     // Append summary response to conversation log
+//     setConversationLog(
+//       (prevLog) =>
+//         `${prevLog ? `${prevLog}<br/>` : ''}<strong>Summary for ${reponame}:</strong> ${response.data}<br/><br/>`
+//     );
+//   } catch (err: any) {
+//     notifications.update({
+//       id: 'fetch-project-summary',
+//       color: 'red',
+//       title: 'Something went wrong',
+//       withBorder: true,
+//       message: 'Something went wrong, please try again',
+//       icon: <IconCross size="1rem" />,
+//       autoClose: 2000,
+//     });
+//   } finally {
+//     notifications.update({
+//       id: 'fetch-project-summary',
+//       color: 'teal',
+//       withBorder: true,
+//       title: 'Summary generation successful',
+//       message: 'Your project summary has been generated',
+//       icon: <IconCheck size="1rem" />,
+//       autoClose: 1000,
+//     });
+//   }
+// };
 
-  // Render the query page when repos have been uploaded
-  // if (reposUploaded) {
-  //   return (
-  //     <Container mt={80} size="lg" p="lg">
-  //       <Header />
-  //       <Space h="xl" />
-  //       <Group position="center">
-  //         <Title order={2}>Generative GitSearch</Title>
-  //       </Group>
-  //       <Group position="center" mt={30}>
-  //         <Blockquote
-  //           cite="- GitConnect tips"
-  //           color="indigo"
-  //           icon={<IconInfoCircle size="1.5rem" />}
-  //         >
-  //           Type a query to fetch responses from Weaviate based on your chosen repos{' '}
-  //           <br />
-  //           You can also generate summaries for each repo with the buttons below
-  //         </Blockquote>
-  //       </Group>
-  //       <Space h="lg" />
-  //       {error && (
-  //         <>
-  //           <Text size="md" color="red" align="center" weight="bold">
-  //             {`Failed to fetch response from Weaviate - Appending full error for debugging purposes:`}
-  //             <br />
-  //           </Text>
-  //           <Text size="md" color="red" align="center">
-  //             {error}
-  //           </Text>
-  //           <Space h="xl" />
-  //         </>
-  //       )}
-  //       <Paper
-  //         radius="sm"
-  //         withBorder
-  //         shadow="md"
-  //         sx={(theme) => ({
-  //           backgroundColor:
-  //             theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
-  //         })}
-  //       >
-  //         <TextConversationOutput newContent={conversationLog} />
-  //       </Paper>
-  //       <Space h="xl" />
-  //       <Paper
-  //         radius="md"
-  //         withBorder
-  //         shadow="sm"
-  //         p="xl"
-  //         sx={(theme) => ({
-  //           backgroundColor:
-  //             theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
-  //         })}
-  //       >
-  //         <form
-  //           onSubmit={(e) => {
-  //             e.preventDefault();
-  //           }}
-  //         >
-  //           <Group position="center">
-  //             <Textarea
-  //               data-autofocus
-  //               label="Repo Query"
-  //               id="query-input"
-  //               placeholder="Ask your repositories anything"
-  //               size="lg"
-  //               w="70%"
-  //               radius="md"
-  //               value={query}
-  //               onChange={(e) => setQuery(e.target.value)}
-  //               styles={(theme) => ({
-  //                 label: {
-  //                   fontWeight: 'bold',
-  //                 },
-  //               })}
-  //             />
-  //             <Button
-  //               mt="xl"
-  //               size="md"
-  //               id="query-input"
-  //               radius="md"
-  //               color="teal"
-  //               onClick={() => handleFetchResponse(query)}
-  //             >
-  //               Query Weaviate
-  //             </Button>
-  //           </Group>
-  //         </form>
-  //       </Paper>
-  //       <Space h="xl" />
-  //       <Paper
-  //         radius="md"
-  //         withBorder
-  //         shadow="sm"
-  //         p="xl"
-  //         sx={(theme) => ({
-  //           backgroundColor:
-  //             theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-  //         })}
-  //       >
-  //         <Text align="center" mb="xs" weight={600}>
-  //           Generate summary buttons:
-  //         </Text>
-  //         <Group position="center">
-  //           <SimpleGrid
-  //             cols={3}
-  //             spacing="lg"
-  //             breakpoints={[
-  //               { maxWidth: 980, cols: 3, spacing: 'md' },
-  //               { maxWidth: 755, cols: 2, spacing: 'sm' },
-  //               { maxWidth: 600, cols: 1, spacing: 'sm' },
-  //             ]}
-  //           >
-  //             {selectedReposWeaviateData.length > 0 &&
-  //               selectedReposWeaviateData.map((repo) => (
-  //                 <Button
-  //                   key={repo.repoid}
-  //                   onClick={() => handleFetchProjectSummary(repo.name)}
-  //                   size="md"
-  //                   radius="md"
-  //                 >
-  //                   Summary for {repo.name}
-  //                 </Button>
-  //               ))}
-  //           </SimpleGrid>
-  //         </Group>
-  //       </Paper>
-  //     </Container>
-  //   );
-  // }
+// Render the query page when repos have been uploaded
+// if (reposUploaded) {
+//   return (
+//     <Container mt={80} size="lg" p="lg">
+//       <Header />
+//       <Space h="xl" />
+//       <Group position="center">
+//         <Title order={2}>Generative GitSearch</Title>
+//       </Group>
+//       <Group position="center" mt={30}>
+//         <Blockquote
+//           cite="- GitConnect tips"
+//           color="indigo"
+//           icon={<IconInfoCircle size="1.5rem" />}
+//         >
+//           Type a query to fetch responses from Weaviate based on your chosen repos{' '}
+//           <br />
+//           You can also generate summaries for each repo with the buttons below
+//         </Blockquote>
+//       </Group>
+//       <Space h="lg" />
+//       {error && (
+//         <>
+//           <Text size="md" color="red" align="center" weight="bold">
+//             {`Failed to fetch response from Weaviate - Appending full error for debugging purposes:`}
+//             <br />
+//           </Text>
+//           <Text size="md" color="red" align="center">
+//             {error}
+//           </Text>
+//           <Space h="xl" />
+//         </>
+//       )}
+//       <Paper
+//         radius="sm"
+//         withBorder
+//         shadow="md"
+//         sx={(theme) => ({
+//           backgroundColor:
+//             theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
+//         })}
+//       >
+//         <TextConversationOutput newContent={conversationLog} />
+//       </Paper>
+//       <Space h="xl" />
+//       <Paper
+//         radius="md"
+//         withBorder
+//         shadow="sm"
+//         p="xl"
+//         sx={(theme) => ({
+//           backgroundColor:
+//             theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+//         })}
+//       >
+//         <form
+//           onSubmit={(e) => {
+//             e.preventDefault();
+//           }}
+//         >
+//           <Group position="center">
+//             <Textarea
+//               data-autofocus
+//               label="Repo Query"
+//               id="query-input"
+//               placeholder="Ask your repositories anything"
+//               size="lg"
+//               w="70%"
+//               radius="md"
+//               value={query}
+//               onChange={(e) => setQuery(e.target.value)}
+//               styles={(theme) => ({
+//                 label: {
+//                   fontWeight: 'bold',
+//                 },
+//               })}
+//             />
+//             <Button
+//               mt="xl"
+//               size="md"
+//               id="query-input"
+//               radius="md"
+//               color="teal"
+//               onClick={() => handleFetchResponse(query)}
+//             >
+//               Query Weaviate
+//             </Button>
+//           </Group>
+//         </form>
+//       </Paper>
+//       <Space h="xl" />
+//       <Paper
+//         radius="md"
+//         withBorder
+//         shadow="sm"
+//         p="xl"
+//         sx={(theme) => ({
+//           backgroundColor:
+//             theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+//         })}
+//       >
+//         <Text align="center" mb="xs" weight={600}>
+//           Generate summary buttons:
+//         </Text>
+//         <Group position="center">
+//           <SimpleGrid
+//             cols={3}
+//             spacing="lg"
+//             breakpoints={[
+//               { maxWidth: 980, cols: 3, spacing: 'md' },
+//               { maxWidth: 755, cols: 2, spacing: 'sm' },
+//               { maxWidth: 600, cols: 1, spacing: 'sm' },
+//             ]}
+//           >
+//             {selectedReposWeaviateData.length > 0 &&
+//               selectedReposWeaviateData.map((repo) => (
+//                 <Button
+//                   key={repo.repoid}
+//                   onClick={() => handleFetchProjectSummary(repo.name)}
+//                   size="md"
+//                   radius="md"
+//                 >
+//                   Summary for {repo.name}
+//                 </Button>
+//               ))}
+//           </SimpleGrid>
+//         </Group>
+//       </Paper>
+//     </Container>
+//   );
+// }

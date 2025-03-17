@@ -68,6 +68,9 @@ export const quickstartPublishedProjectsAtom = atom(
   (get) => get(quickstartStateAtom).projects.filter(p => !p.hidden)
 );
 
+export const quickstartProfileAtom = atom(
+  (get) => get(quickstartStateAtom).profile
+);
 
 
 
