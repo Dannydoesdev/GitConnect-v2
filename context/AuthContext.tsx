@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: Props) => {
     userEmail: '',
     userPhotoLink: '',
     isPro: false,
-    isAnonymous: true,
+    // isAnonymous: true,
   });
 
   useEffect(() => {
