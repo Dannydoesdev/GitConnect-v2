@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 export function ProjectPageDynamicHero({project}: any) {
   const { classes } = useStyles();
 
-  console.log('project in ProjectPageDynamicHero:', project);
+  // console.log('project in ProjectPageDynamicHero:', project);
   // console.log('profile in ProjectPageDynamicHero:', profile);
 
   // const project = props.props[0];
@@ -83,6 +83,7 @@ export function ProjectPageDynamicHero({project}: any) {
           {project?.projectTitle || githubTitleFormatted || project.name || ''}
         </Title>
         <Text className={classes.description} size="xl" mt="xl">
+          by {project?.userName}
           {/* {project.name} */}
         </Text>
         {/* <Group className={classes.group} grow> */}

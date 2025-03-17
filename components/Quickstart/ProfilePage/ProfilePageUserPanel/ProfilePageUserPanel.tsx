@@ -1,7 +1,7 @@
 import { url } from 'inspector';
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { formDataAtom } from '@/atoms';
+import { quickstartProfilePanelForm } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
 import {
   ActionIcon,
@@ -191,15 +191,15 @@ const ProfilePageUserPanel = ({
   currentUser,
 }: ProfilePageUserPanelProps) => {
 
-  console.log('props in ProfilePageUserPanel');
-  console.log(props);
+  // console.log('props in ProfilePageUserPanel');
+  // console.log(props);
 
   const { userData } = useContext(AuthContext);
   const userId = userData.uid;
   const [opened, { open, close }] = useDisclosure(false);
 
-  console.log(userData)
-  console.log(userId)
+  // console.log(userData)
+  // console.log(userId)
 
   // console.log(props);
 
@@ -210,7 +210,7 @@ const ProfilePageUserPanel = ({
   }
 
   // const [formData, setFormData] = useState({})
-  const [formData, setFormData] = useAtom(formDataAtom);
+  const [formData, setFormData] = useAtom(quickstartProfilePanelForm);
 
   // Function to handle saving changes
   const handleSaveChanges = async (newData: any) => {

@@ -67,10 +67,10 @@ const createPortfolioWithUsernameOnly = () => {
 
       const { data } = response;
       const { trimmedUserData, trimmedRepoData } = data;
-      console.log('Returned trimmedRepoData');
-      console.log(trimmedRepoData);
-      console.log('Returned trimmedUserData');
-      console.log(trimmedUserData);
+      // console.log('Returned trimmedRepoData');
+      // console.log(trimmedRepoData);
+      // console.log('Returned trimmedUserData');
+      // console.log(trimmedUserData);
 
       setProfileData(trimmedUserData);
       setRepoData(trimmedRepoData);
@@ -117,8 +117,8 @@ const createPortfolioWithUsernameOnly = () => {
       return;
     }
 
-    console.log('selected Repo names to save:');
-    console.log(selectedRepos);
+    // console.log('selected Repo names to save:');
+    // console.log(selectedRepos);
 
     const selectedReposToSave = await Promise.all(
       repoData
@@ -169,9 +169,9 @@ const createPortfolioWithUsernameOnly = () => {
 
     // Upload Profile data to Firestore
     try {
-      console.log(`saving profile data for user: ${userid}`);
-      console.log(`custom profile data:`);
-      console.log(customProfileData);
+      // console.log(`saving profile data for user: ${userid}`);
+      // console.log(`custom profile data:`);
+      // console.log(customProfileData);
 
       // Save profile data
       await axios.post(saveProfileUrl, {
@@ -186,8 +186,8 @@ const createPortfolioWithUsernameOnly = () => {
 
     try {
       selectedReposToSave.forEach(async (repo) => {
-        console.log('sending repo to api:');
-        console.log(repo);
+        // console.log('sending repo to api:');
+        // console.log(repo);
         await axios.post(saveProjectUrl, {
           userid: userid,
           projectData: repo,
@@ -258,9 +258,9 @@ const createPortfolioWithUsernameOnly = () => {
 
   // const createAnonymousUser = async (username: string) => {
   const createAnonymousUser = async (trimmedUserData: any) => {
-    console.log('creating anonymous user');
-    console.log('data received in createAnonymousUser:');
-    console.log(trimmedUserData);
+    // console.log('creating anonymous user');
+    // console.log('data received in createAnonymousUser:');
+    // console.log(trimmedUserData);
 
     try {
       // Check if we have an existing anonymous UID in localStorage
@@ -306,9 +306,9 @@ const createPortfolioWithUsernameOnly = () => {
       console.error('Error creating anonymous user:', error);
       throw error;
     } finally {
-      console.log('userData after anonymous signup');
-      console.log(userData);
-      console.log('is Anonymous after anonymous signup?:' + isAnonymous);
+      // console.log('userData after anonymous signup');
+      // console.log(userData);
+      // console.log('is Anonymous after anonymous signup?:' + isAnonymous);
     }
   };
 
