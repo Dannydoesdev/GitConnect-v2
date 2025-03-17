@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   quickstartDraftProjectsAtom,
+  quickstartProfileAtom,
   quickstartProfilePanelForm,
   quickstartPublishedProjectsAtom,
   quickstartStateAtom,
@@ -22,7 +23,6 @@ import {
   Text,
 } from '@mantine/core';
 import { useAtom } from 'jotai';
-
 // import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import useSWR from 'swr';
 import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
@@ -128,8 +128,8 @@ export default function QuickstartPortfolio({
   const [profile, setProfile] = useState(initialProfile);
   const [projects, setProjects] = useState(initialProjects);
   // const [projects, setProjects] = useState([]);
-  const [draftProjects, setDraftProjects] = useState([]);
-  const [publishedProjects, setPublishedProjects] = useState([]);
+  const [draftProjects, setDraftProjects] = useState<any>([]);
+  const [publishedProjects, setPublishedProjects] = useState<any>([]);
 
   // Add router.isReady check to prevent hydration errors
   if (!router.isReady) {
@@ -139,24 +139,25 @@ export default function QuickstartPortfolio({
   // console.log('UserData in [anonymousId]')
   // console.log(userData)
 
-//   console.log(`QuickstartPortfolio - anonymousId: ${anonymousId}`);
-//   console.log(`QuickstartPortfolio - isQuickstart: ${isQuickstart}`);
-//   console.log(`QuickstartPortfolio - initialProjects:`);
-// console.log(initialProjects)
-//   console.log(`QuickstartPortfolio - initialProfile:`);
-//   console.log(initialProfile);
+  //   console.log(`QuickstartPortfolio - anonymousId: ${anonymousId}`);
+  //   console.log(`QuickstartPortfolio - isQuickstart: ${isQuickstart}`);
+  //   console.log(`QuickstartPortfolio - initialProjects:`);
+  // console.log(initialProjects)
+  //   console.log(`QuickstartPortfolio - initialProfile:`);
+  //   console.log(initialProfile);
   // Use Jotai for state management
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
   const [publishedProjectsAtom] = useAtom(quickstartPublishedProjectsAtom);
-  const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm)
+  const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm);
+  const [profileDataAtom] = useAtom(quickstartProfileAtom);
 
-// console.log(`QuickstartPortfolio - quickstartState:`);
-//   console.log(quickstartState);
-//   console.log(`QuickstartPortfolio - draftProjectsAtom:`);
-//   console.log(draftProjectsAtom);
-//   console.log(`QuickstartPortfolio - publishedProjectsAtom:`);
-//   console.log(publishedProjectsAtom);
+  // console.log(`QuickstartPortfolio - quickstartState:`);
+  //   console.log(quickstartState);
+  //   console.log(`QuickstartPortfolio - draftProjectsAtom:`);
+  //   console.log(draftProjectsAtom);
+  //   console.log(`QuickstartPortfolio - publishedProjectsAtom:`);
+  //   console.log(publishedProjectsAtom);
 
   // Use quickstart state if available, otherwise use props
   // const profile = quickstartState.profile;
@@ -164,42 +165,207 @@ export default function QuickstartPortfolio({
   // If quickstart state projects & profile exist - rely on them
   // Else rely on initial props (from Firebase)
   useEffect(() => {
-    // Process initialProjects if they exist
+    // console.log('DRAFT PROJECT ATOM:');
+    // console.log(draftProjectsAtom);
+    // console.log('PUBLISHED PROJECT ATOM:');
+    // console.log(publishedProjectsAtom);
+    // console.log('PROFILE DATA ATOM:');
+    // console.log(profileDataAtom);
+
+
+    // console.log('INITIAL PROJECTS');
+    // console.log(initialProjects);
+    // console.log('INITIAL PROFILE');
+    // console.log(initialProfile);
+
+    // REVERSING PRIORITY - InitialProjects && InitialProfile First
+
     if (initialProjects && initialProjects.length > 0) {
+      // Process initialProjects if they exist
+
       // console.log('QuickstartPortfolio - initialProjects exists - length: ' + initialProjects.length);
-      
+      // console.log(
+      //   'NO draftProfectsAtom OR publishedProjectsAtom found - initialProjects found - setting as projects:'
+      // );
+      // console.log(initialProjects);
+
       // Map the projects to extract docData
       const processedProjects = initialProjects.map((project: any) => {
         return project.docData;
       });
-      
+
       // Set the main projects state
       setProjects(processedProjects);
-      
+
       // Determine draft and published projects based on atom state or processed projects
-      const drafts = draftProjectsAtom.length > 0
-        ? draftProjectsAtom
-        : processedProjects.filter((project: any) => {
-            return project.hidden === true;
-          });
-      
-      const published = publishedProjectsAtom.length > 0
-        ? publishedProjectsAtom
-        : processedProjects.filter((project: any) => {
-            return project.hidden === false || project.hidden === undefined;
-          });
-      
+      const drafts = processedProjects.filter((project: any) => {
+        return project.hidden === true;
+      });
+
+      const published = processedProjects.filter((project: any) => {
+        return project.hidden === false || project.hidden === undefined;
+      });
+
+      // const drafts = draftProjectsAtom.length > 0
+      //   ? draftProjectsAtom
+      //   : processedProjects.filter((project: any) => {
+      //       return project.hidden === true;
+      //     });
+
+      // const published = publishedProjectsAtom.length > 0
+      //   ? publishedProjectsAtom
+      //   : processedProjects.filter((project: any) => {
+      //       return project.hidden === false || project.hidden === undefined;
+      //     });
+
       // Set the draft and published projects states
       setDraftProjects(drafts);
       setPublishedProjects(published);
+    } else if (
+      (draftProjectsAtom && draftProjectsAtom.length > 0) ||
+      (publishedProjectsAtom && publishedProjectsAtom.length > 0)
+    ) {
+      // console.log(
+      //   'draftProfectsAtom OR publishedProjectsAtom found - setting as projects:'
+      // );
+      // console.log('DRAFT PROJECT ATOM:');
+      // console.log(draftProjectsAtom);
+      // console.log('PUBLISHED PROJECT ATOM:');
+      // console.log(publishedProjectsAtom);
+
+      const drafts = draftProjectsAtom.length > 0 ? draftProjectsAtom : [];
+      const published = publishedProjectsAtom.length > 0 ? publishedProjectsAtom : [];
+
+      // Set the draft and published projects states
+      setDraftProjects(drafts);
+      setPublishedProjects(published);
+    } else {
+      // console.log(
+      //   'NO draftProfectsAtom OR publishedProjectsAtom found - initialProjects NOT found - setting null array as Projects'
+      // );
+
+      // If none available - set blank
+      setDraftProjects([]);
+      setPublishedProjects([]);
     }
 
-    // Set profile if it exists
-    if (initialProfile) {
+
+    if (initialProfile && Object.keys(initialProfile).length > 0) {
+      // console.log(
+      //   'ProfileDatAtom NOT FOUND found - initialProfile found - setting as Profile:'
+      // );
+      // console.log(initialProfile);
       // console.log('QuickstartPortfolio - initialProfile exists');
       setProfile(initialProfile);
+    } 
+     // Set profile if it exists in Atom else use initialProfile from static Props
+     else if (profileDataAtom && Object.keys(profileDataAtom).length > 0) {
+      // console.log('ProfileDatAtom found - setting as Profile:');
+      // console.log(profileDataAtom);
+      setProfile(profileDataAtom);
+    } else {
+      // If none available - set blank
+      // console.log(
+      //   'ProfileDatAtom NOT FOUND found - initialProfile NOT found - setting null array as Profile'
+      // );
+
+      setProfile([]);
     }
-  }, [initialProfile, initialProjects, draftProjectsAtom, publishedProjectsAtom, quickstartState]);
+
+    // OLD PRIORITY:
+    // if (
+    //   (draftProjectsAtom && draftProjectsAtom.length > 0) ||
+    //   (publishedProjectsAtom && publishedProjectsAtom.length > 0)
+    // ) {
+
+    //   console.log('draftProfectsAtom OR publishedProjectsAtom found - setting as projects:')
+    //   console.log('DRAFT PROJECT ATOM:')
+    //   console.log(draftProjectsAtom)
+    //   console.log('PUBLISHED PROJECT ATOM:')
+    //   console.log(publishedProjectsAtom)
+
+    //   const drafts = draftProjectsAtom.length > 0 ? draftProjectsAtom : [];
+    //   const published = publishedProjectsAtom.length > 0 ? publishedProjectsAtom : [];
+
+    //   // Set the draft and published projects states
+    //   setDraftProjects(drafts);
+    //   setPublishedProjects(published);
+    // } else if (initialProjects && initialProjects.length > 0) {
+    //   // Process initialProjects if they exist
+
+    //   // console.log('QuickstartPortfolio - initialProjects exists - length: ' + initialProjects.length);
+    //   console.log('NO draftProfectsAtom OR publishedProjectsAtom found - initialProjects found - setting as projects:')
+    //   console.log(initialProjects)
+
+    //   // Map the projects to extract docData
+    //   const processedProjects = initialProjects.map((project: any) => {
+    //     return project.docData;
+    //   });
+
+    //   // Set the main projects state
+    //   setProjects(processedProjects);
+
+    //   // Determine draft and published projects based on atom state or processed projects
+    //   const drafts = processedProjects.filter((project: any) => {
+    //     return project.hidden === true;
+    //   });
+
+    //   const published = processedProjects.filter((project: any) => {
+    //     return project.hidden === false || project.hidden === undefined;
+    //   });
+
+    //   // const drafts = draftProjectsAtom.length > 0
+    //   //   ? draftProjectsAtom
+    //   //   : processedProjects.filter((project: any) => {
+    //   //       return project.hidden === true;
+    //   //     });
+
+    //   // const published = publishedProjectsAtom.length > 0
+    //   //   ? publishedProjectsAtom
+    //   //   : processedProjects.filter((project: any) => {
+    //   //       return project.hidden === false || project.hidden === undefined;
+    //   //     });
+
+    //   // Set the draft and published projects states
+    //   setDraftProjects(drafts);
+    //   setPublishedProjects(published);
+    // } else {
+    //   console.log('NO draftProfectsAtom OR publishedProjectsAtom found - initialProjects NOT found - setting null array as Projects')
+
+    //   // If none available - set blank
+    //   setDraftProjects([]);
+    //   setPublishedProjects([]);
+    // }
+
+   
+    // // Set profile if it exists in Atom else use initialProfile from static Props
+    // if (profileDataAtom && Object.keys(profileDataAtom).length > 0) {
+    //   console.log('ProfileDatAtom found - setting as Profile:');
+    //   console.log(profileDataAtom);
+    //   setProfile(profileDataAtom);
+    // } else if (initialProfile && Object.keys(initialProfile).length > 0) {
+    //   console.log(
+    //     'ProfileDatAtom NOT FOUND found - initialProfile found - setting as Profile:'
+    //   );
+    //   console.log(initialProfile);
+    //   // console.log('QuickstartPortfolio - initialProfile exists');
+    //   setProfile(initialProfile);
+    // } else {
+    //   // If none available - set blank
+    //   console.log(
+    //     'ProfileDatAtom NOT FOUND found - initialProfile NOT found - setting null array as Profile'
+    //   );
+
+    //   setProfile([]);
+    // }
+  }, [
+    initialProfile,
+    initialProjects,
+    draftProjectsAtom,
+    publishedProjectsAtom,
+    quickstartState,
+    router,
+  ]);
 
   // if (quickstartState.anonymousId !== anonymousId) {
   //   console.log(
@@ -213,7 +379,7 @@ export default function QuickstartPortfolio({
   // }
 
   useEffect(() => {
-    if (profile) {
+    if (profile && (profile.length > 0 || Object.keys(profile).length > 0)) {
       setProfilePanelAtom(profile);
     }
   }, [profile]);
@@ -246,12 +412,12 @@ export default function QuickstartPortfolio({
   }
 
   // 3. Check if we have the required state and data
-  if (!quickstartState.isQuickstart && !initialProfile && !initialProjects) {
-    return <LoadingPage />;
-  }
+  // if (!quickstartState.isQuickstart && !initialProfile && !initialProjects) {
+  //   return <LoadingPage />;
+  // }
 
   // 4. Check if profile and projects are loaded
-  if (!profile && !projects) {
+  if (!profile && !draftProjects && !publishedProjects) {
     return <LoadingPage />;
   }
 
@@ -338,8 +504,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const initialProjects = projectData ?? null;
   const initialProfile = Array.isArray(profileData)
-  ? profileData[0]?.docData ?? null
-  : profileData?.docData ?? null;
+    ? (profileData[0]?.docData ?? null)
+    : (profileData?.docData ?? null);
   // const initialProfile = profileData ?? null;
   // If we found data, set it in props and update quickstart state
 
