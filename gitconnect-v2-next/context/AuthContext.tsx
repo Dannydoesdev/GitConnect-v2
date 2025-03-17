@@ -77,23 +77,26 @@ export const AuthProvider = ({ children }: Props) => {
             isPro: isPro ?? false
           };
 
+          setUserData(requiredData);
+          setCurrentUser(user);
           // check for user id
           const docRef = doc(colRef, user.uid);
           const checkUserExists = await getDoc(docRef);
 
           if (checkUserExists.exists()) {
+            // Commenting out due to slowness of constant checking
             // Merge existing data with required data
-            const existingData = checkUserExists.data();
-            setUserData({
-              ...requiredData,
-              ...existingData,
-              // Ensure these fields are from requiredData even if they exist in Firestore
-              userName: requiredData.userName,
-              username_lowercase: requiredData.username_lowercase,
-              userEmail: requiredData.userEmail,
-              userPhotoLink: requiredData.userPhotoLink,
-              isPro: isPro ?? false
-            });
+            // const existingData = checkUserExists.data();
+            // setUserData({
+            //   ...requiredData,
+            //   ...existingData,
+            //   // Ensure these fields are from requiredData even if they exist in Firestore
+            //   userName: requiredData.userName,
+            //   username_lowercase: requiredData.username_lowercase,
+            //   userEmail: requiredData.userEmail,
+            //   userPhotoLink: requiredData.userPhotoLink,
+            //   isPro: isPro ?? false
+            // });
           } else {
             const newUserData = {
               ...requiredData,
