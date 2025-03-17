@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   quickstartDraftProjectsAtom,
+  quickstartProfilePanelForm,
   quickstartPublishedProjectsAtom,
   quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
@@ -21,6 +22,7 @@ import {
   Text,
 } from '@mantine/core';
 import { useAtom } from 'jotai';
+
 // import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import useSWR from 'swr';
 import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
@@ -115,11 +117,11 @@ export default function QuickstartPortfolio({
   initialProjects,
   initialProfile,
 }: PortfolioProps) {
-  console.log(`Quickstart portfolio page called - Initial Client Profile fetched: ${JSON.stringify(initialProfile)}`);
+  // console.log(`Quickstart portfolio page called - Initial Client Profile fetched: ${JSON.stringify(initialProfile)}`);
 
-  console.log(
-    `Quickstart portfolio page called -  Initial projects on client fetched: ${JSON.stringify(initialProjects)}`
-  );
+  // console.log(
+  //   `Quickstart portfolio page called -  Initial projects on client fetched: ${JSON.stringify(initialProjects)}`
+  // );
   const [activeTab, setActiveTab] = useState('second');
   const { userData } = useContext(AuthContext);
   const router = useRouter();
@@ -134,23 +136,27 @@ export default function QuickstartPortfolio({
     return <LoadingPage />;
   }
 
-  console.log(`QuickstartPortfolio - anonymousId: ${anonymousId}`);
-  console.log(`QuickstartPortfolio - isQuickstart: ${isQuickstart}`);
-  console.log(`QuickstartPortfolio - initialProjects:`);
-console.log(initialProjects)
-  console.log(`QuickstartPortfolio - initialProfile:`);
-  console.log(initialProfile);
+  // console.log('UserData in [anonymousId]')
+  // console.log(userData)
+
+//   console.log(`QuickstartPortfolio - anonymousId: ${anonymousId}`);
+//   console.log(`QuickstartPortfolio - isQuickstart: ${isQuickstart}`);
+//   console.log(`QuickstartPortfolio - initialProjects:`);
+// console.log(initialProjects)
+//   console.log(`QuickstartPortfolio - initialProfile:`);
+//   console.log(initialProfile);
   // Use Jotai for state management
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
   const [publishedProjectsAtom] = useAtom(quickstartPublishedProjectsAtom);
+  const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm)
 
-console.log(`QuickstartPortfolio - quickstartState:`);
-  console.log(quickstartState);
-  console.log(`QuickstartPortfolio - draftProjectsAtom:`);
-  console.log(draftProjectsAtom);
-  console.log(`QuickstartPortfolio - publishedProjectsAtom:`);
-  console.log(publishedProjectsAtom);
+// console.log(`QuickstartPortfolio - quickstartState:`);
+//   console.log(quickstartState);
+//   console.log(`QuickstartPortfolio - draftProjectsAtom:`);
+//   console.log(draftProjectsAtom);
+//   console.log(`QuickstartPortfolio - publishedProjectsAtom:`);
+//   console.log(publishedProjectsAtom);
 
   // Use quickstart state if available, otherwise use props
   // const profile = quickstartState.profile;
@@ -160,7 +166,7 @@ console.log(`QuickstartPortfolio - quickstartState:`);
   useEffect(() => {
     // Process initialProjects if they exist
     if (initialProjects && initialProjects.length > 0) {
-      console.log('QuickstartPortfolio - initialProjects exists - length: ' + initialProjects.length);
+      // console.log('QuickstartPortfolio - initialProjects exists - length: ' + initialProjects.length);
       
       // Map the projects to extract docData
       const processedProjects = initialProjects.map((project: any) => {
@@ -195,16 +201,22 @@ console.log(`QuickstartPortfolio - quickstartState:`);
     }
   }, [initialProfile, initialProjects, draftProjectsAtom, publishedProjectsAtom, quickstartState]);
 
-  if (quickstartState.anonymousId !== anonymousId) {
-    console.log(
-      'ERROR - QuickstartPortfolio - quickstartatom does not match the URL anonymous ID - check whats happening'
-    );
-    // return <LoadingPage />;
-  } else {
-    console.log(
-      'QuickstartPortfolio - quickstartatom matches the URL anonymous ID - all good'
-    );
-  }
+  // if (quickstartState.anonymousId !== anonymousId) {
+  //   console.log(
+  //     'ERROR - QuickstartPortfolio - quickstartatom does not match the URL anonymous ID - check whats happening'
+  //   );
+  //   // return <LoadingPage />;
+  // } else {
+  //   console.log(
+  //     'QuickstartPortfolio - quickstartatom matches the URL anonymous ID - all good'
+  //   );
+  // }
+
+  useEffect(() => {
+    if (profile) {
+      setProfilePanelAtom(profile);
+    }
+  }, [profile]);
 
   // If no quickstart state exists, redirect to start
   // if (!quickstartState.isQuickstart) {
@@ -223,8 +235,8 @@ console.log(`QuickstartPortfolio - quickstartState:`);
   // These project filtering operations have been moved to the useEffect hook
   // for better state management and to avoid redundant calculations
 
-  console.log('draftProjects: ', draftProjects);
-  console.log('publishedProjects: ', publishedProjects);
+  // console.log('draftProjects: ', draftProjects);
+  // console.log('publishedProjects: ', publishedProjects);
 
   // Reorganized loading checks in logical order
   // 1. Check if router is ready (already added above)
@@ -314,15 +326,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { anonymousId } = params as { anonymousId: string };
-  console.log(`Quickstart portfolio page called - anonymous ID received: ${anonymousId}`);
+  // console.log(`Quickstart portfolio page called - anonymous ID received: ${anonymousId}`);
 
   const profileData = await getProfileDataWithAnonymousId(anonymousId);
   const projectData = await getAllUserProjectsWithAnonymousId(anonymousId);
-  console.log(`Quickstart portfolio page called - profile fetched: ${JSON.stringify(profileData)}`);
+  // console.log(`Quickstart portfolio page called - profile fetched: ${JSON.stringify(profileData)}`);
 
-  console.log(
-    `Quickstart portfolio page called - projects fetched: ${JSON.stringify(projectData)}`
-  );
+  // console.log(
+  //   `Quickstart portfolio page called - projects fetched: ${JSON.stringify(projectData)}`
+  // );
 
   const initialProjects = projectData ?? null;
   const initialProfile = Array.isArray(profileData)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { formDataAtom } from '@/atoms';
+import { quickstartProfilePanelForm } from '@/atoms';
 import {
   Affix,
   Button,
@@ -221,6 +221,9 @@ const ProfilePageUserPanelSettings = ({
   open,
   close,
 }: ProfilePageUserPanelSettingsProps) => {
+
+  // console.log('props in Profile Panel Edit')
+  // console.log(props)
   // const [formData, setFormData] = useAtom(formDataAtom);
 
   // ChatGPTs implementation:
@@ -235,7 +238,7 @@ const ProfilePageUserPanelSettings = ({
   //   initialValues: { ...formData },
   // });
 
-  const [formData, setFormData] = useAtom(formDataAtom);
+  const [formData, setFormData] = useAtom(quickstartProfilePanelForm);
 
   const dataToShow = formData ?? props;
 
