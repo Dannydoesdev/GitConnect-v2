@@ -156,42 +156,7 @@ const GetRepos = () => {
         // ADDING BELOW FOR JOTAI TEST
         setProjectData(repo);
       });
-      // .then(() => {
-      // console.log('Project Data Atom');
-      // console.log(projectDataState);
-      // console.log('Repo Data');
-      // console.log(repo);
-
-      // router.push(
-      //   {
-      //     pathname: `/portfolio/testedit/${repo.id}`,
-      //     query: {
-      //       name: repo.name,
-      //       username_lowercase: userName.toLowerCase(),
-      //       reponame_lowercase: repo.name.toLowerCase(),
-      //       description: repo.description,
-      //       url: repo.html_url,
-      //       userId: userId,
-      //       newRepoParam: JSON.stringify(true),
-      //     },
-      //   },
-      //   `/portfolio/testedit/${repo.id}`
-      // );
-      // });
-
-      // router.push(
-      //   {
-      //     pathname: `/portfolio/new/${repo.id}`,
-      //     query: {
-      //       name: repo.name,
-      //       description: repo.description,
-      //       url: repo.html_url,
-      //       userId: userId,
-      //       newRepoParam: JSON.stringify(true),
-      //     },
-      //   },
-      //   `/portfolio/new/${repo.id}`
-      // );
+    
     } catch (err) {
       console.error(err);
       notifications.update({
@@ -205,14 +170,17 @@ const GetRepos = () => {
     } finally {
       notifications.update({
         id: 'adding-repo',
-        loading: false,
+        loading: true,
         title: `${repo.name} added successfully`,
-        message: `Loading project page`,
+        message: `Loading ${repo.name} page`,
         color: 'green',
         icon: <IconCheck size="1.5rem" />,
-        autoClose: 3000,
+        autoClose: 1500,
+        withCloseButton: false,
       });
     }
+    // Delay navigation to allow the success notification to be visible
+    // and to ensure Firebase data is available on the next page
     setTimeout(() => {
       router.push(
         {
@@ -229,17 +197,33 @@ const GetRepos = () => {
         },
         `/portfolio/edit/${reponame_lowercase}`
       );
-    }, 200);
+    }, 1000); // Adjusted to 1.5 seconds - enough time to see the notification but not too long to wait
   };
 
-  // Close the notification when the router changes
+  // Don't clean notifications on route change to allow success notification to remain visible
   useEffect(() => {
     const handleRouteChange = () => {
+      notifications.update({
+        id: 'adding-repo',
+        loading: false,
+        title: `Project Page Created`,
+        message: `Project Page Created - Redirecting`,
+        color: 'green',
+        icon: <IconCheck size="1.5rem" />,
+        autoClose: 4500,
+        withCloseButton: true,
+      });
+    };
+    const handleRouteChangeComplete = () => {
       notifications.clean();
     };
     router.events.on('routeChangeStart', handleRouteChange);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
     return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
+      router.events.on('routeChangeStart', handleRouteChange);
+      router.events.on('routeChangeComplete', handleRouteChangeComplete);
+      // router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router]);
 
@@ -321,3 +305,38 @@ const GetRepos = () => {
 };
 
 export default GetRepos;
+
+// REMOVED from Jotai test section after repo setDoc && setProjectData atom:
+
+
+// const addRepo = async (repo: RepoDataFull) => {
+//   const reponame_lowercase = repo.name.toLowerCase();
+
+//   // console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
+//   try {
+//     notifications.show({
+//       id: 'adding-repo',
+//       loading: true,
+//       title: 'Adding portfolio project',
+//       message: `Adding ${repo.name} to your portfolio`,
+//       color: 'cyan',
+//       icon: <InfoCircle size="1.5rem" />,
+//       autoClose: false,
+//       withCloseButton: false,
+//     });
+//     await setDoc(
+//       doc(db, `users/${userId}/repos/${repo.id}`),
+//       {
+//         ...repo,
+//         userId,
+//         hidden: true,
+//         userName: userName,
+//         username_lowercase: userName.toLowerCase(),
+//         reponame_lowercase: repo.name.toLowerCase(),
+//         gitconnect_created_at: new Date().toISOString(),
+//         gitconnect_updated_at: new Date().toISOString(),
+//         gitconnect_created_at_unix: Date.now(),
+//         gitconnect_updated_at_unix: Date.now(),
+//       },
+//       { merge: true }
+//     ).then(() => {

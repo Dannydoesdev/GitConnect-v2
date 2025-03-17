@@ -10,13 +10,14 @@ import Loading from './loading';
 // import { db } from '../firebase/clientApp';
 
 const Signup = () => {
-  const { currentUser, loading, setupComplete, isNewUser } = useContext(AuthContext);
+  const { currentUser, loading, setupComplete, isNewUser, userData } = useContext(AuthContext);
   const router = useRouter();
 
   useEffect(() => {
     // Debug logging
     // console.log('Auth State:', {
-    //   currentUser: !!currentUser,
+    //   currentUser: currentUser,
+    //   userData: userData,
     //   loading,
     //   setupComplete,
     //   isNewUser,
@@ -43,9 +44,9 @@ const Signup = () => {
   }, [currentUser, loading, setupComplete, isNewUser, router]);
 
   // If we're in a loading state, we could show a loading indicator
-  if (loading) {
-    return <Loading />; // You might want to replace this with a proper loading component
-  }
+  // if (loading) {
+  //   return <Loading />; // You might want to replace this with a proper loading component
+  // }
 
   // Only show signup page if:
   // 1. We're not authenticated OR
