@@ -5,7 +5,7 @@ import { collectionGroup, doc, getDoc} from "firebase/firestore";
 export async function getProfileDataWithAnonymousId(
   anonymousId: string,
 ) {
-  const docRef = doc(db, `usersAnonymous/${anonymousId}/profileData/publicData`);
+  const docRef = doc(db, `usersAnonymous/${anonymousId}/profileDataAnonymous/publicData`);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {

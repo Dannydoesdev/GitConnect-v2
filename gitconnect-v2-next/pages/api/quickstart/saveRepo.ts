@@ -5,8 +5,8 @@ import fetchReadme from './fetchReadme';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-  console.log('save Repo API route called - data received:')
-  console.log(req.body)
+  // console.log('save Repo API route called - data received:')
+  // console.log(req.body)
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // }
 
 
-  console.log(`userid: ${userid}, repoid: ${repoid}, userName: ${userName}, repoName: ${repoName}`)
+  // console.log(`userid: ${userid}, repoid: ${repoid}, userName: ${userName}, repoName: ${repoName}`)
 
   try { 
     await saveQuickstartProject(userid, repoid, userName, repoName, projectData)

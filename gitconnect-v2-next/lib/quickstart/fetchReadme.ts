@@ -49,10 +49,11 @@ export const cleanReadme = (readme: any) => {
   const sanitizedHTML = DOMPurify.sanitize(readme, config);
 
   // Remove any remaining GitHub-specific classes and IDs
-  return sanitizedHTML.replace(/\s(id|class)="user-content-[^"]*"/g, '')
-                     .replace(/\s(id|class)="octicon[^"]*"/g, '')
-                     .replace(/\sdir="auto"/g, '')
-                     .replace(/\sitemprop="[^"]*"/g, '');
+  return sanitizedHTML
+    .replace(/\s(id|class)="user-content-[^"]*"/g, '')
+    .replace(/\s(id|class)="octicon[^"]*"/g, '')
+    .replace(/\sdir="auto"/g, '')
+    .replace(/\sitemprop="[^"]*"/g, '');
 }
 
 // Utilising this version as it runs on the server
@@ -62,7 +63,6 @@ export const fetchReadmeNoapi = async (
 ) => {
 
   try {
-
     const octokit = new Octokit();
     const { data: readme } = await octokit.repos.getReadme({
       owner: userName.toString(),
@@ -73,13 +73,11 @@ export const fetchReadmeNoapi = async (
       },
     });
 
-    console.log('readme:', readme);
+    // console.log('readme:', readme);
 
     const cleanedReadme = cleanReadme(readme);
     // const readmeContent =  cleanMarkdown(readme);
-     
-
-    console.log('cleaned readmeContent:', cleanedReadme);
+    // console.log('cleaned readmeContent:', cleanedReadme);
 
     return cleanedReadme;
   
@@ -95,7 +93,6 @@ export const fetchReadme = async (
   repoName: string
 ): Promise<string | null> => {
 
- 
   const readmeUrl = `/api/quickstart/fetchReadme`;
 
   try {

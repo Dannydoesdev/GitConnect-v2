@@ -196,7 +196,7 @@ export default function QuickstartPortfolio({
 
     // Set profile if it exists
     if (initialProfile) {
-      console.log('QuickstartPortfolio - initialProfile exists');
+      // console.log('QuickstartPortfolio - initialProfile exists');
       setProfile(initialProfile);
     }
   }, [initialProfile, initialProjects, draftProjectsAtom, publishedProjectsAtom, quickstartState]);

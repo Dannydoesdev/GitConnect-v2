@@ -17,12 +17,12 @@ export async function saveQuickstartProject(
   repoName: string,
   projectData: any
 ) {
-  console.log(`userid in saveQuickstartProject: ${userid}`);
-  console.log(`repoid in saveQuickstartProject: ${repoid}`);
-  console.log(`userName in saveQuickstartProject: ${userName}`);
-  console.log(`repoName in saveQuickstartProject: ${repoName}`);
-  console.log('projectData in saveQuickstartProject:');
-  console.log(projectData);
+  // console.log(`userid in saveQuickstartProject: ${userid}`);
+  // console.log(`repoid in saveQuickstartProject: ${repoid}`);
+  // console.log(`userName in saveQuickstartProject: ${userName}`);
+  // console.log(`repoName in saveQuickstartProject: ${repoName}`);
+  // console.log('projectData in saveQuickstartProject:');
+  // console.log(projectData);
 
   // Check if doc exists and is filled - if so, skip creation
   const projectDataDocRef = doc(db, `usersAnonymous/${userid}/reposAnonymous/${repoid}`);
@@ -43,7 +43,7 @@ export async function saveQuickstartProject(
 
     const docRef = doc(
       db,
-      `usersAnonymous/${userid}/reposAnonymous/${repoid}/projectData/mainContent`
+      `usersAnonymous/${userid}/reposAnonymous/${repoid}/projectDataAnonymous/mainContent`
     );
 
     // Need to do a 'foreach' loop or map
@@ -53,7 +53,7 @@ export async function saveQuickstartProject(
 
       const fullProjectData = {
         ...projectData,
-        readme: readme,
+        htmlOutput: readme,
         language_breakdown_percent: languages,
       };
 
@@ -82,12 +82,12 @@ export async function saveQuickstartProject(
 // Bits and pieces:
 
 export async function saveQuickstartProfile(userid: string, userData: any) {
-  console.log(`userid in saveQuickstartProfile: ${userid}`);
-  console.log('userData in saveQuickstartProfile:');
-  console.log(userData);
+  // console.log(`userid in saveQuickstartProfile: ${userid}`);
+  // console.log('userData in saveQuickstartProfile:');
+  // console.log(userData);
 
   // Check if doc exists and is filled - if so, skip creation
-  const profileDataDocRef = doc(db, `usersAnonymous/${userid}/profileData/publicData`);
+  const profileDataDocRef = doc(db, `usersAnonymous/${userid}/profileDataAnonymous/publicData`);
   const profileDataDocSnap = await getDoc(profileDataDocRef);
 
   if (profileDataDocSnap.exists()) {
