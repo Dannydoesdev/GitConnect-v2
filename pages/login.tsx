@@ -13,6 +13,11 @@ const Login = () => {
   const { currentUser } = useContext(AuthContext)
   const Router = useRouter()
 
+  // console.log('Auth State - login page:', {
+  //   currentUser: currentUser,
+  //   currentPath: Router.pathname
+  // });
+
   if (currentUser) {
     Router.push("/")
     return <></>
