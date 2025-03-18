@@ -47,7 +47,7 @@ export default function QuickstartProject({
     // if (draftProjects && publishedProjects && initialProject) {
     // }
     if (initialProject && Object.keys(initialProject).length > 0) {
-      console.log('initial Project found - using for project');
+      // console.log('initial Project found - using for project');
       // console.log(
       //   'QuickstartProject - initialProjects exists - length: ' + initialProject.length
       // );
@@ -56,13 +56,13 @@ export default function QuickstartProject({
       (draftProjects && draftProjects.length > 0) ||
       (publishedProjects && publishedProjects.length > 0)
     ) {
-      console.log('no initial project found - atom projects found - assigning');
+      // console.log('no initial project found - atom projects found - assigning');
       // Find the project from our atoms
       const allProjects = [...draftProjects, ...publishedProjects];
       const thisProject = allProjects.find((p) => p.id == repoId);
       
       if (!thisProject) {
-        console.log('Project not found in atoms - Project will be undefined!')
+        // console.log('Project not found in atoms - Project will be undefined!')
       }
       setProject(thisProject);
 
@@ -72,25 +72,25 @@ export default function QuickstartProject({
       // }
       // console.log('this Project length' + thisProject.length);
     } else {
-      console.log('No project atom or firebase project found!!');
+      // console.log('No project atom or firebase project found!!');
     }
 
     if (initialReadme && initialReadme.length > 0) {
-      console.log('initialReadme found in props - assigning')
+      // console.log('initialReadme found in props - assigning')
       setReadme(initialReadme);
     } else if (
       (draftProjects && draftProjects.length > 0) ||
       (publishedProjects && publishedProjects.length > 0)
     ) {
-      console.log('initialReadme NOT found in props, atoms found - checking for Readme in atoms')
+      // console.log('initialReadme NOT found in props, atoms found - checking for Readme in atoms')
 
       const allProjects = [...draftProjects, ...publishedProjects];
       const thisProject = allProjects.find((p) => p.id == repoId);
       if (thisProject.htmlOutput && thisProject.htmlOutput?.length > 0) {
-        console.log('Readme found in project atom - setting');
+        // console.log('Readme found in project atom - setting');
         setReadme(thisProject.htmlOutput);
       } else {
-        console.log('no readme found in initial props or jotai atom! no action taken');
+        // console.log('no readme found in initial props or jotai atom! no action taken');
       }
     }
 
