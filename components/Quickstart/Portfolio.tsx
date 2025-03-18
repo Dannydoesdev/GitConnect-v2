@@ -174,10 +174,10 @@ export default function Portfolio({ isQuickstart }: { isQuickstart?: boolean }) 
   const [publishedProjects] = useAtom(quickstartPublishedProjectsAtom);
 
 
-  console.log('quickstartState: ', quickstartState);
-  console.log('profile: ', quickstartState.profile);
-  console.log('draftProjects: ', draftProjects);
-  console.log('publishedProjects: ', publishedProjects);
+  // console.log('quickstartState: ', quickstartState);
+  // console.log('profile: ', quickstartState.profile);
+  // console.log('draftProjects: ', draftProjects);
+  // console.log('publishedProjects: ', publishedProjects);
 
   // Use quickstart state if available, otherwise use props
   const profile = quickstartState.profile;
