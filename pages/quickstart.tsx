@@ -291,7 +291,7 @@ const createPortfolioWithUsernameOnly = () => {
           // );
         }
 
-          // FIXME: NESTED NEEDS CLEANUP
+        // FIXME: NESTED NEEDS CLEANUP
         signInAnonymously(auth)
           .then(async (userCredential) => {
             const user = userCredential.user;

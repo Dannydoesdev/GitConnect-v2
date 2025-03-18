@@ -8,7 +8,19 @@ import {
   quickstartPublishedProjectsAtom,
   quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
-import { Button, Center, Group, Paper, Stack, Text } from '@mantine/core';
+import {
+  Blockquote,
+  Button,
+  Center,
+  Container,
+  Divider,
+  Group,
+  Paper,
+  Space,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
 import { getSingleQuickstartProject } from '@/lib/quickstart/getSavedProjects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
@@ -25,7 +37,6 @@ export default function QuickstartProject({
   initialProject: any;
   initialReadme: any;
 }) {
-
   const router = useRouter();
 
   // const [allProjects, setAllProjects] = useState()
@@ -60,7 +71,7 @@ export default function QuickstartProject({
       // Find the project from our atoms
       const allProjects = [...draftProjects, ...publishedProjects];
       const thisProject = allProjects.find((p) => p.id == repoId);
-      
+
       if (!thisProject) {
         // console.log('Project not found in atoms - Project will be undefined!')
       }
@@ -162,18 +173,36 @@ export default function QuickstartProject({
       ) : (
         <></>
       )}
+      {/* <Space h='lg' /> */}
+      <Container size="lg">
+        <Space h="lg" />
+        <Divider size="sm" my="lg" />
 
-      {/* Add sign up prompt at bottom */}
-      <Center mt={40}>
-        <Stack align="center" spacing="xs">
-          <Text size="lg" weight={500}>
-            Want to edit this project or create more?
-          </Text>
-          <Button component={Link} href="/signup" size="lg" color="teal">
-            Create Your Account
-          </Button>
-        </Stack>
-      </Center>
+        {/* Add sign up prompt at bottom */}
+        <Center mt={50}>
+          <Stack align="center" spacing="xs">
+            <Text size="lg" weight={500}>
+              Want to edit and publish this project?
+            </Text>
+            <Space h="xs" />
+            <Button component={Link} href="/signup" size="md" color="teal">
+              Create Your Account
+            </Button>
+            <Space h="xs" />
+
+            {/* <Group position="center"> */}
+            <Blockquote
+              cite="- GitConnect notes"
+              color="indigo"
+              icon={<IconInfoCircle size="1.5rem" />}
+            >
+              Registered users have many more tools to edit projects <br /> You'll be
+              asked to choose your portfolio projects again
+            </Blockquote>
+            {/* </Group> */}
+          </Stack>
+        </Center>
+      </Container>
     </>
   );
 }
