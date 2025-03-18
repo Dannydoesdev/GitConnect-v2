@@ -1,7 +1,7 @@
 import { url } from 'inspector';
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { quickstartProfilePanelForm } from '@/atoms';
+import { quickstartProfileAtom, quickstartProfilePanelForm, quickstartStateAtom } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
 import {
   ActionIcon,
@@ -211,12 +211,20 @@ const ProfilePageUserPanel = ({
 
   // const [formData, setFormData] = useState({})
   const [formData, setFormData] = useAtom(quickstartProfilePanelForm);
+  const [quickstartState, setQuickstartState] = useAtom(quickstartStateAtom)
+  // const [profileDataAtom, setProfileDataAtom] = useAtom(quickstartProfileAtom);
+
 
   // Function to handle saving changes
   const handleSaveChanges = async (newData: any) => {
     if (!currentUser) return;
     // console.log('formData in save changes', newData);
     setFormData(newData);
+    // setProfileDataAtom(newData);
+    setQuickstartState({
+      ...quickstartState,
+      profile: newData,
+    });
     await updateQuickstartProfileData(userId, newData).then(() => {
       // Update UI or show success message
       close();
