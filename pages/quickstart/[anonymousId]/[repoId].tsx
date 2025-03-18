@@ -12,9 +12,6 @@ import { Button, Center, Group, Paper, Stack, Text } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { getSingleQuickstartProject } from '@/lib/quickstart/getSavedProjects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
-// Import simplified versions of the components we need
-// import ProjectPageDynamicHero from '@/components/Quickstart/ProjectPageDynamicHero';
-// import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPageDynamicContent';
 import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '@/components/Quickstart/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import RichTextEditorDisplay from '@/components/Quickstart/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
@@ -28,14 +25,7 @@ export default function QuickstartProject({
   initialProject: any;
   initialReadme: any;
 }) {
-  // const router = useRouter();
-  // const { repoId } = router.query;
 
-  // console.log(`repoid in static props: ${repoId}`);
-  // console.log('initialProject in static props:');
-  // console.log(initialProject);
-  // console.log('initialReadme in static props:');
-  // console.log(initialReadme);
   const router = useRouter();
 
   // const [allProjects, setAllProjects] = useState()
@@ -54,42 +44,54 @@ export default function QuickstartProject({
   // If quickstart state project exists - rely on them
   // Else rely on initial props (from Firebase)
   useEffect(() => {
-    if (draftProjects && publishedProjects && initialProject) {
-      // console.log('useEffect checks:');
-      // console.log(`draftProject atom exists? ${draftProjects}`);
-      // console.log(`draftProject atom length? ${draftProjects.length}`);
-      // console.log(`draftProject atom exists? ${publishedProjects}`);
-      // console.log(`draftProject atom length? ${publishedProjects.length}`);
-
-      // console.log(`initialProject exists?`);
-      // console.log(initialProject);
-      // !!Object.entries(initialProject).length;
-      // const hasKeys = ;
-      // console.log(`initialProject length? ${Object.keys(initialProject).length}`);
-    }
-    if (
-      (draftProjects && draftProjects.length > 0) ||
-      (publishedProjects && publishedProjects.length > 0)
-    ) {
-      // console.log('atom projects found - assigning');
-      // Find the project from our atoms
-      const allProjects = [...draftProjects, ...publishedProjects];
-      const thisProject = allProjects.find((p) => p.id == repoId);
-      setProject(thisProject);
-
-      if (thisProject.readme && thisProject.readme?.length > 0) {
-        // console.log('Readme found in project atom - setting');
-        setReadme(thisProject.readme);
-      }
-      // console.log('this Project length' + thisProject.length);
-    } else if (initialProject && Object.keys(initialProject).length > 0) {
-      // console.log('no project atoms found - initial Project found, assigning');
+    // if (draftProjects && publishedProjects && initialProject) {
+    // }
+    if (initialProject && Object.keys(initialProject).length > 0) {
+      console.log('initial Project found - using for project');
       // console.log(
       //   'QuickstartProject - initialProjects exists - length: ' + initialProject.length
       // );
       setProject(initialProject);
+    } else if (
+      (draftProjects && draftProjects.length > 0) ||
+      (publishedProjects && publishedProjects.length > 0)
+    ) {
+      console.log('no initial project found - atom projects found - assigning');
+      // Find the project from our atoms
+      const allProjects = [...draftProjects, ...publishedProjects];
+      const thisProject = allProjects.find((p) => p.id == repoId);
+      
+      if (!thisProject) {
+        console.log('Project not found in atoms - Project will be undefined!')
+      }
+      setProject(thisProject);
+
+      // if (thisProject.htmlOutput && thisProject.htmlOutput?.length > 0) {
+      //   // console.log('Readme found in project atom - setting');
+      //   setReadme(thisProject.htmlOutput);
+      // }
+      // console.log('this Project length' + thisProject.length);
     } else {
-      // console.log('No project atom or firebase project found!!');
+      console.log('No project atom or firebase project found!!');
+    }
+
+    if (initialReadme && initialReadme.length > 0) {
+      console.log('initialReadme found in props - assigning')
+      setReadme(initialReadme);
+    } else if (
+      (draftProjects && draftProjects.length > 0) ||
+      (publishedProjects && publishedProjects.length > 0)
+    ) {
+      console.log('initialReadme NOT found in props, atoms found - checking for Readme in atoms')
+
+      const allProjects = [...draftProjects, ...publishedProjects];
+      const thisProject = allProjects.find((p) => p.id == repoId);
+      if (thisProject.htmlOutput && thisProject.htmlOutput?.length > 0) {
+        console.log('Readme found in project atom - setting');
+        setReadme(thisProject.htmlOutput);
+      } else {
+        console.log('no readme found in initial props or jotai atom! no action taken');
+      }
     }
 
     // Set profile if it exists
@@ -156,7 +158,7 @@ export default function QuickstartProject({
       {readme ? (
         <RichTextEditorDisplay content={readme} />
       ) : initialReadme ? (
-        <RichTextEditorDisplay content={readme} />
+        <RichTextEditorDisplay content={initialReadme} />
       ) : (
         <></>
       )}
