@@ -1,4 +1,4 @@
-import { getGithubProfileData, getGithubReposWithUsername } from "@/lib/github";
+import { getGithubProfileData, getGithubReposWithUsername } from "@/lib/quickstart/fetchGithubProfileRepos";
 // import { fetchLanguages } from "@/lib/quickstart/fetchLanguages";
 // import { fetchReadme } from "@/lib/quickstart/fetchReadme";
 import type { NextApiRequest, NextApiResponse } from 'next';

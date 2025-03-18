@@ -454,21 +454,22 @@ const createPortfolioWithUsernameOnly = () => {
   return (
     <Container mt={80} size="lg" p="lg">
       <Header />
-      <Space h="xl" />
+      <Space h="md" />
       {/* <Group position="center">
         <Title order={2}>Portfolio Quickstart</Title>
       </Group> */}
       {repoData && repoData.length === 0 && (
         <>
-          <Space h="xl" />
+          <Space h="md" />
           <Group position="center">
             <Blockquote
               cite="- GitConnect tips"
               color="indigo"
               icon={<IconInfoCircle size="1.5rem" />}
             >
-              Enter your GitHub username to fetch public repos. <br /> You can choose
-              which projects to add to your portfolio in the next steps.
+              Use the quickstart flow to quickly test GitConnect - no signup required. <br/>
+             Enter a GitHub username and choose some repos to create a test portfolio. <br />
+              {/* You can choose which projects to add to the portfolio in the next steps. */}
             </Blockquote>
           </Group>
           {error && (
@@ -480,6 +481,7 @@ const createPortfolioWithUsernameOnly = () => {
               <Space h="lg" />
             </>
           )}
+          <Space h='lg' />
           <Paper
             radius="md"
             withBorder
