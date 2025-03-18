@@ -225,6 +225,8 @@ export const AppContainer = ({ children }, props) => {
   }, [userData]);
 
 
+  // console.log(`userData: ${userData}`);
+  // console.log(userData)
   // const premiumButton = () => {
   //   <Group position="center">
   //     <Button onClick={open}>Open centered Modal</Button>
@@ -255,8 +257,17 @@ export const AppContainer = ({ children }, props) => {
     // { label: 'Pricing', link: '/pricing' },
     // { label: 'Add Project', link: '/getrepos' },
     { label: 'Add Project', link: `/addproject` },
-    { label: 'Portfolio', link: `/portfolio/${userData.username_lowercase}` },
-
+    // Only include the Portfolio link if userData is available
+    { 
+      label: 'Portfolio', 
+      link: userData 
+        ? (userData.isAnonymous 
+            ? `/quickstart/${userData.uid}` 
+            : `/portfolio/${userData.username_lowercase}`)
+        : "#" 
+    },
+    // { label: 'Portfolio', link: `/portfolio/${userData.username_lowercase}` },
+    // href={userData.isAnonymous ? `/quickstart/${userData.uid}` : `/portfolio/${userData.username_lowercase}`}
     // { label: 'Profile', link: `/profiles/${userData.userId}` },
     // { label: 'Sign Out', link: '/login' },
   ];
@@ -392,35 +403,37 @@ export const AppContainer = ({ children }, props) => {
                       Add Project
                     </Button>
                   </Link> */}
-                  <Link href="/addproject" passHref legacyBehavior>
-                    <Button
-                      component="a"
-                      size="xs"
-                      color="gray"
-                      variant="subtle"
-                      sx={(theme) => ({
-                        fontSize: '16px',
-                        color:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.white
-                            : theme.colors.dark,
-                      })}
-                    >
-                      Add Project
-                    </Button>
-                  </Link>
-                  {/* <Text
-                      component='a'
-                      className='dark:text-white'
-                      size='md'
-                      weight='bolder'
-                    >
-                      Add a Project
-                    </Text> */}
 
+                  {userData && !userData.isAnonymous && (
+                    <Link href="/addproject" passHref legacyBehavior>
+                      <Button
+                        component="a"
+                        size="xs"
+                        color="gray"
+                        variant="subtle"
+                        sx={(theme) => ({
+                          fontSize: '16px',
+                          color:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.white
+                              : theme.colors.dark,
+                        })}
+                      >
+                        Add Project
+                      </Button>
+                    </Link>
+                  )}
                   {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
                   <Link
-                    href={`/portfolio/${userData.username_lowercase}`}
+                        // if user is anonymous - use uid
+                        // href={userData.isAnonymous ? `/quickstart/${userData.uid}` : `/portfolio/${userData.
+                        //   username_lowercase}`}
+                          // href={`/portfolio/${userData.username_lowercase}`}
+                    href={userData
+                      ? (userData.isAnonymous
+                        ? `/quickstart/${userData.uid}`
+                        : `/portfolio/${userData.username_lowercase}`)
+                      : "#"}
                     passHref
                     legacyBehavior
                   >
@@ -511,7 +524,13 @@ export const AppContainer = ({ children }, props) => {
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
                   {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
                   <Link
-                    href={`/portfolio/${userData.username_lowercase}`}
+                     // if user is anonymous - use uid
+                      // href={`/portfolio/${userData.username_lowercase}`}
+                    href={userData
+                      ? (userData.isAnonymous
+                        ? `/quickstart/${userData.uid}`
+                        : `/portfolio/${userData.username_lowercase}`)
+                      : "#"}
                     passHref
                     legacyBehavior
                   >

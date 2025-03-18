@@ -80,9 +80,16 @@ export function SignupPage() {
   mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
 
   const signupHandler = useCallback(
+
     async (e: any) => {
       e.preventDefault();
       const provider = new GithubAuthProvider();
+
+      // For Anonymous path - sign out before attempting to sign up / login
+      if (auth.currentUser?.isAnonymous) {
+        // console.log('signing out anonymous user before registration')
+       await auth.signOut()
+      }
 
       try {
         // Attempt popup OAuth

@@ -10,10 +10,12 @@ import Loading from './loading';
 // import { db } from '../firebase/clientApp';
 
 const Signup = () => {
-  const { currentUser, loading, setupComplete, isNewUser, userData } = useContext(AuthContext);
+  const { currentUser, loading, setupComplete, isNewUser, userData, isAnonymous } = useContext(AuthContext);
   const router = useRouter();
 
   useEffect(() => {
+    // console.log('Is anonymous?')
+    // console.log(isAnonymous)
     // Debug logging
     // console.log('Auth State:', {
     //   currentUser: currentUser,
@@ -29,10 +31,13 @@ const Signup = () => {
     // 2. We're not loading
     // 3. We're actually on the signup page (prevents redirect loops)
     // 4. We have a currentUser (authenticated)
+    // 5. User is no longer Anonymous
+
     if (setupComplete && 
         !loading && 
         router.pathname === '/signup' && 
-        currentUser) {
+      currentUser &&
+      !isAnonymous) {
       
       // Use router.replace to avoid adding to history
       if (isNewUser) {
@@ -41,7 +46,7 @@ const Signup = () => {
         router.replace('/');
       }
     }
-  }, [currentUser, loading, setupComplete, isNewUser, router]);
+  }, [currentUser, loading, setupComplete, isNewUser, router, isAnonymous]);
 
   // If we're in a loading state, we could show a loading indicator
   // if (loading) {
@@ -51,7 +56,7 @@ const Signup = () => {
   // Only show signup page if:
   // 1. We're not authenticated OR
   // 2. We're still setting up
-  if (!currentUser || !setupComplete) {
+  if (!currentUser || !setupComplete || isAnonymous) {
     return <SignupPage />;
   }
 

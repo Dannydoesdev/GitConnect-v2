@@ -13,6 +13,7 @@ import '../styles/globals.css';
 import '../styles/tiptap.scss';
 import { AppContainer } from '../components/AppContainer';
 import { AuthProvider } from '../context/AuthContext';
+import { AuthProviderAnonymous } from '@/context/AuthContextAnonymousNoStripe';
 import { useRouter } from 'next/router';
 import "@fontsource/inter"; 
 import axios from 'axios';
@@ -26,6 +27,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const router = useRouter()
  
   const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
+  const [isClient, setIsClient] = useState(false);
+
+  // This effect runs only on the client after hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
@@ -38,14 +45,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   return (
     <>
       <Head>
-    {/* One way to do external stylesheet - not really recommended: */}
-    {/* eslint-disable-next-line @next/next/no-css-tags */}
-        {/* <link rel="stylesheet" href="/css/styles.css" precedence="default" /> */}
-        
-        {/* <title>GitConnect;</title> */}
-        {/* <!DOCTYPE html> */}
-        {/* <title>GitConnect: Your Career Launchpad for Development</title> */}
-        {/* <title>GitConnect: A creative space for Developers, by Developers</title> */}
         <title>GitConnect: The Portfolio Platform for Devs</title>
 
         <meta
@@ -60,11 +59,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         <meta
           name="description"
           content="GitConnect is a dedicated platform for developers to build their portfolio, connect with opportunities, and with each other."
-          // content="Embark on a coding journey where your projects take the spotlight. Join our budding community of developers and grow together. Perfect for junior developers and those starting their coding journey."
         />
-        {/* <meta name="description" content="Embark on a coding journey where your projects take the spotlight. Join our budding community of developers and grow together.Showcase your work, discover inspiring projects, and connect with like-minded developers in just a few clicks. 
-        Perfect for junior developers and those starting their coding journey
-        ." /> */}
         <meta
           name="keywords"
           content="developers, devs, coding, developer portfolio platform, software engineers, freelance portfolios, freelance developers, projects, showcase, connect, collaborate, junior developers, GitHub, coding, coding portfolio, software developer projects, project portfolio for developers, coding collaboration platform"
@@ -83,7 +78,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           <MantineProvider
             theme={{
               colorScheme,
-              // primaryColor: 'green',
             }}
             withGlobalStyles
             withNormalizeCSS
@@ -91,13 +85,27 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             <ModalsProvider>
               <Notifications />
               <AuthProvider>
+                {/* <AuthProviderAnonymous> */}
                 <Provider>
-                  <AppContainer>
+                  {/* Introducing the following change to prevent hydration errors - but needs full testing */}
+                {isClient ? (
+                    <AppContainer>
+                      <Component key={router.asPath} {...pageProps} />
+                      <Analytics />
+                      <SpeedInsights />
+                    </AppContainer>
+                  ) : (
+                    <div style={{ visibility: 'hidden' }}>
+                      <Component key={router.asPath} {...pageProps} />
+                    </div>
+                  )}
+                  {/* <AppContainer>
                     <Component key={router.asPath} {...pageProps} />
                     <Analytics />
                     <SpeedInsights />
-                  </AppContainer>
-                </Provider>
+                  </AppContainer> */}
+                  </Provider>
+                  {/* </AuthProviderAnonymous> */}
               </AuthProvider>
             </ModalsProvider>
           </MantineProvider>
