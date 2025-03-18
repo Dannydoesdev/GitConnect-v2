@@ -226,7 +226,7 @@ export default function QuickstartPortfolio({
     }
 
     if (initialProfile && Object.keys(initialProfile).length > 0) {
-      console.log('initial Profile found - using for profile');
+      // console.log('initial Profile found - using for profile');
 
       // console.log(
       //   'ProfileDatAtom NOT FOUND found - initialProfile found - setting as Profile:'
@@ -236,12 +236,12 @@ export default function QuickstartPortfolio({
     }
     // Set profile if it exists in Atom else use initialProfile from static Props
     else if (profileDataAtom && Object.keys(profileDataAtom).length > 0) {
-      console.log('NO initial profile found - ProfileDataAtom found - setting as Profile:');
+      // console.log('NO initial profile found - ProfileDataAtom found - setting as Profile:');
       // console.log(profileDataAtom);
       setProfile(profileDataAtom);
     } else {
       // If none available - set blank
-      console.log('initialProfile AND profileDataAtom NOT found - setting null array as Profile');
+      // console.log('initialProfile AND profileDataAtom NOT found - setting null array as Profile');
       setProfile([]);
     }
   }, [

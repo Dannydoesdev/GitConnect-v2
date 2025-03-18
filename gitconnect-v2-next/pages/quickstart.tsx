@@ -90,12 +90,12 @@ const createPortfolioWithUsernameOnly = () => {
     const userid = userData.uid;
 
     if (!userid) {
-      console.log('NO USER ID - RETURNING');
+      // console.log('NO USER ID - RETURNING');
       return;
     }
     //  set ProfileData to upload
     if (!profileData || profileData.length === 0) {
-      console.log('No profile data to save - exiting');
+      // console.log('No profile data to save - exiting');
       return;
     }
 
@@ -117,7 +117,7 @@ const createPortfolioWithUsernameOnly = () => {
 
     // Set repoData to upload
     if (!repoData || repoData.length === 0) {
-      console.log('No repo data to save - exiting');
+      // console.log('No repo data to save - exiting');
       return;
     }
 
@@ -272,23 +272,23 @@ const createPortfolioWithUsernameOnly = () => {
 
     if (existingUid) {
       try {
-        console.log(`existing user found in local storage with ID: ${existingUid}`);
+        // console.log(`existing user found in local storage with ID: ${existingUid}`);
         if (auth.currentUser) {
-          console.log(`AND User currently logged in with id: ${auth.currentUser.uid}`);
+          // console.log(`AND User currently logged in with id: ${auth.currentUser.uid}`);
           //A user is already signed in, check if it's the correct anonymous user.
           if (auth.currentUser.uid === existingUid) {
-            console.log('User already signed in and is the correct anonymous user.');
+            // console.log('User already signed in and is the correct anonymous user.');
             return existingUid;
           } else {
-            console.log(
-              'User already signed in, but is not the correct anonymous user. Signing out and attempting to re-authenticate.'
-            );
+            // console.log(
+            //   'User already signed in, but is not the correct anonymous user. Signing out and attempting to re-authenticate.'
+            // );
             // await auth.signOut();
           }
         } else {
-          console.log(
-            'user found in localStorage but no user authenticated with Firebase Auth - logging in'
-          );
+          // console.log(
+          //   'user found in localStorage but no user authenticated with Firebase Auth - logging in'
+          // );
         }
 
           // FIXME: NESTED NEEDS CLEANUP
@@ -296,22 +296,22 @@ const createPortfolioWithUsernameOnly = () => {
           .then(async (userCredential) => {
             const user = userCredential.user;
             if (user.uid === existingUid) {
-              console.log('Anonymous user re-authenticated successfully.');
+              // console.log('Anonymous user re-authenticated successfully.');
               // User is successfully signed in.
               const userDoc = doc(db, 'usersAnonymous', existingUid);
               const checkUserExists = await getDoc(userDoc);
               if (checkUserExists.exists()) {
                 const existingData = checkUserExists.data();
                 if (existingData.userId === existingUid) {
-                  console.log(
-                    'user data exists in firebase and has the same uid - all good'
-                  );
+                  // console.log(
+                  //   'user data exists in firebase and has the same uid - all good'
+                  // );
                   return existingUid;
                 } else {
-                  console.log(
-                    'user data exists in firebase but has a different uid - figure out how to handle'
-                  );
-                  console.log('testing logout and re run:');
+                  // console.log(
+                  //   'user data exists in firebase but has a different uid - figure out how to handle'
+                  // );
+                  // console.log('testing logout and re run:');
                   await auth.signOut();
                   createAnonymousUser(trimmedUserData);
                   return;
@@ -341,9 +341,9 @@ const createPortfolioWithUsernameOnly = () => {
                 return existingUid;
               }
             } else {
-              console.log(
-                'Stored anonymous UID does not match the new signed-in user - Updating localStorage and saving to Firebase.'
-              );
+              // console.log(
+              //   'Stored anonymous UID does not match the new signed-in user - Updating localStorage and saving to Firebase.'
+              // );
               // localStorage.removeItem('anonymousUid'); //Clear out invalid uid.
               localStorage.setItem('anonymousUid', user.uid);
               await setDoc(
@@ -385,7 +385,7 @@ const createPortfolioWithUsernameOnly = () => {
       }
     } else {
       try {
-        console.log('no existing user found in localStorage - Creating');
+        // console.log('no existing user found in localStorage - Creating');
         //   console.log('Found existing anonymous user:', existingUid);
         //   const userDoc = doc(db, 'usersAnonymous', existingUid);
         //   const checkUserExists = await getDoc(userDoc);
@@ -403,7 +403,7 @@ const createPortfolioWithUsernameOnly = () => {
 
         // Store the UID in localStorage
         localStorage.setItem('anonymousUid', anonymousUid);
-        console.log(`New anonymous ID created and stored: ${anonymousUid}`);
+        // console.log(`New anonymous ID created and stored: ${anonymousUid}`);
 
         await setDoc(
           doc(db, 'usersAnonymous', anonymousUid),
