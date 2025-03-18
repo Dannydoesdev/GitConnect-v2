@@ -13,13 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const usernameString = username.toString()
 
   try {
-
     // NOTE - to get more info for the user requires a second call
-
     //  More info on getByUsername octokit: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
 
-    const githubUserData = await getGithubProfileData(usernameString)
-
+    const githubUserData = await getGithubProfileData(usernameString);
+    
     const trimmedUserData = {
       userName: githubUserData?.login,
       githubId: githubUserData?.id,
@@ -32,9 +30,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       bio: githubUserData?.bio ?? '',
     }
     
-
     //  More info on listForUser octokit: https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user
     const returnedRepoData = await getGithubReposWithUsername(usernameString);
+    
+    if (!returnedRepoData || returnedRepoData.length === 0) {
+      return res.status(200).json({ 
+        trimmedUserData, 
+        trimmedRepoData: [] 
+      });
+    }
 
     let trimmedRepoData;
 
@@ -93,9 +97,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log('no repo data returned from GitHub getRepos call')
     }
 
-    res.status(200).json({trimmedUserData, trimmedRepoData});
-  } catch (error) {
-    console.error('Error fetching user quickstart info with error:', error);
-    res.status(500).json({ error: `Error fetching user quickstart info with error: ${error}` });
+    return res.status(200).json({trimmedUserData, trimmedRepoData});
+  } catch (error: any) {
+    console.error('Error fetching user quickstart info:', error);
+    
+    // Handle specific error cases
+    if (error.status === 404) {
+      return res.status(404).json({ error: 'GitHub user not found' });
+    } else if (error.status === 403 && error.response?.data?.message?.includes('rate limit exceeded')) {
+      return res.status(403).json({ 
+        error: 'GitHub API rate limit exceeded. Please try again later.' 
+      });
+    }
+    
+    return res.status(500).json({ error: 'Error fetching GitHub data' });
   }
 }
