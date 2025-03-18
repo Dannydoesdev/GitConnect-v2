@@ -9,9 +9,16 @@ export async function getGithubProfileData(username: string) {
     const response = await octokit.users.getByUsername({ username });
     // console.log(response.data)
     return response.data;
-  } catch (error) {
-    console.error(`Failed to get GitHub data for ${username}`, error);
-    return null;
+  } catch (error: any) {
+    if (error.status === 403 && error.response?.data?.message?.includes('rate limit exceeded')) {
+      console.error(`GitHub API rate limit exceeded when fetching user data for "${username}"`);
+    } else if (error.status === 404) {
+      console.error(`GitHub user "${username}" not found`);
+    } else {
+      console.error(`Failed to get GitHub user data for "${username}"`, error);
+    }
+    // Pass through the original error so we can handle it properly upstream
+    throw error;
   }
 }
 
@@ -26,10 +33,14 @@ export async function getGithubReposWithUsername(username: string) {
       per_page: 100,
     })
     
-      return response.data;
-
-  } catch (error) {
-    console.error(`Failed to get GitHub data for ${username}`, error);
-    return null;
+    return response.data;
+  } catch (error: any) {
+    if (error.status === 403 && error.response?.data?.message?.includes('rate limit exceeded')) {
+      console.error(`GitHub API rate limit exceeded when fetching repos for "${username}"`);
+    } else {
+      console.error(`Failed to get GitHub repos for "${username}"`, error);
+    }
+    // Pass through the original error so we can handle it properly upstream
+    throw error;
   }
 };

@@ -224,7 +224,6 @@ export const AppContainer = ({ children }, props) => {
     setIsPro(newPremiumStatus);
   }, [userData]);
 
-
   // console.log(`userData: ${userData}`);
   // console.log(userData)
   // const premiumButton = () => {
@@ -258,20 +257,19 @@ export const AppContainer = ({ children }, props) => {
     // { label: 'Add Project', link: '/getrepos' },
     { label: 'Add Project', link: `/addproject` },
     // Only include the Portfolio link if userData is available
-    { 
-      label: 'Portfolio', 
-      link: userData 
-        ? (userData.isAnonymous 
-            ? `/quickstart/${userData.uid}` 
-            : `/portfolio/${userData.username_lowercase}`)
-        : "#" 
+    {
+      label: 'Portfolio',
+      link: userData
+        ? userData.isAnonymous
+          ? `/quickstart/${userData.uid}`
+          : `/portfolio/${userData.username_lowercase}`
+        : '#',
     },
     // { label: 'Portfolio', link: `/portfolio/${userData.username_lowercase}` },
     // href={userData.isAnonymous ? `/quickstart/${userData.uid}` : `/portfolio/${userData.username_lowercase}`}
     // { label: 'Profile', link: `/profiles/${userData.userId}` },
     // { label: 'Sign Out', link: '/login' },
   ];
-
 
   const [active, setActive] = useState(links[0].link);
 
@@ -425,15 +423,13 @@ export const AppContainer = ({ children }, props) => {
                   )}
                   {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
                   <Link
-                        // if user is anonymous - use uid
-                        // href={userData.isAnonymous ? `/quickstart/${userData.uid}` : `/portfolio/${userData.
-                        //   username_lowercase}`}
-                          // href={`/portfolio/${userData.username_lowercase}`}
-                    href={userData
-                      ? (userData.isAnonymous
-                        ? `/quickstart/${userData.uid}`
-                        : `/portfolio/${userData.username_lowercase}`)
-                      : "#"}
+                    href={
+                      userData
+                        ? userData.isAnonymous
+                          ? `/quickstart/${userData.uid}`
+                          : `/portfolio/${userData.username_lowercase}`
+                        : '#'
+                    }
                     passHref
                     legacyBehavior
                   >
@@ -453,6 +449,25 @@ export const AppContainer = ({ children }, props) => {
                       Portfolio
                     </Button>
                   </Link>
+                  {userData && userData.isAnonymous && (
+                    <Link href={'/quickstart'} passHref legacyBehavior>
+                      <Button
+                        component="a"
+                        size="xs"
+                        color="gray"
+                        variant="subtle"
+                        sx={(theme) => ({
+                          fontSize: '16px',
+                          color:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.white
+                              : theme.colors.dark,
+                        })}
+                      >
+                        Quickstart
+                      </Button>
+                    </Link>
+                  )}
                 </Group>
 
                 {/* REMOVING PRICING FOR NOW */}
@@ -524,13 +539,15 @@ export const AppContainer = ({ children }, props) => {
                   {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
                   {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
                   <Link
-                     // if user is anonymous - use uid
-                      // href={`/portfolio/${userData.username_lowercase}`}
-                    href={userData
-                      ? (userData.isAnonymous
-                        ? `/quickstart/${userData.uid}`
-                        : `/portfolio/${userData.username_lowercase}`)
-                      : "#"}
+                    // if user is anonymous - use uid
+                    // href={`/portfolio/${userData.username_lowercase}`}
+                    href={
+                      userData
+                        ? userData.isAnonymous
+                          ? `/quickstart/${userData.uid}`
+                          : `/portfolio/${userData.username_lowercase}`
+                        : '#'
+                    }
                     passHref
                     legacyBehavior
                   >
@@ -588,9 +605,27 @@ export const AppContainer = ({ children }, props) => {
                       About
                     </Button>
                   </Link>
-                    {/* <Group className={classes.responsiveHide} position="center"> */}
-                    
-                    {/* REMOVING PRICING FOR NOW */}
+                  <Link href={'/quickstart'} passHref legacyBehavior>
+                    <Button
+                      component="a"
+                      size="xs"
+                      color="gray"
+                      variant="subtle"
+                      sx={(theme) => ({
+                        fontSize: '16px',
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                      })}
+                    >
+                      Quickstart
+                    </Button>
+                  </Link>
+
+                  {/* <Group className={classes.responsiveHide} position="center"> */}
+
+                  {/* REMOVING PRICING FOR NOW */}
                   {/* <Link href="/pricing" passHref legacyBehavior>
                     <Button
                       component="a"
@@ -608,7 +643,6 @@ export const AppContainer = ({ children }, props) => {
                       Pricing
                     </Button>
                     </Link> */}
-                    
                 </Group>
                 {/* <Link href='/landing' passHref legacyBehavior>
                     <Text
