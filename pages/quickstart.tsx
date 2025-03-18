@@ -3,7 +3,7 @@ import Link from 'next/link';
 import router from 'next/router';
 import { quickstartStateAtom } from '@/atoms/quickstartAtoms';
 // Test VertexAI Implementation
-import { auth, db, vertexAI } from '@/firebase/clientApp';
+import { auth, db } from '@/firebase/clientApp';
 import {
   Blockquote,
   Button,
