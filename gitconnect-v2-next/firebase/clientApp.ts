@@ -74,4 +74,4 @@ export { analytics, db };
 // logEvent(analytics, 'notification_received');
 
 // Initialize the Vertex AI service
-export const vertexAI = getVertexAI(app);
+// export const vertexAI = getVertexAI(app);
