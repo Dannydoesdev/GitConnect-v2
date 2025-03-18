@@ -11,7 +11,8 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    height: '50vh',
+    // height: '80vh',
+    height: '55vh',
     marginLeft: 200,
     display: 'flex',
     flexDirection: 'column',

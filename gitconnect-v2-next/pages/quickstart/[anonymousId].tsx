@@ -12,14 +12,19 @@ import {
 } from '@/atoms/quickstartAtoms';
 import { AuthContext } from '@/context/AuthContext';
 import {
+  Blockquote,
   Button,
+  Center,
   Container,
+  Divider,
   Grid,
   Group,
   Space,
+  Stack,
   Tabs,
   Text,
 } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
 import useSWR from 'swr';
 import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
@@ -59,12 +64,12 @@ const ProjectTabs = ({
   isCurrentUser ? (
     <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
       <Tabs.List>
-        <Tabs.Tab value="first">Projects</Tabs.Tab>
+        {/* <Tabs.Tab value="first">Projects</Tabs.Tab> */}
         <Tabs.Tab value="second" color="orange">
           Drafts
         </Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="first">
+      {/* <Tabs.Panel value="first">
         <Space h={20} />
         <Grid.Col>
           <ProfilePageProjectGrid
@@ -73,7 +78,7 @@ const ProjectTabs = ({
             projects={publishedProjects}
           />
         </Grid.Col>
-      </Tabs.Panel>
+      </Tabs.Panel> */}
       <Tabs.Panel value="second">
         <Space h={20} />
         <Grid.Col>
@@ -321,6 +326,34 @@ export default function QuickstartPortfolio({
             </Grid.Col>
           </Grid>
         </Group>
+        {/* Add sign up prompt at bottom */}
+        {/* <Divider my="xs" label="Quickstart Signup" labelPosition="center" /> */}
+
+        <Space h="lg" />
+        <Divider my="lg" size="sm" />
+        <Center mt={55}>
+          <Stack align="center" spacing="xs">
+            <Text size="lg" weight={500}>
+              Want to edit projects and publish your portfolio?
+            </Text>
+            <Space h="xs" />
+            <Button component={Link} href="/signup" size="md" color="teal">
+              Create Your Account
+            </Button>
+            <Space h="xs" />
+
+            {/* <Group position="center"> */}
+            <Blockquote
+              cite="- GitConnect tips"
+              color="indigo"
+              icon={<IconInfoCircle size="1.5rem" />}
+            >
+              Registered users have more tools to edit and publish projects <br /> You'll
+              be asked to choose your portfolio projects again
+            </Blockquote>
+            {/* </Group> */}
+          </Stack>
+        </Center>
       </Container>
     </>
   );
