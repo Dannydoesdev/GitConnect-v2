@@ -96,9 +96,11 @@ const createPortfolioWithUsernameOnly = () => {
       console.error(error);
       if (error.response?.status === 404) {
         setUsernameError('GitHub user not found');
-      } else if (error.response?.status === 403 && error.response?.data?.message?.includes('rate limit exceeded')) {
-        setError('GitHub API rate limit exceeded. Please try again later or try a different username.');
+      } else if (error.response?.status === 403 && error.response?.data?.error?.includes('rate limit exceeded')) {
+        // console.log(error.response?.data?.error)
+        setError('GitHub API rate limit exceeded. Please try again later.');
       } else {
+        // console.log(error.response.data.error)
         setError('Failed to fetch GitHub data. Please try again.');
       }
       return null;
@@ -126,6 +128,17 @@ const createPortfolioWithUsernameOnly = () => {
     // Create anonymous user and save basic data
     // await createAnonymousUser(profileData);
 
+    notifications.show({
+      id: 'saving-portfolio',
+      loading: true,
+      title: 'Creating portfolio',
+      message: 'Saving your profile and projects',
+      color: 'cyan',
+      icon: <InfoCircle size="1.5rem" />,
+      autoClose: false,
+      withCloseButton: false,
+    });
+
     const customProfileData = {
       ...profileData,
       userId: userid,
@@ -142,6 +155,14 @@ const createPortfolioWithUsernameOnly = () => {
     // Set repoData to upload
     if (!repoData || repoData.length === 0) {
       // console.log('No repo data to save - exiting');
+      notifications.update({
+        id: 'saving-portfolio',
+        color: 'red',
+        title: 'Error creating portfolio',
+        message: 'No repository data found to save',
+        icon: <IconCross size="1rem" />,
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -169,6 +190,27 @@ const createPortfolioWithUsernameOnly = () => {
     );
     // console.log('full data of repos to save:');
     // console.log(selectedReposToSave);
+
+    if (selectedReposToSave.length === 0) {
+      notifications.update({
+        id: 'saving-portfolio',
+        color: 'red',
+        title: 'Error creating portfolio',
+        message: 'Please select at least one repository',
+        icon: <IconCross size="1rem" />,
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    notifications.update({
+      id: 'saving-portfolio',
+      loading: true,
+      title: 'Creating portfolio',
+      message: `Saving profile and ${selectedReposToSave.length} selected projects`,
+      color: 'cyan',
+      autoClose: false,
+    });
 
     // FIXME TEST: Save all project data to jotai:
 
@@ -205,14 +247,31 @@ const createPortfolioWithUsernameOnly = () => {
         userid: userid,
         profileData: customProfileData,
       });
+
+      notifications.update({
+        id: 'saving-portfolio',
+        loading: true,
+        title: 'Profile saved',
+        message: 'Now saving your projects',
+        color: 'cyan',
+        autoClose: false,
+      });
     } catch (error) {
       console.error(error);
+      notifications.update({
+        id: 'saving-portfolio',
+        color: 'red',
+        title: 'Error saving profile',
+        message: 'There was an error saving your profile data',
+        icon: <IconCross size="1rem" />,
+        autoClose: 3000,
+      });
     }
 
     // Upload Project data to Firestore
-
+    let savedCount = 0;
     try {
-      selectedReposToSave.forEach(async (repo) => {
+      const savePromises = selectedReposToSave.map(async (repo) => {
         // console.log('sending repo to api:');
         // console.log(repo);
         await axios.post(saveProjectUrl, {
@@ -222,17 +281,39 @@ const createPortfolioWithUsernameOnly = () => {
           repoName: repo.name,
           repoid: repo.id,
         });
+        savedCount++;
+        
+        notifications.update({
+          id: 'saving-portfolio',
+          loading: true,
+          title: 'Saving projects',
+          message: `Saved ${savedCount} of ${selectedReposToSave.length} projects`,
+          color: 'cyan',
+          autoClose: false,
+        });
+      });
+
+      await Promise.all(savePromises);
+      
+      notifications.update({
+        id: 'saving-portfolio',
+        loading: true,
+        title: 'Portfolio created - redirecting',
+        message: `Successfully saved quickstart - loading new portfolio`,
+        color: 'green',
+        icon: <IconCheck size="1.5rem" />,
+        autoClose: 2000,
       });
     } catch (error) {
       console.error(error);
-    } finally {
-      // try {
-      //   // After saving is complete, redirect to the quickstart portfolio
-      //   const anonymousUid = userData.uid;
-      //   router.push(`/quickstart/${anonymousUid}`);
-      // } catch (error) {
-      //   console.error(error);
-      // }
+      notifications.update({
+        id: 'saving-portfolio',
+        color: 'red',
+        title: 'Error saving projects',
+        message: 'There was an error saving some of your projects',
+        icon: <IconCross size="1rem" />,
+        autoClose: 3000,
+      });
     }
 
     // Send through the router to the quickstart portfolio
@@ -269,6 +350,32 @@ const createPortfolioWithUsernameOnly = () => {
       console.error(error);
     }
   };
+    // Close the notification when the router changes
+    useEffect(() => {
+      const handleRouteChange = () => {
+        notifications.update({
+          id: 'adding-repo',
+          loading: false,
+          title: 'Portfolio created - redirecting',
+          message: `Successfully saved quickstart - loading new portfolio`,
+          color: 'green',
+          icon: <IconCheck size="1.5rem" />,
+          autoClose: 5000,
+          withCloseButton: true,
+        });
+      };
+      const handleRouteChangeComplete = () => {
+        notifications.clean();
+      };
+      router.events.on('routeChangeStart', handleRouteChange);
+      router.events.on('routeChangeComplete', handleRouteChangeComplete);
+  
+      return () => {
+        router.events.on('routeChangeStart', handleRouteChange);
+        router.events.on('routeChangeComplete', handleRouteChangeComplete);
+        // router.events.off('routeChangeComplete', handleRouteChange);
+      };
+    }, [router]);
 
   // Adds a repository to the selectedRepos state when selected
   const selectRepo = (repoId: string) => {
@@ -463,16 +570,7 @@ const createPortfolioWithUsernameOnly = () => {
     }
   };
 
-  // Close the notification when the router changes
-  useEffect(() => {
-    const handleRouteChange = () => {
-      notifications.clean();
-    };
-    router.events.on('routeChangeStart', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-  }, [router]);
+
 
   // Render the repo selection pages when no repos have been uploaded
   return (
