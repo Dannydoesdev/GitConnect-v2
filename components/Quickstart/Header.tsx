@@ -1,5 +1,5 @@
 import React from 'react';
-import { Group, Image, Stack, Title, useMantineColorScheme } from '@mantine/core';
+import { Group, Image, Space, Stack, Title, useMantineColorScheme } from '@mantine/core';
 
 const Header: React.FC = () => {
   const { colorScheme } = useMantineColorScheme();
@@ -8,19 +8,19 @@ const Header: React.FC = () => {
   const dark = colorScheme === 'dark';
 
   return (
-    <Group position="center" spacing="md" align="center">
-      <Stack spacing="lg" align='center'>
+    <Group position="center" align="center">
+      <Stack spacing="xl" align="center">
         <Image
-          src={dark ? '/img/gc-sml.webp' : '/img/gitconnect-white.png'}
+          src={dark ? '/img/gitconnect.webp' : '/img/gitconnect-white.png'}
           alt="GitConnect Logo"
-          fit='contain'
-          height={150}
-       
+          fit="contain"
+          height={125}
         />
-        <Title order={2}>GitConnect Portfolio Creator</Title>
+        {/* <Space h='xs' /> */}
+        <Title order={2}>Quickstart Portfolio Creator</Title>
         {/* <Title order={3}>Portfolio Quickstart</Title> */}
       </Stack>
-</Group>
+    </Group>
   );
 };
 
