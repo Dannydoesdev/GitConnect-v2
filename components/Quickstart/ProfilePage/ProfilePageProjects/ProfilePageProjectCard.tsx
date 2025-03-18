@@ -43,7 +43,22 @@ export function ProfilePageProjectCard({
 }: ProfilePageProjectCardProps) {
   const { classes, theme } = useStyles();
 
-  const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 768) : '/img/gitconnect.webp';
+  // Previously - single image:
+  // const imageUrl = typeof image === 'string' &&
+  // image ? correctImageGetter(image, 768) : '/img/gitconnect.webp';
+
+  // Use one of the placeholder images at random
+  const getRandomPlaceholderImage = () => {
+    const placeholders = [
+      '/img/portfolio-placeholders/gitconnect.webp',
+      '/img/portfolio-placeholders/gitconnect-invert.webp',
+      '/img/portfolio-placeholders/gitconnect-rgb.webp',
+      // '/img/portfolio-placeholders/gitconnect-white.webp',
+    ];
+    return placeholders[Math.floor(Math.random() * placeholders.length)];
+  };
+
+  const imageUrl = typeof image === 'string' && image ? correctImageGetter(image, 768) : getRandomPlaceholderImage();
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
