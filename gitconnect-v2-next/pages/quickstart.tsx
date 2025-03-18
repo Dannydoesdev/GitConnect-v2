@@ -46,6 +46,8 @@ const createPortfolioWithUsernameOnly = () => {
   const [profileData, setProfileData] = useState<any>([]);
   const [userAvatar, setUserAvatar] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [usernameError, setUsernameError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { userData, isAnonymous } = useContext(AuthContext);
 
   const [quickstartState, setQuickstartState] = useAtom(quickstartStateAtom);
@@ -56,6 +58,14 @@ const createPortfolioWithUsernameOnly = () => {
 
   // Fetch all public repos for the entered username from GitHub with API helper
   const fetchUserAndRepos = async (username: string) => {
+    if (!username.trim()) {
+      setUsernameError('Please enter a GitHub username');
+      return;
+    }
+    
+    setUsernameError('');
+    setError('');
+    setIsLoading(true);
     const fetchUrl = `/api/quickstart/fetchGithubProfileAndRepos`;
 
     try {
@@ -67,19 +77,33 @@ const createPortfolioWithUsernameOnly = () => {
 
       const { data } = response;
       const { trimmedUserData, trimmedRepoData } = data;
-      // console.log('Returned trimmedRepoData');
-      // console.log(trimmedRepoData);
-      // console.log('Returned trimmedUserData');
-      // console.log(trimmedUserData);
+      
+      if (!trimmedUserData) {
+        setUsernameError('GitHub user not found');
+        return;
+      }
+      
+      if (!trimmedRepoData || trimmedRepoData.length === 0) {
+        setError('This GitHub user has no public repositories');
+        return;
+      }
 
       setProfileData(trimmedUserData);
       setRepoData(trimmedRepoData);
       setUserAvatar(trimmedUserData.avatar_url);
       createAnonymousUser(trimmedUserData);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      if (error.response?.status === 404) {
+        setUsernameError('GitHub user not found');
+      } else if (error.response?.status === 403 && error.response?.data?.message?.includes('rate limit exceeded')) {
+        setError('GitHub API rate limit exceeded. Please try again later or try a different username.');
+      } else {
+        setError('Failed to fetch GitHub data. Please try again.');
+      }
       return null;
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -507,7 +531,10 @@ const createPortfolioWithUsernameOnly = () => {
                   label="Enter a Github Username"
                   radius="md"
                   onChange={(e) => setUsername(e.target.value)}
+                  onFocus={() => setUsernameError('')}
                   w="40%"
+                  error={usernameError}
+                  disabled={isLoading}
                   styles={(theme) => ({
                     label: {
                       fontWeight: 600,
@@ -520,8 +547,10 @@ const createPortfolioWithUsernameOnly = () => {
                   radius="md"
                   color="teal"
                   onClick={() => fetchUserAndRepos(username)}
+                  loading={isLoading}
+                  disabled={!username.trim()}
                 >
-                  Fetch Repos
+                  {isLoading ? 'Fetching...' : 'Fetch Repos'}
                 </Button>
                 {auth.currentUser && auth.currentUser.uid && (
                   <Link
