@@ -125,7 +125,7 @@ export default function QuickstartPortfolio({
   //   `Quickstart portfolio page called -  Initial projects on client fetched: ${JSON.stringify(initialProjects)}`
   // );
   const [activeTab, setActiveTab] = useState('second');
-  const { userData } = useContext(AuthContext);
+  const { userData, currentUser } = useContext(AuthContext);
   const router = useRouter();
   const [profile, setProfile] = useState(initialProfile);
   const [projects, setProjects] = useState(initialProjects);
@@ -138,6 +138,10 @@ export default function QuickstartPortfolio({
     return <LoadingPage />;
   }
 
+  console.log('userData')
+  console.log(userData)
+  console.log('currentUser')
+  console.log(currentUser)
   // Use Jotai for state management
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
@@ -268,7 +272,7 @@ export default function QuickstartPortfolio({
   }
 
   // 4. Check if profile and projects are loaded
-  if (!profile && !draftProjects && !publishedProjects) {
+  if (!profile || (!draftProjects && !publishedProjects)) {
     return <LoadingPage />;
   }
 
@@ -284,7 +288,14 @@ export default function QuickstartPortfolio({
   //   initialProjects
   // );
 
-  const isCurrentUser = true; // For quickstart, user is always "current"
+  const isCurrentUser =
+      userData && anonymousId &&
+      (currentUser.uid === anonymousId.toString())
+        ? true
+        : false;
+
+  // const isCurrentUser = true;
+  // For quickstart, user is always "current"
 
   // const QuickstartBanner = () => (
   //   <Paper p="md" mb="lg" withBorder>

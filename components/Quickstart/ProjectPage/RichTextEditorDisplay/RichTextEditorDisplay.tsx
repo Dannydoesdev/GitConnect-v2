@@ -98,7 +98,7 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
   }
 
   return (
-    <Container size="lg" px="lg" py="lg" className={classes.container}>
+    <Container fluid size="lg" px="lg" py="lg" className={classes.container}>
       {/* <Paper shadow="xl" p="xl"> */}
       <Card shadow="md" radius="md" p="xl">
         {/* // className={classes.card}> */}
