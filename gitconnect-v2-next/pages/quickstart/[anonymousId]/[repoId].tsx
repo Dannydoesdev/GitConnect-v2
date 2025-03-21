@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   quickstartDraftProjectsAtom,
+  quickstartProfileAtom,
+  quickstartProfilePanelForm,
   quickstartPublishedProjectsAtom,
   quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
@@ -19,29 +21,43 @@ import {
   Space,
   Stack,
   Text,
+  Title,
 } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
+import useSWR from 'swr';
+import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
 import { getSingleQuickstartProject } from '@/lib/quickstart/getSavedProjects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
+import ProfilePageUserPanel from '@/components/Quickstart/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '@/components/Quickstart/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import RichTextEditorDisplay from '@/components/Quickstart/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 
+// Update fetcher to extract docData when available
+const fetcher = (url: string) => 
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => data?.docData || data);
+
 export default function QuickstartProject({
-  repoId,
+  // repoId,
   initialProject,
   initialReadme,
+  initialProfile,
 }: {
   repoId: string;
   initialProject: any;
   initialReadme: any;
+  initialProfile: any;
 }) {
   const router = useRouter();
 
   // const [allProjects, setAllProjects] = useState()
   const [project, setProject] = useState(initialProject);
   const [readme, setReadme] = useState(initialReadme);
+  const [profile, setProfile] = useState(initialProfile);
+  // const [isLoading, setIsLoading] = useState(true);
 
   // Add router.isReady check to prevent hydration errors
   if (!router.isReady) {
@@ -51,11 +67,36 @@ export default function QuickstartProject({
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjects] = useAtom(quickstartDraftProjectsAtom);
   const [publishedProjects] = useAtom(quickstartPublishedProjectsAtom);
+  const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm);
+  const [profileDataAtom] = useAtom(quickstartProfileAtom);
 
+  // 2. Get query parameters
+  // const projectname = router.query.projectname as string;
+  // const username_lowercase = router.query.username_lowercase as string;
+  const { anonymousId, repoId } = router.query as { anonymousId: string; repoId: string };
+
+  const profileKey = anonymousId
+    ? `/api/quickstart/getUserProfile?anonymousId=${anonymousId}`
+    : null;
+
+  const { data: fetchProfile, error: profileError } = useSWR(profileKey, fetcher, {
+    fallbackData: initialProfile,
+    revalidateOnMount: true,
+  });
   // If quickstart state project exists - rely on them
   // Else rely on initial props (from Firebase)
   useEffect(() => {
+    
+    // console.log('Iniital Project')
+    // console.log(initialProfile)
+    // console.log('Draft PRojects Atom:')
+    // console.log(draftProjects)
+    // console.log('Published Projects atom:')
+    // console.log(publishedProjects)
+    
     // if (draftProjects && publishedProjects && initialProject) {
+
+
     // }
     if (initialProject && Object.keys(initialProject).length > 0) {
       // console.log('initial Project found - using for project');
@@ -104,13 +145,51 @@ export default function QuickstartProject({
         // console.log('no readme found in initial props or jotai atom! no action taken');
       }
     }
+    // const profile = fetchProfile ?? initialProfile ?? null;
+
+    // console.log('FetchProfile SWR:');
+    // console.log(fetchProfile);
+    // console.log('Initial Profile:');
+    // console.log(initialProfile);
+    // console.log('Profile Data Atom:');
+    // console.log(profileDataAtom);
+
+    if (fetchProfile && Object.keys(fetchProfile).length > 0) {
+      // console.log('fetchProfile found - using')
+      setProfile(fetchProfile);
+    } else if (initialProfile && Object.keys(initialProfile).length > 0) {
+      // console.log('initial Profile found - using for profile');
+
+      // console.log(
+      //   'ProfileDatAtom NOT FOUND found - initialProfile found - setting as Profile:'
+      // );
+      // console.log(initialProfile);
+      setProfile(initialProfile);
+    }
+    // Set profile if it exists in Atom else use initialProfile from static Props
+    else if (profileDataAtom && Object.keys(profileDataAtom).length > 0) {
+      // console.log('NO initial profile found - ProfileDataAtom found - setting as Profile:');
+      // console.log(profileDataAtom);
+      setProfile(profileDataAtom);
+    } else {
+      // If none available - set blank
+      // console.log('initialProfile AND profileDataAtom NOT found - setting null array as Profile');
+      setProfile([]);
+    }
 
     // Set profile if it exists
     // if (initialProfile) {
     //   console.log('QuickstartPortfolio - initialProfile exists');
     //   setProfile(initialProfile);
     // }
-  }, [draftProjects, publishedProjects, initialProject]);
+  }, [
+    draftProjects,
+    publishedProjects,
+    initialProject,
+    initialProfile,
+    router,
+    fetchProfile,
+  ]);
 
   // If no quickstart state exists, redirect to start
   // if (!quickstartState.isQuickstart) {
@@ -131,12 +210,12 @@ export default function QuickstartProject({
   }
 
   // 3. Check if we have the required state and data
-  if (!quickstartState.isQuickstart && !initialProject) {
+  if (!draftProjects && !initialProject) {
     return <LoadingPage />;
   }
 
   // 4. Check if profile and projects are loaded
-  if (!project) {
+  if (!project || !profile) {
     // console.log('project not found');
     // console.log('project state:', allProjects);
     return <LoadingPage />;
@@ -173,6 +252,18 @@ export default function QuickstartProject({
       ) : (
         <></>
       )}
+      {profile && !profileError && (
+        <Container size="sm">
+          <Group position="center" my="lg">
+            <Title size="h3"> Developer Info: </Title>
+          </Group>
+          <ProfilePageUserPanel
+            props={profile}
+            // currentUser={isCurrentUser}
+          />
+        </Container>
+      )}
+
       {/* <Space h='lg' /> */}
       <Container size="lg">
         <Space h="lg" />
@@ -217,14 +308,26 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   // );
 
   const { projectData, readme } = await getSingleQuickstartProject(anonymousId, repoId);
-
+  const profileData = await getProfileDataWithAnonymousId(anonymousId);
   // console.log('project Data (without readme) in staticProps:');
   // console.log(projectData);
+
+  // console.log('profileData in static props')
+  // console.log(profileData)
+  // const initialProject = projectData ?? null;
+  // const initialProfile = Array.isArray(profileData)
+  //   ? (profileData[0]?.docData ?? null)
+  //   : (profileData?.docData ?? null);
+
+ // Ensure the profile data is extracted correctly
+  // profileData from getProfileDataWithAnonymousId comes as { docData: {...} }
+  const initialProfile = profileData?.docData || null;
 
   return {
     props: {
       initialProject: projectData ?? null,
       initialReadme: readme ?? null,
+      initialProfile,
       isQuickstart: true,
       repoId,
     },

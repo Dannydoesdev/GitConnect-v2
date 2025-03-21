@@ -147,7 +147,6 @@ export default function QuickstartPortfolio({
 
   // Use quickstart state if available, otherwise use props
   // const profile = quickstartState.profile;
-
   // If quickstart state projects & profile exist - rely on them
   // Else rely on initial props (from Firebase)
   useEffect(() => {
@@ -372,31 +371,34 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { anonymousId } = params as { anonymousId: string };
-  // console.log(`Quickstart portfolio page called - anonymous ID received: ${anonymousId}`);
 
   const profileData = await getProfileDataWithAnonymousId(anonymousId);
   const projectData = await getAllUserProjectsWithAnonymousId(anonymousId);
-  // console.log(`Quickstart portfolio page called - profile fetched: ${JSON.stringify(profileData)}`);
 
   // console.log(
   //   `Quickstart portfolio page called - projects fetched: ${JSON.stringify(projectData)}`
   // );
+  // console.log('profileData in static props')
+  // console.log(profileData)
+  // console.log('projects Data in static props')
+  // console.log(projectData)
 
+  const initialProfile = profileData?.docData || null;
   const initialProjects = projectData ?? null;
-  const initialProfile = Array.isArray(profileData)
-    ? (profileData[0]?.docData ?? null)
-    : (profileData?.docData ?? null);
+
+  // const initialProjects = projectData ?? null;
+  // const initialProfile = Array.isArray(profileData)
+  //   ? (profileData[0]?.docData ?? null)
+  //   : (profileData?.docData ?? null);
   // const initialProfile = profileData ?? null;
   // If we found data, set it in props and update quickstart state
 
   return {
     props: {
-      // initialState: {
       initialProfile,
       initialProjects,
       isQuickstart: true,
       anonymousId,
-      // },
     },
     revalidate: 5,
   };
