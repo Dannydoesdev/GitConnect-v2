@@ -11,11 +11,14 @@ import {
   quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
 import {
+  AppShell,
+  Aside,
   Blockquote,
   Button,
   Center,
   Container,
   Divider,
+  Flex,
   Group,
   Paper,
   Space,
@@ -35,7 +38,7 @@ import { ProjectPageDynamicHero } from '@/components/Quickstart/ProjectPage/Proj
 import RichTextEditorDisplay from '@/components/Quickstart/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 
 // Update fetcher to extract docData when available
-const fetcher = (url: string) => 
+const fetcher = (url: string) =>
   fetch(url)
     .then((res) => res.json())
     .then((data) => data?.docData || data);
@@ -86,16 +89,14 @@ export default function QuickstartProject({
   // If quickstart state project exists - rely on them
   // Else rely on initial props (from Firebase)
   useEffect(() => {
-    
     // console.log('Iniital Project')
     // console.log(initialProfile)
     // console.log('Draft PRojects Atom:')
     // console.log(draftProjects)
     // console.log('Published Projects atom:')
     // console.log(publishedProjects)
-    
-    // if (draftProjects && publishedProjects && initialProject) {
 
+    // if (draftProjects && publishedProjects && initialProject) {
 
     // }
     if (initialProject && Object.keys(initialProject).length > 0) {
@@ -229,10 +230,26 @@ export default function QuickstartProject({
 
   return (
     <>
-      <ProjectPageDynamicHero project={project} />
+      <Container fluid>
+        {/* <AppShell */}
+        {/* <Group
+          mt={40}
+          // ml={300}
+          // ml={{
+          //   xxs: 0,
+          //   xs: 0,
+          //   md: 'calc(30%)',
+          // }}
+          // w={{
+          //   base: 'calc(63%)',
+          // }}
+          // position='center'
+          // mx='auto'
+        > */}
+        <ProjectPageDynamicHero project={project} />
 
-      {/* Show draft status if applicable */}
-      {/* {project.hidden && (
+        {/* Show draft status if applicable */}
+        {/* {project.hidden && (
         <Paper p="md" mb="lg" withBorder>
           <Group position="apart">
             <Text>This is a draft project. Create an account to publish it!</Text>
@@ -243,59 +260,300 @@ export default function QuickstartProject({
         </Paper>
       )} */}
 
-      <ProjectPageDynamicContent project={project} />
+        <Stack
+          mr={{
+            // xxs: 0,
+            // xs: 0,
+            //  xxs: 'calc(30%)',
+            //   xs: 'calc(25%)',
+            xxs: 0,
+            sm: 'calc(5%)',
 
-      {readme ? (
-        <RichTextEditorDisplay content={readme} />
-      ) : initialReadme ? (
-        <RichTextEditorDisplay content={initialReadme} />
-      ) : (
-        <></>
-      )}
-      {profile && !profileError && (
-        <Container size="sm">
-          <Group position="center" my="lg">
+            // md: 'calc(20%)',
+          }}
+          ml={{
+            xxs: 0,
+            xs: 0,
+            sm: 0,
+            md: 0,
+            lg: 'calc(15%)',
+            xl: 'calc(15%)',
+          }}
+          w={{
+            xxxs: 'calc(100%)',
+            xxs: 'calc(100%)',
+            xs: 'calc(95%)',
+            sm: 'calc(75%)',
+            md: 'calc(80%)',
+            lg: 'calc(60%)',
+            xl: 'calc(65%)',
+            xxl: 'calc(60%)',
+
+            // base: 'calc(70%)',
+          }}
+        >
+          <ProjectPageDynamicContent project={project} />
+
+          {readme ? (
+            <RichTextEditorDisplay content={readme} />
+          ) : initialReadme ? (
+            <RichTextEditorDisplay content={initialReadme} />
+          ) : (
+            <></>
+          )}
+
+          {/* {profile && !profileError && (
+            <Container size="sm">
+              <Group position="center" my="lg">
+                <Title size="h3"> Developer Info: </Title>
+              </Group>
+              <ProfilePageUserPanel props={profile} />
+            </Container>
+          )} */}
+
+          {/* <Space h='lg' /> */}
+          <Container size="lg">
+            <Space h="lg" />
+            <Divider size="sm" my="lg" />
+
+            {/* Add sign up prompt at bottom */}
+            <Center mt={50}>
+              <Stack align="center" spacing="xs">
+                <Text size="lg" weight={500}>
+                  Want to edit and publish this project?
+                </Text>
+                <Space h="xs" />
+                <Button component={Link} href="/signup" size="md" color="teal">
+                  Create Your Account
+                </Button>
+                <Space h="xs" />
+
+                {/* <Group position="center"> */}
+                <Blockquote
+                  cite="- GitConnect notes"
+                  color="indigo"
+                  icon={<IconInfoCircle size="1.5rem" />}
+                >
+                  Registered users have many more tools to edit projects <br /> You'll be
+                  asked to choose your portfolio projects again
+                </Blockquote>
+                {/* </Group> */}
+              </Stack>
+            </Center>
+          </Container>
+        </Stack>
+
+        {profile && !profileError && (
+          <Aside
+            hiddenBreakpoint="sm"
+            hidden={true}
+            styles={() => ({
+              root: {
+                marginTop: '60px',
+              },
+            })}
+            fixed={false}
+            zIndex={1}
+            // mt={80}
+            my="auto"
+            width={{
+              xxs: 'calc(30%)',
+              xs: 'calc(25%)',
+              sm: 'calc(22%)',
+              md: 'calc(20%)',
+              xl: 'calc(18%)',
+              xxl: 'calc(15%)',
+              base: 'calc(30%)',
+            }}
+          >
+            {/* First section with normal height (depends on section content) */}
+            <Aside.Section mt={200} mx="auto">
+              <Text weight={600} c="dimmed">
+                Developer Info{' '}
+              </Text>
+              {/* <Group position="center" my="lg">
             <Title size="h3"> Developer Info: </Title>
-          </Group>
-          <ProfilePageUserPanel
-            props={profile}
-            // currentUser={isCurrentUser}
-          />
-        </Container>
-      )}
+          </Group> */}
+            </Aside.Section>
 
-      {/* <Space h='lg' /> */}
-      <Container size="lg">
-        <Space h="lg" />
-        <Divider size="sm" my="lg" />
+            {/* Grow section will take all available space that is not taken by first and last sections */}
 
-        {/* Add sign up prompt at bottom */}
-        <Center mt={50}>
-          <Stack align="center" spacing="xs">
-            <Text size="lg" weight={500}>
-              Want to edit and publish this project?
-            </Text>
-            <Space h="xs" />
-            <Button component={Link} href="/signup" size="md" color="teal">
-              Create Your Account
-            </Button>
-            <Space h="xs" />
-
-            {/* <Group position="center"> */}
-            <Blockquote
-              cite="- GitConnect notes"
-              color="indigo"
-              icon={<IconInfoCircle size="1.5rem" />}
-            >
-              Registered users have many more tools to edit projects <br /> You'll be
-              asked to choose your portfolio projects again
-            </Blockquote>
-            {/* </Group> */}
-          </Stack>
-        </Center>
+            <Aside.Section mt={50}>
+              <ProfilePageUserPanel
+                props={profile}
+                // currentUser={isCurrentUser}
+              />
+            </Aside.Section>
+          </Aside>
+        )}
       </Container>
     </>
   );
+}
+{
+  /* <Flex direction="column" align="center">
+                <Button
+                  component="a"
+                  radius="md"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.blue[7],
+                      [theme.fn.smallerThan('sm')]: {
+                        padding: 0,
+                        fontSize: 12,
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                >
+                  Import Readme
+                </Button>
+                <Button
+                  component="a"
+                  radius="md"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.blue[7],
+                      [theme.fn.smallerThan('sm')]: {
+                        padding: 0,
+                        fontSize: 12,
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                >
+                  Settings{' '}
+                </Button>
+                <Button
+                  component="a"
+                  radius="md"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.blue[7],
+                      [theme.fn.smallerThan('sm')]: {
+                        // size: 'xs' ,
+                        padding: 0,
+                        fontSize: 12,
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                ></Button>
+              </Flex>
+            </Aside.Section>
+            <Aside.Section>
+              <Flex direction="column" align="center">
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.green[8],
+                      [theme.fn.smallerThan('sm')]: {},
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.green[9]
+                            : theme.colors.green[9],
+                      },
+                    },
+                  })}
+                >
+                  Continue
+                </Button>
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={12}
+                  mb={30}
+                  className="mx-auto"
+                  variant="outline"
+                  styles={(theme) => ({
+                    root: {
+                      [theme.fn.smallerThan('sm')]: {},
+                      '&:hover': {
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[0]
+                            : theme.colors.blue[0],
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[7],
+                      },
+                    },
+                  })}
+                >
+                  Save Draft
+                </Button>
+              </Flex> */
+}
+{
+  /* </Aside.Section>
+        </Aside>
+        )}
+              </Container> */
+}
+{
+  /* </Container> */
+}
+{
+  /* </>
+  );
+} */
 }
 
 // getStaticProps only needed for direct URL access
@@ -319,7 +577,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   //   ? (profileData[0]?.docData ?? null)
   //   : (profileData?.docData ?? null);
 
- // Ensure the profile data is extracted correctly
+  // Ensure the profile data is extracted correctly
   // profileData from getProfileDataWithAnonymousId comes as { docData: {...} }
   const initialProfile = profileData?.docData || null;
 
