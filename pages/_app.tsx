@@ -117,3 +117,18 @@ export default function App(props: AppProps) {
     </>
   );
 }
+
+//  Previous implementations:
+
+
+// App.getInitialProps = ({ ctx }: { ctx: GetServerSidePropsContext }) => ({
+//   colorScheme: getCookie('mantine-color-scheme', ctx) || 'dark',
+// });
+
+// App.getInitialProps = async (appContext: AppContext) => {
+//   const appProps = await NextApp.getInitialProps(appContext);
+//   return {
+//     ...appProps,
+//     colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
+//   };
+// };
