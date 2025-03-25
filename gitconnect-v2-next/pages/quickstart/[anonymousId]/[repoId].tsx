@@ -332,7 +332,7 @@ export default function QuickstartProject({
                   sm: 'calc(85%)',
                   md: 'calc(80%)',
                   lg: 'calc(75%)',
-                  xl: 'calc(55%)',
+                  xl: 'calc(61%)',
                   xxl: 'calc(55%)',
 
                   // base: 'calc(70%)',
