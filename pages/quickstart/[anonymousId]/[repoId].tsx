@@ -22,6 +22,7 @@ import {
   Group,
   MediaQuery,
   Paper,
+  ScrollArea,
   Space,
   Stack,
   Text,
@@ -431,7 +432,7 @@ export default function QuickstartProject({
             styles={() => ({
               root: {
                 display: hideAside ? 'none' : 'flex',
-                marginTop: '60px',
+                // marginTop: '60px',
                 // position: 'fixed',
                 // right: 0,
                 // top: 0,
@@ -439,7 +440,7 @@ export default function QuickstartProject({
             })}
             fixed={false}
             // mt={80}
-            // my="auto"
+            my="auto"
             // fixed={true}
             zIndex={1}
             width={{
@@ -454,7 +455,7 @@ export default function QuickstartProject({
             }}
           >
             {/* First section with normal height (depends on section content) */}
-            <Aside.Section mt={200} mx="auto">
+            <Aside.Section mt={100} mx="auto">
               <Text weight={600} c="dimmed">
                 Developer Info{' '}
               </Text>
@@ -465,7 +466,7 @@ export default function QuickstartProject({
 
             {/* Grow section will take all available space that is not taken by first and last sections */}
 
-            <Aside.Section mt={50}>
+            <Aside.Section grow component={ScrollArea} mt={50}>
               <ProfilePageUserPanel
                 props={profile}
                 // currentUser={isCurrentUser}
