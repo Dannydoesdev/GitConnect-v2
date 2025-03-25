@@ -1,7 +1,11 @@
 import { url } from 'inspector';
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { quickstartProfileAtom, quickstartProfilePanelForm, quickstartStateAtom } from '@/atoms';
+import {
+  quickstartProfileAtom,
+  quickstartProfilePanelForm,
+  quickstartStateAtom,
+} from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
 import {
   ActionIcon,
@@ -14,6 +18,7 @@ import {
   Group,
   MultiSelect,
   Paper,
+  rem,
   Space,
   Spoiler,
   Stack,
@@ -186,11 +191,7 @@ interface ProfilePageUserPanelProps {
   currentUser?: boolean;
 }
 
-const ProfilePageUserPanel = ({
-  props,
-  currentUser,
-}: ProfilePageUserPanelProps) => {
-
+const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps) => {
   // console.log('props in ProfilePageUserPanel');
   // console.log(props);
 
@@ -211,9 +212,8 @@ const ProfilePageUserPanel = ({
 
   // const [formData, setFormData] = useState({})
   const [formData, setFormData] = useAtom(quickstartProfilePanelForm);
-  const [quickstartState, setQuickstartState] = useAtom(quickstartStateAtom)
+  const [quickstartState, setQuickstartState] = useAtom(quickstartStateAtom);
   // const [profileDataAtom, setProfileDataAtom] = useAtom(quickstartProfileAtom);
-
 
   // Function to handle saving changes
   const handleSaveChanges = async (newData: any) => {
@@ -297,9 +297,84 @@ const ProfilePageUserPanel = ({
 
         {/* Edit Profile Button */}
         {currentUser && (
-          <Button variant="filled" fullWidth mt="xl" onClick={open}>
-            Edit Your Profile
-          </Button>
+          <Group mx="xl">
+            <Button variant="filled" fullWidth mt="xl" onClick={open}>
+              Edit Your Profile
+            </Button>
+            <Space h="xxs" />
+          </Group>
+        )}
+
+        {/* GITHUB BUTTON */}
+        {/* TODO: SIMPLIFY LOGIC (+throuhgout this component) */}
+        {formData.githubUrl ? (
+          <Group position="center">
+            <Link href={formData.githubUrl} passHref legacyBehavior>
+              <Button
+                color="gray"
+                component="a"
+                target="_blank"
+                variant="default"
+                mt="xl"
+                styles={(theme) => ({
+                  root: {
+                    borderColor: '#d5d5d5e0',
+                    height: rem(38),
+                    paddingLeft: rem(18),
+                    paddingRight: rem(18),
+                  },
+                })}
+              >
+                <FaGithub /> &nbsp; On GitHub
+              </Button>
+            </Link>
+          </Group>
+        ) : props.githubUrl ? (
+          <Group position="center">
+            <Link href={props.githubUrl} passHref legacyBehavior>
+              <Button
+                color="gray"
+                component="a"
+                target="_blank"
+                variant="default"
+                mt="xl"
+                styles={(theme) => ({
+                  root: {
+                    borderColor: '#d5d5d5e0',
+                    height: rem(38),
+                    paddingLeft: rem(18),
+                    paddingRight: rem(18),
+                  },
+                })}
+              >
+                <FaGithub /> &nbsp; On GitHub
+              </Button>
+            </Link>
+          </Group>
+        ) : props.html_url ? (
+          <Group position="center">
+            <Link href={props.html_url} passHref legacyBehavior>
+              <Button
+                color="gray"
+                component="a"
+                target="_blank"
+                variant="default"
+                mt="xl"
+                styles={(theme) => ({
+                  root: {
+                    borderColor: '#d5d5d5e0',
+                    height: rem(38),
+                    paddingLeft: rem(18),
+                    paddingRight: rem(18),
+                  },
+                })}
+              >
+                <FaGithub /> &nbsp; On GitHub
+              </Button>
+            </Link>
+          </Group>
+        ) : (
+          <></>
         )}
 
         {/* Bio Section */}

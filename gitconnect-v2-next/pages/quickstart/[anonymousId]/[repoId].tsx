@@ -5,43 +5,65 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   quickstartDraftProjectsAtom,
+  quickstartProfileAtom,
+  quickstartProfilePanelForm,
   quickstartPublishedProjectsAtom,
   quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
 import {
+  AppShell,
+  Aside,
   Blockquote,
   Button,
   Center,
   Container,
   Divider,
+  Flex,
   Group,
+  MediaQuery,
   Paper,
+  ScrollArea,
   Space,
   Stack,
   Text,
+  Title,
 } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
+import useSWR from 'swr';
+import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
 import { getSingleQuickstartProject } from '@/lib/quickstart/getSavedProjects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
+import ProfilePageUserPanel from '@/components/Quickstart/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '@/components/Quickstart/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import RichTextEditorDisplay from '@/components/Quickstart/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
 
+// Update fetcher to extract docData when available
+const fetcher = (url: string) =>
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => data?.docData || data);
+
 export default function QuickstartProject({
-  repoId,
+  // repoId,
   initialProject,
   initialReadme,
+  initialProfile,
 }: {
   repoId: string;
   initialProject: any;
   initialReadme: any;
+  initialProfile: any;
 }) {
   const router = useRouter();
 
   // const [allProjects, setAllProjects] = useState()
   const [project, setProject] = useState(initialProject);
   const [readme, setReadme] = useState(initialReadme);
+  const [profile, setProfile] = useState(initialProfile);
+  const [hideAside, setHideAside] = useState(false);
+  // const [isLoading, setIsLoading] = useState(true);
 
   // Add router.isReady check to prevent hydration errors
   if (!router.isReady) {
@@ -51,11 +73,34 @@ export default function QuickstartProject({
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjects] = useAtom(quickstartDraftProjectsAtom);
   const [publishedProjects] = useAtom(quickstartPublishedProjectsAtom);
+  const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm);
+  const [profileDataAtom] = useAtom(quickstartProfileAtom);
 
+  // 2. Get query parameters
+  // const projectname = router.query.projectname as string;
+  // const username_lowercase = router.query.username_lowercase as string;
+  const { anonymousId, repoId } = router.query as { anonymousId: string; repoId: string };
+
+  const profileKey = anonymousId
+    ? `/api/quickstart/getUserProfile?anonymousId=${anonymousId}`
+    : null;
+
+  const { data: fetchProfile, error: profileError } = useSWR(profileKey, fetcher, {
+    fallbackData: initialProfile,
+    revalidateOnMount: true,
+  });
   // If quickstart state project exists - rely on them
   // Else rely on initial props (from Firebase)
   useEffect(() => {
+    // console.log('Iniital Project')
+    // console.log(initialProfile)
+    // console.log('Draft PRojects Atom:')
+    // console.log(draftProjects)
+    // console.log('Published Projects atom:')
+    // console.log(publishedProjects)
+
     // if (draftProjects && publishedProjects && initialProject) {
+
     // }
     if (initialProject && Object.keys(initialProject).length > 0) {
       // console.log('initial Project found - using for project');
@@ -104,13 +149,51 @@ export default function QuickstartProject({
         // console.log('no readme found in initial props or jotai atom! no action taken');
       }
     }
+    // const profile = fetchProfile ?? initialProfile ?? null;
+
+    // console.log('FetchProfile SWR:');
+    // console.log(fetchProfile);
+    // console.log('Initial Profile:');
+    // console.log(initialProfile);
+    // console.log('Profile Data Atom:');
+    // console.log(profileDataAtom);
+
+    if (fetchProfile && Object.keys(fetchProfile).length > 0) {
+      // console.log('fetchProfile found - using')
+      setProfile(fetchProfile);
+    } else if (initialProfile && Object.keys(initialProfile).length > 0) {
+      // console.log('initial Profile found - using for profile');
+
+      // console.log(
+      //   'ProfileDatAtom NOT FOUND found - initialProfile found - setting as Profile:'
+      // );
+      // console.log(initialProfile);
+      setProfile(initialProfile);
+    }
+    // Set profile if it exists in Atom else use initialProfile from static Props
+    else if (profileDataAtom && Object.keys(profileDataAtom).length > 0) {
+      // console.log('NO initial profile found - ProfileDataAtom found - setting as Profile:');
+      // console.log(profileDataAtom);
+      setProfile(profileDataAtom);
+    } else {
+      // If none available - set blank
+      // console.log('initialProfile AND profileDataAtom NOT found - setting null array as Profile');
+      setProfile([]);
+    }
 
     // Set profile if it exists
     // if (initialProfile) {
     //   console.log('QuickstartPortfolio - initialProfile exists');
     //   setProfile(initialProfile);
     // }
-  }, [draftProjects, publishedProjects, initialProject]);
+  }, [
+    draftProjects,
+    publishedProjects,
+    initialProject,
+    initialProfile,
+    router,
+    fetchProfile,
+  ]);
 
   // If no quickstart state exists, redirect to start
   // if (!quickstartState.isQuickstart) {
@@ -131,12 +214,12 @@ export default function QuickstartProject({
   }
 
   // 3. Check if we have the required state and data
-  if (!quickstartState.isQuickstart && !initialProject) {
+  if (!draftProjects && !initialProject) {
     return <LoadingPage />;
   }
 
   // 4. Check if profile and projects are loaded
-  if (!project) {
+  if (!project || !profile) {
     // console.log('project not found');
     // console.log('project state:', allProjects);
     return <LoadingPage />;
@@ -150,10 +233,51 @@ export default function QuickstartProject({
 
   return (
     <>
-      <ProjectPageDynamicHero project={project} />
+      <Container fluid>
+        {/* <AppShell */}
+        {/* <Group
+          mt={40}
+          // ml={300}
+          // ml={{
+          //   xxs: 0,
+          //   xs: 0,
+          //   md: 'calc(30%)',
+          // }}
+          // w={{
+          //   base: 'calc(63%)',
+          // }}
+          // position='center'
+          // mx='auto'
+        > */}
 
-      {/* Show draft status if applicable */}
-      {/* {project.hidden && (
+        {hideAside && (
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <Group position="right">
+              <Button
+                mt="lg"
+                size="md"
+                onClick={() => setHideAside(!hideAside)}
+                style={{ zIndex: 100, position: 'fixed', right: 20, bottom: 20 }}
+              >
+                {hideAside ? 'Show' : 'Hide'} Dev Info
+              </Button>
+            </Group>
+          </MediaQuery>
+        )}
+
+        {/* <Button 
+          position="right" 
+          mt={20} 
+          onClick={() => setHideAside(!hideAside)}
+          style={{ zIndex: 100, position: 'fixed', right: 20, top: 20 }}
+        >
+          {hideAside ? 'Show' : 'Hide'} Developer Info
+        </Button> */}
+
+        <ProjectPageDynamicHero project={project} />
+
+        {/* Show draft status if applicable */}
+        {/* {project.hidden && (
         <Paper p="md" mb="lg" withBorder>
           <Group position="apart">
             <Text>This is a draft project. Create an account to publish it!</Text>
@@ -164,47 +288,366 @@ export default function QuickstartProject({
         </Paper>
       )} */}
 
-      <ProjectPageDynamicContent project={project} />
+        <Stack
+          // position='center'
+          // {hideAside ? mx='auto' }
+          // mx={hideAside && 'auto'}
+          mr={
+            hideAside
+              ? { md: 'auto', sm: 0 }
+              : {
+                  xxs: 0,
+                  sm: 0,
+                  // sm: 'calc(5%)',
+                  md: 'calc(20%)',
+                  lg: 'calc(20%)',
+                  xl: 'calc(20%)',
+                }
+          }
+          ml={
+            hideAside
+              ? { md: 'auto', sm: 0 }
+              : { xxs: 0, sm: 0, lg: 'calc(10%)', xl: 'calc(10%)' }
+          }
+          style={
+            {
+              // width: hideAside ? {
+              //       xxxs: 'calc(100%)',
+              //       xxs: 'calc(100%)',
+              //       xs: 'calc(95%)',
+              //       sm: 'calc(75%)',
+              //       md: 'calc(80%)',
+              //       lg: 'calc(60%)',
+              //       xl: 'calc(65%)',
+              //       xxl: 'calc(60%)',
+              // } : undefined,
+              // margin: hideAside ? '0 auto' : undefined,
+            }
+          }
+          w={
+            hideAside
+              ? {
+                  xxxs: 'calc(100%)',
+                  xxs: 'calc(100%)',
+                  xs: 'calc(95%)',
+                  sm: 'calc(85%)',
+                  md: 'calc(80%)',
+                  lg: 'calc(75%)',
+                  xl: 'calc(61%)',
+                  xxl: 'calc(55%)',
 
-      {readme ? (
-        <RichTextEditorDisplay content={readme} />
-      ) : initialReadme ? (
-        <RichTextEditorDisplay content={initialReadme} />
-      ) : (
-        <></>
-      )}
-      {/* <Space h='lg' /> */}
-      <Container size="lg">
-        <Space h="lg" />
-        <Divider size="sm" my="lg" />
+                  // base: 'calc(70%)',
+                }
+              : undefined
+          }
 
-        {/* Add sign up prompt at bottom */}
-        <Center mt={50}>
-          <Stack align="center" spacing="xs">
-            <Text size="lg" weight={500}>
-              Want to edit and publish this project?
-            </Text>
-            <Space h="xs" />
-            <Button component={Link} href="/signup" size="md" color="teal">
-              Create Your Account
-            </Button>
-            <Space h="xs" />
+          // w={
+          //   hideAside
+          //     ? '60%'
+          //     : {
+          //         xxxs: 'calc(100%)',
+          //         xxs: 'calc(100%)',
+          //         xs: 'calc(95%)',
+          //         sm: 'calc(75%)',
+          //         md: 'calc(80%)',
+          //         lg: 'calc(60%)',
+          //         xl: 'calc(65%)',
+          //         xxl: 'calc(60%)',
+          //       }
+          // }
+          // mr={{
+          //   // xxs: 0,
+          //   // xs: 0,
+          //   //  xxs: 'calc(30%)',
+          //   //   xs: 'calc(25%)',
+          //   xxs: 0,
+          //   sm: 'calc(5%)',
 
-            {/* <Group position="center"> */}
-            <Blockquote
-              cite="- GitConnect notes"
-              color="indigo"
-              icon={<IconInfoCircle size="1.5rem" />}
-            >
-              Registered users have many more tools to edit projects <br /> You'll be
-              asked to choose your portfolio projects again
-            </Blockquote>
-            {/* </Group> */}
-          </Stack>
-        </Center>
+          //   // md: 'calc(20%)',
+          // }}
+          // ml={{
+          //   xxs: 0,
+          //   xs: 0,
+          //   sm: 0,
+          //   md: 0,
+          //   lg: 'calc(15%)',
+          //   xl: 'calc(15%)',
+          // }}
+        >
+          <ProjectPageDynamicContent project={project} />
+
+          {readme ? (
+            <RichTextEditorDisplay content={readme} />
+          ) : initialReadme ? (
+            <RichTextEditorDisplay content={initialReadme} />
+          ) : (
+            <></>
+          )}
+
+          {/* {profile && !profileError && (
+            <Container size="sm">
+              <Group position="center" my="lg">
+                <Title size="h3"> Developer Info: </Title>
+              </Group>
+              <ProfilePageUserPanel props={profile} />
+            </Container>
+          )} */}
+
+          {/* <Space h='lg' /> */}
+          <Container size="lg">
+            <Space h="lg" />
+            <Divider size="sm" my="lg" />
+
+            {/* Add sign up prompt at bottom */}
+            <Center mt={50}>
+              <Stack align="center" spacing="xs">
+                <Text size="lg" weight={500}>
+                  Want to edit and publish this project?
+                </Text>
+                <Space h="xs" />
+                <Button component={Link} href="/signup" size="md" color="teal">
+                  Create Your Account
+                </Button>
+                <Space h="xs" />
+
+                {/* <Group position="center"> */}
+                <Blockquote
+                  cite="- GitConnect notes"
+                  color="indigo"
+                  icon={<IconInfoCircle size="1.5rem" />}
+                >
+                  Registered users have many more tools to edit projects <br /> You'll be
+                  asked to choose your portfolio projects again
+                </Blockquote>
+                {/* </Group> */}
+              </Stack>
+            </Center>
+          </Container>
+        </Stack>
+
+        {profile && !profileError && (
+          <Aside
+            hiddenBreakpoint="md"
+            hidden={true}
+            styles={() => ({
+              root: {
+                display: hideAside ? 'none' : 'flex',
+                // marginTop: '60px',
+                // position: 'fixed',
+                // right: 0,
+                // top: 0,
+              },
+            })}
+            fixed={false}
+            // mt={80}
+            my="auto"
+            // fixed={true}
+            zIndex={1}
+            width={{
+              xxs: 'calc(30%)',
+              xs: 'calc(25%)',
+              sm: 'calc(22%)',
+              md: 'calc(22%)',
+              lg: 'calc(20%)',
+              xl: 'calc(18%)',
+              xxl: 'calc(15%)',
+              // base: 'calc(30%)',
+            }}
+          >
+            {/* First section with normal height (depends on section content) */}
+            <Aside.Section mt={100} mx="auto">
+              <Text weight={600} c="dimmed">
+                Developer Info{' '}
+              </Text>
+              {/* <Group position="center" my="lg">
+            <Title size="h3"> Developer Info: </Title>
+          </Group> */}
+            </Aside.Section>
+
+            {/* Grow section will take all available space that is not taken by first and last sections */}
+
+            <Aside.Section grow component={ScrollArea} mt={50}>
+              <ProfilePageUserPanel
+                props={profile}
+                // currentUser={isCurrentUser}
+              />
+            </Aside.Section>
+            <Group position="center">
+              <Button mt="lg" size="md" onClick={() => setHideAside(!hideAside)}>
+                {hideAside ? 'Show' : 'Hide'} Dev Info
+                {/* Developer Info */}
+              </Button>
+            </Group>
+          </Aside>
+        )}
       </Container>
     </>
   );
+}
+{
+  /* <Flex direction="column" align="center">
+                <Button
+                  component="a"
+                  radius="md"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.blue[7],
+                      [theme.fn.smallerThan('sm')]: {
+                        padding: 0,
+                        fontSize: 12,
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                >
+                  Import Readme
+                </Button>
+                <Button
+                  component="a"
+                  radius="md"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.blue[7],
+                      [theme.fn.smallerThan('sm')]: {
+                        padding: 0,
+                        fontSize: 12,
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                >
+                  Settings{' '}
+                </Button>
+                <Button
+                  component="a"
+                  radius="md"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.blue[7],
+                      [theme.fn.smallerThan('sm')]: {
+                        // size: 'xs' ,
+                        padding: 0,
+                        fontSize: 12,
+                      },
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                ></Button>
+              </Flex>
+            </Aside.Section>
+            <Aside.Section>
+              <Flex direction="column" align="center">
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={40}
+                  className="mx-auto"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.green[8],
+                      [theme.fn.smallerThan('sm')]: {},
+                      '&:hover': {
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.green[9]
+                            : theme.colors.green[9],
+                      },
+                    },
+                  })}
+                >
+                  Continue
+                </Button>
+                <Button
+                  component="a"
+                  radius="lg"
+                  w={{
+                    base: '95%',
+                    md: '80%',
+                    lg: '60%',
+                    sm: '90%',
+                  }}
+                  mt={12}
+                  mb={30}
+                  className="mx-auto"
+                  variant="outline"
+                  styles={(theme) => ({
+                    root: {
+                      [theme.fn.smallerThan('sm')]: {},
+                      '&:hover': {
+                        color:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[0]
+                            : theme.colors.blue[0],
+                        backgroundColor:
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.blue[9]
+                            : theme.colors.blue[7],
+                      },
+                    },
+                  })}
+                >
+                  Save Draft
+                </Button>
+              </Flex> */
+}
+{
+  /* </Aside.Section>
+        </Aside>
+        )}
+              </Container> */
+}
+{
+  /* </Container> */
+}
+{
+  /* </>
+  );
+} */
 }
 
 // getStaticProps only needed for direct URL access
@@ -217,14 +660,26 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   // );
 
   const { projectData, readme } = await getSingleQuickstartProject(anonymousId, repoId);
-
+  const profileData = await getProfileDataWithAnonymousId(anonymousId);
   // console.log('project Data (without readme) in staticProps:');
   // console.log(projectData);
+
+  // console.log('profileData in static props')
+  // console.log(profileData)
+  // const initialProject = projectData ?? null;
+  // const initialProfile = Array.isArray(profileData)
+  //   ? (profileData[0]?.docData ?? null)
+  //   : (profileData?.docData ?? null);
+
+  // Ensure the profile data is extracted correctly
+  // profileData from getProfileDataWithAnonymousId comes as { docData: {...} }
+  const initialProfile = profileData?.docData || null;
 
   return {
     props: {
       initialProject: projectData ?? null,
       initialReadme: readme ?? null,
+      initialProfile,
       isQuickstart: true,
       repoId,
     },

@@ -125,7 +125,7 @@ export default function QuickstartPortfolio({
   //   `Quickstart portfolio page called -  Initial projects on client fetched: ${JSON.stringify(initialProjects)}`
   // );
   const [activeTab, setActiveTab] = useState('second');
-  const { userData } = useContext(AuthContext);
+  const { userData, currentUser } = useContext(AuthContext);
   const router = useRouter();
   const [profile, setProfile] = useState(initialProfile);
   const [projects, setProjects] = useState(initialProjects);
@@ -138,6 +138,10 @@ export default function QuickstartPortfolio({
     return <LoadingPage />;
   }
 
+  // console.log('userData')
+  // console.log(userData)
+  // console.log('currentUser')
+  // console.log(currentUser)
   // Use Jotai for state management
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
@@ -147,7 +151,6 @@ export default function QuickstartPortfolio({
 
   // Use quickstart state if available, otherwise use props
   // const profile = quickstartState.profile;
-
   // If quickstart state projects & profile exist - rely on them
   // Else rely on initial props (from Firebase)
   useEffect(() => {
@@ -269,7 +272,7 @@ export default function QuickstartPortfolio({
   }
 
   // 4. Check if profile and projects are loaded
-  if (!profile && !draftProjects && !publishedProjects) {
+  if (!profile || (!draftProjects && !publishedProjects)) {
     return <LoadingPage />;
   }
 
@@ -285,7 +288,14 @@ export default function QuickstartPortfolio({
   //   initialProjects
   // );
 
-  const isCurrentUser = true; // For quickstart, user is always "current"
+  const isCurrentUser =
+      userData && anonymousId &&
+      (currentUser.uid === anonymousId.toString())
+        ? true
+        : false;
+
+  // const isCurrentUser = true;
+  // For quickstart, user is always "current"
 
   // const QuickstartBanner = () => (
   //   <Paper p="md" mb="lg" withBorder>
@@ -372,31 +382,34 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { anonymousId } = params as { anonymousId: string };
-  // console.log(`Quickstart portfolio page called - anonymous ID received: ${anonymousId}`);
 
   const profileData = await getProfileDataWithAnonymousId(anonymousId);
   const projectData = await getAllUserProjectsWithAnonymousId(anonymousId);
-  // console.log(`Quickstart portfolio page called - profile fetched: ${JSON.stringify(profileData)}`);
 
   // console.log(
   //   `Quickstart portfolio page called - projects fetched: ${JSON.stringify(projectData)}`
   // );
+  // console.log('profileData in static props')
+  // console.log(profileData)
+  // console.log('projects Data in static props')
+  // console.log(projectData)
 
+  const initialProfile = profileData?.docData || null;
   const initialProjects = projectData ?? null;
-  const initialProfile = Array.isArray(profileData)
-    ? (profileData[0]?.docData ?? null)
-    : (profileData?.docData ?? null);
+
+  // const initialProjects = projectData ?? null;
+  // const initialProfile = Array.isArray(profileData)
+  //   ? (profileData[0]?.docData ?? null)
+  //   : (profileData?.docData ?? null);
   // const initialProfile = profileData ?? null;
   // If we found data, set it in props and update quickstart state
 
   return {
     props: {
-      // initialState: {
       initialProfile,
       initialProjects,
       isQuickstart: true,
       anonymousId,
-      // },
     },
     revalidate: 5,
   };
