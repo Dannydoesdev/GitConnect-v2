@@ -6,24 +6,26 @@ import { HeroLanding } from '../components/HomePage/HomePageHero/HomePageHero';
 import HomePageProjectGrid from '../components/HomePage/HomePageProjects/HomePageProjectGrid';
 
 export const getStaticProps: GetStaticProps = async () => {
-  const sortedProjects = await getAllPublicProjectsAndSortWithTimeStamp();
+  const { projects, hasMore, totalProjects } = await getAllPublicProjectsAndSortWithTimeStamp(12, 0);
 
   return {
     props: {
-      sortedProjects,
+      initialProjects: projects,
+      hasMore,
+      totalProjects
     },
-    revalidate: 3600,
+    revalidate: 3600, // Revalidate every hour
   };
 };
 
-const Index: NextPage = ({ sortedProjects }: any) => {
+const Index: NextPage = ({ initialProjects, hasMore, totalProjects }: any) => {
   return (
     <>
       <HeroLanding />
       <Space h="xl" />
       <Space h="xl" />
       <Container fluid>
-        <HomePageProjectGrid projects={sortedProjects} />
+        <HomePageProjectGrid initialProjects={initialProjects} hasMore={hasMore} />
       </Container>
     </>
   );
