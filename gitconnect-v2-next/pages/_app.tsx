@@ -22,16 +22,19 @@ import axios from 'axios';
 // import '@unocss/reset/tailwind.css'
 // import 'uno.css'
 
-export default function App(props: AppProps & { colorScheme: ColorScheme }) {
+export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const router = useRouter()
  
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
   const [isClient, setIsClient] = useState(false);
 
   // This effect runs only on the client after hydration
   useEffect(() => {
     setIsClient(true);
+    // Get color scheme from cookie on client-side only
+    const savedColorScheme = getCookie('mantine-color-scheme') as ColorScheme || 'dark';
+    setColorScheme(savedColorScheme);
   }, []);
 
   const toggleColorScheme = (value?: ColorScheme) => {
@@ -115,14 +118,17 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   );
 }
 
+//  Previous implementations:
+
+
 // App.getInitialProps = ({ ctx }: { ctx: GetServerSidePropsContext }) => ({
 //   colorScheme: getCookie('mantine-color-scheme', ctx) || 'dark',
 // });
 
-App.getInitialProps = async (appContext: AppContext) => {
-  const appProps = await NextApp.getInitialProps(appContext);
-  return {
-    ...appProps,
-    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
-  };
-};
+// App.getInitialProps = async (appContext: AppContext) => {
+//   const appProps = await NextApp.getInitialProps(appContext);
+//   return {
+//     ...appProps,
+//     colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
+//   };
+// };
