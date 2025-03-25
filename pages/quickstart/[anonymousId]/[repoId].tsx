@@ -20,6 +20,7 @@ import {
   Divider,
   Flex,
   Group,
+  MediaQuery,
   Paper,
   Space,
   Stack,
@@ -60,6 +61,7 @@ export default function QuickstartProject({
   const [project, setProject] = useState(initialProject);
   const [readme, setReadme] = useState(initialReadme);
   const [profile, setProfile] = useState(initialProfile);
+  const [hideAside, setHideAside] = useState(false);
   // const [isLoading, setIsLoading] = useState(true);
 
   // Add router.isReady check to prevent hydration errors
@@ -246,6 +248,31 @@ export default function QuickstartProject({
           // position='center'
           // mx='auto'
         > */}
+
+        {hideAside && (
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <Group position="right">
+              <Button
+                mt="lg"
+                size="md"
+                onClick={() => setHideAside(!hideAside)}
+                style={{ zIndex: 100, position: 'fixed', right: 20, bottom: 20 }}
+              >
+                {hideAside ? 'Show' : 'Hide'} Dev Info
+              </Button>
+            </Group>
+          </MediaQuery>
+        )}
+
+        {/* <Button 
+          position="right" 
+          mt={20} 
+          onClick={() => setHideAside(!hideAside)}
+          style={{ zIndex: 100, position: 'fixed', right: 20, top: 20 }}
+        >
+          {hideAside ? 'Show' : 'Hide'} Developer Info
+        </Button> */}
+
         <ProjectPageDynamicHero project={project} />
 
         {/* Show draft status if applicable */}
@@ -261,36 +288,90 @@ export default function QuickstartProject({
       )} */}
 
         <Stack
-          mr={{
-            // xxs: 0,
-            // xs: 0,
-            //  xxs: 'calc(30%)',
-            //   xs: 'calc(25%)',
-            xxs: 0,
-            sm: 'calc(5%)',
+          // position='center'
+          // {hideAside ? mx='auto' }
+          // mx={hideAside && 'auto'}
+          mr={
+            hideAside
+              ? { md: 'auto', sm: 0 }
+              : {
+                  xxs: 0,
+                  sm: 0,
+                  // sm: 'calc(5%)',
+                  md: 'calc(20%)',
+                  lg: 'calc(20%)',
+                  xl: 'calc(20%)',
+                }
+          }
+          ml={
+            hideAside
+              ? { md: 'auto', sm: 0 }
+              : { xxs: 0, sm: 0, lg: 'calc(10%)', xl: 'calc(10%)' }
+          }
+          style={
+            {
+              // width: hideAside ? {
+              //       xxxs: 'calc(100%)',
+              //       xxs: 'calc(100%)',
+              //       xs: 'calc(95%)',
+              //       sm: 'calc(75%)',
+              //       md: 'calc(80%)',
+              //       lg: 'calc(60%)',
+              //       xl: 'calc(65%)',
+              //       xxl: 'calc(60%)',
+              // } : undefined,
+              // margin: hideAside ? '0 auto' : undefined,
+            }
+          }
+          w={
+            hideAside
+              ? {
+                  xxxs: 'calc(100%)',
+                  xxs: 'calc(100%)',
+                  xs: 'calc(95%)',
+                  sm: 'calc(85%)',
+                  md: 'calc(80%)',
+                  lg: 'calc(75%)',
+                  xl: 'calc(55%)',
+                  xxl: 'calc(55%)',
 
-            // md: 'calc(20%)',
-          }}
-          ml={{
-            xxs: 0,
-            xs: 0,
-            sm: 0,
-            md: 0,
-            lg: 'calc(15%)',
-            xl: 'calc(15%)',
-          }}
-          w={{
-            xxxs: 'calc(100%)',
-            xxs: 'calc(100%)',
-            xs: 'calc(95%)',
-            sm: 'calc(75%)',
-            md: 'calc(80%)',
-            lg: 'calc(60%)',
-            xl: 'calc(65%)',
-            xxl: 'calc(60%)',
+                  // base: 'calc(70%)',
+                }
+              : undefined
+          }
 
-            // base: 'calc(70%)',
-          }}
+          // w={
+          //   hideAside
+          //     ? '60%'
+          //     : {
+          //         xxxs: 'calc(100%)',
+          //         xxs: 'calc(100%)',
+          //         xs: 'calc(95%)',
+          //         sm: 'calc(75%)',
+          //         md: 'calc(80%)',
+          //         lg: 'calc(60%)',
+          //         xl: 'calc(65%)',
+          //         xxl: 'calc(60%)',
+          //       }
+          // }
+          // mr={{
+          //   // xxs: 0,
+          //   // xs: 0,
+          //   //  xxs: 'calc(30%)',
+          //   //   xs: 'calc(25%)',
+          //   xxs: 0,
+          //   sm: 'calc(5%)',
+
+          //   // md: 'calc(20%)',
+          // }}
+          // ml={{
+          //   xxs: 0,
+          //   xs: 0,
+          //   sm: 0,
+          //   md: 0,
+          //   lg: 'calc(15%)',
+          //   xl: 'calc(15%)',
+          // }}
         >
           <ProjectPageDynamicContent project={project} />
 
@@ -345,25 +426,31 @@ export default function QuickstartProject({
 
         {profile && !profileError && (
           <Aside
-            hiddenBreakpoint="sm"
+            hiddenBreakpoint="md"
             hidden={true}
             styles={() => ({
               root: {
+                display: hideAside ? 'none' : 'flex',
                 marginTop: '60px',
+                // position: 'fixed',
+                // right: 0,
+                // top: 0,
               },
             })}
             fixed={false}
-            zIndex={1}
             // mt={80}
-            my="auto"
+            // my="auto"
+            // fixed={true}
+            zIndex={1}
             width={{
               xxs: 'calc(30%)',
               xs: 'calc(25%)',
               sm: 'calc(22%)',
-              md: 'calc(20%)',
+              md: 'calc(22%)',
+              lg: 'calc(20%)',
               xl: 'calc(18%)',
               xxl: 'calc(15%)',
-              base: 'calc(30%)',
+              // base: 'calc(30%)',
             }}
           >
             {/* First section with normal height (depends on section content) */}
@@ -384,6 +471,12 @@ export default function QuickstartProject({
                 // currentUser={isCurrentUser}
               />
             </Aside.Section>
+            <Group position="center">
+              <Button mt="lg" size="md" onClick={() => setHideAside(!hideAside)}>
+                {hideAside ? 'Show' : 'Hide'} Dev Info
+                {/* Developer Info */}
+              </Button>
+            </Group>
           </Aside>
         )}
       </Container>

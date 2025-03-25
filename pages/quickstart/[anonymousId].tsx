@@ -138,10 +138,10 @@ export default function QuickstartPortfolio({
     return <LoadingPage />;
   }
 
-  console.log('userData')
-  console.log(userData)
-  console.log('currentUser')
-  console.log(currentUser)
+  // console.log('userData')
+  // console.log(userData)
+  // console.log('currentUser')
+  // console.log(currentUser)
   // Use Jotai for state management
   const [quickstartState] = useAtom(quickstartStateAtom);
   const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
