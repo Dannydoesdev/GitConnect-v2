@@ -9,14 +9,15 @@ firestore.indexes.json
 # /functions
 storage.rules
 firebase-debug.log
-firestore-debug.log
-firebase-debug.log
+**/firestore-debug.log
+**/firebase-debug.log
 pubsub-debug.log
 firebase.json
 ui-debug.log
 **/.runtimeconfig.json
 functions/firestore-debug.log
 functions/pubsub-debug.log
+functions/*.log
 
 # backup
 /backup
