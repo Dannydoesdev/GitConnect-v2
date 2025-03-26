@@ -50,11 +50,6 @@ const ShowRepo: React.FC<ShowRepoProps> = ({
               Not forked
             </Badge>
           )}
-        {/* {isForked && (
-          <Badge size="xs" color="grape" variant="light">
-            Forked
-          </Badge>
-        )} */}
       </Group>
       {/* <Space h="xxs" /> */}
       <Text truncate size="sm" color="dimmed">
