@@ -7,7 +7,6 @@ export async function getGithubProfileData(username: string) {
 
   try {
     const response = await octokit.users.getByUsername({ username });
-    // console.log(response.data)
     return response.data;
   } catch (error: any) {
     if (error.status === 403 && error.response?.data?.message?.includes('rate limit exceeded')) {
