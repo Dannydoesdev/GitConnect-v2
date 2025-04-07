@@ -31,6 +31,8 @@ import ProfilePageProjectGrid from '@/components/Quickstart/ProfilePage/ProfileP
 import ProfilePageUserPanel from '@/components/Quickstart/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 import ProfilePageSkeleton from '@/components/Quickstart/ProfilePage/ProfilePageSkeleton';
 import { useQuickstartState } from '@/hooks/useQuickstartState';
+import { useRouter } from 'next/router';
+import { notifications } from '@mantine/notifications';
 
 const PageHead = ({ profile, username_lowercase }: any) => (
   <Head>
@@ -110,17 +112,20 @@ export default function QuickstartPortfolio({
   const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm);
   // Add transition state
   const [contentMounted, setContentMounted] = useState(false);
+  
+  const router = useRouter();
 
-  // Custom hook to manage state
+  const isReady = router.isReady;
+  const isFallback = router.isFallback;
+
   const {
     profile,
     draftProjects,
     publishedProjects,
-    isReady,
-    isFallback
   } = useQuickstartState({
     initialProfile,
-    initialProjects
+    initialProjects,
+    anonymousId,
   });
 
   // Update profile panel atom when profile changes
@@ -134,7 +139,7 @@ export default function QuickstartPortfolio({
   useEffect(() => {
     // Only mount content when data is ready and router is ready
     if (profile && (draftProjects || publishedProjects) && isReady && !isFallback) {
-      // Small delay for smooth transition
+
       const timer = setTimeout(() => {
         setContentMounted(true);
       }, 50);
@@ -142,7 +147,13 @@ export default function QuickstartPortfolio({
     }
   }, [profile, draftProjects, publishedProjects, isReady, isFallback]);
 
-  // Check if router is ready and data is loaded
+  // Clean up any existing notifications when the profile page loads
+  useEffect(() => {
+    notifications.clean();
+  }, []);
+
+
+  // Check router states
   if (!isReady) {
     return <LoadingPage />;
   }

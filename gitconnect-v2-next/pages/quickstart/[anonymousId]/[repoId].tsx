@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useQuickstartState } from '@/hooks/useQuickstartState';
 import {
   Aside,
   Blockquote,
@@ -17,6 +19,7 @@ import {
   Text,
   Transition,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
 import { getSingleQuickstartProject } from '@/lib/quickstart/getSavedProjects';
@@ -25,48 +28,44 @@ import ProfilePageUserPanel from '@/components/Quickstart/ProfilePage/ProfilePag
 import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
 import { ProjectPageDynamicHero } from '@/components/Quickstart/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
 import RichTextEditorDisplay from '@/components/Quickstart/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
-import ProjectPageSkeleton from '@/components/Quickstart/ProjectPage/ProjectPageSkeleton';
-import { useQuickstartState } from '@/hooks/useQuickstartState';
 
 export default function QuickstartProject({
   initialProject,
   initialReadme,
   initialProfile,
+  anonymousId,
+  repoId,
 }: {
-  repoId: string;
   initialProject: any;
   initialReadme: any;
   initialProfile: any;
+  anonymousId: string;
+  repoId: string;
 }) {
+  // Get router details directly in the component
+  const router = useRouter();
+  const isReady = router.isReady;
+  const isFallback = router.isFallback;
+
   // Use custom hook for state
   const {
     profile,
     currentProject: project,
     readme,
-    isReady,
-    isFallback
   } = useQuickstartState({
     initialProfile,
     initialProject,
-    initialReadme
+    initialReadme,
+    anonymousId,
+    repoId,
   });
 
   const [hideAside, setHideAside] = useState(false);
-  // Add transition state
-  const [contentMounted, setContentMounted] = useState(false);
 
-  // NOTE - omitting transition for now
-  // Handle transition mounting after state is ready
+  // Clean up any existing notifications when the project page loads
   useEffect(() => {
-    // Only mount content when data is ready and router is ready
-    if (profile && project && isReady && !isFallback) {
-      // Small delay for smooth transition
-      const timer = setTimeout(() => {
-        setContentMounted(true);
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [profile, project, isReady, isFallback]);
+    notifications.clean();
+  }, []);
 
   // Check if router is ready
   if (!isReady) {
@@ -101,80 +100,72 @@ export default function QuickstartProject({
           </MediaQuery>
         )}
 
-        {/* {!contentMounted && <ProjectPageSkeleton showAside={!hideAside} />} */}
+        <ProjectPageDynamicHero project={project} />
 
-        {/* <Transition mounted={contentMounted} transition="fade" duration={100} timingFunction="ease">
-          {(styles) => (
-            <div style={styles}> */}
-              <ProjectPageDynamicHero project={project} />
-
-              <Stack
-                mr={
-                  hideAside
-                    ? { md: 'auto', sm: 0 }
-                    : {
-                        xxs: 0,
-                        sm: 0,
-                        md: 'calc(20%)',
-                        lg: 'calc(20%)',
-                        xl: 'calc(20%)',
-                      }
+        <Stack
+          mr={
+            hideAside
+              ? { md: 'auto', sm: 0 }
+              : {
+                  xxs: 0,
+                  sm: 0,
+                  md: 'calc(20%)',
+                  lg: 'calc(20%)',
+                  xl: 'calc(20%)',
                 }
-                ml={
-                  hideAside
-                    ? { md: 'auto', sm: 0 }
-                    : { xxs: 0, sm: 0, lg: 'calc(10%)', xl: 'calc(10%)' }
+          }
+          ml={
+            hideAside
+              ? { md: 'auto', sm: 0 }
+              : { xxs: 0, sm: 0, lg: 'calc(10%)', xl: 'calc(10%)' }
+          }
+          w={
+            hideAside
+              ? {
+                  xxxs: 'calc(100%)',
+                  xxs: 'calc(100%)',
+                  xs: 'calc(95%)',
+                  sm: 'calc(85%)',
+                  md: 'calc(80%)',
+                  lg: 'calc(75%)',
+                  xl: 'calc(61%)',
+                  xxl: 'calc(55%)',
                 }
-                w={
-                  hideAside
-                    ? {
-                        xxxs: 'calc(100%)',
-                        xxs: 'calc(100%)',
-                        xs: 'calc(95%)',
-                        sm: 'calc(85%)',
-                        md: 'calc(80%)',
-                        lg: 'calc(75%)',
-                        xl: 'calc(61%)',
-                        xxl: 'calc(55%)',
-                      }
-                    : undefined
-                }
-              >
-                <ProjectPageDynamicContent project={project} />
+              : undefined
+          }
+        >
+          <ProjectPageDynamicContent project={project} />
 
-                {readme && <RichTextEditorDisplay content={readme} />}
-                
-                <Container size="lg">
-                  <Space h="lg" />
-                  <Divider size="sm" my="lg" />
+          {readme && <RichTextEditorDisplay content={readme} />}
 
-                  {/* sign up prompt footer */}
-                  <Center mt={50}>
-                    <Stack align="center" spacing="xs">
-                      <Text size="lg" weight={500}>
-                        Want to edit and publish this project?
-                      </Text>
-                      <Space h="xs" />
-                      <Button component={Link} href="/signup" size="md" color="teal">
-                        Create Your Account
-                      </Button>
-                      <Space h="xs" />
+          <Container size="lg">
+            <Space h="lg" />
+            <Divider size="sm" my="lg" />
 
-                      <Blockquote
-                        cite="- GitConnect notes"
-                        color="indigo"
-                        icon={<IconInfoCircle size="1.5rem" />}
-                      >
-                        Registered users have many more tools to edit projects <br /> You'll be
-                        asked to choose your portfolio projects again
-                      </Blockquote>
-                    </Stack>
-                  </Center>
-                </Container>
+            {/* sign up prompt footer */}
+            <Center mt={50}>
+              <Stack align="center" spacing="xs">
+                <Text size="lg" weight={500}>
+                  Want to edit and publish this project?
+                </Text>
+                <Space h="xs" />
+                <Button component={Link} href="/signup" size="md" color="teal">
+                  Create Your Account
+                </Button>
+                <Space h="xs" />
+
+                <Blockquote
+                  cite="- GitConnect notes"
+                  color="indigo"
+                  icon={<IconInfoCircle size="1.5rem" />}
+                >
+                  Registered users have many more tools to edit projects <br /> You'll be
+                  asked to choose your portfolio projects again
+                </Blockquote>
               </Stack>
-            {/* </div>
-          )}
-        </Transition> */}
+            </Center>
+          </Container>
+        </Stack>
 
         {profile && (
           <Aside
@@ -235,6 +226,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       initialReadme: readme ?? null,
       initialProfile,
       isQuickstart: true,
+      anonymousId,
       repoId,
     },
   };
