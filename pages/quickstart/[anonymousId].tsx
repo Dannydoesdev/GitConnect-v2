@@ -1,14 +1,9 @@
-import React, { use, useContext, useEffect, useState } from 'react';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import React, { useContext, useEffect, useState } from 'react';
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import {
-  quickstartDraftProjectsAtom,
-  quickstartProfileAtom,
   quickstartProfilePanelForm,
-  quickstartPublishedProjectsAtom,
-  quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
 import { AuthContext } from '@/context/AuthContext';
 import {
@@ -19,10 +14,13 @@ import {
   Divider,
   Grid,
   Group,
+  Paper,
+  Skeleton,
   Space,
   Stack,
   Tabs,
   Text,
+  Transition,
 } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
@@ -31,6 +29,8 @@ import { getAllUserProjectsWithAnonymousId } from '@/lib/quickstart/getSavedProj
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import ProfilePageProjectGrid from '@/components/Quickstart/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 import ProfilePageUserPanel from '@/components/Quickstart/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
+import ProfilePageSkeleton from '@/components/Quickstart/ProfilePage/ProfilePageSkeleton';
+import { useQuickstartState } from '@/hooks/useQuickstartState';
 
 const PageHead = ({ profile, username_lowercase }: any) => (
   <Head>
@@ -107,90 +107,47 @@ export default function QuickstartPortfolio({
 }: PortfolioProps) {
   const [activeTab, setActiveTab] = useState('second');
   const { userData, currentUser } = useContext(AuthContext);
-  const router = useRouter();
-  const [profile, setProfile] = useState(initialProfile);
-  const [projects, setProjects] = useState(initialProjects);
-  const [draftProjects, setDraftProjects] = useState<any>([]);
-  const [publishedProjects, setPublishedProjects] = useState<any>([]);
-
-  // Add router.isReady check to prevent hydration errors
-  if (!router.isReady) {
-    return <LoadingPage />;
-  }
-
-  const [quickstartState] = useAtom(quickstartStateAtom);
-  const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
-  const [publishedProjectsAtom] = useAtom(quickstartPublishedProjectsAtom);
   const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm);
-  const [profileDataAtom] = useAtom(quickstartProfileAtom);
+  // Add transition state
+  const [contentMounted, setContentMounted] = useState(false);
 
-  useEffect(() => {
-    // Priority - InitialProjects && InitialProfile First
-    if (initialProjects && initialProjects.length > 0) {
-      // Process initialProjects if they exist
-
-      // Map the projects to extract docData
-      const processedProjects = initialProjects.map((project: any) => {
-        return project.docData;
-      });
-
-      // Set the main projects state
-      setProjects(processedProjects);
-
-      // Determine draft and published projects based on atom state or processed projects
-      const drafts = processedProjects.filter((project: any) => {
-        return project.hidden === true;
-      });
-
-      const published = processedProjects.filter((project: any) => {
-        return project.hidden === false || project.hidden === undefined;
-      });
-
-      // Set the draft and published projects states
-      setDraftProjects(drafts);
-      setPublishedProjects(published);
-    } else if (
-      (draftProjectsAtom && draftProjectsAtom.length > 0) ||
-      (publishedProjectsAtom && publishedProjectsAtom.length > 0)
-    ) {
-      const drafts = draftProjectsAtom.length > 0 ? draftProjectsAtom : [];
-      const published = publishedProjectsAtom.length > 0 ? publishedProjectsAtom : [];
-
-      // Set the draft and published projects states
-      setDraftProjects(drafts);
-      setPublishedProjects(published);
-    } else {
-      // If none available - set blank
-      setDraftProjects([]);
-      setPublishedProjects([]);
-    }
-
-    if (initialProfile && Object.keys(initialProfile).length > 0) {
-      setProfile(initialProfile);
-    }
-    // Set profile if it exists in Atom else use initialProfile from static Props
-    else if (profileDataAtom && Object.keys(profileDataAtom).length > 0) {
-      setProfile(profileDataAtom);
-    } else {
-      // If none available - set blank
-      setProfile([]);
-    }
-  }, [
+  // Custom hook to manage state
+  const {
+    profile,
+    draftProjects,
+    publishedProjects,
+    isReady,
+    isFallback
+  } = useQuickstartState({
     initialProfile,
-    initialProjects,
-    draftProjectsAtom,
-    publishedProjectsAtom,
-    quickstartState,
-    router,
-  ]);
+    initialProjects
+  });
 
+  // Update profile panel atom when profile changes
   useEffect(() => {
     if (profile && (profile.length > 0 || Object.keys(profile).length > 0)) {
       setProfilePanelAtom(profile);
     }
-  }, [profile]);
+  }, [profile, setProfilePanelAtom]);
 
-  if (router.isFallback) {
+  // Handle transition mounting after state is ready
+  useEffect(() => {
+    // Only mount content when data is ready and router is ready
+    if (profile && (draftProjects || publishedProjects) && isReady && !isFallback) {
+      // Small delay for smooth transition
+      const timer = setTimeout(() => {
+        setContentMounted(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [profile, draftProjects, publishedProjects, isReady, isFallback]);
+
+  // Check if router is ready and data is loaded
+  if (!isReady) {
+    return <LoadingPage />;
+  }
+
+  if (isFallback) {
     return <LoadingPage />;
   }
 
@@ -200,36 +157,42 @@ export default function QuickstartPortfolio({
   }
 
   const isCurrentUser =
-    userData && anonymousId && currentUser.uid === anonymousId.toString() ? true : false;
+    userData && anonymousId && currentUser?.uid === anonymousId.toString() ? true : false;
 
-  // Render logic
+
   return (
     <>
       <PageHead profile={profile} username_lowercase={profile?.username_lowercase} />
       <Container size="xl" mt={0}>
         <Group position="center">
           <Space h={60} />
-          <Grid grow gutter={35}>
-            <Grid.Col sm={12} md={4}>
-              <ProfilePanel profile={profile} isCurrentUser={isCurrentUser} />
-            </Grid.Col>
-            <Grid.Col span={8}>
-              <Grid gutter="md">
-                <Grid.Col>
-                  <ProjectTabs
-                    isCurrentUser={isCurrentUser}
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                    publishedProjects={publishedProjects}
-                    draftProjects={draftProjects}
-                  />
+          <Transition mounted={contentMounted} transition="fade" duration={250} timingFunction="ease">
+            {(styles) => (
+              <Grid grow gutter={35} style={styles}>
+                <Grid.Col sm={12} md={4}>
+                  <ProfilePanel profile={profile} isCurrentUser={isCurrentUser} />
+                </Grid.Col>
+                <Grid.Col span={8}>
+                  <Grid gutter="md">
+                    <Grid.Col>
+                      <ProjectTabs
+                        isCurrentUser={isCurrentUser}
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                        publishedProjects={publishedProjects}
+                        draftProjects={draftProjects}
+                      />
+                    </Grid.Col>
+                  </Grid>
                 </Grid.Col>
               </Grid>
-            </Grid.Col>
-          </Grid>
+            )}
+          </Transition>
+          {/* Show Profile Page Skeleton if content no loaded */}
+          {!contentMounted && <ProfilePageSkeleton />}
         </Group>
 
-        {/* Add sign up prompt at bottom */}
+         {/* sign up prompt footer */}
         <Space h="lg" />
         <Divider my="lg" size="sm" />
         <Center mt={55}>
@@ -258,15 +221,8 @@ export default function QuickstartPortfolio({
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Return empty paths array since these are dynamic
-  return {
-    paths: [],
-    fallback: true,
-  };
-};
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { anonymousId } = params as { anonymousId: string };
 
   const profileData = await getProfileDataWithAnonymousId(anonymousId);
@@ -282,6 +238,33 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       isQuickstart: true,
       anonymousId,
     },
-    revalidate: 5,
   };
 };
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   // Return empty paths array since these are dynamic
+//   return {
+//     paths: [],
+//     fallback: true,
+//   };
+// };
+
+// export const getStaticProps: GetStaticProps = async ({ params }) => {
+//   const { anonymousId } = params as { anonymousId: string };
+
+//   const profileData = await getProfileDataWithAnonymousId(anonymousId);
+//   const projectData = await getAllUserProjectsWithAnonymousId(anonymousId);
+
+//   const initialProfile = profileData?.docData || null;
+//   const initialProjects = projectData ?? null;
+
+//   return {
+//     props: {
+//       initialProfile,
+//       initialProjects,
+//       isQuickstart: true,
+//       anonymousId,
+//     },
+//     revalidate: 5,
+//   };
+// };
