@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { useRouter } from 'next/router';
 import {
   quickstartDraftProjectsAtom,
   quickstartProfileAtom,
@@ -29,6 +28,8 @@ interface QuickstartStateProps {
   initialProjects?: any[];
   initialProject?: any;
   initialReadme?: string;
+  anonymousId?: string;
+  repoId?: string;
 }
 
 /**
@@ -39,10 +40,9 @@ export function useQuickstartState({
   initialProjects,
   initialProject,
   initialReadme,
+  anonymousId,
+  repoId,
 }: QuickstartStateProps = {}) {
-  const router = useRouter();
-  const { anonymousId, repoId } = router.query as { anonymousId?: string; repoId?: string };
-
   // Local state
   const [profile, setProfile] = useState<any>(initialProfile || {});
   const [projects, setProjects] = useState<any[]>([]);
@@ -181,10 +181,6 @@ export function useQuickstartState({
     // Router query parameters
     anonymousId,
     repoId,
-    
-    // Router state
-    isReady: router.isReady,
-    isFallback: router.isFallback,
     
     // Error state
     error
