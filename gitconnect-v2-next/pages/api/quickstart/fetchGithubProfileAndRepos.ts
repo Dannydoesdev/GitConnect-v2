@@ -14,13 +14,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // NOTE - to get more info for the user requires a second call
     //  More info on getByUsername octokit: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
 
+    // Fetch user data via Octokit, extact the data we need and return
     const githubUserData = await getGithubProfileData(usernameString);
     
     const trimmedUserData = {
       userName: githubUserData?.login,
       githubId: githubUserData?.id,
       avatar_url: githubUserData?.avatar_url ?? '',
-      html_url: githubUserData?.html_url ?? '',
+      html_url: githubUserData?.html_url,
       name: githubUserData?.name ?? '',
       company: githubUserData?.company ?? '',
       location: githubUserData?.location ?? '',
@@ -29,6 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     
     //  More info on listForUser octokit: https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user
+
+    // Fetch repo data via Octokit, extact the data we need and return
     const returnedRepoData = await getGithubReposWithUsername(usernameString);
     
     if (!returnedRepoData || returnedRepoData.length === 0) {
@@ -55,8 +58,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           star_count: repo.stargazers_count ?? 0,
           open_issues_count: repo.open_issues_count ?? 0,
           main_language: repo.language ?? '',
-          url: repo.html_url ?? '',
-          html_url: repo.html_url ?? '',
+          url: repo.html_url,
+          html_url: repo.html_url,
           languages_url: repo.languages_url ?? '',
         };
       }) || []

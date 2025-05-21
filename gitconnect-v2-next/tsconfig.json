@@ -50,6 +50,9 @@
       ],
       "@/components/*": [
         "./components/*"
+      ],
+      "@/features/*": [
+        "./features/*"
       ]
     },
     "plugins": [

@@ -16,7 +16,7 @@
     "emulatedatabest": "firebase emulators:start --import ../backup/db_best_bk_161023"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
