@@ -251,31 +251,3 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   };
 };
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   // Return empty paths array since these are dynamic
-//   return {
-//     paths: [],
-//     fallback: true,
-//   };
-// };
-
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   const { anonymousId } = params as { anonymousId: string };
-
-//   const profileData = await getProfileDataWithAnonymousId(anonymousId);
-//   const projectData = await getAllUserProjectsWithAnonymousId(anonymousId);
-
-//   const initialProfile = profileData?.docData || null;
-//   const initialProjects = projectData ?? null;
-
-//   return {
-//     props: {
-//       initialProfile,
-//       initialProjects,
-//       isQuickstart: true,
-//       anonymousId,
-//     },
-//     revalidate: 5,
-//   };
-// };
