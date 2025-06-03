@@ -16,9 +16,7 @@ const Header: React.FC = () => {
           fit="contain"
           height={125}
         />
-        {/* <Space h='xs' /> */}
         <Title order={2}>Quickstart Portfolio Creator</Title>
-        {/* <Title order={3}>Portfolio Quickstart</Title> */}
       </Stack>
     </Group>
   );
