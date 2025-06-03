@@ -1,4 +1,4 @@
-// This component displays individual messages from both the user and the AI.
+// Displays individual messages from both the user and AI
 
 interface MessageProps {
   sender: string;

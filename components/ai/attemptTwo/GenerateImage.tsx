@@ -1,62 +1,38 @@
 // components/editproject/UploadCoverImage.tsx
 
-import { use, useContext, useEffect, useState } from 'react';
-import Image from 'next/image';
-import { aiEditorAtom, aiImageAtom } from '@/atoms';
-import { Button, Modal, ScrollArea } from '@mantine/core';
-import { useCompletion } from 'ai/react';
-import axios from 'axios';
-import { doc, setDoc } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { useAtom } from 'jotai';
-// import { set } from 'lodash';
-// import { RequestInfo } from 'undici-types';
-import { db, storage } from '../../../firebase/clientApp';
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { aiEditorAtom, aiImageAtom } from "@/atoms";
+import { Button, Modal, ScrollArea } from "@mantine/core";
+import { useCompletion } from "ai/react";
+import axios from "axios";
+import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { useAtom } from "jotai";
+import { db, storage } from "../../../firebase/clientApp";
 
-export const GenerateCoverImageModal = ({
-  imageUrl,
-  userId,
-  repoId,
-  opened,
-  open,
-  close,
-}: any) => {
+export const GenerateCoverImageModal = ({ imageUrl, userId, repoId, opened, open, close }: any) => {
   const [textContentState, setTextContentState] = useAtom(aiEditorAtom);
   const [imagePromptState, setImagePromptState] = useAtom(aiImageAtom);
-  const [generatedImage, setGeneratedImage] = useState<any>('');
-  const [generatedPrompt, setGeneratedPrompt] = useState<any>('');
-  const [revisedPrompt, setRevisedPrompt] = useState<any>('');
+  const [generatedImage, setGeneratedImage] = useState<any>("");
+  const [generatedPrompt, setGeneratedPrompt] = useState<any>("");
+  const [revisedPrompt, setRevisedPrompt] = useState<any>("");
 
-  const {
-    complete,
-    completion,
-    input,
-    stop,
-    isLoading,
-    handleInputChange,
-    handleSubmit,
-  } = useCompletion({
-    api: '/api/image/generatePrompt',
-    onResponse: (res) => {
-      // trigger something when the response starts streaming in
-      // e.g. if the user is rate limited, you can show a toast
-      // if (res.status === 429) {
-      //   toast.error('You are being rate limited. Please try again later.');
-      // }
-    },
-    onFinish: async (prompt, completion) => {
-      console.log('Finished generating prompt', prompt);
-      console.log('Finished generating prompt', completion);
-      // console.log('Finished atom prompt', imagePromptState);
-      // setGeneratedPrompt(completion);
-      handleGenerateImageFromPrompt(completion);
-      // handleGenerateImageFromPrompt(generatedPrompt);
+  const { complete, completion, input, stop, isLoading, handleInputChange, handleSubmit } =
+    useCompletion({
+      api: "/api/image/generatePrompt",
+      onResponse: (res) => {
+        // trigger something when the response starts streaming in
+      },
+      onFinish: async (prompt, completion) => {
+        // console.log('Finished generating prompt', prompt);
+        // console.log('Finished generating prompt', completion);
 
-      // do something with the completion result
-      // toast.success('Successfully generated completion!');
-      console.log('Successfully generated completion!');
-    },
-  });
+        handleGenerateImageFromPrompt(completion);
+
+        // console.log('Successfully generated completion!');
+      },
+    });
 
   useEffect(() => {
     // console.log('completion:', completion);
@@ -78,7 +54,7 @@ export const GenerateCoverImageModal = ({
     try {
       complete(prompt);
     } catch (error) {
-      console.error('Error generating prompt:', error);
+      console.error("Error generating prompt:", error);
     }
   };
 
@@ -86,40 +62,28 @@ export const GenerateCoverImageModal = ({
     // if (!textContentState) { return }
     // const prompt = textContentState;
     const data = {
-      prompt: prompt, // Replace 'prompt' with your string variable
-    }
+      prompt: prompt,
+    };
     try {
-      console.log('prompt for image api', prompt)
-
+      // console.log('prompt for image api', prompt)
       const message = prompt.toString();
-      // console.log('message for image api', message)
-      console.log('Sending data to image api', data)
-      // await axios.post('/api/image/generateImage', data, {
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   }
-        // })
-        await axios.post('/api/ai/generateImage', data, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-      // await axios
-      //   .post('/api/image/generateImage', {
-      //   prompt: prompt,
-      //   // prompt: message,
-      //   })
-          .then((response) => {
-          
-            const generatedImage = response.data.imageUrl;
-            const revisedPrompt = response.data.revisedPrompt;
-            setRevisedPrompt(revisedPrompt);
-        setGeneratedImage(generatedImage);
-        console.log(generatedImage);
-      });
 
+      await axios
+        .post("/api/ai/generateImage", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+
+        .then((response) => {
+          const generatedImage = response.data.imageUrl;
+          const revisedPrompt = response.data.revisedPrompt;
+          setRevisedPrompt(revisedPrompt);
+          setGeneratedImage(generatedImage);
+          console.log(generatedImage);
+        });
     } catch (error) {
-      console.error('Error generating prompt:', error);
+      console.error("Error generating prompt:", error);
     }
   };
 
@@ -130,49 +94,45 @@ export const GenerateCoverImageModal = ({
 
       const storageRef = ref(
         storage,
-        `users/${userId}/repos/${repoId}/images/coverImage/generatedImage.png`
+        `users/${userId}/repos/${repoId}/images/coverImage/generatedImage.png`,
       );
       const uploadTask = uploadBytesResumable(storageRef, imageBlob);
 
       uploadTask.on(
-        'state_changed',
+        "state_changed",
         (snapshot) => {
           // Handle progress
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
+          console.log("Upload is " + progress + "% done");
         },
         (error) => {
           // Handle unsuccessful uploads
-          console.error('Upload failed:', error);
+          console.error("Upload failed:", error);
         },
         () => {
           // Handle successful uploads
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             saveImageMetadataToFirestore(downloadURL, userId, repoId);
           });
-        }
+        },
       );
     } catch (error) {
-      console.error('Error fetching or uploading image:', error);
+      console.error("Error fetching or uploading image:", error);
     }
   }
 
-  async function saveImageMetadataToFirestore(
-    downloadURL: any,
-    userId: any,
-    repoId: any
-  ) {
+  async function saveImageMetadataToFirestore(downloadURL: any, userId: any, repoId: any) {
     const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
     const coverImageMeta = {
-      name: 'generatedImage.png',
-      extension: 'png',
-      sizes: ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'],
+      name: "generatedImage.png",
+      extension: "png",
+      sizes: ["200x200", "400x400", "768x768", "1024x1024", "2000x2000"],
     };
 
     await setDoc(
       docRef,
       { coverImageMeta: coverImageMeta, coverImage: downloadURL },
-      { merge: true }
+      { merge: true },
     );
   }
 
@@ -210,33 +170,7 @@ export const GenerateCoverImageModal = ({
             {revisedPrompt}
           </>
         )}
-            
       </Modal>
     </>
   );
 };
-
-// ... Rest of your component code
-
-      // Send the user message to the backend via json api call
-      // const response = await fetch('/api/image/generateImage', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     prompt: prompt,
-      //     // systemMessage: systemMessage,
-      //     // model: 'gpt-4',
-      //   }),
-      // }).then((res) => {
-      //   setGeneratedImage(res);
-      //   console.log(res);
-      // });
-
-      // await axios
-      //   .post('/api/ai/generateProject', {
-      //     userMessage: userMessage,
-      //     systemMessage: systemMessage,
-      //     model: 'gpt-4',
-      //   })
