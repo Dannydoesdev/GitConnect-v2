@@ -25,7 +25,6 @@ const pageAtom = atomWithHash('page', 1, {
   },
 });
 
-
 interface ProfileFormData {
   bio?: string;
   location?: string;
@@ -54,7 +53,7 @@ interface ProfileFormData {
   facebookUrl?: string;
   instagramUrl?: string;
   openToWork?: boolean;
-  [key: string]: any; // This allows you to add arbitrary fields
+  [key: string]: any; // Allow arbitrary fields
 }
 
 export const formDataAtom = atom<ProfileFormData>({

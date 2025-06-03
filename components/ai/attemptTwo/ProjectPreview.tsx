@@ -3,7 +3,6 @@ export const ProjectPreview = ({ narrative }: any) => {
     <div className="project-preview">
       <h3>Project Narrative Preview:</h3>
       <p>{narrative}</p>
-      {/* Additional styling and logic */}
     </div>
   );
 };
