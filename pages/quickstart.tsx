@@ -92,10 +92,12 @@ const QuickstartPage = () => {
     }
   }, [isGithubLoading, githubProfile, githubRepos, githubError, usernameInputValue]);
 
+  
   // STAGE 2: 'RepoSelection' - Select repos to add to portfolio
   const selectRepo = (id: string) => setSelectedRepoIds((prev) => [...prev, id]);
   const deselectRepo = (id: string) =>
     setSelectedRepoIds((prev) => prev.filter((item) => item !== id));
+
 
   // STAGE 3: 'Processing' - Build and save portfolio
   const handlePortfolioBuildSubmit = async () => {
