@@ -16,7 +16,8 @@ import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 import css from "highlight.js/lib/languages/css";
 import { useAtom } from "jotai";
-import { textEditorAtom, unsavedChangesAtom } from "@/atoms/jotaiAtoms";
+import { unsavedChangesAtom } from "@/atoms/jotaiAtoms";
+import { quickstartTextEditorAtom } from '@/atoms/quickstartAtoms';
 import { lowlight } from "lowlight/lib/core";
 import { DBlock } from "./extensions/dBlock";
 import { CustomResizableImage } from "./extensions/image/customResizableImage";
@@ -65,7 +66,7 @@ lowlight.registerLanguage("ts", ts);
 function ProjectRichTextEditor({ repoId, userId, initialContent }: RichTextEditorVanillaProps) {
 
 
-  const [textContentState, setTextContentState] = useAtom(textEditorAtom);
+  const [textContentState, setTextContentState] = useAtom(quickstartTextEditorAtom);
   // const [initialContent, setInitialContent] = useState("");
   const [unsavedChanges, setUnsavedChanges] = useAtom(unsavedChangesAtom);
 
@@ -100,7 +101,7 @@ function ProjectRichTextEditor({ repoId, userId, initialContent }: RichTextEdito
       editor?.commands.setContent(initialContent);
       setTextContentState(initialContent);
     }
-  }, [initialContent]);
+  }, []);
 
   useEffect(() => {
     if (textContentState && textContentState !== editor?.getHTML()) {
