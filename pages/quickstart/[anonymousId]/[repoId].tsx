@@ -1,9 +1,9 @@
 // pages/quickstart/[repoid].tsx
-import { useEffect, useState } from 'react';
-import { GetServerSideProps } from 'next';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useQuickstartState } from '@/hooks/useQuickstartState';
+import { useEffect, useState } from "react";
+import { GetServerSideProps } from "next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useQuickstartState } from "@/hooks/useQuickstartState";
 import {
   Aside,
   Blockquote,
@@ -18,16 +18,16 @@ import {
   Stack,
   Text,
   Transition,
-} from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
-import { getSingleQuickstartProject } from '@/lib/quickstart/getSavedProjects';
-import LoadingPage from '@/components/LoadingPage/LoadingPage';
-import ProfilePageUserPanel from '@/components/Quickstart/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
-import ProjectPageDynamicContent from '@/components/Quickstart/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
-import { ProjectPageDynamicHero } from '@/components/Quickstart/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
-import RichTextEditorDisplay from '@/components/Quickstart/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
+} from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconInfoCircle } from "@tabler/icons-react";
+import { getProfileDataWithAnonymousId } from "@/lib/quickstart/getSavedProfile";
+import { getSingleQuickstartProject } from "@/lib/quickstart/getSavedProjects";
+import LoadingPage from "@/components/LoadingPage/LoadingPage";
+import ProfilePageUserPanel from "@/features/quickstart/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel";
+import ProjectPageDynamicContent from "@/features/quickstart/components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent";
+import { ProjectPageDynamicHero } from "@/features/quickstart/components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero";
+import RichTextEditorDisplay from "@/features/quickstart/components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay";
 
 export default function QuickstartProject({
   initialProject,
@@ -86,15 +86,23 @@ export default function QuickstartProject({
     <>
       <Container fluid>
         {hideAside && (
-          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
-            <Group position="right">
+          <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+            <Group position="right" mb={50}>
               <Button
                 mt="lg"
                 size="md"
+                color="gray"
+                variant="filled"
+                radius="md"
+                styles={(theme) => ({
+                  root: {
+                    border: theme.colorScheme === "dark" ? "lightgray solid 1px" : "gray solid 3px",
+                  },
+                })}
                 onClick={() => setHideAside(!hideAside)}
-                style={{ zIndex: 100, position: 'fixed', right: 20, bottom: 20 }}
+                style={{ zIndex: 100, position: "fixed", right: 20, bottom: 30 }}
               >
-                {hideAside ? 'Show' : 'Hide'} Dev Info
+                {hideAside ? "Show" : "Hide"} Dev Info
               </Button>
             </Group>
           </MediaQuery>
@@ -105,35 +113,61 @@ export default function QuickstartProject({
         <Stack
           mr={
             hideAside
-              ? { md: 'auto', sm: 0 }
+              ? { md: "auto", sm: 0 }
               : {
                   xxs: 0,
                   sm: 0,
-                  md: 'calc(20%)',
-                  lg: 'calc(20%)',
-                  xl: 'calc(20%)',
+                  md: "calc(20%)",
+                  lg: "calc(20%)",
+                  xl: "calc(20%)",
                 }
           }
           ml={
-            hideAside
-              ? { md: 'auto', sm: 0 }
-              : { xxs: 0, sm: 0, lg: 'calc(10%)', xl: 'calc(10%)' }
+            hideAside ? { md: "auto", sm: 0 } : { xxs: 0, sm: 0, lg: "calc(10%)", xl: "calc(10%)" }
           }
           w={
             hideAside
               ? {
-                  xxxs: 'calc(100%)',
-                  xxs: 'calc(100%)',
-                  xs: 'calc(95%)',
-                  sm: 'calc(85%)',
-                  md: 'calc(80%)',
-                  lg: 'calc(75%)',
-                  xl: 'calc(61%)',
-                  xxl: 'calc(55%)',
+                  xxxs: "calc(100%)",
+                  xxs: "calc(100%)",
+                  xs: "calc(95%)",
+                  sm: "calc(85%)",
+                  md: "calc(80%)",
+                  lg: "calc(75%)",
+                  xl: "calc(61%)",
+                  xxl: "calc(55%)",
                 }
               : undefined
           }
         >
+          <Group position="center" mt="lg">
+            <Button
+              component="a"
+              size="lg"
+              radius="md"
+              onClick={() => router.push(`/quickstart/edit/${anonymousId}/${repoId}`)}
+              className="mx-auto"
+              mt="xs"
+              color="gray"
+              variant="outline"
+              styles={(theme) => ({
+                root: {
+                  border: theme.colorScheme === "dark" ? "white solid 1px" : "darkblue solid 3px",
+
+                  width: "25%",
+                  [theme.fn.smallerThan("sm")]: {
+                    width: "100%",
+                  },
+                  "&:hover": {
+                    backgroundColor:
+                      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.blue[9],
+                  },
+                },
+              })}
+            >
+              Edit Project
+            </Button>
+          </Group>
           <ProjectPageDynamicContent project={project} />
 
           {readme && <RichTextEditorDisplay content={readme} />}
@@ -159,8 +193,8 @@ export default function QuickstartProject({
                   color="indigo"
                   icon={<IconInfoCircle size="1.5rem" />}
                 >
-                  Registered users have many more tools to edit projects <br /> You'll be
-                  asked to choose your portfolio projects again
+                  Registered users have many more tools to edit projects <br /> You'll be asked to
+                  choose your portfolio projects again
                 </Blockquote>
               </Stack>
             </Center>
@@ -173,36 +207,69 @@ export default function QuickstartProject({
             hidden={true}
             styles={() => ({
               root: {
-                display: hideAside ? 'none' : 'flex',
+                display: hideAside ? "none" : "flex",
               },
             })}
             fixed={false}
             my="auto"
             zIndex={1}
             width={{
-              xxs: 'calc(30%)',
-              xs: 'calc(25%)',
-              sm: 'calc(22%)',
-              md: 'calc(22%)',
-              lg: 'calc(20%)',
-              xl: 'calc(18%)',
-              xxl: 'calc(15%)',
+              xxs: "calc(30%)",
+              xs: "calc(25%)",
+              sm: "calc(22%)",
+              md: "calc(22%)",
+              lg: "calc(20%)",
+              xl: "calc(18%)",
+              xxl: "calc(15%)",
             }}
           >
             <Aside.Section mt={100} mx="auto">
-              <Text weight={600} c="dimmed">
-                Developer Info{' '}
-              </Text>
+              <Stack>
+                <Group position="center">
+                  <Text weight={600} c="dimmed">
+                    Developer Info{" "}
+                  </Text>
+                </Group>
+                <Button
+                  mt="lg"
+                  size="sm"
+                  color="gray"
+                  variant="outline"
+                  radius="md"
+                  styles={(theme) => ({
+                    root: {
+                      "&:hover": {
+                        backgroundColor:
+                          theme.colorScheme === "dark"
+                            ? theme.colors.dark[4]
+                            : theme.colors.blue[9],
+                      },
+                    },
+                  })}
+                  onClick={() => router.push(`/quickstart/${anonymousId}`)}
+                >
+                  Open Portfolio
+                </Button>
+              </Stack>
             </Aside.Section>
 
             <Aside.Section grow component={ScrollArea} mt={50}>
               <ProfilePageUserPanel props={profile} />
             </Aside.Section>
-            <Group position="center">
-              <Button mt="lg" size="md" onClick={() => setHideAside(!hideAside)}>
-                {hideAside ? 'Show' : 'Hide'} Dev Info
-              </Button>
-            </Group>
+            <Aside.Section mb={50}>
+              <Group position="center">
+                <Button
+                  mt="lg"
+                  size="md"
+                  color="gray"
+                  variant="filled"
+                  radius="md"
+                  onClick={() => setHideAside(!hideAside)}
+                >
+                  {hideAside ? "Show" : "Hide"} Dev Info
+                </Button>
+              </Group>
+            </Aside.Section>
           </Aside>
         )}
       </Container>

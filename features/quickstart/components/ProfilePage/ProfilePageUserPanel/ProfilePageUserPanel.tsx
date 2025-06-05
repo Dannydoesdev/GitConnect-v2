@@ -1,12 +1,8 @@
-import { url } from 'inspector';
-import { useContext, useEffect, useState } from 'react';
-import Link from 'next/link';
-import {
-  quickstartProfileAtom,
-  quickstartProfilePanelForm,
-  quickstartStateAtom,
-} from '@/atoms';
-import { AuthContext } from '@/context/AuthContext';
+import { url } from "inspector";
+import { useContext, useEffect, useState } from "react";
+import Link from "next/link";
+import { quickstartProfileAtom, quickstartProfilePanelForm, quickstartStateAtom } from "@/atoms";
+import { AuthContext } from "@/context/AuthContext";
 import {
   ActionIcon,
   Avatar,
@@ -26,11 +22,11 @@ import {
   Text,
   Textarea,
   TextInput,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
-import { useAtom } from 'jotai';
-import { set } from 'lodash';
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { useAtom } from "jotai";
+import { set } from "lodash";
 import {
   FaBehance,
   FaCodepen,
@@ -49,8 +45,8 @@ import {
   FaTwitch,
   FaTwitter,
   FaYoutube,
-} from 'react-icons/fa6';
-import { IconType } from 'react-icons/lib';
+} from "react-icons/fa6";
+import { IconType } from "react-icons/lib";
 import {
   SiAngular,
   SiBootstrap,
@@ -86,10 +82,10 @@ import {
   SiTailwindcss,
   SiTypescript,
   SiVuedotjs,
-} from 'react-icons/si';
+} from "react-icons/si";
 // import { updateProfileDataGithub } from '@/lib/profiles';
-import { updateQuickstartProfileData } from '@/lib/quickstart/saveEditData';
-import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
+import { updateQuickstartProfileData } from "@/lib/quickstart/saveEditData";
+import ProfilePageUserPanelSettings from "./ProfilePageUserPanelSettingsModal";
 
 interface IconMap {
   [key: string]: React.ReactNode;
@@ -192,35 +188,19 @@ interface ProfilePageUserPanelProps {
 }
 
 const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps) => {
-  // console.log('props in ProfilePageUserPanel');
-  // console.log(props);
-
   const { userData } = useContext(AuthContext);
   const userId = userData.uid;
   const [opened, { open, close }] = useDisclosure(false);
 
-  // console.log(userData)
-  // console.log(userId)
-
-  // console.log(props);
-
-  // Reusable Social Media Button
-
   function handleCancelChanges() {
     close();
   }
-
-  // const [formData, setFormData] = useState({})
   const [formData, setFormData] = useAtom(quickstartProfilePanelForm);
   const [quickstartState, setQuickstartState] = useAtom(quickstartStateAtom);
-  // const [profileDataAtom, setProfileDataAtom] = useAtom(quickstartProfileAtom);
 
-  // Function to handle saving changes
   const handleSaveChanges = async (newData: any) => {
     if (!currentUser) return;
-    // console.log('formData in save changes', newData);
     setFormData(newData);
-    // setProfileDataAtom(newData);
     setQuickstartState({
       ...quickstartState,
       profile: newData,
@@ -230,8 +210,6 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
       close();
     });
   };
-
-  // Determine the display name based on the presence of a first name
 
   return (
     <>
@@ -252,7 +230,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
         </Text>
         <Text ta="center" c="dimmed" fz="sm">
           {props.userName}
-          {props.location && ' • '} {formData.location || props.location}
+          {props.location && " • "} {formData.location || props.location}
         </Text>
 
         {/* Headline */}
@@ -289,7 +267,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
           <></>
         )}
         <Text mt="xs" ta="center" fz="sm">
-          {' '}
+          {" "}
           {props.publicEmail && props.publicEmail}
         </Text>
 
@@ -318,7 +296,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                 mt="xl"
                 styles={(theme) => ({
                   root: {
-                    borderColor: '#d5d5d5e0',
+                    borderColor: "#d5d5d5e0",
                     height: rem(38),
                     paddingLeft: rem(18),
                     paddingRight: rem(18),
@@ -340,7 +318,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                 mt="xl"
                 styles={(theme) => ({
                   root: {
-                    borderColor: '#d5d5d5e0',
+                    borderColor: "#d5d5d5e0",
                     height: rem(38),
                     paddingLeft: rem(18),
                     paddingRight: rem(18),
@@ -362,7 +340,8 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                 mt="xl"
                 styles={(theme) => ({
                   root: {
-                    borderColor: '#d5d5d5e0',
+                    // borderColor: "#d5d5d5e0",
+                    border: "lightgray 1px solid",
                     height: rem(38),
                     paddingLeft: rem(18),
                     paddingRight: rem(18),
@@ -388,7 +367,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
               size="xs"
               label="About"
               labelPosition="left"
-              labelProps={{ fw: 500, fz: 'md' }}
+              labelProps={{ fw: 500, fz: "md" }}
             />
 
             <Paper radius="md" p="lg">
@@ -407,7 +386,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
               size="xs"
               label="About"
               labelPosition="left"
-              labelProps={{ fw: 500, fz: 'md' }}
+              labelProps={{ fw: 500, fz: "md" }}
             />
 
             <Paper radius="md" p="lg">
@@ -428,7 +407,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
               size="xs"
               label="Availability"
               labelPosition="left"
-              labelProps={{ fw: 500, fz: 'md' }}
+              labelProps={{ fw: 500, fz: "md" }}
             />
 
             <Space h={12} />
@@ -455,7 +434,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
               size="xs"
               label="Tech Stack"
               labelPosition="left"
-              labelProps={{ fw: 500, fz: 'md' }}
+              labelProps={{ fw: 500, fz: "md" }}
             />
             <Space h={12} />
           </>
@@ -490,8 +469,8 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                         root: {
                           // padding: 5,
                           // borderWidth: 1,
-                          '&::before': {
-                            display: 'none', // Hide the dot
+                          "&::before": {
+                            display: "none", // Hide the dot
                           },
                         },
                       })}
@@ -532,8 +511,8 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                         root: {
                           // padding: 5,
                           // borderWidth: 1,
-                          '&::before': {
-                            display: 'none', // Hide the dot
+                          "&::before": {
+                            display: "none", // Hide the dot
                           },
                         },
                       })}
@@ -558,7 +537,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
               size="xs"
               label="Skills:"
               labelPosition="left"
-              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
+              labelProps={{ fw: 500, fz: "md", variant: "link" }}
             />
             <Space h={10} />
 
@@ -580,8 +559,8 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                           fontSize: 11,
                         },
                         root: {
-                          '&::before': {
-                            display: 'none', // Hide the dot
+                          "&::before": {
+                            display: "none", // Hide the dot
                           },
                         },
                       })}
@@ -602,7 +581,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
               size="xs"
               label="Skills:"
               labelPosition="left"
-              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
+              labelProps={{ fw: 500, fz: "md", variant: "link" }}
             />
             <Space h={10} />
 
@@ -624,8 +603,8 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                           fontSize: 11,
                         },
                         root: {
-                          '&::before': {
-                            display: 'none', // Hide the dot
+                          "&::before": {
+                            display: "none", // Hide the dot
                           },
                         },
                       })}
@@ -663,7 +642,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
               size="xs"
               label="Links"
               labelPosition="left"
-              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
+              labelProps={{ fw: 500, fz: "md", variant: "link" }}
             />
             <Space h={1} />
           </>
