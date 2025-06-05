@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
-import {  textEditorAtom, unsavedChangesAtom } from "@/atoms/jotaiAtoms";
+import { unsavedChangesAtom } from "@/atoms/jotaiAtoms";
 import { Group, ScrollArea, Space, Text, } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import {useAtom } from "jotai";
@@ -10,7 +10,7 @@ import LoadingPage from "@/components/LoadingPage/LoadingPage";
 import { AuthContext } from "@/context/AuthContext";
 import { getProfileDataWithAnonymousId } from "@/lib/quickstart/getSavedProfile";
 import { getSingleQuickstartProject } from "@/lib/quickstart/getSavedProjects";
-import { quickstartStateAtom } from "@/atoms";
+import { quickstartStateAtom, quickstartTextEditorAtom } from "@/atoms";
 import { useQuickstartState } from "@/hooks/useQuickstartState";
 
 
@@ -58,7 +58,7 @@ export default function UpdatePortfolioProject({
     repoId,
   });
   const [unsavedChanges, setUnsavedChanges] = useAtom(unsavedChangesAtom);
-  const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
+  const [textEditorState, setTextEditor] = useAtom(quickstartTextEditorAtom);
 
   const openModal = (url: string) => {
     modals.openConfirmModal({
