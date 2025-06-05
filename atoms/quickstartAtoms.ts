@@ -72,6 +72,7 @@ export const quickstartProfileAtom = atom(
   (get) => get(quickstartStateAtom).profile
 );
 
+export const quickstartTextEditorAtom = atom<string | undefined>('');
 
 
 interface ProfileFormData {

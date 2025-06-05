@@ -7,6 +7,7 @@ import {
   quickstartStateAtom,
 } from '@/atoms/quickstartAtoms';
 import useSWR from 'swr';
+import { quickstartTextEditorAtom } from '@/atoms/quickstartAtoms';
 
 // Utility fetcher function for SWR
 const fetcher = (url: string) =>
@@ -57,6 +58,8 @@ export function useQuickstartState({
   const [draftProjectsAtom] = useAtom(quickstartDraftProjectsAtom);
   const [publishedProjectsAtom] = useAtom(quickstartPublishedProjectsAtom);
   const [profileDataAtom] = useAtom(quickstartProfileAtom);
+  const [readmeAtom, setReadmeAtom] = useAtom(quickstartTextEditorAtom);
+
 
   // Fetch profile data from API if needed
   const profileKey = anonymousId
@@ -150,6 +153,7 @@ export function useQuickstartState({
             // Set readme if available in the project
             if (thisProject.htmlOutput && !initialReadme) {
               setReadme(thisProject.htmlOutput);
+              setReadmeAtom(thisProject.htmlOutput)
             }
           }
         }
@@ -157,6 +161,7 @@ export function useQuickstartState({
         // Set readme if provided from server props
         if (initialReadme) {
           setReadme(initialReadme);
+          setReadmeAtom(initialReadme);
         }
       } catch (err) {
         console.error('Error updating current project state:', err);
