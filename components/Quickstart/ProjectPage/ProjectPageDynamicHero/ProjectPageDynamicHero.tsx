@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Box, Button, Container, Group, Overlay, Text, Title } from '@mantine/core';
 import { correctImageGetter } from '@/lib/correctImageGetter';
 import useStyles from './ProjectPageDynamicHero.styles';
+import { useState, useEffect } from 'react';
 
-export function ProjectPageDynamicHero({ project }: any) {
+export function ProjectPageDynamicHero({project}: any) {
   const { classes } = useStyles();
+
+  // console.log('project in ProjectPageDynamicHero:', project);
+  // console.log('profile in ProjectPageDynamicHero:', profile);
 
   // const project = props.props[0];
   const image = project.coverImage;
@@ -23,6 +26,11 @@ export function ProjectPageDynamicHero({ project }: any) {
     ? replaceUnderscoresAndDashes(project.name)
     : '';
 
+  // console.log('live_url', project.live_url);
+  // console.log('liveUrl', project.liveUrl);
+  // console.log('repoUrl', project.repoUrl);
+  // console.log('html_url', project.html_url);
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,7 +39,12 @@ export function ProjectPageDynamicHero({ project }: any) {
 
   return (
     // <Group className={classes.hero} sx={{ backgroundImage: project.coverImage ? `url(${project.coverImage})` : '' }}>
-    <Group className={classes.hero}>
+    <Group
+      className={classes.hero}
+      // sx={{
+      //   backgroundImage: `url(${imageUrl})`,
+      // }}
+    >
       <Box
         // h='100%'
         sx={(theme) => ({
@@ -132,6 +145,17 @@ export function ProjectPageDynamicHero({ project }: any) {
             </Link>
           )}
         </Group>
+        {/* {mounted && (
+          <Link 
+            href={`/portfolio/${username_lowercase}/${projectname}#`}
+            passHref 
+            legacyBehavior
+          >
+          </Link>
+        )} */}
+        {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
+        Check it out!
+      </Button> */}
       </Container>
     </Group>
   );

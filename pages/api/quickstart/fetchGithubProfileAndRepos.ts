@@ -1,4 +1,6 @@
 import { getGithubProfileData, getGithubReposWithUsername } from "@/lib/quickstart/fetchGithubProfileRepos";
+// import { fetchLanguages } from "@/lib/quickstart/fetchLanguages";
+// import { fetchReadme } from "@/lib/quickstart/fetchReadme";
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -60,6 +62,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           languages_url: repo.languages_url ?? '',
         };
       }) || []
+
+    // TODO Move fetchlanguages & fetchreadme to calls after returned data
+    //  Or could be used in output on frontend
+      // Moving as it caused rate limits   
+      
+    // trimmedRepoData = await Promise.all(
+    //     returnedRepoData
+    //       .map(async (repo) => {
+    //         // const readme = await fetchReadme(usernameString, repo.name);
+    //         // const languages = await fetchLanguages(repo.languages_url);
+    //         return {
+    //           id: repo.id, // intentionally left in twice for testing
+    //           repoid: repo.id,
+    //           name: repo.name,
+    //           username: repo.owner?.login,
+    //           description: repo.description ?? '',
+    //           tags: repo.topics ?? [],
+    //           license: repo.license?.name ?? '',
+    //           // readme: readme ?? '',
+    //           fork_count: repo.forks_count ?? 0,
+    //           fork: repo.fork ?? false,
+    //           star_count: repo.stargazers_count ?? 0,
+    //           open_issues_count: repo.open_issues_count ?? 0,
+    //           main_language: repo.language ?? '',
+    //           // language_breakdown_percent: languages ?? [],
+    //           url: repo.html_url ?? '',
+    //           html_url: repo.html_url ?? '',
+    //         };
+    //       }) || []
+      //   )
       
     } else {
       console.log('no repo data returned from GitHub getRepos call')

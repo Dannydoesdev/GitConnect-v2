@@ -18,8 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         format: 'html', // fetch the raw markdown content
       },
     });
+    // res.status(200).json(readme);
     
     res.setHeader('Content-Type', 'text/html');
+    // console.log(readme.data.content)
 
     res.status(200).send(readme);
   } catch (error) {
