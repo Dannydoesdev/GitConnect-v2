@@ -50,6 +50,9 @@
       ],
       "@/components/*": [
         "./components/*"
+      ],
+      "@/features/*": [
+        "./features/*"
       ]
     },
     "plugins": [
@@ -67,6 +70,6 @@
   "exclude": [
     "node_modules",
     "functions",
-    "**/backup/**"
+    "**/backup/**/*"
   ]
 }

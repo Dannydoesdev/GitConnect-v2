@@ -8,6 +8,7 @@ const includedDirs = [
   path.resolve(__dirname, './pages'),
   path.resolve(__dirname, './components'),
   path.resolve(__dirname, './app'),
+  path.resolve(__dirname, './features'),
 ];
 
 module.exports = function withTwin(nextConfig) {
