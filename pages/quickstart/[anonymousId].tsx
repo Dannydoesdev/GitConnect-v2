@@ -209,7 +209,7 @@ export default function QuickstartPortfolio({
         <Center mt={55}>
           <Stack align="center" spacing="xs">
             <Text size="lg" weight={500}>
-              Want to edit projects and publish your portfolio?
+              Want to publish your portfolio?
             </Text>
             <Space h="xs" />
             <Button component={Link} href="/signup" size="md" color="teal">
@@ -222,8 +222,7 @@ export default function QuickstartPortfolio({
               color="indigo"
               icon={<IconInfoCircle size="1.5rem" />}
             >
-              Registered users have more tools to edit and publish projects <br /> You'll
-              be asked to choose your portfolio projects again
+              Registered users have more tools to edit their portfolio and publish projects
             </Blockquote>
           </Stack>
         </Center>

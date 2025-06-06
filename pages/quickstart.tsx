@@ -229,7 +229,7 @@ const QuickstartPage = () => {
               handleSubmit={handlePortfolioBuildSubmit}
               userAvatar={githubProfile?.avatar_url}
               username={githubProfile?.userName}
-              isSubmitting={isBuildingPortfolio}
+              isSubmitting={isBuildingPortfolio || finalProcessingCheck}
             />
           )}
       </Container>
