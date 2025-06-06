@@ -190,9 +190,8 @@ export function HeroLanding() {
               <span>the </span> global creative platform for devs
             </Title> */}
             <Text className={classes.description} size="xl" mt="xs">
-              Create your portfolio <span className={classes.emphasis}>in minutes - </span>
-                not days
-                <span className={classes.emphasisTwo}>- for free.</span>
+              Create your portfolio <span className={classes.emphasis}>in minutes, not days,</span>
+                <span className={classes.emphasisTwo}>for free.</span>
               <br />
               {/* Share what you've been building with the world */}
               Share what you're building with peers, clients & employers.
