@@ -76,8 +76,7 @@ export const fetchReadmeNoapi = async (
     // console.log('readme:', readme);
 
     const cleanedReadme = cleanReadme(readme);
-    // const readmeContent =  cleanMarkdown(readme);
-    // console.log('cleaned readmeContent:', cleanedReadme);
+
 
     return cleanedReadme;
   
@@ -107,9 +106,3 @@ export const fetchReadme = async (
     return null;
   }
 };
-
-// Remove markdown syntax and newlines - OLD
-// export const cleanMarkdown = (rawText: any) => {
-//   const strippedMarkdown = removeMarkdown(rawText);
-//   return strippedMarkdown.replace(/\n/g, ' ');
-// };
