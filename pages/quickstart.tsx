@@ -92,12 +92,10 @@ const QuickstartPage = () => {
     }
   }, [isGithubLoading, githubProfile, githubRepos, githubError, usernameInputValue]);
 
-  
   // STAGE 2: 'RepoSelection' - Select repos to add to portfolio
   const selectRepo = (id: string) => setSelectedRepoIds((prev) => [...prev, id]);
   const deselectRepo = (id: string) =>
     setSelectedRepoIds((prev) => prev.filter((item) => item !== id));
-
 
   // STAGE 3: 'Processing' - Build and save portfolio
   const handlePortfolioBuildSubmit = async () => {
@@ -138,8 +136,9 @@ const QuickstartPage = () => {
           withCloseButton: true,
         });
         // quickstartNotifications.redirecting();
-        setFinalProcessingCheck(false);
+
         setTimeout(() => {
+          // setFinalProcessingCheck(false);
           router.push(`/quickstart/${result.userId}`);
         }, 500);
       }, 3000);
@@ -187,52 +186,70 @@ const QuickstartPage = () => {
         type: "error",
       });
       if (uiStep === "processing") setUiStep("selectRepos");
+      setFinalProcessingCheck(false);
     }
   }, [githubError, authError, builderError, uiStep]);
 
   //  Cleanup notifications on route change
   useEffect(() => {
-    const handleRouteChange = () => notifications.clean();
+    const handleRouteChange = () => {
+      notifications.clean();
+      setFinalProcessingCheck(false);
+    };
     router.events.on("routeChangeComplete", handleRouteChange);
     return () => router.events.off("routeChangeComplete", handleRouteChange);
   }, [router]);
 
   return (
-    <Container mt={80} size="lg" p="lg">
-      <Header />
-      <Space h="md" />
+    <>
+      <Container mt={80} size="lg" p="lg">
+        <Header />
+        <Space h="md" />
 
-      {/* Stage 1 UI */}
-      {uiStep === "inputUsername" && (
-        <UsernameInputForm
-          initialUsername={usernameInputValue}
-          onSubmit={handleUsernameSubmit}
-          isLoading={isGithubLoading}
-          error={githubError}
-          showExistingLink={!!userData.uid}
-          existingLinkHref={`/quickstart/${userData.uid}`}
-        />
-      )}
+        {/* Stage 1 UI */}
+        {uiStep === "inputUsername" && (
+          <UsernameInputForm
+            initialUsername={usernameInputValue}
+            onSubmit={handleUsernameSubmit}
+            isLoading={isGithubLoading}
+            error={githubError}
+            showExistingLink={!!userData.uid}
+            existingLinkHref={`/quickstart/${userData.uid}`}
+          />
+        )}
+        {/* Stage 2 & 3 UI */}
+        {(uiStep === "selectRepos" || uiStep === "processing" || finalProcessingCheck) &&
+          githubProfile &&
+          githubRepos && (
+            <RepoSelection
+              repoData={githubRepos}
+              selectedRepos={selectedRepoIds}
+              selectRepo={selectRepo}
+              deselectRepo={deselectRepo}
+              handleSubmit={handlePortfolioBuildSubmit}
+              userAvatar={githubProfile?.avatar_url}
+              username={githubProfile?.userName}
+              isSubmitting={isBuildingPortfolio}
+            />
+          )}
+      </Container>
 
-      {/* Stage 2 UI */}
-      {uiStep === "selectRepos" && githubProfile && githubRepos && (
-        <RepoSelection
-          repoData={githubRepos}
-          selectedRepos={selectedRepoIds}
-          selectRepo={selectRepo}
-          deselectRepo={deselectRepo}
-          handleSubmit={handlePortfolioBuildSubmit}
-          userAvatar={githubProfile?.avatar_url}
-          username={githubProfile?.userName}
-          isSubmitting={isBuildingPortfolio}
-        />
-      )}
-
-      {/* Stage 3 UI */}
+      {/* Global Loading Overlay for full-page coverage - Stage 3 */}
       {(isBuildingPortfolio || finalProcessingCheck) && uiStep === "processing" && (
-        <LoadingOverlay visible={true} overlayBlur={2} />
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100%",
+            zIndex: 99,
+          }}
+        >
+          <LoadingOverlay visible zIndex={99} loaderProps={{ size: "xl" }} overlayBlur={2} />
+        </div>
       )}
-    </Container>
+    </>
   );
 };
 
