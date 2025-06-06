@@ -1,16 +1,34 @@
-import { Card, Center, Container, Group, Text, Title } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
-  IconEye,
+  createStyles,
+  Badge,
+  Group,
+  Container,
+  Title,
+  Text,
+  Card,
+  SimpleGrid,
+  Stack,
+  Space,
+  Center,
+} from '@mantine/core';
+import {
+  IconGauge,
+  IconUser,
+  IconCookie,
   IconFall,
-  IconListNumbers,
   IconReportAnalytics,
+  IconListNumbers,
+  IconEye,
   IconStar,
 } from '@tabler/icons-react';
 import axios from 'axios';
 import { ProjectPageDynamicHero } from '../ProjectPageDynamicHero/ProjectPageDynamicHero';
 import useStyles from './ProjectPageDynamicContent.styles';
 
-export default function ProjectPageDynamicContent({ project }: any) {
+export default function ProjectPageDynamicContent({project}: any) {
   const { classes, theme } = useStyles();
   // console.log('project in ProjectPageDynamicContent:', project);
 
@@ -72,12 +90,12 @@ export default function ProjectPageDynamicContent({ project }: any) {
     </Card>
   ));
 
+
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
-  }
-  const githubTitleFormatted = project.name
-    ? replaceUnderscoresAndDashes(project.name)
-    : '';
+  } 
+  const githubTitleFormatted = project.name ? replaceUnderscoresAndDashes(project.name) : '';
+
 
   return (
     <Container size="lg" mt="lg" py="xs">
@@ -106,7 +124,7 @@ export default function ProjectPageDynamicContent({ project }: any) {
         <Center>
           <IconStar size="1.2rem" stroke={1.7} color={theme.colors.dark[2]} />
           <Text size="sm" weight={450} className={classes.bodyText}>
-            {project.stars ? project.stars.length : 0}
+            {project.stars ? (project.stars).length : 0}
             {stars}
           </Text>
         </Center>
