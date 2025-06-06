@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import {
   Button,
   Center,
@@ -12,43 +12,41 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { Dropzone, DropzoneProps, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { notifications } from "@mantine/notifications";
-import { IconCheck, IconCross, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
-import { collection, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { AuthContext } from "@/context/AuthContext";
-import { db, storage } from "@/firebase/clientApp";
 import { useAtom } from "jotai";
 import { unsavedChangesSettingsAtom } from "@/atoms";
+import { useProjectCoverImageUpload } from "../hooks/useProjectCoverImageUpload";
 
 type RepoProps = {
   repoId: string | number;
   existingCoverImage?: string;
   handleNewCoverImage: (url: string) => void;
-  // initialFirebaseData?: string
 };
 
 export function UploadProjectCoverImage(
   { repoId, existingCoverImage, handleNewCoverImage }: RepoProps,
   props: Partial<DropzoneProps>,
 ) {
-  // console.log('existingCoverImage', existingCoverImage)
   const { userData } = useContext(AuthContext);
   const userId = userData.userId;
-  const userName = userData.userName;
-  const router = useRouter();
-
   const theme = useMantineTheme();
-
-  const [imgUrl, setImgUrl] = useState("");
-  const [progresspercent, setProgresspercent] = useState(0);
-  const [imgCheck, setImgCheck] = useState(false);
   const [files, setFiles] = useState<FileWithPath[]>([]);
+  const [imgCheck, setImgCheck] = useState(false);
   const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(unsavedChangesSettingsAtom);
 
+  // Use the custom hook for upload logic
+  const {
+    uploadCoverImage,
+    progress,
+    isUploading,
+    error,
+    imgUrl,
+  } = useProjectCoverImageUpload({ userId, repoId });
+
+  // Preview for dropped file
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
-
     return (
       <Image
         key={index}
@@ -57,138 +55,37 @@ export function UploadProjectCoverImage(
       />
     );
   });
-  const handleFileCancel = (file: any) => {
+
+  const handleFileCancel = () => {
     setFiles([]);
     setImgCheck(false);
     setUnsavedChangesSettings(false);
-    // URL.revokeObjectURL(file)
-    // file.map((file) => URL.revokeObjectURL(file));
   };
 
   const handleFileDrop = (file: FileWithPath[]) => {
-    setImgUrl("");
-    // setImgCheck(false);
-    // console.log('accepted file', file);
-    // console.log('droptime')
     setFiles(file);
     setImgCheck(true);
     setUnsavedChangesSettings(true);
   };
 
-  async function sendImageToFirebase(file: any) {
-    const extension = file.name.split(".").pop();
-    const storageRef = ref(
-      storage,
-      `usersAnonymous/${userId}/reposAnonymous/${repoId}/images/coverImage/${file.name}`,
-    );
-    try {
-      notifications.show({
-        id: "load-data",
-        loading: true,
-        title: "Uploading Image",
-        message: "Cover image is being uploaded",
-        autoClose: false,
-        withCloseButton: false,
-      });
-
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          setProgresspercent(progress);
-        },
-        (error) => {
-          alert(error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            const docRef = doc(
-              db,
-              `usersAnonymous/${userId}/reposAnonymous/${repoId}/projectDataAnonymous/mainContent`,
-            );
-            const parentStorageRef = doc(db, `usersAnonymous/${userId}/reposAnonymous/${repoId}`);
-            const backupStorageRef = doc(
-              db,
-              `usersAnonymous/${userId}/reposAnonymous/${repoId}/projectDataAnonymous/images`,
-            );
-            // Match the exact sizes configured in the Firebase resizer extension
-            // const sizes = [200, 400, 768, 1024, 2000, 4000];
-            const sizes = ["200x200", "400x400", "768x768", "1024x1024", "2000x2000", "4000x4000"];
-            const coverImageMeta = {
-              name: file.name,
-              extension,
-              sizes,
-              // lastModified: new Date().toISOString()
-            };
-
-            await setDoc(
-              docRef,
-              {
-                coverImageMeta: coverImageMeta,
-                coverImage: downloadURL,
-              },
-              { merge: true },
-            );
-            await setDoc(
-              parentStorageRef,
-              {
-                coverImageMeta: coverImageMeta,
-                coverImage: downloadURL,
-              },
-              { merge: true },
-            );
-            await setDoc(
-              backupStorageRef,
-              {
-                coverImageMeta: coverImageMeta,
-                coverImage: downloadURL,
-              },
-              { merge: true },
-            );
-
-            setImgUrl(downloadURL);
-            handleNewCoverImage(downloadURL);
-          });
-        },
-      );
-    } catch (error) {
-      console.log(error);
-      notifications.update({
-        id: "load-data",
-        color: "red",
-        title: "Something went wrong",
-        message: "Something went wrong, please try again",
-        icon: <IconCross size="1rem" />,
-        autoClose: 2000,
-      });
-    } finally {
+  // When upload is successful, call handleNewCoverImage
+  useEffect(() => {
+    if (imgUrl) {
+      handleNewCoverImage(imgUrl);
       setUnsavedChangesSettings(false);
-      notifications.update({
-        id: "load-data",
-        color: "teal",
-        title: "Image was saved",
-        message: "Cover image uploaded to the database",
-        icon: <IconCheck size="1rem" />,
-        autoClose: 2000,
-      });
+      setImgCheck(false);
+      setFiles([]);
     }
-  }
+  }, [imgUrl]);
 
   return (
     <>
-      {/* <Group mx={10}> */}
       <Dropzone
-        // padding='xl'
-        // loading
-        onDrop={(file) => handleFileDrop(file)}
-        // onDrop={setFiles}
+        onDrop={handleFileDrop}
         onReject={(files) => console.log("rejected files", files)}
         maxSize={6 * 1024 ** 2}
         maxFiles={1}
         mb="lg"
-        // accept='image'
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
           maxWidth: 200,
@@ -198,7 +95,6 @@ export function UploadProjectCoverImage(
           display: "flex",
           justifyContent: "center",
           marginTop: 30,
-
           backgroundColor: "#afafaf1a",
         })}
         {...props}
@@ -225,7 +121,6 @@ export function UploadProjectCoverImage(
                 height={100}
                 src={existingCoverImage}
                 alt="Current cover image"
-                // sx={{ maxHeight: 160 }}
               />
             ) : imgUrl ? (
               <Image
@@ -233,7 +128,6 @@ export function UploadProjectCoverImage(
                 height={100}
                 src={imgUrl}
                 alt="Current cover image"
-                // sx={{ width: '100%' }}
               />
             ) : (
               <IconPhoto size={40} stroke={1.5} />
@@ -248,58 +142,53 @@ export function UploadProjectCoverImage(
         <>
           <Group position="center">
             <Space h="lg" />
-
             <Text>Preview:</Text>
             <Space h="sm" />
             <Container size={200}>{previews}</Container>
           </Group>
           <Group mt="lg" position="center" spacing="xs">
-            {imgUrl ? (
-              <Text>Image Saved</Text>
-            ) : (
-              <>
-                <Button
-                  component="a"
-                  size="xs"
-                  radius="md"
-                  onClick={() => sendImageToFirebase(files[0])}
-                  styles={(theme) => ({
-                    root: {
-                      backgroundColor:
-                        theme.colorScheme === "dark"
-                          ? theme.colors.green[8]
-                          : theme.colors.green[6],
-                      // maxWidth: '70%',
-                      [theme.fn.smallerThan("sm")]: {
-                        // width: '90%',
-                      },
-                      "&:hover": {
-                        backgroundColor:
-                          theme.colorScheme === "dark"
-                            ? theme.colors.green[9]
-                            : theme.colors.green[9],
-                      },
-                    },
-                  })}
-                >
-                  Save Image
-                </Button>
-                <Button
-                  component="a"
-                  size="xs"
-                  radius="md"
-                  variant="outline"
-                  color="red"
-                  onClick={() => handleFileCancel(files[0])}
-                >
-                  Remove
-                </Button>
-              </>
-            )}
+            <Button
+              component="a"
+              size="xs"
+              radius="md"
+              onClick={async () => {
+                if (files[0]) {
+                  await uploadCoverImage(files[0]);
+                }
+              }}
+              loading={isUploading}
+              disabled={isUploading}
+              styles={(theme) => ({
+                root: {
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.green[8]
+                      : theme.colors.green[6],
+                  "&:hover": {
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.green[9]
+                        : theme.colors.green[9],
+                  },
+                },
+              })}
+            >
+              {isUploading ? `Uploading...` : "Save Image"}
+            </Button>
+            <Button
+              component="a"
+              size="xs"
+              radius="md"
+              variant="outline"
+              color="red"
+              onClick={handleFileCancel}
+              disabled={isUploading}
+            >
+              Remove
+            </Button>
           </Group>
         </>
       )}
-      {/* </Center> */}
     </>
   );
 }
