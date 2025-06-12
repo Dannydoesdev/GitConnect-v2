@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import NextApp, { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
-import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
+import {
+  MantineProvider,
+  ColorScheme,
+  ColorSchemeProvider,
+} from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { Analytics } from '@vercel/analytics/react';
@@ -13,10 +17,8 @@ import '../styles/globals.css';
 import '../styles/tiptap.scss';
 import { AppContainer } from '../components/AppContainer';
 import { AuthProvider } from '../context/AuthContext';
-import { AuthProviderAnonymous } from '@/context/AuthContextAnonymousNoStripe';
 import { useRouter } from 'next/router';
-import "@fontsource/inter"; 
-import axios from 'axios';
+import '@fontsource/inter';
 
 // Previous solution here for future ref - just for icons for notitap
 // import '@unocss/reset/tailwind.css'
@@ -24,8 +26,8 @@ import axios from 'axios';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
-  const router = useRouter()
- 
+  const router = useRouter();
+
   const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
   const [isClient, setIsClient] = useState(false);
 
@@ -33,12 +35,14 @@ export default function App(props: AppProps) {
   useEffect(() => {
     setIsClient(true);
     // Get color scheme from cookie on client-side only
-    const savedColorScheme = getCookie('mantine-color-scheme') as ColorScheme || 'dark';
+    const savedColorScheme =
+      (getCookie('mantine-color-scheme') as ColorScheme) || 'dark';
     setColorScheme(savedColorScheme);
   }, []);
 
   const toggleColorScheme = (value?: ColorScheme) => {
-    const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
+    const nextColorScheme =
+      value || (colorScheme === 'dark' ? 'light' : 'dark');
     setColorScheme(nextColorScheme);
     setCookie('mantine-color-scheme', nextColorScheme, {
       maxAge: 60 * 60 * 24 * 30,
@@ -51,29 +55,29 @@ export default function App(props: AppProps) {
         <title>GitConnect: The Portfolio Platform for Devs</title>
 
         <meta
-          property="og:title"
-          content="GitConnect: The Portfolio Platform for Devs"
+          property='og:title'
+          content='GitConnect: The Portfolio Platform for Devs'
         />
         <meta
-          property="og:image"
-          content="https://www.gitconnect.dev/img/favicon/gclogo.png"
+          property='og:image'
+          content='https://www.gitconnect.dev/img/favicon/gclogo.png'
         />
-        <meta property="og:url" content="https://www.gitconnect.dev/" />
+        <meta property='og:url' content='https://www.gitconnect.dev/' />
         <meta
-          name="description"
-          content="GitConnect is a dedicated platform for developers to build their portfolio, connect with opportunities, and with each other."
-        />
-        <meta
-          name="keywords"
-          content="developers, devs, coding, developer portfolio platform, software engineers, freelance portfolios, freelance developers, projects, showcase, connect, collaborate, junior developers, GitHub, coding, coding portfolio, software developer projects, project portfolio for developers, coding collaboration platform"
+          name='description'
+          content='GitConnect is a dedicated platform for developers to build their portfolio, connect with opportunities, and with each other.'
         />
         <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
+          name='keywords'
+          content='developers, devs, coding, developer portfolio platform, software engineers, freelance portfolios, freelance developers, projects, showcase, connect, collaborate, junior developers, GitHub, coding, coding portfolio, software developer projects, project portfolio for developers, coding collaboration platform'
         />
-        <link rel="icon" href="/img/favicon/gclogo.png" />
+        <meta
+          name='viewport'
+          content='minimum-scale=1, initial-scale=1, width=device-width'
+        />
+        <link rel='icon' href='/img/favicon/gclogo.png' />
       </Head>
-      <ThemeProvider attribute="class">
+      <ThemeProvider attribute='class'>
         <ColorSchemeProvider
           colorScheme={colorScheme}
           toggleColorScheme={toggleColorScheme}
@@ -91,7 +95,7 @@ export default function App(props: AppProps) {
                 {/* <AuthProviderAnonymous> */}
                 <Provider>
                   {/* Introducing the following change to prevent hydration errors - but needs full testing */}
-                {isClient ? (
+                  {isClient ? (
                     <AppContainer>
                       <Component key={router.asPath} {...pageProps} />
                       <Analytics />
@@ -107,8 +111,8 @@ export default function App(props: AppProps) {
                     <Analytics />
                     <SpeedInsights />
                   </AppContainer> */}
-                  </Provider>
-                  {/* </AuthProviderAnonymous> */}
+                </Provider>
+                {/* </AuthProviderAnonymous> */}
               </AuthProvider>
             </ModalsProvider>
           </MantineProvider>
@@ -117,18 +121,3 @@ export default function App(props: AppProps) {
     </>
   );
 }
-
-//  Previous implementations:
-
-
-// App.getInitialProps = ({ ctx }: { ctx: GetServerSidePropsContext }) => ({
-//   colorScheme: getCookie('mantine-color-scheme', ctx) || 'dark',
-// });
-
-// App.getInitialProps = async (appContext: AppContext) => {
-//   const appProps = await NextApp.getInitialProps(appContext);
-//   return {
-//     ...appProps,
-//     colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
-//   };
-// };

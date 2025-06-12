@@ -1,10 +1,10 @@
-import React, { ReactNode, useEffect, useState } from 'react';
-import { Auth, onAuthStateChanged, User } from 'firebase/auth';
-import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
-import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
-import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
-import { app, auth, db } from '../firebase/clientApp';
-import { getGithubProfileData } from '../lib/github';
+import React, { ReactNode, useEffect, useState } from "react";
+import { Auth, onAuthStateChanged, User } from "firebase/auth";
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { getPremiumStatusProd } from "@/lib/stripe/getPremiumStatusProd";
+import { getPremiumStatusTest } from "@/lib/stripe/getPremiumStatusTest";
+import { app, auth, db } from "../firebase/clientApp";
+import { getGithubProfileData } from "../lib/github";
 
 // import { AuthData } from '../types';
 
@@ -34,7 +34,7 @@ type Props = {
   title?: string;
 };
 
-const colRef = collection(db, 'users');
+const colRef = collection(db, "users");
 
 export const AuthProvider = ({ children }: Props) => {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -45,14 +45,14 @@ export const AuthProvider = ({ children }: Props) => {
   const [isPro, setIsPro] = useState<boolean | null>(null);
   // const [userData, setUserData] = useState<AuthData | null>(null);
   const [userData, setUserData] = useState<AuthData>({
-    userProviderId: '',
-    userId: '',
-    userName: '',
-    username_lowercase: '',
-    githubId: '',
-    displayName: '',
-    userEmail: '',
-    userPhotoLink: '',
+    userProviderId: "",
+    userId: "",
+    userName: "",
+    username_lowercase: "",
+    githubId: "",
+    displayName: "",
+    userEmail: "",
+    userPhotoLink: "",
     isPro: false,
     isAnonymous: true,
   });
@@ -114,40 +114,35 @@ export const AuthProvider = ({ children }: Props) => {
               gitconnect_updated_at_unix: Date.now(),
             };
 
-            await setDoc(doc(colRef, user.uid), newUserData)
+            await setDoc(doc(colRef, user.uid), newUserData);
 
             // Uncomment and test the below
             // .then(async (cred) => {
-            
-                // Get full github profile data
 
-                if (requiredData.userName) {
-                  const githubPublicProfileData = await getGithubProfileData(
-                    requiredData.userName
-                  );
+            // Get full github profile data
 
-                  const githubProfileDataForFirestore = {
-                    ...requiredData,
-                    ...githubPublicProfileData,
-                    gitconnect_created_at: new Date().toISOString(),
-                    gitconnect_updated_at: new Date().toISOString(),
-                    gitconnect_created_at_unix: Date.now(),
-                    gitconnect_updated_at_unix: Date.now(),
-                  };
+            if (requiredData.userName) {
+              const githubPublicProfileData = await getGithubProfileData(requiredData.userName);
 
-                  const profileDocRef = doc(
-                    db,
-                    `users/${user.uid}/profileData/publicData`
-                  );
-                  await setDoc(profileDocRef, githubProfileDataForFirestore, {
-                    merge: true,
-                  });
-                }
-            
-              // })
-              // .catch((error) => {
-              //   console.log('Error adding profileData document: ', error);
-              // });
+              const githubProfileDataForFirestore = {
+                ...requiredData,
+                ...githubPublicProfileData,
+                gitconnect_created_at: new Date().toISOString(),
+                gitconnect_updated_at: new Date().toISOString(),
+                gitconnect_created_at_unix: Date.now(),
+                gitconnect_updated_at_unix: Date.now(),
+              };
+
+              const profileDocRef = doc(db, `users/${user.uid}/profileData/publicData`);
+              await setDoc(profileDocRef, githubProfileDataForFirestore, {
+                merge: true,
+              });
+            }
+
+            // })
+            // .catch((error) => {
+            //   console.log('Error adding profileData document: ', error);
+            // });
 
             setUserData(newUserData);
             setIsNewUser(true);
@@ -157,7 +152,7 @@ export const AuthProvider = ({ children }: Props) => {
 
           setCurrentUser(user);
         } catch (error) {
-          console.error('Error in auth state change:', error);
+          console.error("Error in auth state change:", error);
           // setUserData(null);
           // setCurrentUser(null);
         }
@@ -166,7 +161,6 @@ export const AuthProvider = ({ children }: Props) => {
         setUserData({ ...user, userId: user.uid });
         setCurrentUser(user);
       } else {
-
         // Logout / fail path
         setIsPro(false); // Reset premium status if user logs out
         if (unsubscribePremiumStatus) {
@@ -206,273 +200,3 @@ export const AuthProvider = ({ children }: Props) => {
     </AuthContext.Provider>
   );
 };
-
-// ------------------- REVERT MAR 2025 FOR MAJOR ISSUE -------------------
-
-//         setCurrentUser(user);
-//       } else {
-//         setIsPro(false);
-//         setCurrentUser(null);
-//         setUserData({
-//           userProviderId: '',
-//           userId: '',
-//           userName: '',
-//           username_lowercase: '',
-//           githubId: '',
-//           displayName: '',
-//           userEmail: '',
-//           userPhotoLink: '',
-//           isPro: false,
-//         });
-//       }
-//     } catch (error) {
-//       console.error('Auth state change error:', error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   });
-
-//   return () => {
-//     unsubscribe();
-//     if (unsubscribePremiumStatus) {
-//       unsubscribePremiumStatus();
-//     }
-//   };
-// }, [isPro]);
-
-// Don't render children until initial loading is complete
-// if (loading) {
-//   return <LoadingPage />;
-// }
-
-// ------------------- OLDER -------------------
-
-// // Add a new document with a generated id.
-// // Create the context to store user data
-// // Note the type goes in angled brackets before the initial state
-// export const AuthContext = React.createContext<any>(null);
-
-// type Props = {
-//   children?: ReactNode;
-//   title?: string;
-// };
-
-// // get users collection to add this user
-// const colRef = collection(db, 'users');
-
-// // Creating the provider component
-// // Using 'any' type for now
-// export const AuthProvider = ({ children }: Props) => {
-//   const [currentUser, setCurrentUser] = useState<any>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [isPro, setIsPro] = useState<boolean | null>(null);
-//   const [userData, setUserData] = useState<AuthData>({
-//     userProviderId: '',
-//     userId: '',
-//     userName: '',
-//     username_lowercase: '',
-//     githubId: '',
-//     displayName: '',
-//     userEmail: '',
-//     userPhotoLink: '',
-//     isPro: false,
-//   });
-
-//   useEffect(() => {
-//     let unsubscribePremiumStatus: any = null;
-
-//     const unsubscribe = onAuthStateChanged(auth, async (user: any) => {
-//       try {
-//         if (user) {
-//           unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro);
-
-//           const requiredData: AuthData = {
-//             userProviderId: user.providerData[0].providerId,
-//             userId: user.uid,
-//             userName: user.reloadUserInfo.screenName,
-//             username_lowercase: user.reloadUserInfo.screenName.toLowerCase(),
-//             githubId: user.providerData[0].uid,
-//             displayName: user.displayName,
-//             userEmail: user.email,
-//             userPhotoLink: user.photoURL,
-//             isPro: isPro ?? false,
-//           };
-
-//           setUserData(requiredData);
-//           setCurrentUser(user);
-//         } else {
-//           setIsPro(false);
-//           setCurrentUser(null);
-//           setUserData({
-//             userProviderId: '',
-//             userId: '',
-//             userName: '',
-//             username_lowercase: '',
-//             githubId: '',
-//             displayName: '',
-//             userEmail: '',
-//             userPhotoLink: '',
-//             isPro: false,
-//           });
-//         }
-//       } catch (error) {
-//         console.error('Auth state change error:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     });
-
-//     return () => {
-//       unsubscribe();
-//       if (unsubscribePremiumStatus) {
-//         unsubscribePremiumStatus();
-//       }
-//     };
-//   }, [isPro]);
-
-//   // Don't render children until initial loading is complete
-//   if (loading) {
-//     return <LoadingPage />;
-//   }
-
-//   return (
-//     <AuthContext.Provider value={{ currentUser, userData, loading }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-// ------------------- REVERT MAR 2025 FOR MAJOR ISSUE -------------------
-
-//         setCurrentUser(user);
-//       } else {
-//         setIsPro(false);
-//         setCurrentUser(null);
-//         setUserData({
-//           userProviderId: '',
-//           userId: '',
-//           userName: '',
-//           username_lowercase: '',
-//           githubId: '',
-//           displayName: '',
-//           userEmail: '',
-//           userPhotoLink: '',
-//           isPro: false,
-//         });
-//       }
-//     } catch (error) {
-//       console.error('Auth state change error:', error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   });
-
-//   return () => {
-//     unsubscribe();
-//     if (unsubscribePremiumStatus) {
-//       unsubscribePremiumStatus();
-//     }
-//   };
-// }, [isPro]);
-
-// Don't render children until initial loading is complete
-// if (loading) {
-//   return <LoadingPage />;
-// }
-
-// ------------------- OLDER -------------------
-
-// // Add a new document with a generated id.
-// // Create the context to store user data
-// // Note the type goes in angled brackets before the initial state
-// export const AuthContext = React.createContext<any>(null);
-
-// type Props = {
-//   children?: ReactNode;
-//   title?: string;
-// };
-
-// // get users collection to add this user
-// const colRef = collection(db, 'users');
-
-// // Creating the provider component
-// // Using 'any' type for now
-// export const AuthProvider = ({ children }: Props) => {
-//   const [currentUser, setCurrentUser] = useState<any>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [isPro, setIsPro] = useState<boolean | null>(null);
-//   const [userData, setUserData] = useState<AuthData>({
-//     userProviderId: '',
-//     userId: '',
-//     userName: '',
-//     username_lowercase: '',
-//     githubId: '',
-//     displayName: '',
-//     userEmail: '',
-//     userPhotoLink: '',
-//     isPro: false,
-//   });
-
-//   useEffect(() => {
-//     let unsubscribePremiumStatus: any = null;
-
-//     const unsubscribe = onAuthStateChanged(auth, async (user: any) => {
-//       try {
-//         if (user) {
-//           unsubscribePremiumStatus = await getPremiumStatusProd(app, setIsPro);
-
-//           const requiredData: AuthData = {
-//             userProviderId: user.providerData[0].providerId,
-//             userId: user.uid,
-//             userName: user.reloadUserInfo.screenName,
-//             username_lowercase: user.reloadUserInfo.screenName.toLowerCase(),
-//             githubId: user.providerData[0].uid,
-//             displayName: user.displayName,
-//             userEmail: user.email,
-//             userPhotoLink: user.photoURL,
-//             isPro: isPro ?? false,
-//           };
-
-//           setUserData(requiredData);
-//           setCurrentUser(user);
-//         } else {
-//           setIsPro(false);
-//           setCurrentUser(null);
-//           setUserData({
-//             userProviderId: '',
-//             userId: '',
-//             userName: '',
-//             username_lowercase: '',
-//             githubId: '',
-//             displayName: '',
-//             userEmail: '',
-//             userPhotoLink: '',
-//             isPro: false,
-//           });
-//         }
-//       } catch (error) {
-//         console.error('Auth state change error:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     });
-
-//     return () => {
-//       unsubscribe();
-//       if (unsubscribePremiumStatus) {
-//         unsubscribePremiumStatus();
-//       }
-//     };
-//   }, [isPro]);
-
-//   // Don't render children until initial loading is complete
-//   if (loading) {
-//     return <LoadingPage />;
-//   }
-
-//   return (
-//     <AuthContext.Provider value={{ currentUser, userData, loading }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
