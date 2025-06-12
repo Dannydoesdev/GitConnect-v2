@@ -137,6 +137,4 @@ export default createStyles((theme) => ({
       alignItems: 'center',
     },
   },
-
-
 }));

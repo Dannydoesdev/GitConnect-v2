@@ -4,7 +4,6 @@ export default createStyles((theme) => ({
   hero: {
     paddingTop: 10,
     position: 'relative',
-    // backgroundImage: 'url(../../img/gitconnect.webp)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
@@ -36,11 +35,6 @@ export default createStyles((theme) => ({
     fontWeight: 800,
     lineHeight: 1.1,
     marginLeft: -6,
-
-    // [theme.fn.largerThan('xxl')]: {
-    //   fontSize: 65,
-    //   lineHeight: 1.2,
-    // },
 
     [theme.fn.smallerThan('xl')]: {
       fontSize: 55,
@@ -83,16 +77,12 @@ export default createStyles((theme) => ({
       fontSize: 35,
       lineHeight: 1.2,
     },
-    
+
     [theme.fn.smallerThan('sm')]: {
       fontSize: 30,
       lineHeight: 1.2,
     },
 
-    // [theme.fn.smallerThan('xs')]: {
-    //   fontSize: 25,
-    //   lineHeight: 1.3,
-    // },
   },
 
   titleThree: {
@@ -110,56 +100,24 @@ export default createStyles((theme) => ({
       fontSize: 35,
       lineHeight: 1.2,
     },
-    
+
     [theme.fn.smallerThan('sm')]: {
       fontSize: 30,
       lineHeight: 1.2,
     },
-
-    // [theme.fn.smallerThan('xs')]: {
-    //   fontSize: 25,
-    //   lineHeight: 1.3,
-    // },
   },
 
   emphasisThree: {
-  fontSize: 15,
-  fontWeight: 600,
-},
+    fontSize: 15,
+    fontWeight: 600,
+  },
 
   emphasisTwo: {
     fontWeight: 500,
   },
 
   emphasis: {
-    // fontStyle: 'oblique',
-    // textEmphasis: 'firebrick',
-
-    // color: theme.white,
-    // fontSize: 30,
-    // fontStyle: 'italic',
-
     fontWeight: 500,
-    // fontStyle: 'italic',
-    // textAlign: 'center',
-    // reverse: true,
-    // direction: 'ltr',
-    // // fontVariantCaps: 'small-caps',
-    // fontVariantCaps: 'petite-caps',
-    // // textDecoration: 'italic',
-    // lineHeight: 1,
-    // fontFamily: 'monospace',
-    // // marginTop: '8px',
-
-    // [theme.fn.smallerThan('sm')]: {
-    //   fontSize: 26,
-    //   lineHeight: 1.2,
-    // },
-
-    // [theme.fn.smallerThan('xs')]: {
-    //   fontSize: 18,
-    //   lineHeight: 1.3,
-    // },
   },
 
   beta: {
@@ -216,17 +174,16 @@ export default createStyles((theme) => ({
       theme.colorScheme === 'dark'
         ? theme.colors.dark[5]
         : theme.colors.blue[6],
-    
+
     '&.hover': {
       root: {
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[6]
-          : theme.colors.blue[7],
+        backgroundColor:
+          theme.colorScheme === 'dark'
+            ? theme.colors.dark[6]
+            : theme.colors.blue[7],
       },
     },
-    
-    
+
     width: '25%',
 
     [theme.fn.smallerThan('sm')]: {
