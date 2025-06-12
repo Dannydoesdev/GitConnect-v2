@@ -1,48 +1,48 @@
-import { useContext, useEffect, useState } from 'react';
-import { Button, Card, Center, Container, Group, Paper } from '@mantine/core';
-import { Link, RichTextEditor, useRichTextEditorContext } from '@mantine/tiptap';
+import { useState, useEffect, useContext } from 'react';
+import { Button, Card, Center, Container, Group } from '@mantine/core';
+import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
-// import { lowlight } from 'lowlight/lib/core'
-// import { lowlight } from 'lowlight';
-import { lowlight } from 'lowlight/lib/common.js';
-import { CustomResizableImage } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/image/customResizableImage';
-import { ResizableMedia } from '../../Portfolio/Project/EditProject/RichTextEditor/extensions/resizableMedia';
-// import { notitapEditorClass } from '../../Portfolio/RichTextEditor/proseClassString';
-// import useStyles from './ViewPreviewProjectContent.styles';
-import useStyles from './RichTextEditorDisplay.styles';
+import { lowlight } from 'lowlight/lib/core';
+import css from 'highlight.js/lib/languages/css';
+import { CustomResizableImage } from '../../../../../features/project-edit/components/RichTextEditor/extensions/image/customResizableImage';
+import { ResizableMedia } from '../../../../../features/project-edit/components/RichTextEditor/extensions/resizableMedia';
+import { notitapEditorClass } from '../../../../../features/project-edit/components/RichTextEditor/proseClassString';
+import useStyles from './ViewPreviewProjectContent.styles';
 
 type RichTextEditorVanillaProps = {
-  content?: string | null | undefined;
+  updatedContent?: string | null | undefined;
 };
 
-// console.log(lowlight.listLanguages())
+// lowlight.registerLanguage('ts', tsLanguageSyntax);
+lowlight.registerLanguage('html', html);
+lowlight.registerLanguage('css', css);
+lowlight.registerLanguage('js', js);
+lowlight.registerLanguage('ts', ts);
 
-// lowlight.register('ts', tsLanguageSyntax);
-// lowlight.registerLanguage('html', html);
-// lowlight.registerLanguage('css', css);
-// lowlight.registerLanguage('js', js);
-// lowlight.registerLanguage('ts', ts);
+function ViewPreviewProjectEditor({
+  updatedContent,
+}:
+RichTextEditorVanillaProps) {
 
-export default function RichTextEditorDisplay({ content }: RichTextEditorVanillaProps) {
   const [editable, setEditable] = useState(false);
   const { classes, theme } = useStyles();
 
   useEffect(() => {
-    if (content && editor) {
-      editor?.commands.setContent(content);
+    if (updatedContent && editor) {
+      editor?.commands.setContent(updatedContent);
     }
-  }, [content]);
+  }, [updatedContent]);
 
   const editor = useEditor({
     editable,
-    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         codeBlock: false,
@@ -61,7 +61,6 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
           class: 'lowlight',
         },
         lowlight,
-        // highlight,
       }),
       Underline,
       // DBlock,
@@ -73,7 +72,7 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: content,
+    content: updatedContent,
     editorProps: {
       attributes: {
         // class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
@@ -98,12 +97,10 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
   }
 
   return (
-    <Container size="lg" px="lg" py="lg" className={classes.container}>
-      {/* <Paper shadow="xl" p="xl"> */}
-      <Card shadow="md" radius="md" p="xl">
-        {/* // className={classes.card}> */}
+
+    <Container size='xl' px='xl' py="lg" className={classes.container}>
+      <Card shadow="md" radius="md" p="xl" className={classes.card}>
         <RichTextEditor
-          // withTypographyStyles={false}
           editor={editor}
           w="100%"
           styles={(theme) => ({
@@ -114,47 +111,14 @@ export default function RichTextEditorDisplay({ content }: RichTextEditorVanilla
             content: {
               backgroundColor: '#00000000',
               border: 0,
-            },
+            }
           })}
         >
           <RichTextEditor.Content />
         </RichTextEditor>
       </Card>
-      {/* </Paper> */}
     </Container>
   );
 }
 
-type TipTapDisplayProps = {
-  content: string;
-};
-
-// function RichTextEditorDisplay({ content }: TipTapDisplayProps) {
-
-//   const { classes, theme } = useStyles();
-
-//   return (
-//     <Container
-//       id='second-section'
-//       py="xl"
-//       className={classes.container}
-//     >
-
-//       <Card
-//         shadow="md"
-//         radius="md"
-//         p="xl"
-//         className={classes.card}
-
-//         >
-//           {/* dangerouslySetInnerHTML={{ __html: content }} */}
-//       <div dangerouslySetInnerHTML={{ __html: content }} />
-
-//       </Card>
-//     </Container>
-
-//   )
-
-// }
-
-// export default RichTextEditorDisplay;
+export default ViewPreviewProjectEditor;
