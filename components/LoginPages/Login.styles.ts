@@ -3,7 +3,6 @@ import { createStyles } from '@mantine/core';
 export default createStyles((theme) => {
 
   return {
-
     wrapper: {
       marginTop: 70,
       minHeight: 900,
