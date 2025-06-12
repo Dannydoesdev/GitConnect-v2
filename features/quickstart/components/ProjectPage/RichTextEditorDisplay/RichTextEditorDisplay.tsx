@@ -8,8 +8,8 @@ import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { lowlight } from 'lowlight/lib/common.js';
-import { CustomResizableImage } from '@/components/Portfolio/Project/EditProject/RichTextEditor/extensions/image/customResizableImage';
-import { ResizableMedia } from '@/components/Portfolio/Project/EditProject/RichTextEditor/extensions/resizableMedia';
+import { CustomResizableImage } from '@/features/quickstart/components/ProjectPage/EditProject/RichTextEditor/extensions/image/customResizableImage'; 
+import { ResizableMedia } from '@/features/quickstart/components/ProjectPage/EditProject/RichTextEditor/extensions/resizableMedia';
 import useStyles from './RichTextEditorDisplay.styles';
 
 type RichTextEditorVanillaProps = {
