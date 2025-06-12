@@ -17,10 +17,6 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// console.log("FIRESTORE_EMULATOR_HOST:", process.env.FIRESTORE_EMULATOR_HOST);
-// console.log("NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST:", process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST );
-// console.log("node environment:", process.env.NODE_ENV);
-
 let firebaseApp;
 
 if (!getApps().length) {
