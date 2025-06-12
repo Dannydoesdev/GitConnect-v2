@@ -81,8 +81,8 @@ import {
   SiTypescript,
   SiVuedotjs,
 } from 'react-icons/si';
-import { AuthContext } from '../../../context/AuthContext';
-import { updateProfileDataGithub } from '../../../lib/profiles';
+import { AuthContext } from '../../../../context/AuthContext';
+import { updateProfileDataGithub } from '../../../../lib/profiles';
 import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
 
 interface IconMap {

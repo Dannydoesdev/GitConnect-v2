@@ -10,13 +10,10 @@ import axios from 'axios';
 import { Provider, useAtom, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import {
-  getAllCustomProjectData,
-  getAllProjectIds,
   getProjectTextEditorContent,
-  getSingleProjectById,
   getSingleProjectByNameLowercase,
 } from '@/lib/projects';
-import EditPortfolioProject from '@/components/Portfolio/Project/EditProject/EditProject';
+import EditPortfolioProject from '@/features/project-edit/components/EditProject';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../../context/AuthContext';
 // import { getPremiumStatus } from '@/lib/stripe/getPremiumStatusTest';
