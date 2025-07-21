@@ -142,7 +142,6 @@ const ProjectTabs = ({ isCurrentUser, activeTab, setActiveTab, publishedProjects
 
 
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
-  // All hooks at the top level
   const [activeTab, setActiveTab] = useState('first');
   const { userData, currentUser } = useContext(AuthContext);
   const router = useRouter();
@@ -234,7 +233,6 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
       publishedProjects = sortProjects(publishedProjects);
     }
 
-  // Render logic
   return (
     <>
       <PageHead profile={profile} username_lowercase={username_lowercase} />
