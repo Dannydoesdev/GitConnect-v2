@@ -1,6 +1,6 @@
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
-import { WeaviateRepoUploadData } from '@/types/weaviate';
+import { WeaviateRepoUploadData } from '@/features/ai-rag/types/weaviate';
 
 export const uploadToWeaviate = async (projectData: WeaviateRepoUploadData[]) => {
   console.log(`Uploading project data to Weaviate from client: ${projectData}`);

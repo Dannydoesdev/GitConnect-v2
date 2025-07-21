@@ -9,7 +9,7 @@ import {
   Text,
 } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { RepoDataFull } from '@/types/weaviate';
+import { RepoDataFull } from '@/features/ai-rag/types/weaviate';
 import ShowRepo from './ShowRepo';
 
 interface RepoSelectionProps {

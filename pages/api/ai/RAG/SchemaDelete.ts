@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { deleteWeaviateSchema } from '@/lib/weaviate/weaviateDeleteSchema';
+import { deleteWeaviateSchema } from '@/features/ai-rag/lib/DeleteSchema';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {

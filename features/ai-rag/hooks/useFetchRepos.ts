@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { RepoDataFull } from '@/types/weaviate';
+import { RepoDataFull } from '@/features/ai-rag/types/weaviate';
 import { getGithubReposWithUsername } from '@/lib/github';
 
 // Custom hook for handling fetching reops from Github Octokit package
