@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import weaviateBulkUploadHelper from '@/lib/weaviate/weaviateBulkUploadHelper';
+import weaviateBulkUploadHelper from '@/features/ai-rag/lib/BulkUploadHelper';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {

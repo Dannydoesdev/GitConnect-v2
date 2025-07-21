@@ -1,5 +1,5 @@
-import client from './weaviateInitiateClient';
-import createWeaviateSchema from './weaviateCreateSchema';
+import client from './InitiateClient';
+import createWeaviateSchema from './CreateSchema';
 
 export async function deleteWeaviateSchema() {
   try {
