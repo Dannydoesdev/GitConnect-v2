@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useFetchRepos from '@/hooks/weaviate/useFetchRepos';
+import useFetchRepos from '@/features/ai-rag/hooks/useFetchRepos';
 import {
   Blockquote,
   Button,
@@ -16,19 +16,19 @@ import {
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconCross, IconInfoCircle } from '@tabler/icons-react';
 import axios from 'axios';
-import { fetchLanguages } from '@/lib/weaviate/fetchLanguages';
-import { fetchReadme } from '@/lib/weaviate/fetchReadme';
-import { uploadToWeaviate } from '@/lib/weaviate/uploadToWeaviate';
-import Header from '@/components/Weaviate/Header';
-import RepoSelection from '@/components/Weaviate/RepoSelection';
-import TextConversationOutput from '@/components/Weaviate/TextConversationOutput';
-import { WeaviateRepoUploadData } from '../types/weaviate';
+import { fetchLanguages } from '@/features/ai-rag/lib/fetchLanguages';
+import { fetchReadme } from '@/features/ai-rag/lib/fetchReadme';
+import { uploadToWeaviate } from '@/features/ai-rag/lib/uploadToDB';
+import Header from '@/features/ai-rag/components/Header';
+import RepoSelection from '@/features/ai-rag/components/RepoSelection';
+import TextConversationOutput from '@/features/ai-rag/components/TextConversationOutput';
+import { WeaviateRepoUploadData } from '@/features/ai-rag/types/weaviate';
 
-// Renders the WeaviateProject component.
+// Renders the RAGProject component.
 // This component allows the user to interact with the Weaviate API by fetching GitHub repositories,
 // selecting repositories to upload to Weaviate, and generating responses based on user queries.
 
-const WeaviateProject: React.FC = () => {
+const RAGProject: React.FC = () => {
   // State variables
   const [username, setUsername] = useState<string>('');
   const { repoData, userAvatar, error, fetchRepos } = useFetchRepos();
@@ -45,7 +45,7 @@ const WeaviateProject: React.FC = () => {
     // Checks if the relevent schemas exists and creates them if they don't
     const initializeSchema = async () => {
       try {
-        await axios.get('/api/weaviate/weaviateSchemaSetup');
+        await axios.get('/api/ai/RAG/SchemaSetup');
       } catch (error) {
         console.error('Error calling schema setup API:', error);
       }
@@ -57,7 +57,7 @@ const WeaviateProject: React.FC = () => {
   // For dev purposes - deletes and recreates Weaviate collections
   const deleteCollections = async () => {
     try {
-      await axios.get('/api/weaviate/weaviateSchemaDelete');
+      await axios.get('/api/ai/RAG/SchemaDelete');
       notifications.show({
         id: 'delete-schema',
         loading: true,
@@ -154,7 +154,7 @@ const WeaviateProject: React.FC = () => {
           `${prevLog ? `${prevLog}<br/>` : ''}<strong>Query:</strong> ${query}<br/>`
       );
 
-      const response = await axios.get('/api/weaviate/weaviateDynamicResponseRoute', {
+      const response = await axios.get('/api/ai/RAG/DynamicResponseRoute', {
         params: { username, query },
       });
 
@@ -199,7 +199,7 @@ const WeaviateProject: React.FC = () => {
         withCloseButton: false,
       });
 
-      const response = await axios.get('/api/weaviate/weaviateGenerateDescriptionRoute', {
+      const response = await axios.get('/api/ai/RAG/GenerateDescriptionRoute', {
         params: { username, reponame },
       });
 
@@ -467,4 +467,4 @@ const WeaviateProject: React.FC = () => {
   );
 };
 
-export default WeaviateProject;
+export default RAGProject;

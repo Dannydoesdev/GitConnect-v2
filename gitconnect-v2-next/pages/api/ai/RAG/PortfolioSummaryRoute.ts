@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { generateUserWorkSummary } from '@/lib/weaviate/generateWeaviateResponse';
+import { generateUserWorkSummary } from '@/features/ai-rag/lib/generateResponse';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Extract username data from request params

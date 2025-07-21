@@ -1,5 +1,5 @@
 import { get_encoding } from 'tiktoken';
-import type { WeaviateObject } from '@/types/weaviate';
+import type { WeaviateObject } from '@/features/ai-rag/types/weaviate';
 
 const MAX_TOKENS = 8192;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Badge, Card, Checkbox, Group, Space, Text } from '@mantine/core';
-import { RepoDataFull } from '../../types/repos';
+import { RepoDataFull } from '../../../types/repos';
 
 interface ShowRepoProps {
   repo: RepoDataFull;
