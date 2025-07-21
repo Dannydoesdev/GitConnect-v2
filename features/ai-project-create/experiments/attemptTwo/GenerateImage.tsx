@@ -9,7 +9,7 @@ import axios from "axios";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useAtom } from "jotai";
-import { db, storage } from "../../../firebase/clientApp";
+import { db, storage } from "../../../../firebase/clientApp";
 
 export const GenerateCoverImageModal = ({ imageUrl, userId, repoId, opened, open, close }: any) => {
   const [textContentState, setTextContentState] = useAtom(aiEditorAtom);
