@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { generateProjectWithSystemAndUserMessage } from "@/lib/generateProject";
+import { generateProjectWithSystemAndUserMessage } from "@/features/ai-project-create/lib/generateProject";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   if (req.method === "POST") {
