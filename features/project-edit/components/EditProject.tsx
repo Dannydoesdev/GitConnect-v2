@@ -1,92 +1,47 @@
-// import type { NextPage } from 'next';
-// import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
-import router, { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import {
   isProAtom,
-  projectDataAtom,
   textEditorAtom,
   unsavedChangesAtom,
   unsavedChangesSettingsAtom,
 } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
-import { app, auth, db } from '@/firebase/clientApp';
-// import { RepoData } from '../../../types/repos';
+import { db } from '@/firebase/clientApp';
 import {
   Aside,
   Button,
-  Center,
   Container,
   createStyles,
   Dialog,
   Flex,
   Group,
-  MediaQuery,
-  ScrollArea,
   Text,
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import {
-  IconArrowRight,
-  IconCheck,
-  IconCross,
-  IconExternalLink,
-} from '@tabler/icons-react';
+import { IconCheck, IconCross, IconExternalLink } from '@tabler/icons-react';
 import axios from 'axios';
-// import DOMPurify from 'dompurify';
-// import * as DOMPurify from 'dompurify';
-// import {DomPur}
-// import DOMPurify from 'lib/dompurifyCustomHooks';  // Import from your custom file
 import {
   collection,
   doc,
   getCountFromServer,
-  getDoc,
-  getDocs,
   query,
   setDoc,
   where,
 } from 'firebase/firestore';
 import DOMPurify from 'isomorphic-dompurify';
 import { useAtom } from 'jotai';
-import { set } from 'lodash';
-import useSWR from 'swr';
-import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
+// import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 // import { isAllowedToPublishProject } from '@/lib/stripe/isAllowedToPublishProject';
-import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
-// import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
-import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
-import LoadingPage from '../../../components/LoadingPage/LoadingPage';
+// import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
+// import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
 import ViewPreviewProjectEditor from '@/features/project-view/components/ViewPreviewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '@/features/project-view/components/ViewPreviewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal, { FormData } from './EditProjectSettings';
 import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
-
-// import { createDOMPurify } from 'dompurify';
-// const DOMPurify = createDOMPurify(window);
-
-// import { JSDOM } from 'jsdom';
-// import DOMPurify from 'dompurify';
-
-// DOMPurify.addHook('uponSanitizeElement', (currentNode, data) => {
-//   // If the current node is a heading element with a child anchor element with class 'heading-link'
-//   if (/^h[1-6]$/.test(data.tagName) && currentNode.querySelector('a.heading-link')) {
-//     // Remove the anchor element
-//     const anchorElement = currentNode.querySelector('a.heading-link');
-//     if (anchorElement) {
-//       while (anchorElement.firstChild) {
-//         const parentNode = anchorElement.parentNode;
-//         if (parentNode) {
-//           parentNode.insertBefore(anchorElement.firstChild, anchorElement);
-//         }
-//       }
-//       anchorElement.remove();
-//     }
-//   }
-// });
 
 type EditPortfolioProps = {
   repoName: string;
@@ -123,19 +78,12 @@ export default function EditPortfolioProject({
   userName,
   otherProjectData,
 }: EditPortfolioProps) {
-  // const [shouldFetch, setShouldFetch] = useState(false);
-  // const [readme, setReadme] = useState('');
-  // const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
-  const [realtimeEditorContent, setRealtimeEditorContent] = useState('');
-
   const [currentCoverImage, setcurrentCoverImage] = useState('');
-  // const [projectDataState, setProjectData] = useAtom(projectDataAtom);
   const [textEditorState, setTextEditor] = useAtom(textEditorAtom);
   const [unsavedChanges, setUnsavedChanges] = useAtom(unsavedChangesAtom);
 
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
-  // const [previewOpened, { open, close }] = useDisclosure(false);
 
   const [settingsOnly, setSettingsOnly] = useState(false);
 
@@ -144,21 +92,7 @@ export default function EditPortfolioProject({
     unsavedChangesSettingsAtom
   );
 
-  const { classes, theme } = useStyles();
   const { userData } = useContext(AuthContext);
-
-  // TODO - may not be ideal for this to run in a circular fashion - may need to refactor
-  // Consider extracting checkPremium() to acustom hook or trigger upon publishing projects
-  // useEffect(() => {
-  // const checkPremium = async () => {
-  //   const newPremiumStatus = auth.currentUser ? await getPremiumStatus(app) : false;
-  //   setIsPro(newPremiumStatus);
-  //   if (newPremiumStatus) {
-  //     console.log('isAllowedToPublishProject - user is pro')
-  //     return true;
-  //   }
-  // };
-  // }, [app, auth.currentUser?.uid]);
 
   const [isPro, setIsPro] = useAtom(isProAtom);
 
@@ -172,73 +106,38 @@ export default function EditPortfolioProject({
     repo: string;
   };
 
+  // NOTE: Cleaned up most of the Stripe related code - decision on whether to keep or remove any Stripe code is pending
   const isAllowedToPublishProject = async ({
     userId,
     repo,
   }: IsAllowedToPublishProjectProps) => {
-    // console.log(`isAllowedToPublishProject check - userId: ${userId} repo: ${repo}`)
-    // console.log('isAllowedToPublishProject isPro - start of function: ', isPro);
-
     if (isPro) {
-      // console.log('is a Pro')
       return true;
     }
-    // const newPremiumStatus = await getPremiumStatus(app)
 
-    // setIsPro(newPremiumStatus);
-
-    // console.log('isAllowedToPublishProject - getPremium Status returned: ', getPremiumStatus(app))
-    // if (newPremiumStatus) { return true }
-    // const newPremiumStatus = auth.currentUser ? await getPremiumStatus(app) : false;
-
-    // console.log('moving on to db check:');
-
-    // const q = query(collectionGroup(db, 'repos'), where('hidden', '==', false));
-    // const querySnapshot = await getDocs(q);
+    // Get count of published projects from Firebase
     const coll = collection(db, `users/${userId}/repos/`);
-    const q = query(coll, where('hidden', '==', false), where('id', '!=', repo));
-
-    // const querySnapshot = await getDocs(q);
-    // const projectData: any = querySnapshot.docs.map((doc: any) => {
-    //   const data = doc.data();
-    //   if (!data) {
-    //     return null;
-    //   }
-    //   return {
-    //     ...data,
-    //   };
-    // });
-    // console.log('projectData: ', projectData)
-
+    const q = query(
+      coll,
+      where('hidden', '==', false),
+      where('id', '!=', repo)
+    );
     const snapshot = await getCountFromServer(q);
-    //   .then((snapshot) => {
-    //   console.log('snapshot: ', snapshot)
-    //   console.log('count of published projects: ', snapshot.data().count)
-    //   const count = snapshot.data().count;
-    //   return snapshot;
-    // })
 
-    // console.log('count of published projects: ', snapshot.data().count);
-
-    // If user has published 3 or more projects and is not pro, return false
+    // If user has published 3 or more projects and is not premium, return false on publish
     if (snapshot.data().count >= 3 && !isPro) {
-      // console.log(
-      //   'isAllowedToPublishProject false - user has published 3 projects and is not pro'
-      // );
       return false;
     } else {
-      // console.log(
-      //   'isAllowedToPublishProject true - user has published less than 3 projects or is pro'
-      // );
       return true;
     }
   };
 
-  // Check if user is allowed to publish project
-  // If so - they can publish
-
   async function handlePublish(formData: FormData) {
-    const canPublish = await isAllowedToPublishProject({ userId: userid, repo: repoid });
+    // Check if user is allowed to publish project - if not, show notification and save as draft
+    const canPublish = await isAllowedToPublishProject({
+      userId: userid,
+      repo: repoid,
+    });
 
     if (!canPublish) {
       notifications.show({
@@ -248,11 +147,14 @@ export default function EditPortfolioProject({
         title: 'Publishing limit reached',
         message:
           'You have reached the limit of 3 published projects - saving your project',
-        icon: <IconCross size="1rem" />,
+        icon: <IconCross size='1rem' />,
         autoClose: false,
       });
 
-      const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+      const docRef = doc(
+        db,
+        `users/${userid}/repos/${repoid}/projectData/mainContent`
+      );
       const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
 
       setTimeout(async () => {
@@ -269,7 +171,11 @@ export default function EditPortfolioProject({
             { merge: true }
           );
           //
-          await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
+          await setDoc(
+            parentDocRef,
+            { ...formData, hidden: true },
+            { merge: true }
+          );
           setUnsavedChanges(false);
           setUnsavedChangesSettings(false);
         } catch (error) {
@@ -279,7 +185,7 @@ export default function EditPortfolioProject({
             color: 'red',
             title: 'Something went wrong',
             message: 'Something went wrong, please try again',
-            icon: <IconCross size="1rem" />,
+            icon: <IconCross size='1rem' />,
             autoClose: 2000,
           });
         } finally {
@@ -291,34 +197,20 @@ export default function EditPortfolioProject({
             title: 'Your updates were saved - redirecting',
             message:
               'You have reached the free plan limit of published projects - redirecting to Pricing',
-            icon: <IconCross size="1rem" />,
+            icon: <IconCross size='1rem' />,
             autoClose: 2000,
           });
         }
       }, 2000);
       setTimeout(async () => {
-        // const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
-
-        // const checkoutUrl = await getCheckoutUrl(app, priceId);
-        // router.push(checkoutUrl);
-
-        // const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
-
-        // const checkoutUrl = await getCheckoutUrl(app, priceId);
         router.push('/pricing');
       }, 2000);
-
-      // id: 'load-data',
-      // color: 'teal',
-      // title: 'Updates were saved',
-      // message: 'Your updates have been saved',
-      // icon: <IconCheck size="1rem" />,
-      // autoClose: 1000,
       return;
     } else {
-      // console.log(`handlePublish fn - canPublish end result: ${canPublish}`);
-
-      const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+      const docRef = doc(
+        db,
+        `users/${userid}/repos/${repoid}/projectData/mainContent`
+      );
       const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
       try {
         notifications.show({
@@ -329,7 +221,7 @@ export default function EditPortfolioProject({
           autoClose: false,
           withCloseButton: false,
         });
-        
+
         // Save to Firebase
         await setDoc(
           docRef,
@@ -342,7 +234,7 @@ export default function EditPortfolioProject({
           },
           { merge: true }
         );
-        
+
         await setDoc(
           parentDocRef,
           { ...formData, hidden: false, visibleToPublic: true },
@@ -350,11 +242,13 @@ export default function EditPortfolioProject({
         );
 
         // Trigger revalidation of the homepage
-        const revalidateRes = await fetch(`/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`);
+        const revalidateRes = await fetch(
+          `/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`
+        );
         if (!revalidateRes.ok) {
           console.warn('Failed to revalidate homepage');
         }
-        
+
         setUnsavedChanges(false);
         setUnsavedChangesSettings(false);
       } catch (error) {
@@ -364,7 +258,7 @@ export default function EditPortfolioProject({
           color: 'red',
           title: 'Something went wrong',
           message: 'Something went wrong, please try again',
-          icon: <IconCross size="1rem" />,
+          icon: <IconCross size='1rem' />,
           autoClose: 2000,
         });
       } finally {
@@ -373,7 +267,7 @@ export default function EditPortfolioProject({
           color: 'teal',
           title: 'Project published successfully',
           message: 'Loading your project page',
-          icon: <IconCheck size="1rem" />,
+          icon: <IconCheck size='1rem' />,
           autoClose: 2000,
         });
         close();
@@ -381,11 +275,8 @@ export default function EditPortfolioProject({
         setTimeout(() => {
           router.push(`/portfolio/${userName}/${repoName}`);
         }, 2000);
-        // router.push(`/portfolio/${userName}/${repoName}`);
       }
     }
-    // TODO: New project view page
-    // router.push(`/profiles/projects/${repoid}`);
   }
 
   // Close the notification when the router changes
@@ -397,7 +288,7 @@ export default function EditPortfolioProject({
         loading: false,
         title: 'Project page loaded',
         message: 'Your project page is ready',
-        icon: <IconCheck size="1rem" />,
+        icon: <IconCheck size='1rem' />,
         autoClose: 500,
       });
       // notifications.clean();
@@ -407,19 +298,6 @@ export default function EditPortfolioProject({
       router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [router]);
-
-  // Hoist the editor state up to this component
-  // const handleEditorChange = (value: string) => {
-  // setRealtimeEditorContent(value);
-  // console.log(value);
-  // console.log('editor changed');
-  // };
-
-  // useEffect(() => {
-  //   if (textContent && textContent !== '' && realtimeEditorContent === '') {
-  //     setRealtimeEditorContent(textContent);
-  //   }
-  // }, []);
 
   const handleNewCoverImage = (imageURL: string) => {
     setcurrentCoverImage(imageURL);
@@ -436,8 +314,6 @@ export default function EditPortfolioProject({
   }, []);
 
   async function handleUpdateProject() {
-    // if ( realtimeEditorContent !== '' ) {
-
     if (!textEditorState || textEditorState == '') {
       return;
     }
@@ -445,7 +321,10 @@ export default function EditPortfolioProject({
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
 
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const docRef = doc(
+      db,
+      `users/${userid}/repos/${repoid}/projectData/mainContent`
+    );
     try {
       notifications.show({
         id: 'load-data',
@@ -463,7 +342,7 @@ export default function EditPortfolioProject({
         color: 'red',
         title: 'Something went wrong',
         message: 'Something went wrong, please try again',
-        icon: <IconCross size="1rem" />,
+        icon: <IconCross size='1rem' />,
         autoClose: 2000,
       });
     } finally {
@@ -473,20 +352,19 @@ export default function EditPortfolioProject({
         color: 'teal',
         title: 'Updates were saved',
         message: 'Your updates have been saved',
-        icon: <IconCheck size="1rem" />,
+        icon: <IconCheck size='1rem' />,
         autoClose: 1000,
       });
     }
-
-    // TODO: New project view page
-    // router.push(`/profiles/projects/${repoid}`);
   }
 
   async function handleSaveAndFinish(formData: any) {
-    // if (realtimeEditorContent === '') { return; }
     setSettingsOnly(false);
 
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const docRef = doc(
+      db,
+      `users/${userid}/repos/${repoid}/projectData/mainContent`
+    );
     const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
     try {
       notifications.show({
@@ -508,12 +386,13 @@ export default function EditPortfolioProject({
         },
         { merge: true }
       );
-      await setDoc(parentDocRef, { ...formData, hidden: true }, { merge: true });
+      await setDoc(
+        parentDocRef,
+        { ...formData, hidden: true },
+        { merge: true }
+      );
       setUnsavedChanges(false);
       setUnsavedChangesSettings(false);
-      // console.log(formData)
-      // console.log('publishing');
-      // close();
     } catch (error) {
       console.log(error);
       notifications.update({
@@ -521,7 +400,7 @@ export default function EditPortfolioProject({
         color: 'red',
         title: 'Something went wrong',
         message: 'Something went wrong, please try again',
-        icon: <IconCross size="1rem" />,
+        icon: <IconCross size='1rem' />,
         autoClose: 2000,
       });
     } finally {
@@ -530,7 +409,7 @@ export default function EditPortfolioProject({
         color: 'teal',
         title: 'Project saved successfully',
         message: 'Loading your project page',
-        icon: <IconCheck size="1rem" />,
+        icon: <IconCheck size='1rem' />,
         autoClose: 2000,
       });
       // Wait 2 seconds before redirecting to allow time for the database to update
@@ -539,11 +418,7 @@ export default function EditPortfolioProject({
       setTimeout(() => {
         router.push(`/portfolio/${userName}/${repoName}`);
       }, 2000);
-
-      // router.push(`/portfolio/${userName}/${repoName}`);
     }
-    // TODO: New project view page
-    // router.push(`/profiles/projects/${repoid}`);
   }
 
   // When continuing - save the data to Firebase and set the hidden status to false
@@ -557,21 +432,14 @@ export default function EditPortfolioProject({
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
 
-    // if (realtimeEditorContent !== '') {
-    //   const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
-    //     ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
-    //   });
-
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const docRef = doc(
+      db,
+      `users/${userid}/repos/${repoid}/projectData/mainContent`
+    );
 
     await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
     setUnsavedChanges(false);
-
-    // const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
-
-    // await setDoc(hiddenStatusRef, { hidden: false }, { merge: true });
     open();
-    // console.log('saved and continue')
   }
 
   async function handleSaveAsDraft(revertToDraft: boolean) {
@@ -582,7 +450,10 @@ export default function EditPortfolioProject({
       ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
 
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const docRef = doc(
+      db,
+      `users/${userid}/repos/${repoid}/projectData/mainContent`
+    );
     try {
       notifications.show({
         id: 'load-data',
@@ -603,19 +474,18 @@ export default function EditPortfolioProject({
         },
         { merge: true }
       );
-      // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
 
       const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
 
       await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
-      // close();
 
-       // Trigger revalidation of the homepage
-       const revalidateRes = await fetch(`/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`);
-       if (!revalidateRes.ok) {
-         console.warn('Failed to revalidate homepage');
-       }
-
+      // Trigger revalidation of the homepage
+      const revalidateRes = await fetch(
+        `/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`
+      );
+      if (!revalidateRes.ok) {
+        console.warn('Failed to revalidate homepage');
+      }
     } catch (error) {
       console.log(error);
       notifications.update({
@@ -623,7 +493,7 @@ export default function EditPortfolioProject({
         color: 'red',
         title: 'Something went wrong',
         message: 'Something went wrong, please try again',
-        icon: <IconCross size="1rem" />,
+        icon: <IconCross size='1rem' />,
         autoClose: 2000,
       });
     } finally {
@@ -636,7 +506,7 @@ export default function EditPortfolioProject({
               color: 'teal',
               title: 'Reverted to draft',
               message: 'Reloading page',
-              icon: <IconCheck size="1rem" />,
+              icon: <IconCheck size='1rem' />,
               autoClose: 2000,
             })
           : notifications.update({
@@ -644,7 +514,7 @@ export default function EditPortfolioProject({
               color: 'teal',
               title: 'Draft was saved',
               message: 'Your project was saved as a draft',
-              icon: <IconCheck size="1rem" />,
+              icon: <IconCheck size='1rem' />,
               autoClose: 2000,
             });
       }
@@ -658,9 +528,10 @@ export default function EditPortfolioProject({
   }
 
   async function handleSaveSettings(formData: any) {
-    // async function handlePublish(formData: any) {
-    // if ( realtimeEditorContent !== '' ) {
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const docRef = doc(
+      db,
+      `users/${userid}/repos/${repoid}/projectData/mainContent`
+    );
     const parentDocRef = doc(db, `users/${userid}/repos/${repoid}`);
     try {
       notifications.show({
@@ -683,9 +554,6 @@ export default function EditPortfolioProject({
         { merge: true }
       );
       await setDoc(parentDocRef, { ...formData }, { merge: true });
-      // console.log(formData)
-      // console.log('publishing');
-      // close();
     } catch (error) {
       console.log(error);
       notifications.update({
@@ -693,7 +561,7 @@ export default function EditPortfolioProject({
         color: 'red',
         title: 'Something went wrong',
         message: 'Something went wrong, please try again',
-        icon: <IconCross size="1rem" />,
+        icon: <IconCross size='1rem' />,
         autoClose: 2000,
       });
     } finally {
@@ -702,94 +570,22 @@ export default function EditPortfolioProject({
         color: 'teal',
         title: 'Settings Saved',
         message: 'Your updates have been saved',
-        icon: <IconCheck size="1rem" />,
+        icon: <IconCheck size='1rem' />,
         autoClose: 2000,
       });
       setUnsavedChangesSettings(false);
       setSettingsOnly(false);
       close();
     }
-
-    // TODO: New project view page
-    // router.push(`/profiles/projects/${repoid}`);
   }
-
-  // When saving as draft - save the data to Firebase and set the hidden status to true
-  // async function handleSaveAsDraft() {
-  //   if (realtimeEditorContent == '') { return }
-  //   const sanitizedHTML = DOMPurify.sanitize(realtimeEditorContent, {
-  //     ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
-  //   });
-
-  //   const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
-  //     try {
-  //       notifications.show({
-  //         id: 'load-data',
-  //         loading: true,
-  //         title: 'Saving draft',
-  //         message: 'Please wait',
-  //         autoClose: false,
-  //         withCloseButton: false,
-  //       });
-  //       await setDoc(docRef, { htmlOutput: sanitizedHTML }, { merge: true });
-  //       // await setDoc(docRef, { htmlOutput: realtimeEditorContent }, { merge: true });
-
-  //     const hiddenStatusRef = doc(db, `users/${userid}/repos/${repoid}`);
-
-  //     await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
-  //     // close();
-  //   } catch (error) {
-  //     console.log(error);
-  //     notifications.update({
-  //       id: 'load-data',
-  //       color: 'red',
-  //       title: 'Something went wrong',
-  //       message: 'Something went wrong, please try again',
-  //       icon: <IconCross size="1rem" />,
-  //       autoClose: 2000,
-  //     });
-  //   } finally {
-  //     notifications.update({
-  //       id: 'load-data',
-  //       color: 'teal',
-  //       title: 'Draft was saved',
-  //       message: 'Your updates were saved to the database',
-  //       icon: <IconCheck size="1rem" />,
-  //       autoClose: 2000,
-  //     });
-  //     close();
-  //   }
-  // }
-
-  // const params = {
-  //   owner: userName,
-  //   repo: repoName,
-  //   //TODO change to repoName - currently hardcoded for as GC2 is private
-  //   // repo: 'gitconnect',
-  // };
-
-  // TODO: Figure out how to set SWR call to button click trigger - temp workaround
-
-  // const { data } = useSWR(
-  //   shouldFetch ? ['/api/profiles/projects/edit/readme', params] : null,
-  //   fetcher
-  // );
-
-  // function handleImportReadmeSWR() {
-  //   setShouldFetch(true);
-  //   // console.log(data);
-  //   setTimeout(() => {
-  //     setShouldFetch(false);
-  //   }, 2000);
-  // }
 
   const confirmImportReadme = () => {
     modals.openConfirmModal({
       title: 'Confirm Import Readme - Will replace editor content',
       children: (
-        <Text size="sm">
-          Importing the readme from GitHub will replace the current content in the editor.
-          Continue?
+        <Text size='sm'>
+          Importing the readme from GitHub will replace the current content in
+          the editor. Continue?
         </Text>
       ),
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
@@ -820,36 +616,37 @@ export default function EditPortfolioProject({
       .then((response) => {
         setTextEditor('');
 
-        DOMPurify.addHook('uponSanitizeElement', (currentNode: any, data: any) => {
-          if (data.tagName === 'a' && currentNode.classList.contains('heading-link')) {
-            // Create a text node with the anchor's content
-            const textContent = currentNode.textContent || ''; // Fallback to empty string if null
-            const textNode = document.createTextNode(textContent);
+        DOMPurify.addHook(
+          'uponSanitizeElement',
+          (currentNode: any, data: any) => {
+            if (
+              data.tagName === 'a' &&
+              currentNode.classList.contains('heading-link')
+            ) {
+              // Create a text node with the anchor's content
+              const textContent = currentNode.textContent || ''; // Fallback to empty string if null
+              const textNode = document.createTextNode(textContent);
 
-            // Replace the anchor with the text node
-            const parentNode = currentNode.parentNode;
-            if (parentNode) {
-              parentNode.replaceChild(textNode, currentNode);
+              // Replace the anchor with the text node
+              const parentNode = currentNode.parentNode;
+              if (parentNode) {
+                parentNode.replaceChild(textNode, currentNode);
+              }
             }
           }
+        );
+
+        const sanitizedHTML = DOMPurify.sanitize(response.data, {
+          ADD_ATTR: ['target'],
         });
-
-        const sanitizedHTML = DOMPurify.sanitize(response.data, { ADD_ATTR: ['target'] });
         setTextEditor(sanitizedHTML);
-        // console.log(response.data)
-        // setTextEditor(response.data)
-
-        // setReadme(sanitizedHTML);
-        // handleEditorChange(sanitizedHTML);
-        // setTextEditor(sanitizedHTML);
-
         setUnsavedChanges(true);
         notifications.update({
           id: 'fetch-readme',
           color: 'teal',
           title: 'Readme fetched',
           message: 'Your readme has been fetched and imported',
-          icon: <IconCheck size="1rem" />,
+          icon: <IconCheck size='1rem' />,
           autoClose: 2000,
         });
       })
@@ -860,7 +657,7 @@ export default function EditPortfolioProject({
           color: 'red',
           title: 'Something went wrong, please try again',
           message: `Error: ${error}`,
-          icon: <IconCross size="1rem" />,
+          icon: <IconCross size='1rem' />,
           autoClose: 2000,
         });
       });
@@ -875,17 +672,14 @@ export default function EditPortfolioProject({
         title: 'Unsaved changes',
         centered: true,
         children: (
-          <Text size="sm">
-            You have unsaved changes. Are you sure you want to close this window?
+          <Text size='sm'>
+            You have unsaved changes. Are you sure you want to close this
+            window?
           </Text>
         ),
         labels: { confirm: 'Close without saving', cancel: 'Cancel' },
-        onCancel: () => {
-          // console.log('Cancel');
-          // router.events.on('routeChangeStart', handleRouteChange);
-        },
+        onCancel: () => {},
         onConfirm: () => {
-          // console.log('Confirmed');
           setUnsavedChangesSettings(false);
           close();
         },
@@ -898,13 +692,18 @@ export default function EditPortfolioProject({
   if (preview) {
     return (
       <>
-        <Dialog shadow="xl" opened={preview} withBorder size="lg" radius="md">
-          <Text size="sm" align="center" mb="xs" weight={500}>
+        <Dialog shadow='xl' opened={preview} withBorder size='lg' radius='md'>
+          <Text size='sm' align='center' mb='xs' weight={500}>
             Back to Editing
           </Text>
 
-          <Group position="center">
-            <Button component="a" onClick={handlePreview} radius="md" variant="filled">
+          <Group position='center'>
+            <Button
+              component='a'
+              onClick={handlePreview}
+              radius='md'
+              variant='filled'
+            >
               {preview ? 'Close Preview' : 'View a Preview'}
             </Button>
           </Group>
@@ -914,13 +713,12 @@ export default function EditPortfolioProject({
           name={otherProjectData?.projectTitle || repoName}
           coverImage={currentCoverImage}
           liveUrl={otherProjectData?.liveUrl || otherProjectData?.live_url}
-          repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url || url}
+          repoUrl={
+            otherProjectData?.repoUrl || otherProjectData?.html_url || url
+          }
         />
 
-        {/* <Container size="xl"> */}
-
         <ViewPreviewProjectEditor updatedContent={textEditorState} />
-        {/* </Container> */}
       </>
     );
   } else
@@ -938,11 +736,9 @@ export default function EditPortfolioProject({
             opened={opened}
             open={open}
             close={settingsModalCloseCheck}
-            // close={close}
             techStack={otherProjectData?.techStack}
             liveUrl={otherProjectData?.liveUrl || otherProjectData?.live_url}
             repoUrl={otherProjectData?.repoUrl || otherProjectData?.html_url}
-            // coverImage={otherProjectData.coverImage}
             coverImage={currentCoverImage}
             projectCategories={otherProjectData?.projectCategories}
             projectTags={otherProjectData?.projectTags}
@@ -951,14 +747,15 @@ export default function EditPortfolioProject({
               description ||
               otherProjectData?.description
             }
-            projectTitle={otherProjectData?.projectTitle || otherProjectData?.name}
+            projectTitle={
+              otherProjectData?.projectTitle || otherProjectData?.name
+            }
             repoName={repoName}
             openToCollaboration={otherProjectData?.openToCollaboration}
             visibleToPublic={otherProjectData?.visibleToPublic}
           />
           <Group
             mt={40}
-            // ml={300}
             ml={{
               xxs: 0,
               xs: 0,
@@ -968,20 +765,12 @@ export default function EditPortfolioProject({
               base: 'calc(63%)',
             }}
           >
-            <Title mx="auto">Editing {otherProjectData?.projectTitle || repoName}</Title>
-            {/* <Text>{description}</Text>
-          <Text>{url}</Text> */}
+            <Title mx='auto'>
+              Editing {otherProjectData?.projectTitle || repoName}
+            </Title>
 
-            <ProjectRichTextEditor
-              // existingContent={textContent}
-              // updatedContent={realtimeEditorContent}
-              userId={userid}
-              repoId={repoid}
-              // readme={readme || null}
-              // onUpdateEditor={handleEditorChange}
-            />
+            <ProjectRichTextEditor userId={userid} repoId={repoid} />
           </Group>
-          {/* </> */}
         </Container>
         <Aside
           styles={(theme) => ({
@@ -1001,21 +790,18 @@ export default function EditPortfolioProject({
             base: 'calc(30%)',
           }}
         >
-          {/* First section with normal height (depends on section content) */}
-          <Aside.Section mx="auto" mt={90}>
-            <Text weight={600} c="dimmed">
+          <Aside.Section mx='auto' mt={90}>
+            <Text weight={600} c='dimmed'>
               Project Tools{' '}
             </Text>
           </Aside.Section>
 
-          {/* Grow section will take all available space that is not taken by first and last sections */}
           <Aside.Section grow={true}>
-            {/* FIELDS AND BUTTONS */}
-            <Flex direction="column" align="center">
+            <Flex direction='column' align='center'>
               <Button
-                component="a"
+                component='a'
                 onClick={confirmImportReadme}
-                radius="md"
+                radius='md'
                 w={{
                   base: '95%',
                   md: '80%',
@@ -1023,14 +809,11 @@ export default function EditPortfolioProject({
                   sm: '90%',
                 }}
                 mt={40}
-                className="mx-auto"
-                // onClick={handleSave}
+                className='mx-auto'
                 styles={(theme) => ({
                   root: {
                     backgroundColor: theme.colors.blue[7],
-                    // width: '40%',
                     [theme.fn.smallerThan('sm')]: {
-                      // size: 'xs' ,
                       padding: 0,
                       fontSize: 12,
                     },
@@ -1046,13 +829,12 @@ export default function EditPortfolioProject({
                 Import Readme
               </Button>
               <Button
-                component="a"
-                // onClick={handleImportReadme}
+                component='a'
                 onClick={() => {
                   setSettingsOnly(true);
                   open();
                 }}
-                radius="md"
+                radius='md'
                 w={{
                   base: '95%',
                   md: '80%',
@@ -1060,13 +842,11 @@ export default function EditPortfolioProject({
                   sm: '90%',
                 }}
                 mt={40}
-                className="mx-auto"
+                className='mx-auto'
                 styles={(theme) => ({
                   root: {
                     backgroundColor: theme.colors.blue[7],
-                    // width: '40%',
                     [theme.fn.smallerThan('sm')]: {
-                      // size: 'xs' ,
                       padding: 0,
                       fontSize: 12,
                     },
@@ -1082,11 +862,11 @@ export default function EditPortfolioProject({
                 Settings{' '}
               </Button>
               <Button
-                component="a"
+                component='a'
                 onClick={() => {
                   router.push(`/portfolio/${userName}/${repoName}`);
                 }}
-                radius="md"
+                radius='md'
                 w={{
                   base: '95%',
                   md: '80%',
@@ -1094,7 +874,7 @@ export default function EditPortfolioProject({
                   sm: '90%',
                 }}
                 mt={40}
-                className="mx-auto"
+                className='mx-auto'
                 styles={(theme) => ({
                   root: {
                     backgroundColor: theme.colors.blue[7],
@@ -1125,14 +905,6 @@ export default function EditPortfolioProject({
                   lg: '60%',
                   sm: '90%',
                 }}
-                styles={(theme) => ({
-                  root: {
-                    [theme.fn.smallerThan('sm')]: {
-                      padding: 0,
-                      fontSize: 12,
-                    },
-                  },
-                })}
                 mt={20}
                 className="mx-auto"
               >
@@ -1140,13 +912,12 @@ export default function EditPortfolioProject({
               </Button> */}
             </Flex>
           </Aside.Section>
-          {/* Last section with normal height (depends on section content) */}
           <Aside.Section>
             {otherProjectData?.hidden ? (
-              <Flex direction="column" align="center">
+              <Flex direction='column' align='center'>
                 <Button
-                  component="a"
-                  radius="lg"
+                  component='a'
+                  radius='lg'
                   w={{
                     base: '95%',
                     md: '80%',
@@ -1155,15 +926,11 @@ export default function EditPortfolioProject({
                   }}
                   mt={40}
                   onClick={handleSaveAndContinue}
-                  className="mx-auto"
-                  // onClick={handleSave}
+                  className='mx-auto'
                   styles={(theme) => ({
                     root: {
                       backgroundColor: theme.colors.green[8],
-                      // width: '40%',
-                      [theme.fn.smallerThan('sm')]: {
-                        // width: '70%',
-                      },
+                      [theme.fn.smallerThan('sm')]: {},
                       '&:hover': {
                         backgroundColor:
                           theme.colorScheme === 'dark'
@@ -1176,8 +943,8 @@ export default function EditPortfolioProject({
                   Continue
                 </Button>
                 <Button
-                  component="a"
-                  radius="lg"
+                  component='a'
+                  radius='lg'
                   w={{
                     base: '95%',
                     md: '80%',
@@ -1189,18 +956,11 @@ export default function EditPortfolioProject({
                   onClick={() => {
                     handleSaveAsDraft(false);
                   }}
-                  className="mx-auto"
-                  variant="outline"
-                  // onClick={handleSave}
+                  className='mx-auto'
+                  variant='outline'
                   styles={(theme) => ({
                     root: {
-                      // backgroundColor: theme.colors.green[8],
-                      // width: '40%',
-                      [theme.fn.smallerThan('sm')]: {
-                        // width: '70%',
-                      },
                       '&:hover': {
-                        // color: theme.colors.white,
                         color:
                           theme.colorScheme === 'dark'
                             ? theme.colors.blue[0]
@@ -1217,10 +977,10 @@ export default function EditPortfolioProject({
                 </Button>
               </Flex>
             ) : (
-              <Flex direction="column" align="center">
+              <Flex direction='column' align='center'>
                 <Button
-                  component="a"
-                  radius="lg"
+                  component='a'
+                  radius='lg'
                   w={{
                     base: '95%',
                     md: '80%',
@@ -1229,7 +989,7 @@ export default function EditPortfolioProject({
                   }}
                   mt={40}
                   onClick={handleUpdateProject}
-                  className="mx-auto"
+                  className='mx-auto'
                   styles={(theme) => ({
                     root: {
                       backgroundColor: theme.colors.green[8],
@@ -1246,8 +1006,8 @@ export default function EditPortfolioProject({
                   Save Updates
                 </Button>
                 <Button
-                  component="a"
-                  radius="lg"
+                  component='a'
+                  radius='lg'
                   w={{
                     base: '95%',
                     md: '80%',
@@ -1259,19 +1019,11 @@ export default function EditPortfolioProject({
                   onClick={() => {
                     handleSaveAsDraft(true);
                   }}
-                  // onClick={handleSaveAsDraft}
-                  className="mx-auto"
-                  variant="outline"
-                  // onClick={handleSave}
+                  className='mx-auto'
+                  variant='outline'
                   styles={(theme) => ({
                     root: {
-                      // backgroundColor: theme.colors.green[8],
-                      // width: '40%',
-                      [theme.fn.smallerThan('sm')]: {
-                        // width: '70%',
-                      },
                       '&:hover': {
-                        // color: theme.colors.white,
                         color:
                           theme.colorScheme === 'dark'
                             ? theme.colors.blue[0]
@@ -1288,13 +1040,8 @@ export default function EditPortfolioProject({
                 </Button>
               </Flex>
             )}
-
-            {/* </Center> */}
-
-            {/* Last section */}
           </Aside.Section>
         </Aside>
-        {/* )} */}
       </>
     );
 }
