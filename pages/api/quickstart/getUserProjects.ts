@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
-import { getAllUserProjectsWithAnonymousId } from '@/lib/quickstart/getSavedProjects';
+import { getAllUserProjectsWithAnonymousId } from '@/features/quickstart/lib/getSavedProjects';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const anonymousId = req.query.anonymousId as string;
