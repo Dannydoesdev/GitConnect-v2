@@ -1,12 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import {
   Button,
-  Center,
   Container,
   Group,
   Image,
-  SimpleGrid,
   Space,
   Text,
   useMantineTheme,
@@ -16,7 +13,7 @@ import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { AuthContext } from "@/context/AuthContext";
 import { useAtom } from "jotai";
 import { unsavedChangesSettingsAtom } from "@/atoms";
-import { useProjectCoverImageUpload } from "../hooks/useProjectCoverImageUpload";
+import { useProjectCoverImageUpload } from "@/features/quickstart/hooks/useProjectCoverImageUpload";
 
 type RepoProps = {
   repoId: string | number;
