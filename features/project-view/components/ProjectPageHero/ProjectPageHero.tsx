@@ -79,11 +79,8 @@ export function ProjectPageHero(props: any) {
                 <Button
                   component="a"
                   target="_blank"
-                  // size='xl'
-                  // radius='xl'
                   className={classes.liveAndGithub}
                   sx={(theme) => ({
-                    // subscribe to color scheme changes
                     backgroundColor:
                       theme.colorScheme === 'dark'
                         ? theme.colors.dark[5]

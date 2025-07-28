@@ -1,12 +1,10 @@
 import { createStyles } from '@mantine/core';
 
 export default createStyles((theme) => ({
-  
   container: {
     a: {
       target: '_blank',
       textDecoration: 'none',
-      // color: theme.colorScheme === 'dark' ? theme.colors.blue[5] : theme.colors.blue[7],
     },
   },
 
@@ -15,6 +13,4 @@ export default createStyles((theme) => ({
       theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1]
     }`,
   },
-
-
 }));
