@@ -75,8 +75,6 @@ RichTextEditorVanillaProps) {
     content: updatedContent,
     editorProps: {
       attributes: {
-        // class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
-        // class: `${notitapEditorClass} focus:outline-none w-full view-only-mode`,
         class: `view-only-mode`,
         spellcheck: 'false',
         suppressContentEditableWarning: 'true',

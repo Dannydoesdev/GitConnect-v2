@@ -11,16 +11,18 @@ import {
 } from '@/lib/projects';
 import { starProject, unstarProject } from '@/lib/stars';
 import ProfilePageUserPanel from '@/features/profiles/components/ProfilePageUserPanel/ProfilePageUserPanel';
-import ProjectPageDynamicContent from '@/features/projects/components/ProjectPageDynamicContent/ProjectPageDynamicContent';
-import { ProjectPageDynamicHero } from '@/features/projects/components/ProjectPageDynamicHero/ProjectPageDynamicHero';
-import RichTextEditorDisplay from '@/features/projects/components/RichTextEditorDisplay/RichTextEditorDisplay';
+import ProjectPageContent from '@/features/project-view/components/ProjectPageContent/ProjectPageContent';
+import { ProjectPageHero } from '@/features/project-view/components/ProjectPageHero/ProjectPageHero';
+import RichTextEditorDisplay from '@/features/project-view/components/RichTextEditorDisplay/RichTextEditorDisplay';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../../context/AuthContext';
 
 export async function getStaticProps({ params }: any) {
   const { projectname } = params;
   if (!projectname) return { props: { projectData: null, textContent: null } };
-  const projectData: any = await getSingleProjectByNameLowercase(projectname as string);
+  const projectData: any = await getSingleProjectByNameLowercase(
+    projectname as string
+  );
 
   let textEditorContent;
   if (!projectData || !projectData[0]?.userId) {
@@ -72,7 +74,6 @@ export default function Project({
   projects: initialProjects,
   textContent: initialTextContent,
 }: ProjectProps) {
-  // 1. All hooks at the top level
   const router = useRouter();
   const { currentUser, userData, loading } = useContext(AuthContext);
   const [userHasStarred, setUserHasStarred] = useState<boolean>(false);
@@ -82,10 +83,10 @@ export default function Project({
   const [lastUpdated, setLastUpdated] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 2. Get query parameters
+  // Get query parameters
   const projectname = router.query.projectname as string;
 
-  // 3. SWR setup
+  // SWR setup
   const projectKey = projectname
     ? `/api/portfolio/getSingleProject?projectname=${projectname}`
     : null;
@@ -93,10 +94,14 @@ export default function Project({
     ? `/api/portfolio/getTextEditorContent?userId=${initialProjects[0].userId}&repoId=${initialProjects[0].id}`
     : null;
 
-  const { data: fetchProject, error: projectsError } = useSWR(projectKey, fetcher, {
-    fallbackData: initialProjects,
-    revalidateOnMount: true,
-  });
+  const { data: fetchProject, error: projectsError } = useSWR(
+    projectKey,
+    fetcher,
+    {
+      fallbackData: initialProjects,
+      revalidateOnMount: true,
+    }
+  );
 
   const { data: fetchTextContent, error: textContentError } = useSWR(
     textContentKey,
@@ -129,7 +134,12 @@ export default function Project({
   }, [loading, userData]);
 
   useEffect(() => {
-    if (loading || !projectname || !isActiveTab || Date.now() - lastUpdated < 10000) {
+    if (
+      loading ||
+      !projectname ||
+      !isActiveTab ||
+      Date.now() - lastUpdated < 10000
+    ) {
       return;
     }
 
@@ -138,12 +148,15 @@ export default function Project({
 
     if (!project || !userData) return;
 
-    setUserHasStarred(project.stars ? project.stars.includes(userData.userId) : false);
+    setUserHasStarred(
+      project.stars ? project.stars.includes(userData.userId) : false
+    );
     setStarCount(project.stars ? project.stars.length : 0);
 
     const handleIncrementView = async (userId: string, repoId: string) => {
       if (!projects || !userData || projects.length === 0) return;
-      if (userId === userData.userId && project.views && project.views > 1) return;
+      if (userId === userData.userId && project.views && project.views > 1)
+        return;
 
       try {
         const response = await axios.post('/api/projects/incrementView', {
@@ -158,7 +171,10 @@ export default function Project({
       }
     };
 
-    if (project.userId && (!currentUser || currentUser.uid !== project.userId)) {
+    if (
+      project.userId &&
+      (!currentUser || currentUser.uid !== project.userId)
+    ) {
       setRepoOwner(project.userId);
       handleIncrementView(project.userId, project.id);
     }
@@ -173,7 +189,7 @@ export default function Project({
     currentUser,
   ]);
 
-  // 5. Early returns
+  // Early returns
   if (router.isFallback || isLoading) {
     return <LoadingPage />;
   }
@@ -189,7 +205,7 @@ export default function Project({
     return <LoadingPage />;
   }
 
-  // Original star/unstar function - ADDING IN some revalidation improvements
+  // Star/unstar function - added some revalidation improvements
   const handleStarClick = async () => {
     if (!userData || !projects || projects.length === 0) return;
 
@@ -201,12 +217,10 @@ export default function Project({
         setUserHasStarred(false);
         setStarCount((prev) => prev - 1);
         await unstarProject(userId, ownerId, repoId);
-     
       } else {
         setUserHasStarred(true);
         setStarCount((prev) => prev + 1);
         await starProject(userId, ownerId, repoId);
-   
       }
       // Trigger revalidation for homepage and project page to update relevant counts when successful
       await triggerHomepageRevalidation();
@@ -219,44 +233,11 @@ export default function Project({
     }
   };
 
-  // FIXME: check this out later - New star/unstar function
-
-  // const handleStarClick = async () => {
-  //   if (!userData || !projects || projects.length === 0) return;
-
-  //   const userId = userData.userId;
-  //   const ownerId = projects[0]?.userId;
-  //   const repoId = projects[0]?.id;
-
-  //   // Optimistic update
-  //   const isCurrentlyStarred = userHasStarred;
-  //   const currentStarCount = projects[0]?.stars;
-  //   setUserHasStarred(!isCurrentlyStarred);
-  //   setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
-
-  //   try {
-  //     if (isCurrentlyStarred) {
-  //       await unstarProject(userId, ownerId, repoId);
-  //     } else {
-  //       await starProject(userId, ownerId, repoId);
-  //     }
-
-  //     // Trigger revalidation after successful star/unstar
-  //     await triggerRevalidationWithCooldown();
-  //   } catch (error) {
-  //     // Revert optimistic updates on error
-  //     console.error('Failed to update star status:', error);
-  //     setUserHasStarred(isCurrentlyStarred);
-  //     setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
-  //   }
-  // };
-
-  // 7. Render
   return (
     <>
-      <ProjectPageDynamicHero props={projects} />
+      <ProjectPageHero props={projects} />
       {projects[0]?.username_lowercase === userData.username_lowercase && (
-        <Group position="center">
+        <Group position='center'>
           <Stack>
             {projects[0].hidden === true && (
               <>
@@ -264,8 +245,8 @@ export default function Project({
                   mt={30}
                   mb={-10}
                   checked={false}
-                  variant="filled"
-                  size="md"
+                  variant='filled'
+                  size='md'
                   styles={(theme) => ({
                     root: {
                       pointerEvents: 'none',
@@ -288,16 +269,18 @@ export default function Project({
             )}
             <br />
             <Button
-              component="a"
-              size="lg"
-              radius="md"
+              component='a'
+              size='lg'
+              radius='md'
               onClick={() =>
-                router.push(`/portfolio/edit/${projects[0]?.reponame_lowercase}`)
+                router.push(
+                  `/portfolio/edit/${projects[0]?.reponame_lowercase}`
+                )
               }
-              className="mx-auto"
-              color="gray"
-              mt="xs"
-              variant="outline"
+              className='mx-auto'
+              color='gray'
+              mt='xs'
+              variant='outline'
               styles={(theme) => ({
                 root: {
                   border:
@@ -327,13 +310,13 @@ export default function Project({
       {userData.userId && (
         <Center>
           <Button
-            component="a"
+            component='a'
             onClick={handleStarClick}
-            variant="filled"
-            size="lg"
-            radius="md"
+            variant='filled'
+            size='lg'
+            radius='md'
             mt={40}
-            className="mx-auto"
+            className='mx-auto'
             sx={(theme) => ({
               backgroundColor:
                 theme.colorScheme === 'dark'
@@ -346,13 +329,41 @@ export default function Project({
         </Center>
       )}
 
-      <ProjectPageDynamicContent props={projects} stars={starCount} />
+      <ProjectPageContent props={projects} stars={starCount} />
 
       {textContent && <RichTextEditorDisplay content={textContent} />}
-
-      {/* {projects[0]?.username_lowercase === userData.username_lowercase && (
-        <ProfilePageUserPanel props={projects[0]} currentUser={projects[0].userId === userData.userId} />
-      )} */}
     </>
   );
 }
+
+// TODO: Consider adding back in later - New star/unstar function
+
+// const handleStarClick = async () => {
+//   if (!userData || !projects || projects.length === 0) return;
+
+//   const userId = userData.userId;
+//   const ownerId = projects[0]?.userId;
+//   const repoId = projects[0]?.id;
+
+//   // Optimistic update
+//   const isCurrentlyStarred = userHasStarred;
+//   const currentStarCount = projects[0]?.stars;
+//   setUserHasStarred(!isCurrentlyStarred);
+//   setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
+
+//   try {
+//     if (isCurrentlyStarred) {
+//       await unstarProject(userId, ownerId, repoId);
+//     } else {
+//       await starProject(userId, ownerId, repoId);
+//     }
+
+//     // Trigger revalidation after successful star/unstar
+//     await triggerRevalidationWithCooldown();
+//   } catch (error) {
+//     // Revert optimistic updates on error
+//     console.error('Failed to update star status:', error);
+//     setUserHasStarred(isCurrentlyStarred);
+//     setStarCount(prev => isCurrentlyStarred ? prev - 1 : prev + 1);
+//   }
+// };

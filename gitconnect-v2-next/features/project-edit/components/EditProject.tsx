@@ -60,8 +60,8 @@ import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
 // import { getCheckoutUrl } from '@/lib/stripe/stripePaymentTest';
 import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
-import ViewPreviewProjectEditor from '@/features/projects/components/ViewPreviewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
-import { ViewProjectHero } from '@/features/projects/components/ViewPreviewProject/ViewPreviewProjectHero/ViewProjectHero';
+import ViewPreviewProjectEditor from '@/features/project-view/components/ViewPreviewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
+import { ViewProjectHero } from '@/features/project-view/components/ViewPreviewProject/ViewPreviewProjectHero/ViewProjectHero';
 import ProjectSettingsModal, { FormData } from './EditProjectSettings';
 import ProjectRichTextEditor from './RichTextEditor/RichTextEditor';
 

@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { quickstartProfilePanelForm } from '@/atoms';
 import {
-  Affix,
   Button,
   Checkbox,
   Group,
   Modal,
   MultiSelect,
   ScrollArea,
-  Space,
   Spoiler,
   Stack,
   Switch,
@@ -128,7 +126,6 @@ const formatSocialURL = (input: string, platform: string) => {
     default:
       return '';
   }
-  // ... (rest of the code remains the same)
 };
 
 const formatWebsiteURL = (input: string): string => {
@@ -137,7 +134,7 @@ const formatWebsiteURL = (input: string): string => {
   // Check if input already starts with http:// or https://
   if (/^https?:\/\//.test(input)) return input;
 
-  // If not, prepend http://
+  // If not, prepend https://
   return `https://${input}`;
 };
 
@@ -184,7 +181,6 @@ interface ProfilePageUserPanelSettingsProps {
     stackoverflowUrl?: string;
     facebookUrl?: string;
     instagramUrl?: string;
-
     githubUsername?: string;
     gitlabUsername?: string;
     linkedinUsername?: string;
@@ -222,25 +218,7 @@ const ProfilePageUserPanelSettings = ({
   close,
 }: ProfilePageUserPanelSettingsProps) => {
 
-  // console.log('props in Profile Panel Edit')
-  // console.log(props)
-  // const [formData, setFormData] = useAtom(formDataAtom);
-
-  // ChatGPTs implementation:
-  // const form = useForm({
-  //   initialValues: { ...props },
-  // });
-
-  // Attempting to fix the issue with the form not updating when the user changes their profile data:
-
-  // const [formData, setFormData] = useState(props);
-  // const form = useForm({
-  //   initialValues: { ...formData },
-  // });
-
   const [formData, setFormData] = useAtom(quickstartProfilePanelForm);
-
-  const dataToShow = formData ?? props;
 
   const form = useForm({
     initialValues: {
@@ -626,11 +604,9 @@ const ProfilePageUserPanelSettings = ({
         </Spoiler>
 
         <Group position="center" pb="lg">
-          {/* <Button variant="filled" fullWidth mt="md" onClick={() => handleSaveChanges(form.values)}> */}
           <Button variant="filled" radius="sm" w="40%" mt="md" onClick={handleSubmit}>
             Save Changes
           </Button>
-          {/* <Button onClick={() => { form.reset(); handleCancelChanges() }} > */}
           <Button
             variant="outline"
             radius="sm"
