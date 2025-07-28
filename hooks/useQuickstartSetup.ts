@@ -6,8 +6,8 @@ import { auth, db } from '@/firebase/clientApp';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 import { quickstartStateAtom } from '@/atoms/quickstartAtoms';
-import { fetchLanguages } from '@/lib/quickstart/fetchLanguages';
-import { fetchReadme } from '@/lib/quickstart/fetchReadme';
+import { fetchLanguages } from '@/features/quickstart/lib/fetchLanguages';
+import { fetchReadme } from '@/features/quickstart/lib/fetchReadme';
 import { RepoDataFull } from '@/types/quickstart';
 
 /**

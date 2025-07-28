@@ -14,7 +14,6 @@ import {
   Space,
   Text,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { useAtom } from 'jotai';
 import {
@@ -74,7 +73,7 @@ import {
   SiVuedotjs,
 } from 'react-icons/si';
 // import { updateProfileDataGithub } from '@/lib/profiles';
-import { updateQuickstartProfileData } from '@/lib/quickstart/saveEditData';
+import { updateQuickstartProfileData } from '@/features/quickstart/lib/saveEditData';
 import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
 
 interface IconMap {
