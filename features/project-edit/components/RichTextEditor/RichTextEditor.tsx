@@ -1,9 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { db } from '@/firebase/clientApp';
-import { Button, Center, Container, Group } from '@mantine/core';
-import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
-import { IconCode, IconPhoto, IconPhotoPlus, IconSourceCode } from '@tabler/icons-react';
+import { Group } from '@mantine/core';
+import {
+  RichTextEditor,
+  Link,
+  useRichTextEditorContext,
+} from '@mantine/tiptap';
+import { IconCode, IconPhotoPlus, IconSourceCode } from '@tabler/icons-react';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
@@ -22,7 +26,6 @@ import { DBlock } from './extensions/dBlock';
 import { CustomResizableImage } from './extensions/image/customResizableImage';
 import { ResizableMedia } from './extensions/resizableMedia';
 import { notitapEditorClass } from './proseClassString';
-import { set } from 'lodash';
 
 function InsertCodeControls() {
   const { editor } = useRichTextEditorContext();
@@ -30,17 +33,17 @@ function InsertCodeControls() {
     <RichTextEditor.ControlsGroup>
       <RichTextEditor.Control
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        aria-label="Code block"
-        title="Code block"
+        aria-label='Code block'
+        title='Code block'
       >
-        <IconSourceCode stroke={1.5} size="1rem" />
+        <IconSourceCode stroke={1.5} size='1rem' />
       </RichTextEditor.Control>
       <RichTextEditor.Control
         onClick={() => editor.chain().focus().toggleCode().run()}
-        aria-label="Code"
-        title="Code"
+        aria-label='Code'
+        title='Code'
       >
-        <IconCode stroke={1.5} size="1rem" />
+        <IconCode stroke={1.5} size='1rem' />
       </RichTextEditor.Control>
     </RichTextEditor.ControlsGroup>
   );
@@ -61,11 +64,7 @@ lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
 lowlight.registerLanguage('ts', ts);
 
-function ProjectRichTextEditor({
-  repoId,
-  userId,
-}:
-RichTextEditorVanillaProps) {
+function ProjectRichTextEditor({ repoId, userId }: RichTextEditorVanillaProps) {
   const router = useRouter();
 
   const [textContentState, setTextContentState] = useAtom(textEditorAtom);
@@ -76,7 +75,10 @@ RichTextEditorVanillaProps) {
 
   useEffect(() => {
     const getFirebaseData = async () => {
-      const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
+      const docRef = doc(
+        db,
+        `users/${userId}/repos/${repoId}/projectData/mainContent`
+      );
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
@@ -101,7 +103,6 @@ RichTextEditorVanillaProps) {
   useEffect(() => {
     editor?.commands.setContent(initialContent);
   }, [initialContent]);
-
 
   useEffect(() => {
     if (textContentState && textContentState !== editor?.getHTML()) {
@@ -147,22 +148,14 @@ RichTextEditorVanillaProps) {
       },
     },
     onUpdate({ editor }) {
-      // const htmlOutput = editor.getHTML();
-      // console.log('updating state');
-      // if (textContentState && (textContentState !== editor.getHTML())) {
-      // setEditorContent(editor.getHTML());
       setTextContentState(editor.getHTML());
       setUnsavedChanges(true);
-      // }
-      // Update state every time the editor content changes
-      // setEditorContent(editor.getHTML());
-      // onUpdateEditor?.(editor.getHTML());
     },
   });
 
   return (
-    <Group w="100%">
-      <RichTextEditor mt={40} editor={editor} w="100%">
+    <Group w='100%'>
+      <RichTextEditor mt={40} editor={editor} w='100%'>
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           {userId && repoId && (
             <RichTextEditor.Control
@@ -176,10 +169,10 @@ RichTextEditorVanillaProps) {
                   })
                   .run()
               }
-              aria-label="Insert an image"
-              title="Insert an image"
+              aria-label='Insert an image'
+              title='Insert an image'
             >
-              <IconPhotoPlus stroke={1.5} size="1rem" />
+              <IconPhotoPlus stroke={1.5} size='1rem' />
             </RichTextEditor.Control>
           )}
 
@@ -249,7 +242,10 @@ RichTextEditorVanillaProps) {
           </BubbleMenu>
         )}
         {editor && (
-          <FloatingMenu editor={editor} tippyOptions={{ placement: 'top-start', duration: 100 }}>
+          <FloatingMenu
+            editor={editor}
+            tippyOptions={{ placement: 'top-start', duration: 100 }}
+          >
             <RichTextEditor.ControlsGroup>
               {userId && repoId && (
                 <RichTextEditor.Control
@@ -263,10 +259,10 @@ RichTextEditorVanillaProps) {
                       })
                       .run()
                   }
-                  aria-label="Insert an image"
-                  title="Insert an image"
+                  aria-label='Insert an image'
+                  title='Insert an image'
                 >
-                  <IconPhotoPlus stroke={1.5} size="1rem" />
+                  <IconPhotoPlus stroke={1.5} size='1rem' />
                 </RichTextEditor.Control>
               )}
               <InsertCodeControls />

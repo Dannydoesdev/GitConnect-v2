@@ -21,11 +21,6 @@ export function ViewProjectHero({
 
   const image = coverImage;
 
-  // const imageUrl =
-  //   typeof image === 'string' && image
-  //     ? correctImageGetter(image, 2000)
-  //     : '/img/gitconnect.webp';
-
   const imageUrl = image ? image : '/img/gitconnect.webp';
 
   function replaceUnderscoresAndDashes(input: string): string {

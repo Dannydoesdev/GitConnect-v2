@@ -1,32 +1,22 @@
-import { url } from "inspector";
-import { useContext, useEffect, useState } from "react";
-import Link from "next/link";
-import { quickstartProfileAtom, quickstartProfilePanelForm, quickstartStateAtom } from "@/atoms";
-import { AuthContext } from "@/context/AuthContext";
+import { useContext } from 'react';
+import Link from 'next/link';
+import { quickstartProfilePanelForm, quickstartStateAtom } from '@/atoms';
+import { AuthContext } from '@/context/AuthContext';
 import {
-  ActionIcon,
   Avatar,
   Badge,
   Button,
   Center,
-  Checkbox,
   Divider,
   Group,
-  MultiSelect,
   Paper,
   rem,
   Space,
-  Spoiler,
-  Stack,
-  Switch,
   Text,
-  Textarea,
-  TextInput,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { useAtom } from "jotai";
-import { set } from "lodash";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { useAtom } from 'jotai';
 import {
   FaBehance,
   FaCodepen,
@@ -45,8 +35,8 @@ import {
   FaTwitch,
   FaTwitter,
   FaYoutube,
-} from "react-icons/fa6";
-import { IconType } from "react-icons/lib";
+} from 'react-icons/fa6';
+import { IconType } from 'react-icons/lib';
 import {
   SiAngular,
   SiBootstrap,
@@ -82,10 +72,10 @@ import {
   SiTailwindcss,
   SiTypescript,
   SiVuedotjs,
-} from "react-icons/si";
+} from 'react-icons/si';
 // import { updateProfileDataGithub } from '@/lib/profiles';
-import { updateQuickstartProfileData } from "@/lib/quickstart/saveEditData";
-import ProfilePageUserPanelSettings from "./ProfilePageUserPanelSettingsModal";
+import { updateQuickstartProfileData } from '@/lib/quickstart/saveEditData';
+import ProfilePageUserPanelSettings from './ProfilePageUserPanelSettingsModal';
 
 interface IconMap {
   [key: string]: React.ReactNode;
@@ -139,7 +129,7 @@ const SocialMediaButton = ({ url, icon, label }: SocialMediaButtonProps) => {
   if (!url || url.length === 0) return <></>;
   return (
     <Link href={url} passHref legacyBehavior>
-      <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+      <Button component='a' target='_blank' variant='default' fullWidth mt='md'>
         {icon} &nbsp; {label}
       </Button>
     </Link>
@@ -187,7 +177,10 @@ interface ProfilePageUserPanelProps {
   currentUser?: boolean;
 }
 
-const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps) => {
+const ProfilePageUserPanel = ({
+  props,
+  currentUser,
+}: ProfilePageUserPanelProps) => {
   const { userData } = useContext(AuthContext);
   const userId = userData.uid;
   const [opened, { open, close }] = useDisclosure(false);
@@ -223,23 +216,23 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
         currentUser={currentUser}
       />
 
-      <Paper radius="md" withBorder p="lg">
-        <Avatar src={props.avatar_url} size={120} radius={120} mx="auto" />
-        <Text ta="center" fz="lg" weight={500} mt="md">
+      <Paper radius='md' withBorder p='lg'>
+        <Avatar src={props.avatar_url} size={120} radius={120} mx='auto' />
+        <Text ta='center' fz='lg' weight={500} mt='md'>
           {formData.name || props.name}
         </Text>
-        <Text ta="center" c="dimmed" fz="sm">
+        <Text ta='center' c='dimmed' fz='sm'>
           {props.userName}
-          {props.location && " • "} {formData.location || props.location}
+          {props.location && ' • '} {formData.location || props.location}
         </Text>
 
         {/* Headline */}
         {formData.headline ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
+          <Text ta='center' fz='lg' weight={500} mt='md'>
             {formData.headline}
           </Text>
         ) : props.headline ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
+          <Text ta='center' fz='lg' weight={500} mt='md'>
             {props.headline}
           </Text>
         ) : (
@@ -248,55 +241,53 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
 
         {/* Position @ Company */}
         {formData.position && formData.company ? (
-          <Text ta="center" fz="md" weight={500} mt="md">
+          <Text ta='center' fz='md' weight={500} mt='md'>
             {formData.position} @ {formData.company}
           </Text>
         ) : props.position && props.company ? (
-          <Text ta="center" fz="md" weight={400} mt="md">
+          <Text ta='center' fz='md' weight={400} mt='md'>
             {props.position} @ {props.company}
           </Text>
         ) : props.position ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
+          <Text ta='center' fz='lg' weight={500} mt='md'>
             {formData.position || props.position}
           </Text>
         ) : props.company ? (
-          <Text ta="center" fz="lg" weight={500} mt="md">
+          <Text ta='center' fz='lg' weight={500} mt='md'>
             {formData.company || props.company}
           </Text>
         ) : (
           <></>
         )}
-        <Text mt="xs" ta="center" fz="sm">
-          {" "}
+        <Text mt='xs' ta='center' fz='sm'>
+          {' '}
           {props.publicEmail && props.publicEmail}
         </Text>
 
-        {/* <Text mt={4} ta="center" c="dimmed" fz="sm">  {props.publicEmail && props.publicEmail}</Text> */}
-
         {/* Edit Profile Button */}
         {currentUser && (
-          <Group mx="xl">
-            <Button variant="filled" fullWidth mt="xl" onClick={open}>
+          <Group mx='xl'>
+            <Button variant='filled' fullWidth mt='xl' onClick={open}>
               Edit Your Profile
             </Button>
-            <Space h="xxs" />
+            <Space h='xxs' />
           </Group>
         )}
 
         {/* GITHUB BUTTON */}
         {/* TODO: SIMPLIFY LOGIC (+throuhgout this component) */}
         {formData.githubUrl ? (
-          <Group position="center">
+          <Group position='center'>
             <Link href={formData.githubUrl} passHref legacyBehavior>
               <Button
-                color="gray"
-                component="a"
-                target="_blank"
-                variant="default"
-                mt="xl"
+                color='gray'
+                component='a'
+                target='_blank'
+                variant='default'
+                mt='xl'
                 styles={(theme) => ({
                   root: {
-                    borderColor: "#d5d5d5e0",
+                    borderColor: '#d5d5d5e0',
                     height: rem(38),
                     paddingLeft: rem(18),
                     paddingRight: rem(18),
@@ -308,17 +299,17 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
             </Link>
           </Group>
         ) : props.githubUrl ? (
-          <Group position="center">
+          <Group position='center'>
             <Link href={props.githubUrl} passHref legacyBehavior>
               <Button
-                color="gray"
-                component="a"
-                target="_blank"
-                variant="default"
-                mt="xl"
+                color='gray'
+                component='a'
+                target='_blank'
+                variant='default'
+                mt='xl'
                 styles={(theme) => ({
                   root: {
-                    borderColor: "#d5d5d5e0",
+                    borderColor: '#d5d5d5e0',
                     height: rem(38),
                     paddingLeft: rem(18),
                     paddingRight: rem(18),
@@ -330,18 +321,18 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
             </Link>
           </Group>
         ) : props.html_url ? (
-          <Group position="center">
+          <Group position='center'>
             <Link href={props.html_url} passHref legacyBehavior>
               <Button
-                color="gray"
-                component="a"
-                target="_blank"
-                variant="default"
-                mt="xl"
+                color='gray'
+                component='a'
+                target='_blank'
+                variant='default'
+                mt='xl'
                 styles={(theme) => ({
                   root: {
                     // borderColor: "#d5d5d5e0",
-                    border: "lightgray 1px solid",
+                    border: 'lightgray 1px solid',
                     height: rem(38),
                     paddingLeft: rem(18),
                     paddingRight: rem(18),
@@ -362,16 +353,16 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
             <Space h={9} />
 
             <Divider
-              mt="xl"
+              mt='xl'
               // mb='xs'
-              size="xs"
-              label="About"
-              labelPosition="left"
-              labelProps={{ fw: 500, fz: "md" }}
+              size='xs'
+              label='About'
+              labelPosition='left'
+              labelProps={{ fw: 500, fz: 'md' }}
             />
 
-            <Paper radius="md" p="lg">
-              <Text ta="center" fz="lg" weight={500} mt="md">
+            <Paper radius='md' p='lg'>
+              <Text ta='center' fz='lg' weight={500} mt='md'>
                 {formData.bio}
               </Text>
             </Paper>
@@ -381,16 +372,16 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
             <Space h={9} />
 
             <Divider
-              mt="xl"
+              mt='xl'
               // mb='xs'
-              size="xs"
-              label="About"
-              labelPosition="left"
-              labelProps={{ fw: 500, fz: "md" }}
+              size='xs'
+              label='About'
+              labelPosition='left'
+              labelProps={{ fw: 500, fz: 'md' }}
             />
 
-            <Paper radius="md" p="lg">
-              <Text ta="center" fz="lg" weight={500} mt="md">
+            <Paper radius='md' p='lg'>
+              <Text ta='center' fz='lg' weight={500} mt='md'>
                 {props.bio}
               </Text>
             </Paper>
@@ -403,16 +394,16 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
         {formData.openToWork === true || props.openToWork === true ? (
           <>
             <Divider
-              my="lg"
-              size="xs"
-              label="Availability"
-              labelPosition="left"
-              labelProps={{ fw: 500, fz: "md" }}
+              my='lg'
+              size='xs'
+              label='Availability'
+              labelPosition='left'
+              labelProps={{ fw: 500, fz: 'md' }}
             />
 
             <Space h={12} />
             <Center>
-              <Badge color="teal" size="lg" radius="lg" w="70%" variant="light">
+              <Badge color='teal' size='lg' radius='lg' w='70%' variant='light'>
                 Open to Work
               </Badge>
             </Center>
@@ -425,16 +416,16 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
           <></>
         )}
 
-        {/* FIXME: Can't even remember why there's double props checks for everything - note because return is diff depending on source - needs reinvestigation */}
+        {/* FIXME:  double props checks for everything - because return is diff depending on source - needs reinvestigation */}
         {((formData.techStack && formData.techStack.length > 0) ||
           (props.techStack && props.techStack.length > 0)) && (
           <>
             <Divider
-              my="lg"
-              size="xs"
-              label="Tech Stack"
-              labelPosition="left"
-              labelProps={{ fw: 500, fz: "md" }}
+              my='lg'
+              size='xs'
+              label='Tech Stack'
+              labelPosition='left'
+              labelProps={{ fw: 500, fz: 'md' }}
             />
             <Space h={12} />
           </>
@@ -443,7 +434,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
         {/* Tech Stack */}
         {formData.techStack && formData.techStack.length > 0 ? (
           <>
-            <Group spacing="sm">
+            <Group spacing='sm'>
               <>
                 {formData.techStack.map((tech) => {
                   // NOTE: If you want to use icons next to languages within the badges, use this code
@@ -454,23 +445,21 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                     // See OG code: https://github.com/mantinedev/mantine/blob/cdf1179358c6d4591f5de76a2a41935ff4c91ec6/src/mantine-core/src/Badge/Badge.styles.ts#L49C3-L49C3
                     <Badge
                       key={tech}
-                      size="md"
-                      radius="lg"
-                      color="gray"
+                      size='md'
+                      radius='lg'
+                      color='gray'
                       // variant="light"
-                      variant="dot"
-                      p="xs"
-                      py="sm"
+                      variant='dot'
+                      p='xs'
+                      py='sm'
                       styles={(theme) => ({
                         inner: {
                           // color: 'yellowgreen',
                           fontSize: 11,
                         },
                         root: {
-                          // padding: 5,
-                          // borderWidth: 1,
-                          "&::before": {
-                            display: "none", // Hide the dot
+                          '&::before': {
+                            display: 'none', // Hide the dot
                           },
                         },
                       })}
@@ -481,12 +470,10 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                 })}
               </>
             </Group>
-            {/* </Spoiler> */}
           </>
-        ) : // {/* </Stack> */}
-        props.techStack && props.techStack.length > 0 ? (
+        ) : props.techStack && props.techStack.length > 0 ? (
           <>
-            <Group spacing="sm">
+            <Group spacing='sm'>
               <>
                 {props.techStack.map((tech) => {
                   // NOTE: If you want to use icons next to languages within the badges, use this code
@@ -497,22 +484,20 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
                     // See OG code: https://github.com/mantinedev/mantine/blob/cdf1179358c6d4591f5de76a2a41935ff4c91ec6/src/mantine-core/src/Badge/Badge.styles.ts#L49C3-L49C3
                     <Badge
                       key={tech}
-                      size="md"
-                      radius="lg"
-                      color="gray"
-                      variant="dot"
-                      p="xs"
-                      py="sm"
+                      size='md'
+                      radius='lg'
+                      color='gray'
+                      variant='dot'
+                      p='xs'
+                      py='sm'
                       styles={(theme) => ({
                         inner: {
                           // color: 'yellowgreen',
                           fontSize: 11,
                         },
                         root: {
-                          // padding: 5,
-                          // borderWidth: 1,
-                          "&::before": {
-                            display: "none", // Hide the dot
+                          '&::before': {
+                            display: 'none', // Hide the dot
                           },
                         },
                       })}
@@ -533,34 +518,34 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
           <>
             <Space h={16} />
             <Divider
-              my="lg"
-              size="xs"
-              label="Skills:"
-              labelPosition="left"
-              labelProps={{ fw: 500, fz: "md", variant: "link" }}
+              my='lg'
+              size='xs'
+              label='Skills:'
+              labelPosition='left'
+              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
             />
             <Space h={10} />
 
-            <Group spacing="sm">
+            <Group spacing='sm'>
               <>
                 {formData.skills.map((skill) => {
                   return (
                     <Badge
                       key={skill}
-                      size="md"
-                      radius="lg"
-                      color="gray"
-                      variant="dot"
-                      p="xs"
-                      py="sm"
+                      size='md'
+                      radius='lg'
+                      color='gray'
+                      variant='dot'
+                      p='xs'
+                      py='sm'
                       styles={(theme) => ({
                         inner: {
                           // color: 'yellowgreen',
                           fontSize: 11,
                         },
                         root: {
-                          "&::before": {
-                            display: "none", // Hide the dot
+                          '&::before': {
+                            display: 'none', // Hide the dot
                           },
                         },
                       })}
@@ -577,34 +562,34 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
             <Space h={15} />
 
             <Divider
-              my="lg"
-              size="xs"
-              label="Skills:"
-              labelPosition="left"
-              labelProps={{ fw: 500, fz: "md", variant: "link" }}
+              my='lg'
+              size='xs'
+              label='Skills:'
+              labelPosition='left'
+              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
             />
             <Space h={10} />
 
-            <Group spacing="sm">
+            <Group spacing='sm'>
               <>
                 {props.skills.map((skill) => {
                   return (
                     <Badge
                       key={skill}
-                      size="md"
-                      radius="lg"
-                      color="gray"
-                      variant="dot"
-                      p="xs"
-                      py="sm"
+                      size='md'
+                      radius='lg'
+                      color='gray'
+                      variant='dot'
+                      p='xs'
+                      py='sm'
                       styles={(theme) => ({
                         inner: {
                           // color: 'yellowgreen',
                           fontSize: 11,
                         },
                         root: {
-                          "&::before": {
-                            display: "none", // Hide the dot
+                          '&::before': {
+                            display: 'none', // Hide the dot
                           },
                         },
                       })}
@@ -637,12 +622,12 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
           <>
             <Space h={22} />
             <Divider
-              my="md"
+              my='md'
               // mb={19}
-              size="xs"
-              label="Links"
-              labelPosition="left"
-              labelProps={{ fw: 500, fz: "md", variant: "link" }}
+              size='xs'
+              label='Links'
+              labelPosition='left'
+              labelProps={{ fw: 500, fz: 'md', variant: 'link' }}
             />
             <Space h={1} />
           </>
@@ -653,13 +638,25 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
         {/* Website Button */}
         {formData.website ? (
           <Link href={formData.website} passHref legacyBehavior>
-            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+            <Button
+              component='a'
+              target='_blank'
+              variant='default'
+              fullWidth
+              mt='md'
+            >
               <FaGlobe /> &nbsp; Website
             </Button>
           </Link>
         ) : props.website ? (
           <Link href={props.website} passHref legacyBehavior>
-            <Button component="a" target="_blank" variant="default" fullWidth mt="md">
+            <Button
+              component='a'
+              target='_blank'
+              variant='default'
+              fullWidth
+              mt='md'
+            >
               Website
             </Button>
           </Link>
@@ -670,77 +667,77 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
         <SocialMediaButton
           url={formData.githubUrl || props.githubUrl}
           icon={<FaGithub />}
-          label="Github"
+          label='Github'
         />
         <SocialMediaButton
           url={formData.twitterUrl || props.twitterUrl}
           icon={<FaTwitter />}
-          label="Twitter"
+          label='Twitter'
         />
         <SocialMediaButton
           url={formData.linkedinUrl || props.linkedinUrl}
           icon={<FaLinkedin />}
-          label="Linkedin"
+          label='Linkedin'
         />
         <SocialMediaButton
           url={formData.mediumUrl || props.mediumUrl}
           icon={<FaMedium />}
-          label="Medium"
+          label='Medium'
         />
         <SocialMediaButton
           url={formData.hashnodeUrl || props.hashnodeUrl}
           icon={<FaHashnode />}
-          label="Hashnode"
+          label='Hashnode'
         />
         <SocialMediaButton
           url={formData.codepenUrl || props.codepenUrl}
           icon={<FaCodepen />}
-          label="Codepen"
+          label='Codepen'
         />
         <SocialMediaButton
           url={formData.devToUrl || props.devToUrl}
           icon={<FaDev />}
-          label="Dev.to"
+          label='Dev.to'
         />
         <SocialMediaButton
           url={formData.youtubeUrl || props.youtubeUrl}
           icon={<FaYoutube />}
-          label="Youtube"
+          label='Youtube'
         />
         <SocialMediaButton
           url={formData.twitchUrl || props.twitchUrl}
           icon={<FaTwitch />}
-          label="Twitch"
+          label='Twitch'
         />
         <SocialMediaButton
           url={formData.discordUrl || props.discordUrl}
           icon={<FaDiscord />}
-          label="Discord"
+          label='Discord'
         />
         <SocialMediaButton
           url={formData.stackoverflowUrl || props.stackoverflowUrl}
           icon={<FaStackOverflow />}
-          label="Stackoverflow"
+          label='Stackoverflow'
         />
         <SocialMediaButton
           url={formData.facebookUrl || props.facebookUrl}
           icon={<FaFacebookF />}
-          label="Facebook"
+          label='Facebook'
         />
         <SocialMediaButton
           url={formData.instagramUrl || props.instagramUrl}
           icon={<FaInstagram />}
-          label="Instagram"
+          label='Instagram'
         />
         <SocialMediaButton
           url={formData.dribbbleUrl || props.dribbbleUrl}
           icon={<FaDribbble />}
-          label="Dribbble"
+          label='Dribbble'
         />
         <SocialMediaButton
           url={formData.behanceUrl || props.behanceUrl}
           icon={<FaBehance />}
-          label="Behance"
+          label='Behance'
         />
       </Paper>
     </>
@@ -749,7 +746,7 @@ const ProfilePageUserPanel = ({ props, currentUser }: ProfilePageUserPanelProps)
 
 const techStackBadge = (techStack: string[]) => {
   return techStack.map((tech) => (
-    <Badge key={tech} radius="md" variant="outline">
+    <Badge key={tech} radius='md' variant='outline'>
       {tech}
     </Badge>
   ));
@@ -757,7 +754,7 @@ const techStackBadge = (techStack: string[]) => {
 
 const skillsBadge = (skills: string[]) => {
   return skills.map((skill) => (
-    <Badge key={skill} color="teal" radius="md" variant="outline">
+    <Badge key={skill} color='teal' radius='md' variant='outline'>
       {skill}
     </Badge>
   ));
