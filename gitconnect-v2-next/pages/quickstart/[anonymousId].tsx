@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import {
-  quickstartProfilePanelForm,
-} from '@/atoms/quickstartAtoms';
+import { quickstartProfilePanelForm } from '@/atoms/quickstartAtoms';
 import { AuthContext } from '@/context/AuthContext';
 import {
   Blockquote,
@@ -14,8 +12,6 @@ import {
   Divider,
   Grid,
   Group,
-  Paper,
-  Skeleton,
   Space,
   Stack,
   Tabs,
@@ -24,8 +20,8 @@ import {
 } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useAtom } from 'jotai';
-import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
-import { getAllUserProjectsWithAnonymousId } from '@/lib/quickstart/getSavedProjects';
+import { getProfileDataWithAnonymousId } from '@/features/quickstart/lib/getSavedProfile';
+import { getAllUserProjectsWithAnonymousId } from '@/features/quickstart/lib/getSavedProjects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import ProfilePageProjectGrid from '@/features/quickstart/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 import ProfilePageUserPanel from '@/features/quickstart/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
@@ -40,7 +36,7 @@ const PageHead = ({ profile, username_lowercase }: any) => (
       {`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Quickstart Portfolio`}
     </title>
     <meta
-      name="description"
+      name='description'
       content={`${(profile?.name && profile.name.length >= 1 ? profile.name : username_lowercase) ?? 'GitConnect'}'s Quickstart portfolio page`}
     />
   </Head>
@@ -63,13 +59,13 @@ const ProjectTabs = ({
   draftProjects,
 }: any) =>
   isCurrentUser ? (
-    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+    <Tabs color='teal' value={activeTab} onTabChange={setActiveTab}>
       <Tabs.List>
-        <Tabs.Tab value="second" color="orange">
+        <Tabs.Tab value='second' color='orange'>
           Drafts
         </Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="second">
+      <Tabs.Panel value='second'>
         <Space h={20} />
         <Grid.Col>
           <ProfilePageProjectGrid
@@ -81,11 +77,11 @@ const ProjectTabs = ({
       </Tabs.Panel>
     </Tabs>
   ) : (
-    <Tabs color="teal" value={activeTab} onTabChange={setActiveTab}>
+    <Tabs color='teal' value={activeTab} onTabChange={setActiveTab}>
       <Tabs.List>
-        <Tabs.Tab value="first">Projects</Tabs.Tab>
+        <Tabs.Tab value='first'>Projects</Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="first">
+      <Tabs.Panel value='first'>
         <Space h={20} />
         <Grid.Col>
           <ProfilePageProjectGrid projects={publishedProjects} />
@@ -109,20 +105,18 @@ export default function QuickstartPortfolio({
 }: PortfolioProps) {
   const [activeTab, setActiveTab] = useState('second');
   const { userData, currentUser } = useContext(AuthContext);
-  const [profilePanelAtom, setProfilePanelAtom] = useAtom(quickstartProfilePanelForm);
+  const [profilePanelAtom, setProfilePanelAtom] = useAtom(
+    quickstartProfilePanelForm
+  );
   // Add transition state
   const [contentMounted, setContentMounted] = useState(false);
-  
+
   const router = useRouter();
 
   const isReady = router.isReady;
   const isFallback = router.isFallback;
 
-  const {
-    profile,
-    draftProjects,
-    publishedProjects,
-  } = useQuickstartState({
+  const { profile, draftProjects, publishedProjects } = useQuickstartState({
     initialProfile,
     initialProjects,
     anonymousId,
@@ -138,8 +132,12 @@ export default function QuickstartPortfolio({
   // Handle transition mounting after state is ready
   useEffect(() => {
     // Only mount content when data is ready and router is ready
-    if (profile && (draftProjects || publishedProjects) && isReady && !isFallback) {
-
+    if (
+      profile &&
+      (draftProjects || publishedProjects) &&
+      isReady &&
+      !isFallback
+    ) {
       const timer = setTimeout(() => {
         setContentMounted(true);
       }, 50);
@@ -151,7 +149,6 @@ export default function QuickstartPortfolio({
   useEffect(() => {
     notifications.clean();
   }, []);
-
 
   // Check router states
   if (!isReady) {
@@ -168,23 +165,35 @@ export default function QuickstartPortfolio({
   }
 
   const isCurrentUser =
-    userData && anonymousId && currentUser?.uid === anonymousId.toString() ? true : false;
-
+    userData && anonymousId && currentUser?.uid === anonymousId.toString()
+      ? true
+      : false;
 
   return (
     <>
-      <PageHead profile={profile} username_lowercase={profile?.username_lowercase} />
-      <Container size="xl" mt={0}>
-        <Group position="center">
+      <PageHead
+        profile={profile}
+        username_lowercase={profile?.username_lowercase}
+      />
+      <Container size='xl' mt={0}>
+        <Group position='center'>
           <Space h={60} />
-          <Transition mounted={contentMounted} transition="fade" duration={250} timingFunction="ease">
+          <Transition
+            mounted={contentMounted}
+            transition='fade'
+            duration={250}
+            timingFunction='ease'
+          >
             {(styles) => (
               <Grid grow gutter={35} style={styles}>
                 <Grid.Col sm={12} md={4}>
-                  <ProfilePanel profile={profile} isCurrentUser={isCurrentUser} />
+                  <ProfilePanel
+                    profile={profile}
+                    isCurrentUser={isCurrentUser}
+                  />
                 </Grid.Col>
                 <Grid.Col span={8}>
-                  <Grid gutter="md">
+                  <Grid gutter='md'>
                     <Grid.Col>
                       <ProjectTabs
                         isCurrentUser={isCurrentUser}
@@ -203,26 +212,27 @@ export default function QuickstartPortfolio({
           {!contentMounted && <ProfilePageSkeleton />}
         </Group>
 
-         {/* sign up prompt footer */}
-        <Space h="lg" />
-        <Divider my="lg" size="sm" />
+        {/* sign up prompt footer */}
+        <Space h='lg' />
+        <Divider my='lg' size='sm' />
         <Center mt={55}>
-          <Stack align="center" spacing="xs">
-            <Text size="lg" weight={500}>
+          <Stack align='center' spacing='xs'>
+            <Text size='lg' weight={500}>
               Want to publish your portfolio?
             </Text>
-            <Space h="xs" />
-            <Button component={Link} href="/signup" size="md" color="teal">
+            <Space h='xs' />
+            <Button component={Link} href='/signup' size='md' color='teal'>
               Create Your Account
             </Button>
-            <Space h="xs" />
+            <Space h='xs' />
 
             <Blockquote
-              cite="- GitConnect tips"
-              color="indigo"
-              icon={<IconInfoCircle size="1.5rem" />}
+              cite='- GitConnect tips'
+              color='indigo'
+              icon={<IconInfoCircle size='1.5rem' />}
             >
-              Registered users have more tools to edit their portfolio and publish projects
+              Registered users have more tools to edit their portfolio and
+              publish projects
             </Blockquote>
           </Stack>
         </Center>
@@ -230,7 +240,6 @@ export default function QuickstartPortfolio({
     </>
   );
 }
-
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { anonymousId } = params as { anonymousId: string };
