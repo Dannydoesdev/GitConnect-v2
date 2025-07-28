@@ -25,68 +25,14 @@ import {
   IconStar,
 } from '@tabler/icons-react';
 import axios from 'axios';
-import { ProjectPageDynamicHero } from '../ProjectPageDynamicHero/ProjectPageDynamicHero';
-import useStyles from './ProjectPageDynamicContent.styles';
+import { ProjectPageHero } from '../ProjectPageHero/ProjectPageHero';
+import useStyles from './ProjectPageContent.styles';
 
-export default function ProjectPageDynamicContent(props: any) {
+export default function ProjectPageContent(props: any) {
   const { classes, theme } = useStyles();
   const project = props.props[0];
   const stars = props.stars;
 
-  // Temporary workaround for non-static projects
-
-  let projectData: any = [];
-  if (project.process && project.challenges && project.outcomes) {
-    projectData = [
-      {
-        title: 'Process',
-        description: project.process,
-        icon: IconListNumbers,
-      },
-      {
-        title: 'Challenges',
-        description: project.challenges,
-        icon: IconFall,
-      },
-      {
-        title: 'Outcomes',
-        description: project.outcomes,
-        icon: IconReportAnalytics,
-      },
-    ];
-  }
-  // Temporary workaround for non-static projects
-  else {
-    projectData = [
-      {
-        title: 'Process',
-        description: 'Process not added yet',
-        icon: IconListNumbers,
-      },
-      {
-        title: 'Challenges',
-        description: 'Challenges not added yet',
-        icon: IconFall,
-      },
-      {
-        title: 'Outcomes',
-        description: 'Outcomes not added yet',
-        icon: IconReportAnalytics,
-      },
-    ];
-  }
-
-  const features = projectData.map((project: any) => (
-    <Card key={project.title} shadow="md" radius="md" className={classes.card} p="xl">
-      <project.icon size={50} stroke={2} color={theme.fn.primaryColor()} />
-      <Text size="lg" weight={500} className={classes.cardTitle} mt="md">
-        {project.title}
-      </Text>
-      <Text size="sm" color="dimmed" mt="sm">
-        {project.description}
-      </Text>
-    </Card>
-  ));
 
 
   function replaceUnderscoresAndDashes(input: string): string {
@@ -128,7 +74,30 @@ export default function ProjectPageDynamicContent(props: any) {
         </Center>
       </Group>
 
-      {/* NOTE: Removing special content for now */}
+    </Container>
+  );
+}
+
+
+// ===== Removed ideas for future consideration =====
+
+// iFrame of live site embedded in page:
+
+      {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
+
+      {/* referrerPolicy="origin-when-cross-origin" allow-storage-access-by-user-activation   allow-scripts*/}
+
+      {/* TODO - enforce stricter sandboxing (without breaking iFrame content) */}
+
+      {/* <Group>
+            <iframe sandbox="allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock" className={classes.iframe} src={project.live_url}></iframe>
+
+          </Group>
+        </>
+      } */}
+
+// Project process, challenges, and outcomes structure:
+
       {/* TODO: Incorporate back if and when useful */}
 
       {/* {project.process && project.challenges && project.outcomes &&
@@ -146,19 +115,55 @@ export default function ProjectPageDynamicContent(props: any) {
             Check out the live site:
           </Title> */}
 
-      {/* Note - this is test code not included previously */}
-      {/* <Link href="#second-section" scroll={false}>Skip to case study</Link> */}
+  // let projectData: any = [];
+  // if (project.process && project.challenges && project.outcomes) {
+  //   projectData = [
+  //     {
+  //       title: 'Process',
+  //       description: project.process,
+  //       icon: IconListNumbers,
+  //     },
+  //     {
+  //       title: 'Challenges',
+  //       description: project.challenges,
+  //       icon: IconFall,
+  //     },
+  //     {
+  //       title: 'Outcomes',
+  //       description: project.outcomes,
+  //       icon: IconReportAnalytics,
+  //     },
+  //   ];
+  // }
+  // // Temporary workaround for non-static projects
+  // else {
+  //   projectData = [
+  //     {
+  //       title: 'Process',
+  //       description: 'Process not added yet',
+  //       icon: IconListNumbers,
+  //     },
+  //     {
+  //       title: 'Challenges',
+  //       description: 'Challenges not added yet',
+  //       icon: IconFall,
+  //     },
+  //     {
+  //       title: 'Outcomes',
+  //       description: 'Outcomes not added yet',
+  //       icon: IconReportAnalytics,
+  //     },
+  //   ];
+  // }
 
-      {/* referrerPolicy="origin-when-cross-origin" allow-storage-access-by-user-activation   allow-scripts*/}
-
-      {/* TODO - enforce stricter sandboxing (without breaking iFrame content) */}
-
-      {/* <Group>
-            <iframe sandbox="allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock" className={classes.iframe} src={project.live_url}></iframe>
-
-          </Group>
-        </>
-      } */}
-    </Container>
-  );
-}
+  // const features = projectData.map((project: any) => (
+  //   <Card key={project.title} shadow="md" radius="md" className={classes.card} p="xl">
+  //     <project.icon size={50} stroke={2} color={theme.fn.primaryColor()} />
+  //     <Text size="lg" weight={500} className={classes.cardTitle} mt="md">
+  //       {project.title}
+  //     </Text>
+  //     <Text size="sm" color="dimmed" mt="sm">
+  //       {project.description}
+  //     </Text>
+  //   </Card>
+  // ));

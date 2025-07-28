@@ -7,19 +7,15 @@ export default createStyles((theme) => ({
     backgroundPosition: 'center',
     marginTop: 55,
     width: '100%',
-    // height: '60vh',
-    // height: '400',
   },
 
   container: {
-    // height: '80vh',
     height: '55vh',
     marginLeft: 200,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
-    // paddingBottom: theme.spacing.xl * 6,
     paddingBottom: `calc(${theme.spacing.xl} * 6)`,
     zIndex: 1,
     position: 'relative',
@@ -27,7 +23,6 @@ export default createStyles((theme) => ({
     [theme.fn.smallerThan('sm')]: {
       marginLeft: 40,
       height: 500,
-      // paddingBottom: theme.spacing.xl * 3,
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
   },
@@ -59,21 +54,14 @@ export default createStyles((theme) => ({
     },
   },
 
-  // group: {
-  //   width: '100%',
-  // },
-
   githubOnly: {
-    // marginTop: theme.spacing.xl * 1,
     marginTop: `calc(${theme.spacing.xl} * 1)`,
     fontSize: 16,
     width: 260,
-    // width: '80%',
     height: 52,
     borderRadius: 10,
 
     [theme.fn.smallerThan('sm')]: {
-      // marginTop: theme.spacing.xl * 0.5,
       marginTop: `calc(${theme.spacing.xl} * 0.5)`,
       fontSize: 12,
       width: 100,
@@ -83,16 +71,13 @@ export default createStyles((theme) => ({
   },
 
   liveAndGithub: {
-    // marginTop: theme.spacing.xl * 1,
     marginTop: `calc(${theme.spacing.xl} * 1)`,
     fontSize: 16,
     width: 150,
-    // width: '100%',
     height: 52,
     borderRadius: 10,
 
     [theme.fn.smallerThan('sm')]: {
-      // marginTop: theme.spacing.xl * 0.5,
       marginTop: `calc(${theme.spacing.xl} * 0.5)`,
       fontSize: 12,
       width: 100,
