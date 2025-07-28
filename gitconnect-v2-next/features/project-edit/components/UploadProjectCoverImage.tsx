@@ -18,7 +18,13 @@ import {
   IMAGE_MIME_TYPE,
 } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconCross, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconCross,
+  IconPhoto,
+  IconUpload,
+  IconX,
+} from '@tabler/icons-react';
 import {
   collection,
   doc,
@@ -38,14 +44,12 @@ type RepoProps = {
   repoId: string | number;
   existingCoverImage?: string;
   handleNewCoverImage: (url: string) => void;
-  // initialFirebaseData?: string
 };
 
 export function UploadProjectCoverImage(
   { repoId, existingCoverImage, handleNewCoverImage }: RepoProps,
   props: Partial<DropzoneProps>
 ) {
-  // console.log('existingCoverImage', existingCoverImage)
   const { userData } = useContext(AuthContext);
   const userId = userData.userId;
   const userName = userData.userName;
@@ -57,7 +61,9 @@ export function UploadProjectCoverImage(
   const [progresspercent, setProgresspercent] = useState(0);
   const [imgCheck, setImgCheck] = useState(false);
   const [files, setFiles] = useState<FileWithPath[]>([]);
-  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(unsavedChangesSettingsAtom);
+  const [unsavedChangesSettings, setUnsavedChangesSettings] = useAtom(
+    unsavedChangesSettingsAtom
+  );
 
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
@@ -80,9 +86,6 @@ export function UploadProjectCoverImage(
 
   const handleFileDrop = (file: FileWithPath[]) => {
     setImgUrl('');
-    // setImgCheck(false);
-    // console.log('accepted file', file);
-    // console.log('droptime')
     setFiles(file);
     setImgCheck(true);
     setUnsavedChangesSettings(true);
@@ -119,36 +122,31 @@ export function UploadProjectCoverImage(
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
+            const docRef = doc(
+              db,
+              `users/${userId}/repos/${repoId}/projectData/images`
+            );
             const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-            
-            // Match the exact sizes configured in the Firebase resizer extension
-            // const sizes = [200, 400, 768, 1024, 2000, 4000];
-            const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000', '4000x4000'];
+
+            const sizes = [
+              '200x200',
+              '400x400',
+              '768x768',
+              '1024x1024',
+              '2000x2000',
+              '4000x4000',
+            ];
             const coverImageMeta = {
               name: file.name,
               extension,
               sizes,
-              // lastModified: new Date().toISOString()
             };
-
-            // getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            //   const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/images`);
-            //   const parentStorageRef = doc(db, `users/${userId}/repos/${repoId}`);
-            //   // const urlOnlyRef =
-            //   // Generate sizes
-            //   const sizes = ['200x200', '400x400', '768x768', '1024x1024', '2000x2000'];
-            //   const coverImageMeta = {
-            //     name: file.name,
-            //     extension,
-            //     sizes,
-            //   };
 
             await setDoc(
               docRef,
-              { 
-                coverImageMeta: coverImageMeta, 
-                coverImage: downloadURL
+              {
+                coverImageMeta: coverImageMeta,
+                coverImage: downloadURL,
               },
               { merge: true }
             );
@@ -156,7 +154,7 @@ export function UploadProjectCoverImage(
               parentStorageRef,
               {
                 coverImageMeta: coverImageMeta,
-                coverImage: downloadURL
+                coverImage: downloadURL,
               },
               { merge: true }
             );
@@ -173,7 +171,7 @@ export function UploadProjectCoverImage(
         color: 'red',
         title: 'Something went wrong',
         message: 'Something went wrong, please try again',
-        icon: <IconCross size="1rem" />,
+        icon: <IconCross size='1rem' />,
         autoClose: 2000,
       });
     } finally {
@@ -183,7 +181,7 @@ export function UploadProjectCoverImage(
         color: 'teal',
         title: 'Image was saved',
         message: 'Cover image uploaded to the database',
-        icon: <IconCheck size="1rem" />,
+        icon: <IconCheck size='1rem' />,
         autoClose: 2000,
       });
     }
@@ -191,17 +189,12 @@ export function UploadProjectCoverImage(
 
   return (
     <>
-      {/* <Group mx={10}> */}
       <Dropzone
-        // padding='xl'
-        // loading
         onDrop={(file) => handleFileDrop(file)}
-        // onDrop={setFiles}
         onReject={(files) => console.log('rejected files', files)}
         maxSize={6 * 1024 ** 2}
         maxFiles={1}
-        mb="lg"
-        // accept='image'
+        mb='lg'
         accept={IMAGE_MIME_TYPE}
         sx={(theme) => ({
           maxWidth: 200,
@@ -216,13 +209,15 @@ export function UploadProjectCoverImage(
         })}
         {...props}
       >
-        <Group position="center">
+        <Group position='center'>
           <Dropzone.Accept>
             <IconUpload
               size={50}
               stroke={1.5}
               color={
-                theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]
+                theme.colors[theme.primaryColor][
+                  theme.colorScheme === 'dark' ? 4 : 6
+                ]
               }
             />
           </Dropzone.Accept>
@@ -236,53 +231,45 @@ export function UploadProjectCoverImage(
           <Dropzone.Idle>
             {existingCoverImage && !imgUrl ? (
               <Image
-                mb="xs"
+                mb='xs'
                 height={100}
                 src={existingCoverImage}
-                alt="Current cover image"
-                // sx={{ maxHeight: 160 }}
+                alt='Current cover image'
               />
             ) : imgUrl ? (
               <Image
-                mb="xs"
+                mb='xs'
                 height={100}
                 src={imgUrl}
-                alt="Current cover image"
-                // sx={{ width: '100%' }}
+                alt='Current cover image'
               />
             ) : (
               <IconPhoto size={40} stroke={1.5} />
             )}
-            <Text size="md">Edit cover image</Text>
-            <Text size="xs"> Max 6MB</Text>
+            <Text size='md'>Edit cover image</Text>
+            <Text size='xs'> Max 6MB</Text>
           </Dropzone.Idle>
         </Group>
       </Dropzone>
 
       {imgCheck && !imgUrl && (
         <>
-          <Group position="center">
-            {/* <Space h="xl" />
-          // <Space h="xl" /> */}
-            <Space h="lg" />
+          <Group position='center'>
+            <Space h='lg' />
 
             <Text>Preview:</Text>
-            <Space h="sm" />
+            <Space h='sm' />
             <Container size={200}>{previews}</Container>
           </Group>
-          <Group mt="lg" position="center" spacing="xs">
+          <Group mt='lg' position='center' spacing='xs'>
             {imgUrl ? (
               <Text>Image Saved</Text>
             ) : (
               <>
                 <Button
-                  component="a"
-                  size="xs"
-                  radius="md"
-                  // px={30}
-                  // className="mx-auto"
-                  // onClick={() => console.log(typeof files[0])}
-
+                  component='a'
+                  size='xs'
+                  radius='md'
                   onClick={() => sendImageToFirebase(files[0])}
                   styles={(theme) => ({
                     root: {
@@ -290,10 +277,7 @@ export function UploadProjectCoverImage(
                         theme.colorScheme === 'dark'
                           ? theme.colors.green[8]
                           : theme.colors.green[6],
-                      // maxWidth: '70%',
-                      [theme.fn.smallerThan('sm')]: {
-                        // width: '90%',
-                      },
+                      [theme.fn.smallerThan('sm')]: {},
                       '&:hover': {
                         backgroundColor:
                           theme.colorScheme === 'dark'
@@ -306,24 +290,14 @@ export function UploadProjectCoverImage(
                   Save Image
                 </Button>
                 <Button
-                  component="a"
-                  size="xs"
-                  radius="md"
-                  // px={20}
-                  // mt={40}
-                  // className="mx-auto"
-                  variant="outline"
+                  component='a'
+                  size='xs'
+                  radius='md'
+                  variant='outline'
                   onClick={() => handleFileCancel(files[0])}
                   styles={(theme) => ({
                     root: {
-                      // backgroundColor:
-                      //   theme.colorScheme === 'dark'
-                      //     ? theme.colors.dark[5]
-                      //     : theme.colors.blue[6],
-                      // maxWidth: '70%',
-                      [theme.fn.smallerThan('sm')]: {
-                        // maxWidth: '90%',
-                      },
+                      [theme.fn.smallerThan('sm')]: {},
                       '&:hover': {
                         color:
                           theme.colorScheme === 'dark'
@@ -344,7 +318,6 @@ export function UploadProjectCoverImage(
           </Group>
         </>
       )}
-      {/* </Center> */}
     </>
   );
 }
