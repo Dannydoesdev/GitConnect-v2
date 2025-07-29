@@ -124,16 +124,11 @@ export default createStyles((theme) => ({
     color: theme.white,
     fontSize: 30,
     fontWeight: 800,
-    // fontStyle: 'oblique',
     textAlign: 'center',
     reverse: true,
-    // direction: 'ltr',
-    // fontVariantCaps: 'small-caps',
     fontVariantCaps: 'petite-caps',
-    // textDecoration: 'italic',
     lineHeight: 1,
     fontFamily: 'monospace',
-    // marginTop: '8px',
 
     [theme.fn.smallerThan('sm')]: {
       fontSize: 26,

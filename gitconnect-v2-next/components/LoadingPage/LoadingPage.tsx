@@ -48,14 +48,8 @@ const useStyles = createStyles((theme) => ({
   },
 
   grid: {
-    // display: 'flex',
-    // justifyContent: 'space-around',
-    // flexWrap: 'nowrap',
     [theme.fn.smallerThan('sm')]: {
-      // height: 200,
-      // width: '70vw',
       marginTop: '-60px',
-      // margin: 0,
     },
     backgroundColor:
       theme.colorScheme === 'dark'
