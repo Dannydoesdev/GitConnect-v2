@@ -26,7 +26,7 @@ import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import ProfilePageProjectGrid from '@/features/quickstart/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
 import ProfilePageUserPanel from '@/features/quickstart/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
 import ProfilePageSkeleton from '@/features/quickstart/components/ProfilePage/ProfilePageSkeleton';
-import { useQuickstartState } from '@/hooks/useQuickstartState';
+import { useQuickstartState } from '@/features/quickstart/hooks/useQuickstartState';
 import { useRouter } from 'next/router';
 import { notifications } from '@mantine/notifications';
 

@@ -11,7 +11,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { getProfileDataWithAnonymousId } from '@/features/quickstart/lib/getSavedProfile';
 import { getSingleQuickstartProject } from '@/features/quickstart/lib/getSavedProjects';
 import { quickstartTextEditorAtom } from '@/atoms';
-import { useQuickstartState } from '@/hooks/useQuickstartState';
+import { useQuickstartState } from '@/features/quickstart/hooks/useQuickstartState';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { anonymousId, repoId } = params as {
