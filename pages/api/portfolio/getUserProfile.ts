@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getProfileDataWithUsernameLowercase } from '@/lib/profiles';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<any>
+) {
   const username = req.query.username as string;
   try {
     const data = await getProfileDataWithUsernameLowercase(username);
