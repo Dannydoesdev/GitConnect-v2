@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSingleProjectByNameLowercase } from '@/lib/projects';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { projectname } = req.query;
-  // console.log('getSingleProject API route hit with projectname:', projectname)
   try {
     const data = await getSingleProjectByNameLowercase(projectname as string);
     res.status(200).json(data);
