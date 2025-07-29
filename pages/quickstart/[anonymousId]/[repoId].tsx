@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useQuickstartState } from "@/hooks/useQuickstartState";
+import { useQuickstartState } from "@/features/quickstart/hooks/useQuickstartState";
 import {
   Aside,
   Blockquote,
