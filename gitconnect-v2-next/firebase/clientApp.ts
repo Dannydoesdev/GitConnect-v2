@@ -3,8 +3,7 @@ import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getStorage, ref } from 'firebase/storage';
-import { getVertexAI, getGenerativeModel } from "firebase/vertexai";
-
+import { getVertexAI, getGenerativeModel } from 'firebase/vertexai';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -32,8 +31,8 @@ export const auth = getAuth(app);
 const db = getFirestore(firebaseApp);
 
 // Check to stop emulator from re running constantly - from https://stackoverflow.com/a/74727587
-const dbhost = (db.toJSON() as { settings?: { host?: string } }).settings?.host ?? '';
-// console.log("dbhost:", dbhost);
+const dbhost =
+  (db.toJSON() as { settings?: { host?: string } }).settings?.host ?? '';
 
 // NOTE - firestore won't work with this setup on dev unless you configure and run the emulator
 if (
@@ -55,16 +54,14 @@ export const storageRef = ref(storage);
 // See https://stackoverflow.com/q/66812479
 let analytics;
 
-//  If we're in dev mode, don't initialize analytics
-if (
-  process.env.NODE_ENV === 'development'
-) {
+// don't initialize analytics in dev mode
+if (process.env.NODE_ENV === 'development') {
   analytics = null;
 } else {
   if (typeof window != undefined) {
     analytics = isSupported().then((yes) => (yes ? getAnalytics(app) : null));
   }
-};
+}
 
 export { analytics, db };
 // logEvent(analytics, 'notification_received');
