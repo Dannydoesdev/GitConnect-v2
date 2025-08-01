@@ -43,7 +43,6 @@ if (
   // Swap out line below to use emulator with prod builds:
   // if (process.env.NODE_ENV && process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST && !dbhost.startsWith('localhost')) {
   connectFirestoreEmulator(db, 'localhost', 8080);
-  // console.log("Connected to Firestore emulator");
   // console.log('After connecting to emulator, dbhost:', (db.toJSON() as { settings?: { host?: string } }).settings?.host);
 }
 
