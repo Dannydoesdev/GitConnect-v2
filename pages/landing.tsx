@@ -21,7 +21,7 @@ import {
 import { IconBrandDiscord, IconBrandGithub } from '@tabler/icons-react';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import mixpanel from 'mixpanel-browser';
-import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
+import { getCheckoutUrl } from '@/features/payments/lib/stripePaymentProd';
 
 const useStyles = createStyles((theme) => ({
   iconDiscord: {
