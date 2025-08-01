@@ -36,7 +36,6 @@ import DOMPurify from 'isomorphic-dompurify';
 import { useAtom } from 'jotai';
 // import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 // import { isAllowedToPublishProject } from '@/lib/stripe/isAllowedToPublishProject';
-// import { getPremiumStatusTest } from '@/lib/stripe/getPremiumStatusTest';
 // import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
 import ViewPreviewProjectEditor from '@/features/project-view/components/ViewPreviewProject/ViewPreviewProjectContent/ViewPreviewProjectContent';
 import { ViewProjectHero } from '@/features/project-view/components/ViewPreviewProject/ViewPreviewProjectHero/ViewProjectHero';
@@ -106,11 +105,14 @@ export default function EditPortfolioProject({
     repo: string;
   };
 
-  // NOTE: Cleaned up most of the Stripe related code - decision on whether to keep or remove any Stripe code is pending
+  // NOTE: Restrictions on publishing projects left in for now - pending decision on removing entirely
   const isAllowedToPublishProject = async ({
     userId,
     repo,
   }: IsAllowedToPublishProjectProps) => {
+    // NOTE: Uncomment this to remove restrictions on publishing projects
+    // return true;
+
     if (isPro) {
       return true;
     }

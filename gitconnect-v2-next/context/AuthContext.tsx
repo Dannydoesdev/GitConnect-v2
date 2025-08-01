@@ -1,12 +1,9 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { Auth, onAuthStateChanged, User } from "firebase/auth";
-import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { getPremiumStatusProd } from "@/lib/stripe/getPremiumStatusProd";
-import { getPremiumStatusTest } from "@/lib/stripe/getPremiumStatusTest";
-import { app, auth, db } from "../firebase/clientApp";
-import { getGithubProfileData } from "../lib/github";
-
-// import { AuthData } from '../types';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getPremiumStatusProd } from '@/features/payments/lib/getPremiumStatusProd';
+import { app, auth, db } from '../firebase/clientApp';
+import { getGithubProfileData } from '../lib/github';
 
 export type AuthData = {
   userProviderId?: string;
@@ -34,7 +31,7 @@ type Props = {
   title?: string;
 };
 
-const colRef = collection(db, "users");
+const colRef = collection(db, 'users');
 
 export const AuthProvider = ({ children }: Props) => {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -43,16 +40,16 @@ export const AuthProvider = ({ children }: Props) => {
   const [setupComplete, setSetupComplete] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
   const [isPro, setIsPro] = useState<boolean | null>(null);
-  // const [userData, setUserData] = useState<AuthData | null>(null);
+
   const [userData, setUserData] = useState<AuthData>({
-    userProviderId: "",
-    userId: "",
-    userName: "",
-    username_lowercase: "",
-    githubId: "",
-    displayName: "",
-    userEmail: "",
-    userPhotoLink: "",
+    userProviderId: '',
+    userId: '',
+    userName: '',
+    username_lowercase: '',
+    githubId: '',
+    displayName: '',
+    userEmail: '',
+    userPhotoLink: '',
     isPro: false,
     isAnonymous: true,
   });
@@ -92,19 +89,7 @@ export const AuthProvider = ({ children }: Props) => {
           const checkUserExists = await getDoc(docRef);
 
           if (checkUserExists.exists()) {
-            // Commenting out due to slowness of constant checking
-            // Merge existing data with required data
-            // const existingData = checkUserExists.data();
-            // setUserData({
-            //   ...requiredData,
-            //   ...existingData,
-            //   // Ensure these fields are from requiredData even if they exist in Firestore
-            //   userName: requiredData.userName,
-            //   username_lowercase: requiredData.username_lowercase,
-            //   userEmail: requiredData.userEmail,
-            //   userPhotoLink: requiredData.userPhotoLink,
-            //   isPro: isPro ?? false
-            // });
+            // Removing positive check logic due to slowness of constant checking
           } else {
             const newUserData = {
               ...requiredData,
@@ -116,13 +101,10 @@ export const AuthProvider = ({ children }: Props) => {
 
             await setDoc(doc(colRef, user.uid), newUserData);
 
-            // Uncomment and test the below
-            // .then(async (cred) => {
-
-            // Get full github profile data
-
             if (requiredData.userName) {
-              const githubPublicProfileData = await getGithubProfileData(requiredData.userName);
+              const githubPublicProfileData = await getGithubProfileData(
+                requiredData.userName
+              );
 
               const githubProfileDataForFirestore = {
                 ...requiredData,
@@ -133,16 +115,14 @@ export const AuthProvider = ({ children }: Props) => {
                 gitconnect_updated_at_unix: Date.now(),
               };
 
-              const profileDocRef = doc(db, `users/${user.uid}/profileData/publicData`);
+              const profileDocRef = doc(
+                db,
+                `users/${user.uid}/profileData/publicData`
+              );
               await setDoc(profileDocRef, githubProfileDataForFirestore, {
                 merge: true,
               });
             }
-
-            // })
-            // .catch((error) => {
-            //   console.log('Error adding profileData document: ', error);
-            // });
 
             setUserData(newUserData);
             setIsNewUser(true);
@@ -152,7 +132,7 @@ export const AuthProvider = ({ children }: Props) => {
 
           setCurrentUser(user);
         } catch (error) {
-          console.error("Error in auth state change:", error);
+          console.error('Error in auth state change:', error);
           // setUserData(null);
           // setCurrentUser(null);
         }

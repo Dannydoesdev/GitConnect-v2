@@ -21,7 +21,7 @@ import { IconX } from '@tabler/icons-react';
 import UploadProjectCoverImage from './UploadProjectCoverImage';
 import { useAtom } from 'jotai';
 import { isProAtom, unsavedChangesSettingsAtom } from '@/atoms';
-import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
+import { getCheckoutUrl } from '@/features/payments/lib/stripePaymentProd';
 
 import { app } from '@/firebase/clientApp';
 
