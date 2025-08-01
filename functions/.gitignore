@@ -18,3 +18,4 @@ firestore-debug.log
 # sensitive info
 .env
 .runtimeconfig.json
+local_db_export/
