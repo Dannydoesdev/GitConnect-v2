@@ -9,11 +9,6 @@ type ErrorProps = {
 const Error = ({ statusCode }: ErrorProps) => {
   return (
     <NextError statusCode={statusCode} />
-    // <p>
-    //   {statusCode
-    //     ? `An error ${statusCode} occurred on server`
-    //     : 'An error occurred on client'}
-    // </p>
   );
 };
 

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { projectDataAtom } from '@/atoms';
@@ -31,7 +30,11 @@ interface ShowRepoProps {
   addRepo: (repo: RepoDataFull) => void;
 }
 
-const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo }) => {
+const ShowRepo: React.FC<ShowRepoProps> = ({
+  repo,
+  existingRepos,
+  addRepo,
+}) => {
   const {
     name: repoName,
     fork: isForked,
@@ -44,42 +47,44 @@ const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo }) => 
 
   return (
     <div>
-      <Card shadow="sm" p="lg" radius="md" withBorder>
+      <Card shadow='sm' p='lg' radius='md' withBorder>
         <Card.Section></Card.Section>
 
-        <Group display="flex" noWrap position="apart" mt="md" mb="xs">
+        <Group display='flex' noWrap position='apart' mt='md' mb='xs'>
           <Link href={repoUrl} passHref legacyBehavior>
-            <Text underline component="a" target="_blank" weight={500}>
+            <Text underline component='a' target='_blank' weight={500}>
               {repoName}
             </Text>
           </Link>
 
           {isForked ? (
-            <Badge size="xs" color="grape" variant="light">
+            <Badge size='xs' color='grape' variant='light'>
               Forked
             </Badge>
           ) : (
-            <Badge size="xs" color="green" variant="light">
+            <Badge size='xs' color='green' variant='light'>
               Not forked
             </Badge>
           )}
         </Group>
-        <Text truncate size="sm" color="dimmed">
+        <Text truncate size='sm' color='dimmed'>
           {repoDesc
             ? repoDesc
             : 'No description found - you can add a custom description with GitConnect once you add this repo'}
         </Text>
-        <Space h="xs" />
-        <Text size="xs" color="dimmed">
-          {repoLicense ? repoLicense.name : 'No license found from this Github Repo'}
+        <Space h='xs' />
+        <Text size='xs' color='dimmed'>
+          {repoLicense
+            ? repoLicense.name
+            : 'No license found from this Github Repo'}
         </Text>
 
         {repoAlreadyAdded ? (
-          <Group position="center">
+          <Group position='center'>
             <Badge
-              mt="lg"
-              color="gray"
-              variant="light"
+              mt='lg'
+              color='gray'
+              variant='light'
               styles={(theme) => ({
                 root: {
                   cursor: 'not-allowed',
@@ -90,15 +95,14 @@ const ShowRepo: React.FC<ShowRepoProps> = ({ repo, existingRepos, addRepo }) => 
             </Badge>
           </Group>
         ) : (
-          <Group position="center">
-            <Link href="#" passHref legacyBehavior>
+          <Group position='center'>
+            <Link href='#' passHref legacyBehavior>
               <Button
-                component="a"
-                mt="xl"
-                size="xs"
-                // size='l'
-                radius="lg"
-                color="teal"
+                component='a'
+                mt='xl'
+                size='xs'
+                radius='lg'
+                color='teal'
                 onClick={() => {
                   addRepo(repo);
                 }}
@@ -125,7 +129,6 @@ const GetRepos = () => {
   const addRepo = async (repo: RepoDataFull) => {
     const reponame_lowercase = repo.name.toLowerCase();
 
-    // console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
     try {
       notifications.show({
         id: 'adding-repo',
@@ -133,7 +136,7 @@ const GetRepos = () => {
         title: 'Adding portfolio project',
         message: `Adding ${repo.name} to your portfolio`,
         color: 'cyan',
-        icon: <InfoCircle size="1.5rem" />,
+        icon: <InfoCircle size='1.5rem' />,
         autoClose: false,
         withCloseButton: false,
       });
@@ -153,10 +156,8 @@ const GetRepos = () => {
         },
         { merge: true }
       ).then(() => {
-        // ADDING BELOW FOR JOTAI TEST
         setProjectData(repo);
       });
-    
     } catch (err) {
       console.error(err);
       notifications.update({
@@ -164,7 +165,7 @@ const GetRepos = () => {
         color: 'red',
         title: 'Something went wrong',
         message: 'Something went wrong, please try again',
-        icon: <IconCross size="1rem" />,
+        icon: <IconCross size='1rem' />,
         autoClose: 2000,
       });
     } finally {
@@ -174,7 +175,7 @@ const GetRepos = () => {
         title: `${repo.name} added successfully`,
         message: `Loading ${repo.name} page`,
         color: 'green',
-        icon: <IconCheck size="1.5rem" />,
+        icon: <IconCheck size='1.5rem' />,
         autoClose: 1500,
         withCloseButton: false,
       });
@@ -209,7 +210,7 @@ const GetRepos = () => {
         title: `Project Page Created`,
         message: `Project Page Created - Redirecting`,
         color: 'green',
-        icon: <IconCheck size="1.5rem" />,
+        icon: <IconCheck size='1.5rem' />,
         autoClose: 5000,
         withCloseButton: true,
       });
@@ -223,7 +224,6 @@ const GetRepos = () => {
     return () => {
       router.events.on('routeChangeStart', handleRouteChange);
       router.events.on('routeChangeComplete', handleRouteChangeComplete);
-      // router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router]);
 
@@ -232,21 +232,16 @@ const GetRepos = () => {
       try {
         const returnedRepoData = await getGithubReposWithUsername(userName);
         setRepoData(returnedRepoData);
-        // console.log('returned repo data');
-        // console.log(returnedRepoData);
 
         const q = query(collection(db, `users/${userId}/repos`));
         const querySnapshot = await getDocs(q);
 
         const existingRepoArr: string[] = [];
         querySnapshot.forEach((doc) => {
-          // console.log(doc.id, ' => ', doc.data());
           existingRepoArr.push(doc.id);
         });
 
         setExistingRepos(existingRepoArr);
-        // console.log('existing repos');
-        // console.log(existingRepoArr);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -259,27 +254,32 @@ const GetRepos = () => {
 
   return (
     <>
-      <Stack align="center" mt={90} spacing="lg">
-        <Avatar className="mx-auto" radius="xl" size="xl" src={userData.userPhotoLink} />
-        <Text size="lg" weight="bolder" className="mx-auto">
+      <Stack align='center' mt={90} spacing='lg'>
+        <Avatar
+          className='mx-auto'
+          radius='xl'
+          size='xl'
+          src={userData.userPhotoLink}
+        />
+        <Text size='lg' weight='bolder' className='mx-auto'>
           {userName}'s public repos
         </Text>
-        <Text size="lg" className="mx-auto"></Text>
+        <Text size='lg' className='mx-auto'></Text>
         <Blockquote
-          cite="- GitConnect tips"
-          color="indigo"
-          icon={<InfoCircle size="1.5rem" />}
+          cite='- GitConnect tips'
+          color='indigo'
+          icon={<InfoCircle size='1.5rem' />}
         >
-          Choose which project you want to add to your portfolio <br /> You will be able
-          to customise the project details in the next step
+          Choose which project you want to add to your portfolio <br /> You will
+          be able to customise the project details in the next step
         </Blockquote>
       </Stack>
-      <Space h="xl" />
-      <Space h="xl" />
-      <Group mx="md">
+      <Space h='xl' />
+      <Space h='xl' />
+      <Group mx='md'>
         <SimpleGrid
           cols={4}
-          spacing="xl"
+          spacing='xl'
           breakpoints={[
             { maxWidth: 980, cols: 3, spacing: 'md' },
             { maxWidth: 755, cols: 2, spacing: 'sm' },
@@ -299,44 +299,9 @@ const GetRepos = () => {
             })}
         </SimpleGrid>
       </Group>
-      <Space h="xl" />
+      <Space h='xl' />
     </>
   );
 };
 
 export default GetRepos;
-
-// REMOVED from Jotai test section after repo setDoc && setProjectData atom:
-
-
-// const addRepo = async (repo: RepoDataFull) => {
-//   const reponame_lowercase = repo.name.toLowerCase();
-
-//   // console.log(`lowercase reponame in addRepo: ${reponame_lowercase}`)
-//   try {
-//     notifications.show({
-//       id: 'adding-repo',
-//       loading: true,
-//       title: 'Adding portfolio project',
-//       message: `Adding ${repo.name} to your portfolio`,
-//       color: 'cyan',
-//       icon: <InfoCircle size="1.5rem" />,
-//       autoClose: false,
-//       withCloseButton: false,
-//     });
-//     await setDoc(
-//       doc(db, `users/${userId}/repos/${repo.id}`),
-//       {
-//         ...repo,
-//         userId,
-//         hidden: true,
-//         userName: userName,
-//         username_lowercase: userName.toLowerCase(),
-//         reponame_lowercase: repo.name.toLowerCase(),
-//         gitconnect_created_at: new Date().toISOString(),
-//         gitconnect_updated_at: new Date().toISOString(),
-//         gitconnect_created_at_unix: Date.now(),
-//         gitconnect_updated_at_unix: Date.now(),
-//       },
-//       { merge: true }
-//     ).then(() => {

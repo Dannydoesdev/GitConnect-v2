@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { formDataAtom } from '@/atoms';
 import { AuthContext } from '@/context/AuthContext';
 import { Container, Grid, Group, MediaQuery, Space, Tabs } from '@mantine/core';
-// import ProfilePageUserPanelEditable from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanelEditable';
 import { useAtom } from 'jotai';
 import useSWR from 'swr';
 import {
