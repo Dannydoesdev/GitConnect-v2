@@ -1,7 +1,6 @@
 import { type Config } from "prettier";
 
 const config: Config = {
-   // plugins: ['@trivago/prettier-plugin-sort-imports'],
    endOfLine: 'lf',
    semi: true,
    singleQuote: true,
@@ -21,7 +20,6 @@ const config: Config = {
      '.css$',
      '.scss$',
      '^[./]',
-     // '',
    ],
    importOrderParserPlugins: ['typescript', 'jsx', 'classProperties', 'decorators-legacy'],
    plugins: ['@ianvs/prettier-plugin-sort-imports'],
