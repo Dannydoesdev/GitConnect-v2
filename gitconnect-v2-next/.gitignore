@@ -15,6 +15,7 @@ ui-debug.log
 functions/firestore-debug.log
 functions/pubsub-debug.log
 functions/*.log
+/functions/local_db_export
 
 # backup
 /backup
