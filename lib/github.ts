@@ -23,12 +23,11 @@ export async function getGithubReposWithUsername(username: string) {
       username: username,
       sort: 'updated',
       per_page: 100,
-    })
-    
-      return response.data;
+    });
 
+    return response.data;
   } catch (error) {
     console.error(`Failed to get GitHub data for ${username}`, error);
     return null;
   }
-};
+}

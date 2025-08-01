@@ -1,4 +1,3 @@
-
 // Conversion function for taking data from the database and converting it to the format used in the app
 export function convertToRepoData(fullData: RepoDataFull): RepoData {
   return {
@@ -21,8 +20,6 @@ export interface RepoData {
   license?: { name?: string } | null;
 }
 
-
-
 // Interface for data in the database
 export interface RepoDataFull {
   allow_forking?: boolean;
@@ -42,7 +39,7 @@ export interface RepoDataFull {
   name: string;
   fork: boolean;
   url: string;
-  description?: string| null;
+  description?: string | null;
   license?: {
     name?: string;
     node_id?: string;
@@ -78,7 +75,7 @@ export interface RepoDataFull {
   issues_url?: string;
   keys_url?: string;
   labels_url?: string;
-  language?: string  | null;
+  language?: string | null;
   languages_url?: string | null;
   license_url?: string | null;
   merges_url?: string | null;
@@ -101,7 +98,7 @@ export interface RepoDataFull {
   statuses_url?: string;
   subscribers_count?: number;
   subscribers_url?: string | null;
-  subscription_url?: string | null; 
+  subscription_url?: string | null;
   svn_url?: string | null;
   tags_url?: string | null;
   teams_url?: string | null;
@@ -133,6 +130,4 @@ export interface RepoDataFull {
     repos_url?: string;
     events_url?: string;
   } | null;
-} 
-
-
+}
