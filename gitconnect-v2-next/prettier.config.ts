@@ -23,7 +23,6 @@ const config: Config = {
    ],
    importOrderParserPlugins: ['typescript', 'jsx', 'classProperties', 'decorators-legacy'],
    plugins: ['@ianvs/prettier-plugin-sort-imports'],
-   // overrides: [{ files: ['*.ts'], options: { parser: 'babel-ts' } }],
 };
 
 export default config;

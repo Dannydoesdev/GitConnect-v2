@@ -1,20 +1,20 @@
-import { useContext, useEffect, useState } from "react";
-import { ProjectFormProvider, useProjectForm } from "@/context/formContext";
-import { Button, Drawer, Group } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { useCompletion } from "ai/react";
-import { CreateProjectStepper } from "@/features/ai-project-create/experiments/attemptTwo/CreateProjectStepper";
-import { NarrativeEditor } from "@/features/ai-project-create/experiments/attemptTwo/NarrativeEditor";
-import { StepPanel } from "@/features/ai-project-create/experiments/attemptTwo/StepPanel";
-import { useAtom } from "jotai";
-import { aiEditorAtom } from "@/atoms";
-import DOMPurify from "dompurify";
-import { doc, setDoc } from "firebase/firestore";
-import { notifications } from "@mantine/notifications";
-import { AuthContext } from "@/context/AuthContext";
-import { db } from "@/firebase/clientApp";
-import { IconCross, IconCheck } from "@tabler/icons-react";
-import { useRouter } from "next/router";
+import { useContext, useEffect, useState } from 'react';
+import { ProjectFormProvider, useProjectForm } from '@/context/formContext';
+import { Button, Drawer, Group } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { useCompletion } from 'ai/react';
+import { CreateProjectStepper } from '@/features/ai-project-create/experiments/attemptTwo/CreateProjectStepper';
+import { NarrativeEditor } from '@/features/ai-project-create/experiments/attemptTwo/NarrativeEditor';
+import { StepPanel } from '@/features/ai-project-create/experiments/attemptTwo/StepPanel';
+import { useAtom } from 'jotai';
+import { aiEditorAtom } from '@/atoms';
+import DOMPurify from 'dompurify';
+import { doc, setDoc } from 'firebase/firestore';
+import { notifications } from '@mantine/notifications';
+import { AuthContext } from '@/context/AuthContext';
+import { db } from '@/firebase/clientApp';
+import { IconCross, IconCheck } from '@tabler/icons-react';
+import { useRouter } from 'next/router';
 
 const CreateProjectPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -32,19 +32,26 @@ const CreateProjectPage = () => {
   }, [userData]);
 
   const apiUrl = isPro
-    ? "/api/generateProject/narrativeGpt4"
-    : "/api/generateProject/narrativeGpt3";
+    ? '/api/generateProject/narrativeGpt4'
+    : '/api/generateProject/narrativeGpt3';
 
-  const { complete, completion, input, stop, isLoading, handleInputChange, handleSubmit } =
-    useCompletion({
-      api: apiUrl,
-      onResponse: (res) => {
-        // trigger something when the response starts streaming in
-      },
-      onFinish: () => {
-        console.log("Successfully generated completion!");
-      },
-    });
+  const {
+    complete,
+    completion,
+    input,
+    stop,
+    isLoading,
+    handleInputChange,
+    handleSubmit,
+  } = useCompletion({
+    api: apiUrl,
+    onResponse: (res) => {
+      // trigger something when the response starts streaming in
+    },
+    onFinish: () => {
+      console.log('Successfully generated completion!');
+    },
+  });
 
   const userid = userData?.uid;
   const repoid = router.query.repoId;
@@ -59,20 +66,22 @@ const CreateProjectPage = () => {
 
   const form = useProjectForm({
     initialValues: {
-      title: "GitConnect",
-      description: "",
-      technologies: "React, typescript, firestore, nextjs, mantine UI",
-      role: "Founder, designer and lead dev",
-      duration: "",
-      purpose: "Create a portfolio platform for devs",
-      challenges: "Learning new technologies, turning it into a startup, launching, finding users",
+      title: 'GitConnect',
+      description: '',
+      technologies: 'React, typescript, firestore, nextjs, mantine UI',
+      role: 'Founder, designer and lead dev',
+      duration: '',
+      purpose: 'Create a portfolio platform for devs',
+      challenges:
+        'Learning new technologies, turning it into a startup, launching, finding users',
       solutions:
-        "Github API to import public projects, lots of helper functions, project pages for each project, ai generation for project assistance",
+        'Github API to import public projects, lots of helper functions, project pages for each project, ai generation for project assistance',
       learnings:
-        "Heaps - how to start a company, how not to start a company, honestly how to code altogether",
-      outcome: "Finally launched publicly after 450+ commits, now just trying to find users!",
+        'Heaps - how to start a company, how not to start a company, honestly how to code altogether',
+      outcome:
+        'Finally launched publicly after 450+ commits, now just trying to find users!',
       images: [],
-      liveProjectURL: "",
+      liveProjectURL: '',
     },
   });
 
@@ -113,20 +122,23 @@ const CreateProjectPage = () => {
     // Store the project data and answers to the questions in firestore
     // if ( realtimeEditorContent !== '' ) {
 
-    if (!textEditorAtom || textEditorAtom == "") {
+    if (!textEditorAtom || textEditorAtom == '') {
       return;
     }
     const sanitizedHTML = DOMPurify.sanitize(textEditorAtom, {
-      ADD_ATTR: ["target", "align", "dataalign"], // Save custom image alignment attributes
+      ADD_ATTR: ['target', 'align', 'dataalign'], // Save custom image alignment attributes
     });
 
-    const docRef = doc(db, `users/${userid}/repos/${repoid}/projectData/mainContent`);
+    const docRef = doc(
+      db,
+      `users/${userid}/repos/${repoid}/projectData/mainContent`
+    );
     try {
       notifications.show({
-        id: "load-data",
+        id: 'load-data',
         loading: true,
-        title: "Saving updates",
-        message: "Updated project is being saved to the database",
+        title: 'Saving updates',
+        message: 'Updated project is being saved to the database',
         autoClose: false,
         withCloseButton: false,
       });
@@ -134,21 +146,21 @@ const CreateProjectPage = () => {
     } catch (error) {
       console.log(error);
       notifications.update({
-        id: "load-data",
-        color: "red",
-        title: "Something went wrong",
-        message: "Something went wrong, please try again",
-        icon: <IconCross size="1rem" />,
+        id: 'load-data',
+        color: 'red',
+        title: 'Something went wrong',
+        message: 'Something went wrong, please try again',
+        icon: <IconCross size='1rem' />,
         autoClose: 2000,
       });
     } finally {
       // setUnsavedChanges(false);
       notifications.update({
-        id: "load-data",
-        color: "teal",
-        title: "Updates were saved",
-        message: "Your updates have been saved",
-        icon: <IconCheck size="1rem" />,
+        id: 'load-data',
+        color: 'teal',
+        title: 'Updates were saved',
+        message: 'Your updates have been saved',
+        icon: <IconCheck size='1rem' />,
         autoClose: 1000,
       });
     }
@@ -161,18 +173,15 @@ const CreateProjectPage = () => {
   const handleNextStep = async () => {
     if (currentStep === totalSteps - 1) {
       const prompt = formatPrompt(form.values);
-      console.log("prompt:", prompt);
+      console.log('prompt:', prompt);
       open();
       try {
         complete(prompt);
         // const narrative: any = await generateNarrative(form.values);
         // setNarrativeContent(completion);
-        // console.log('completion:')
-        // console.log(completion)
         // setNarrativeContent(completion);
       } catch (error) {
-        // Handle errors, such as updating state to show an error message
-        console.log("error:", error);
+        console.log('error:', error);
       }
     } else {
       setCurrentStep((current) => current + 1);
@@ -186,8 +195,8 @@ const CreateProjectPage = () => {
   return (
     <>
       <ProjectFormProvider form={form}>
-        <div className="create-project-container mt-20">
-          <div className="panel-left">
+        <div className='create-project-container mt-20'>
+          <div className='panel-left'>
             {/* The stepper component that manages which step the user is on */}
             <CreateProjectStepper
               totalSteps={totalSteps}
@@ -195,25 +204,29 @@ const CreateProjectPage = () => {
               setCurrentStep={setCurrentStep}
             >
               {/* render StepPanel components for each step */}
-              <StepPanel step={0} title="Basic Info" />
+              <StepPanel step={0} title='Basic Info' />
               {/* <StepPanel step={1} title="Tech & Role" /> */}
-              <StepPanel step={1} title="Purpose" />
-              <StepPanel step={2} title="Challenges" />
-              <StepPanel step={3} title="Solutions" />
-              <StepPanel step={4} title="Learnings" />
-              <StepPanel step={5} title="Outcome" />
+              <StepPanel step={1} title='Purpose' />
+              <StepPanel step={2} title='Challenges' />
+              <StepPanel step={3} title='Solutions' />
+              <StepPanel step={4} title='Learnings' />
+              <StepPanel step={5} title='Outcome' />
             </CreateProjectStepper>
 
-            <Group position="center" mt="xl">
-              <Button onClick={handleBackStep} variant="default" disabled={currentStep === 0}>
+            <Group position='center' mt='xl'>
+              <Button
+                onClick={handleBackStep}
+                variant='default'
+                disabled={currentStep === 0}
+              >
                 Back
               </Button>
               <Button onClick={handleNextStep}>
-                {currentStep === totalSteps - 1 ? "Submit" : "Next step"}
+                {currentStep === totalSteps - 1 ? 'Submit' : 'Next step'}
               </Button>
             </Group>
           </div>
-          <div className="panel-right">
+          <div className='panel-right'>
             {/* The component that displays the narrative generated by the AI */}
             {/* <NarrativeEditor content={narrativeContent} /> */}
             {/* <NarrativeEditor content={completion} /> */}
@@ -221,8 +234,13 @@ const CreateProjectPage = () => {
         </div>
       </ProjectFormProvider>
       <>
-        <Drawer size="xl" opened={opened} onClose={close} title="Project narrative generation">
-          <div className="panel-right">
+        <Drawer
+          size='xl'
+          opened={opened}
+          onClose={close}
+          title='Project narrative generation'
+        >
+          <div className='panel-right'>
             <NarrativeEditor
             // generatedContent={completion} // Directly pass the completion state to the editor
             />
