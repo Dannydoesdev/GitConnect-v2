@@ -1,6 +1,3 @@
-// Instead of exporting the Firebase instances (adminApp, adminDb, adminAuth) directly,
-// create and export getter functions that initialize the Firebase app if it hasn't been initialized yet, and then return the Firebase instances.
-
 import { getApps, initializeApp, cert, App } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
