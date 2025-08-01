@@ -2,7 +2,7 @@ import {
   collection,
   collectionGroup,
   doc,
-  DocumentData, // serverTimestamp,
+  DocumentData,
   getDoc,
   getDocs,
   query,
