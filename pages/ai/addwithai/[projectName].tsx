@@ -1,12 +1,19 @@
-import React, { useContext, useState } from "react";
-import { useRouter } from "next/router";
-import { Button, Container, Paper, Space, Textarea, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import axios from "axios";
-import DOMPurify from "dompurify";
+import React, { useContext, useState } from 'react';
+import { useRouter } from 'next/router';
+import {
+  Button,
+  Container,
+  Paper,
+  Space,
+  Textarea,
+  TextInput,
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import axios from 'axios';
+import DOMPurify from 'dompurify';
 
-import EditableCaseStudy from "@/features/ai-project-create/components/EditableCaseStudy";
-import { AuthContext } from "@/context/AuthContext";
+import EditableCaseStudy from '@/features/ai-project-create/components/EditableCaseStudy';
+import { AuthContext } from '@/context/AuthContext';
 
 type AiCaseStudyProps = {
   repoId?: string;
@@ -14,39 +21,41 @@ type AiCaseStudyProps = {
 };
 
 const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
-  const [projectTitle, setProjectTitle] = useState("GitConnect");
+  const [projectTitle, setProjectTitle] = useState('GitConnect');
 
   const [purpose, setPurpose] = useState(
-    "To make a project sharing platform for software developers",
+    'To make a project sharing platform for software developers'
   );
 
   const [approach, setApproach] = useState(
-    "Do some research on alternatives, whip up some wireframes, identify tech and then start putting things together",
+    'Do some research on alternatives, whip up some wireframes, identify tech and then start putting things together'
   );
 
   const [technology, setTechnology] = useState(
-    "Next.js, React Firebase, Mantine UI, TypeScript, Github API",
+    'Next.js, React Firebase, Mantine UI, TypeScript, Github API'
   );
 
   const [challenges, setChallenges] = useState(
-    "First time using a lot of the technology, trying to make a scalable platform was challenging as well as integrating with github api - lots of learnings",
+    'First time using a lot of the technology, trying to make a scalable platform was challenging as well as integrating with github api - lots of learnings'
   );
 
   const [outcomes, setOutcomes] = useState(
-    "Basically ready with the MVP having made good progress, only took 1000 hours more than expected",
+    'Basically ready with the MVP having made good progress, only took 1000 hours more than expected'
   );
 
-  const [nextSteps, setNextSteps] = useState("Launch the beta and make money");
+  const [nextSteps, setNextSteps] = useState('Launch the beta and make money');
 
-  const [readme, setReadme] = useState("");
+  const [readme, setReadme] = useState('');
 
-  const [outputLanguage, setOutputLanguage] = useState("HTML");
+  const [outputLanguage, setOutputLanguage] = useState('HTML');
 
-  const [style, setStyle] = useState("professional, first-person, confident but fun");
+  const [style, setStyle] = useState(
+    'professional, first-person, confident but fun'
+  );
 
-  const [length, setLength] = useState("medium");
+  const [length, setLength] = useState('medium');
 
-  const [outPut, setOutPut] = useState<any>("");
+  const [outPut, setOutPut] = useState<any>('');
 
   const { userData } = useContext(AuthContext);
   const userId = userData.userId;
@@ -83,20 +92,20 @@ const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
 
     try {
       await axios
-        .post("/api/ai/generateProject", {
+        .post('/api/ai/generateProject', {
           userMessage: userMessage,
           systemMessage: systemMessage,
-          model: "gpt-4",
+          model: 'gpt-4',
         })
         .then((response) => {
           const sanitizedHTML = DOMPurify.sanitize(response.data, {
-            ADD_ATTR: ["target"],
+            ADD_ATTR: ['target'],
           });
 
           setOutPut(sanitizedHTML as any);
         });
     } catch (error) {
-      console.error("Failed to generate case study:", error);
+      console.error('Failed to generate case study:', error);
     }
   };
 
@@ -112,11 +121,11 @@ const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
     //   const sanitizedHTML = DOMPurify.sanitize(response.data, {
     //     ADD_ATTR: ['target'],
     //   });
-    //   // console.log(sanitizedHTML)
-    //   // setReadme(sanitizedHTML)
-    //   // setContent(sanitizedHTML)
-    //   // setEditorContent(sanitizedHTML)
-    //   // editor?.commands.setContent(sanitizedHTML);
+      // console.log(sanitizedHTML)
+      // setReadme(sanitizedHTML)
+      // setContent(sanitizedHTML)
+      // setEditorContent(sanitizedHTML)
+      // editor?.commands.setContent(sanitizedHTML);
     // });
   }
 
@@ -140,68 +149,66 @@ const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
       {/* <Space h={70} /> */}
       <Container mt={70}>
         <Paper
-          radius="md"
+          radius='md'
           withBorder
-          p="lg"
+          p='lg'
           sx={(theme) => ({
-            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+            backgroundColor:
+              theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
           })}
         >
           <TextInput
-            label="Project Title"
-            placeholder="The name of your project"
-            {...form.getInputProps("projectTitle")}
+            label='Project Title'
+            placeholder='The name of your project'
+            {...form.getInputProps('projectTitle')}
           />
           <Textarea
-            label="Purpose"
-            placeholder="Describe the purposes of the project"
-            {...form.getInputProps("purpose")}
+            label='Purpose'
+            placeholder='Describe the purposes of the project'
+            {...form.getInputProps('purpose')}
           />
           <Textarea
-            label="Approach"
-            placeholder="Describe the approach taken"
-            {...form.getInputProps("approach")}
+            label='Approach'
+            placeholder='Describe the approach taken'
+            {...form.getInputProps('approach')}
           />
           <TextInput
-            label="Technology"
-            placeholder="Describe the technology used"
-            {...form.getInputProps("technology")}
+            label='Technology'
+            placeholder='Describe the technology used'
+            {...form.getInputProps('technology')}
           />
           <Textarea
-            label="Challenges"
-            placeholder="Describe the challenges faced"
-            {...form.getInputProps("challenges")}
+            label='Challenges'
+            placeholder='Describe the challenges faced'
+            {...form.getInputProps('challenges')}
           />
           <Textarea
-            label="Outcomes"
-            placeholder="Describe the outcomes of the project"
-            {...form.getInputProps("outcomes")}
+            label='Outcomes'
+            placeholder='Describe the outcomes of the project'
+            {...form.getInputProps('outcomes')}
           />
 
           <Textarea
-            label="Next Steps"
-            placeholder="Describe the next steps for the project"
-            {...form.getInputProps("nextSteps")}
+            label='Next Steps'
+            placeholder='Describe the next steps for the project'
+            {...form.getInputProps('nextSteps')}
           />
           <Textarea
-            label="Length of Output"
-            placeholder="How long should the output be? (Short, Medium, Long)"
-            {...form.getInputProps("length")}
+            label='Length of Output'
+            placeholder='How long should the output be? (Short, Medium, Long)'
+            {...form.getInputProps('length')}
           />
           <Textarea
-            label="Style of Output"
-            placeholder="What kind of style should the output be? (Casual, Professional, Academic etc)"
-            {...form.getInputProps("style")}
+            label='Style of Output'
+            placeholder='What kind of style should the output be? (Casual, Professional, Academic etc)'
+            {...form.getInputProps('style')}
           />
 
-          <Button variant="filled" fullWidth mt="md" onClick={handleSubmit}>
-            Generate Case Study{" "}
+          <Button variant='filled' fullWidth mt='md' onClick={handleSubmit}>
+            Generate Case Study{' '}
           </Button>
-          {/* <Button type='submit'></Button> */}
-          {/* </form> */}
 
           <EditableCaseStudy aiGeneratedContent={outPut} />
-          {/* <div dangerouslySetInnerHTML={{ __html: outPut }} /> */}
         </Paper>
       </Container>
     </div>
