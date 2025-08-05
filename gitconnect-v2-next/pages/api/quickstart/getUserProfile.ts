@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getProfileDataWithUsernameLowercase } from '@/lib/profiles';
-import { getProfileDataWithAnonymousId } from '@/lib/quickstart/getSavedProfile';
+import { getProfileDataWithAnonymousId } from '@/features/quickstart/lib/getSavedProfile';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const anonymousId = req.query.anonymousId as string;

@@ -7,4 +7,10 @@ export default createStyles((theme) => ({
       textDecoration: 'none',
     },
   },
+
+  card: {
+    border: `1px solid ${
+      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1]
+    }`,
+  },
 }));

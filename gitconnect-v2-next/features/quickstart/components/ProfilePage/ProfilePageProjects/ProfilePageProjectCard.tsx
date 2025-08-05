@@ -1,10 +1,5 @@
-import { IconEye, IconMessageCircle } from '@tabler/icons-react';
 import {
   Card,
-  Text,
-  Group,
-  Center,
-  Avatar,
   Overlay,
   Box,
   Button,
@@ -43,10 +38,6 @@ export function ProfilePageProjectCard({
 }: ProfilePageProjectCardProps) {
   const { classes, theme } = useStyles();
 
-  // Previously - single image:
-  // const imageUrl = typeof image === 'string' &&
-  // image ? correctImageGetter(image, 768) : '/img/gitconnect.webp';
-
   // Use one of the placeholder images at random
   const getRandomPlaceholderImage = () => {
     const placeholders = [
@@ -68,14 +59,11 @@ export function ProfilePageProjectCard({
   return (
     <>
       <Link href={link} passHref legacyBehavior>
-
         <Card
           p='xl'
-          // mb='lg'
           shadow='lg'
           className={classes.card}
           radius='md'
-          // href={link}
           component='a'
         >
           {hidden && (
@@ -83,11 +71,8 @@ export function ProfilePageProjectCard({
               <Button color='lime' size='xl' radius='lg' variant='outline'>
                 Draft Project
               </Button>
-              {/* <Text>Draft Project</Text> */}
             </Overlay>
           )}
-
-          {/* <div className={classes.image} style={{ backgroundImage: `url(${image})` }} /> */}
           <Box
             sx={(theme) => ({
               position: 'absolute',
@@ -100,7 +85,6 @@ export function ProfilePageProjectCard({
             })}
           >
             <Image
-              // src={image ? image : '/img/gitconnect.jpg'}
               src={imageUrl}
               className='image'
               style={{  objectFit: 'cover', transition: 'transform 500ms ease', }}

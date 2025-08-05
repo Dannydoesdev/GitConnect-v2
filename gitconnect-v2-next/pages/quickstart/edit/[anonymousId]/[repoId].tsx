@@ -1,23 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
-import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { useRouter } from "next/router";
-import { unsavedChangesAtom } from "@/atoms/jotaiAtoms";
-import { Group, ScrollArea, Space, Text, } from "@mantine/core";
-import { modals } from "@mantine/modals";
-import {useAtom } from "jotai";
-import EditPortfolioProject from "@/features/quickstart/components/ProjectPage/EditProject/EditProjectMain";
-import LoadingPage from "@/components/LoadingPage/LoadingPage";
-import { AuthContext } from "@/context/AuthContext";
-import { getProfileDataWithAnonymousId } from "@/lib/quickstart/getSavedProfile";
-import { getSingleQuickstartProject } from "@/lib/quickstart/getSavedProjects";
-import { quickstartStateAtom, quickstartTextEditorAtom } from "@/atoms";
-import { useQuickstartState } from "@/hooks/useQuickstartState";
-
+import React, { useContext, useEffect } from 'react';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
+import { unsavedChangesAtom } from '@/atoms/jotaiAtoms';
+import { Space, Text } from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { useAtom } from 'jotai';
+import EditPortfolioProject from '@/features/quickstart/components/ProjectPage/EditProject/EditProjectMain';
+import LoadingPage from '@/components/LoadingPage/LoadingPage';
+import { AuthContext } from '@/context/AuthContext';
+import { getProfileDataWithAnonymousId } from '@/features/quickstart/lib/getSavedProfile';
+import { getSingleQuickstartProject } from '@/features/quickstart/lib/getSavedProjects';
+import { quickstartTextEditorAtom } from '@/atoms';
+import { useQuickstartState } from '@/features/quickstart/hooks/useQuickstartState';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { anonymousId, repoId } = params as { anonymousId: string; repoId: string };
+  const { anonymousId, repoId } = params as {
+    anonymousId: string;
+    repoId: string;
+  };
 
-  const { projectData, readme } = await getSingleQuickstartProject(anonymousId, repoId);
+  const { projectData, readme } = await getSingleQuickstartProject(
+    anonymousId,
+    repoId
+  );
   const profileData = await getProfileDataWithAnonymousId(anonymousId);
 
   // Ensure the profile data is extracted correctly
@@ -62,12 +67,14 @@ export default function UpdatePortfolioProject({
 
   const openModal = (url: string) => {
     modals.openConfirmModal({
-      title: "Unsaved changes",
+      title: 'Unsaved changes',
       centered: true,
       children: (
-        <Text size="sm">You have unsaved changes. Are you sure you want to leave this page?</Text>
+        <Text size='sm'>
+          You have unsaved changes. Are you sure you want to leave this page?
+        </Text>
       ),
-      labels: { confirm: "Leave without saving", cancel: "Return to page" },
+      labels: { confirm: 'Leave without saving', cancel: 'Return to page' },
       onCancel: () => {},
       onConfirm: () => {
         setUnsavedChanges(false);
@@ -77,18 +84,25 @@ export default function UpdatePortfolioProject({
   };
 
   useEffect(() => {
-    const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
+    const handleRouteChange = (
+      url: string,
+      { shallow }: { shallow: boolean }
+    ) => {
       if (unsavedChanges) {
         openModal(url);
-        router.events.emit("routeChangeError", new Error("Aborted route change"), url);
-        throw "Route change aborted";
+        router.events.emit(
+          'routeChangeError',
+          new Error('Aborted route change'),
+          url
+        );
+        throw 'Route change aborted';
       }
     };
 
-    router.events.on("routeChangeStart", handleRouteChange);
+    router.events.on('routeChangeStart', handleRouteChange);
 
     return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
+      router.events.off('routeChangeStart', handleRouteChange);
     };
   }, [router, unsavedChanges]);
 
@@ -97,12 +111,9 @@ export default function UpdatePortfolioProject({
   }
 
   if (project) {
-
     const { name, description, html_url } = project;
 
-
     return (
-
       <>
         <Space h={50} />
         <EditPortfolioProject

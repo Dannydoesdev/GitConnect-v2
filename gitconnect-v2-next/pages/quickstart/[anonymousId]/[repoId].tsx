@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useQuickstartState } from "@/hooks/useQuickstartState";
+import { useQuickstartState } from "@/features/quickstart/hooks/useQuickstartState";
 import {
   Aside,
   Blockquote,
@@ -21,12 +21,12 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle } from "@tabler/icons-react";
-import { getProfileDataWithAnonymousId } from "@/lib/quickstart/getSavedProfile";
-import { getSingleQuickstartProject } from "@/lib/quickstart/getSavedProjects";
+import { getProfileDataWithAnonymousId } from "@/features/quickstart/lib/getSavedProfile";
+import { getSingleQuickstartProject } from "@/features/quickstart/lib/getSavedProjects";
 import LoadingPage from "@/components/LoadingPage/LoadingPage";
 import ProfilePageUserPanel from "@/features/quickstart/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel";
-import ProjectPageDynamicContent from "@/features/quickstart/components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent";
-import { ProjectPageDynamicHero } from "@/features/quickstart/components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero";
+import ProjectPageContent from "@/features/quickstart/components/ProjectPage/ProjectPageContent/ProjectPageContent";
+import { ProjectPageHero } from "@/features/quickstart/components/ProjectPage/ProjectPageHero/ProjectPageHero";
 import RichTextEditorDisplay from "@/features/quickstart/components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay";
 
 export default function QuickstartProject({
@@ -108,7 +108,7 @@ export default function QuickstartProject({
           </MediaQuery>
         )}
 
-        <ProjectPageDynamicHero project={project} />
+        <ProjectPageHero project={project} />
 
         <Stack
           mr={
@@ -168,7 +168,7 @@ export default function QuickstartProject({
               Edit Project
             </Button>
           </Group>
-          <ProjectPageDynamicContent project={project} />
+          <ProjectPageContent project={project} />
 
           {readme && <RichTextEditorDisplay content={readme} />}
 

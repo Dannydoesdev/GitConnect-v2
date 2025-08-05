@@ -10,7 +10,6 @@ interface ShowRepoProps {
   isSelected: boolean;
 }
 
-// Card component to display repo data and allow selection
 const ShowRepo: React.FC<ShowRepoProps> = ({ repo, selectRepo, deselectRepo, isSelected }) => {
   const {
     name: repoName,

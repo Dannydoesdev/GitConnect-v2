@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Box, Button, Container, Group, Overlay, Text, Title } from '@mantine/core';
-import { correctImageGetter } from '../../../../lib/correctImageGetter';
-import useStyles from './ProjectPageDynamicHero.styles';
+import { correctImageGetter } from '@/lib/correctImageGetter';
+import useStyles from './ProjectPageHero.styles';
 import { useState, useEffect } from 'react';
 
-export function ProjectPageDynamicHero(props: any) {
+export function ProjectPageHero(props: any) {
   const { classes } = useStyles();
 
   const project = props.props[0];
@@ -23,11 +23,6 @@ export function ProjectPageDynamicHero(props: any) {
     ? replaceUnderscoresAndDashes(project.name)
     : '';
 
-  // console.log('live_url', project.live_url);
-  // console.log('liveUrl', project.liveUrl);
-  // console.log('repoUrl', project.repoUrl);
-  // console.log('html_url', project.html_url);
-
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -35,15 +30,10 @@ export function ProjectPageDynamicHero(props: any) {
   }, []);
 
   return (
-    // <Group className={classes.hero} sx={{ backgroundImage: project.coverImage ? `url(${project.coverImage})` : '' }}>
     <Group
       className={classes.hero}
-      // sx={{
-      //   backgroundImage: `url(${imageUrl})`,
-      // }}
     >
       <Box
-        // h='100%'
         sx={(theme) => ({
           position: 'absolute',
           top: 0,
@@ -55,13 +45,10 @@ export function ProjectPageDynamicHero(props: any) {
         })}
       >
         <Image
-          // src={image ? image : '/img/gitconnect.jpg'}
           src={imageUrl}
           className="image"
           style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
           sizes="100vw"
-          // height={500}
-          // width={2000}
           fill={true}
           quality={100}
           alt=""
@@ -80,9 +67,7 @@ export function ProjectPageDynamicHero(props: any) {
           {project?.projectTitle || githubTitleFormatted || project.name || ''}
         </Title>
         <Text className={classes.description} size="xl" mt="xl">
-          {/* {project.name} */}
         </Text>
-        {/* <Group className={classes.group} grow> */}
         <Group>
           {
             (project.liveUrl || project.live_url) && (
@@ -94,11 +79,8 @@ export function ProjectPageDynamicHero(props: any) {
                 <Button
                   component="a"
                   target="_blank"
-                  // size='xl'
-                  // radius='xl'
                   className={classes.liveAndGithub}
                   sx={(theme) => ({
-                    // subscribe to color scheme changes
                     backgroundColor:
                       theme.colorScheme === 'dark'
                         ? theme.colors.dark[5]
@@ -109,7 +91,6 @@ export function ProjectPageDynamicHero(props: any) {
                 </Button>
               </Link>
             )
-            // : null
           }
 
           {(project.repoUrl || project.html_url) && (
@@ -121,15 +102,12 @@ export function ProjectPageDynamicHero(props: any) {
               <Button
                 component="a"
                 target="_blank"
-                // size='xl'
-                // radius='xl'
                 className={
                   project.live_url || project.liveUrl
                     ? classes.liveAndGithub
                     : classes.githubOnly
                 }
                 sx={(theme) => ({
-                  // subscribe to color scheme changes
                   backgroundColor:
                     theme.colorScheme === 'dark'
                       ? theme.colors.dark[5]
@@ -141,17 +119,6 @@ export function ProjectPageDynamicHero(props: any) {
             </Link>
           )}
         </Group>
-        {/* {mounted && (
-          <Link 
-            href={`/portfolio/${username_lowercase}/${projectname}#`}
-            passHref 
-            legacyBehavior
-          >
-          </Link>
-        )} */}
-        {/* <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
-        Check it out!
-      </Button> */}
       </Container>
     </Group>
   );

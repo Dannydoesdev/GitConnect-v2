@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<any>
+) {
   const username = req.query.username as string;
   try {
     const data = await getAllUserProjectsWithUsernameLowercase(username);

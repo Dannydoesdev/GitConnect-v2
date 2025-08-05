@@ -1,14 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import {
   Badge,
-  Box,
   Button,
-  Container,
   Grid,
   Group,
   ScrollArea,
-  SimpleGrid,
   Space,
   Stack,
   Text,
@@ -16,14 +13,15 @@ import {
 } from '@mantine/core';
 import { ProfilePageProjectCard } from './ProfilePageProjectCard';
 
-const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => {
- 
+const ProfilePageProjectGrid = ({
+  projects,
+  currentUser,
+  projectType,
+}: any) => {
   const projectsLength = projects ? projects.length : 0;
 
   function replaceUnderscoresAndDashes(input: string): string {
-    // console.log('input: ', input);
-    return (input && input.length > 0) ? input.replace(/[_-]/g, ' ') : '';
-    // return input.replace(/[_-]/g, ' ');
+    return input && input.length > 0 ? input.replace(/[_-]/g, ' ') : '';
   }
 
   if (projectsLength === 0) {
@@ -32,7 +30,6 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
         {currentUser ? (
           <Stack spacing={80}>
             <Grid columns={8}>
-              {/* <Grid.Col span={3}></Grid.Col> */}
               <Grid.Col span={8}>
                 {projectType === 'published' ? (
                   <Title order={2}>No Published projects</Title>
@@ -43,19 +40,20 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
               <Space h={10} />
               <Grid.Col span={6}>
                 {projectType === 'published' ? (
-                  <Text weight={500} pr="xl">
-                    Publish your first project to share it on your GitConnect Portfolio
+                  <Text weight={500} pr='xl'>
+                    Publish your first project to share it on your GitConnect
+                    Portfolio
                   </Text>
                 ) : (
-                  <Text weight={500} pr="xl">
+                  <Text weight={500} pr='xl'>
                     Add a project to build your GitConnect portfolio
                   </Text>
                 )}
-                <Link href="/addproject" passHref legacyBehavior>
+                <Link href='/addproject' passHref legacyBehavior>
                   <Button
-                    component="a"
-                    size="md"
-                    radius="md"
+                    component='a'
+                    size='md'
+                    radius='md'
                     mt={40}
                     styles={(theme) => ({
                       root: {
@@ -95,12 +93,11 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
         ) : (
           <Stack spacing={80}>
             <Grid columns={8}>
-              {/* <Grid.Col span={3}></Grid.Col> */}
               <Grid.Col span={8}>
                 <Title order={1}>No Projects added yet</Title>
               </Grid.Col>
               <Grid.Col span={8}>
-                <Text weight={500} pr="xl">
+                <Text weight={500} pr='xl'>
                   Check back later to see if this user has added any projects!
                 </Text>
               </Grid.Col>
@@ -111,14 +108,12 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
     );
   } else
     return (
-      // <Container>
       <>
         <Stack spacing={80}>
           {projects &&
             projects.map((project: any, index: any) => {
               return (
                 <div key={project.id}>
-                  {/* TODO: Test default column count vs custom for styling preferences */}
                   <Grid columns={8}>
                     <Grid.Col span={3}>
                       <ProfilePageProjectCard
@@ -128,8 +123,14 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                         githubTitle={project.name}
                         customTitle={project.projectTitle}
                         avatar={project.avatar_url}
-                        profileUrl={project.userId ? `/quickstart/${project.userId}` : '#'}
-                        link={project.userId && project.id ? `/quickstart/${project.userId}/${project.id}` : '#'}
+                        profileUrl={
+                          project.userId ? `/quickstart/${project.userId}` : '#'
+                        }
+                        link={
+                          project.userId && project.id
+                            ? `/quickstart/${project.userId}/${project.id}`
+                            : '#'
+                        }
                       />
                     </Grid.Col>
                     <Grid.Col span={5}>
@@ -137,11 +138,9 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                         {project.projectTitle
                           ? replaceUnderscoresAndDashes(project.projectTitle)
                           : replaceUnderscoresAndDashes(project.name)}
-                        {/* NOTE: Unregex-ed version FYI: */}
-                        {/* {project.docData.projectTitle ? project.docData.projectTitle : project.docData.name} */}
                       </Title>
                       <Space h={10} />
-                      <Text weight={500} pr="xl">
+                      <Text weight={500} pr='xl'>
                         {project.projectDescription
                           ? project.projectDescription
                           : project.description}
@@ -153,33 +152,32 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                         offsetScrollbars
                         scrollbarSize={7}
                         w={{ base: 400, sm: 700, md: 400, lg: 740, xl: 830 }}
-                        // w={800}
                       >
-                        {/* <ScrollArea.Autosize  offsetScrollbars scrollbarSize={6}  maw={400}> */}
-                        {/* <Box h={50} w={600}> */}
-
                         {/* Tech Stack badges */}
-                        {project.techStack &&
-                          project.techStack.length >= 1 && (
-                            <>
-                              <Space h={5} />
+                        {project.techStack && project.techStack.length >= 1 && (
+                          <>
+                            <Space h={5} />
 
-                              <Group noWrap={true}>
-                                <Badge color="gray" radius="sm" variant="outline">
-                                  Tech Stack:
-                                </Badge>
+                            <Group noWrap={true}>
+                              <Badge color='gray' radius='sm' variant='outline'>
+                                Tech Stack:
+                              </Badge>
 
-                                {project.techStack &&
-                                  project.techStack.map((tech: any) => {
-                                    return (
-                                      <Badge key={tech} radius="md" variant="outline">
-                                        {tech}
-                                      </Badge>
-                                    );
-                                  })}
-                              </Group>
-                            </>
-                          )}
+                              {project.techStack &&
+                                project.techStack.map((tech: any) => {
+                                  return (
+                                    <Badge
+                                      key={tech}
+                                      radius='md'
+                                      variant='outline'
+                                    >
+                                      {tech}
+                                    </Badge>
+                                  );
+                                })}
+                            </Group>
+                          </>
+                        )}
 
                         {project.projectCategories &&
                           project.projectCategories.length >= 1 && (
@@ -187,7 +185,11 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                               {/* Category heading badge */}
                               <Space h={13} />
                               <Group noWrap={true}>
-                                <Badge color="gray" radius="sm" variant="outline">
+                                <Badge
+                                  color='gray'
+                                  radius='sm'
+                                  variant='outline'
+                                >
                                   Categories:
                                 </Badge>
 
@@ -197,9 +199,9 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                                     return (
                                       <Badge
                                         key={category}
-                                        color="teal"
-                                        radius="md"
-                                        variant="outline"
+                                        color='teal'
+                                        radius='md'
+                                        variant='outline'
                                       >
                                         {category}
                                       </Badge>
@@ -216,7 +218,11 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                               <Space h={13} />
 
                               <Group noWrap={true}>
-                                <Badge color="gray" radius="sm" variant="outline">
+                                <Badge
+                                  color='gray'
+                                  radius='sm'
+                                  variant='outline'
+                                >
                                   Tags:
                                 </Badge>
 
@@ -225,9 +231,9 @@ const ProfilePageProjectGrid = ({ projects, currentUser, projectType }: any) => 
                                     return (
                                       <Badge
                                         key={tag}
-                                        color="cyan"
-                                        radius="md"
-                                        variant="outline"
+                                        color='cyan'
+                                        radius='md'
+                                        variant='outline'
                                       >
                                         {tag}
                                       </Badge>

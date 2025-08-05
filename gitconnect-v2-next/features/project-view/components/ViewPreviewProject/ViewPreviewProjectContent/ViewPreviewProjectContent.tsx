@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext } from 'react';
-import { Button, Card, Center, Container, Group } from '@mantine/core';
-import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
+import { useState, useEffect } from 'react';
+import { Card, Container } from '@mantine/core';
+import { RichTextEditor, Link } from '@mantine/tiptap';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
@@ -14,14 +14,12 @@ import { lowlight } from 'lowlight/lib/core';
 import css from 'highlight.js/lib/languages/css';
 import { CustomResizableImage } from '../../../../../features/project-edit/components/RichTextEditor/extensions/image/customResizableImage';
 import { ResizableMedia } from '../../../../../features/project-edit/components/RichTextEditor/extensions/resizableMedia';
-import { notitapEditorClass } from '../../../../../features/project-edit/components/RichTextEditor/proseClassString';
 import useStyles from './ViewPreviewProjectContent.styles';
 
 type RichTextEditorVanillaProps = {
   updatedContent?: string | null | undefined;
 };
 
-// lowlight.registerLanguage('ts', tsLanguageSyntax);
 lowlight.registerLanguage('html', html);
 lowlight.registerLanguage('css', css);
 lowlight.registerLanguage('js', js);
@@ -75,8 +73,6 @@ RichTextEditorVanillaProps) {
     content: updatedContent,
     editorProps: {
       attributes: {
-        // class: `${notitapEditorClass} focus:outline-none w-full project-edit-tiptap`,
-        // class: `${notitapEditorClass} focus:outline-none w-full view-only-mode`,
         class: `view-only-mode`,
         spellcheck: 'false',
         suppressContentEditableWarning: 'true',
