@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import createWeaviateSchema from '@/lib/weaviate/weaviateCreateSchema';
+import createWeaviateSchema from '@/features/ai-rag/lib/CreateSchema';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {

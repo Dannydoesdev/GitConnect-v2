@@ -1,6 +1,6 @@
 import { generateUuid5 } from 'weaviate-client';
-import type { WeaviateRepoUploadData } from '@/types/weaviate';
-import client from './weaviateInitiateClient';
+import type { WeaviateRepoUploadData } from '@/features/ai-rag/types/weaviate';
+import client from './InitiateClient';
 
 const weaviateBulkUploadHelper = async (userProjectData: WeaviateRepoUploadData[]) => {
   try {

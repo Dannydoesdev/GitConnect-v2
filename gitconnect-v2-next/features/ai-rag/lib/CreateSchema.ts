@@ -1,5 +1,5 @@
 import { generative, vectorizer } from 'weaviate-client';
-import client from './weaviateInitiateClient';
+import client from './InitiateClient';
 
 export async function createWeaviateSchema() {
   try {

@@ -1,4 +1,4 @@
-import client from './weaviateInitiateClient';
+import client from './InitiateClient';
 
 // Generate a 'dynamic' response (based on free text query from Weaviate
 export async function generateDynamicResponse(username: string, query: string) {

@@ -5,7 +5,7 @@ import { useForm } from "@mantine/form";
 import axios from "axios";
 import DOMPurify from "dompurify";
 
-import EditableCaseStudy from "@/components/AiProjectPage/EditableCaseStudy";
+import EditableCaseStudy from "@/features/ai-project-create/components/EditableCaseStudy";
 import { AuthContext } from "@/context/AuthContext";
 
 type AiCaseStudyProps = {

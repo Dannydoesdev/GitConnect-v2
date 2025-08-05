@@ -100,17 +100,6 @@ function EditableCaseStudy({ aiGeneratedContent }: CaseStudyProps) {
             mt={40}
             editor={editor}
             w="90%"
-            // mx={200}
-            // styles={(theme) => ({
-            //   content: {
-            //     color: editor?.isEditable ? 'auto' : '#999',
-            //     minHeight: 500,
-
-            //   },
-            //   root: {
-            //     cursor: editor?.isEditable ? 'auto' : 'not-allowed',
-            //   },
-            // })}
           >
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
               <RichTextEditor.ControlsGroup>

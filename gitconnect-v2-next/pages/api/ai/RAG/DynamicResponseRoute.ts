@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { generateDynamicResponse } from '@/lib/weaviate/generateWeaviateResponse';
+import { generateDynamicResponse } from '@/features/ai-rag/lib/generateResponse';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Extract project data from request body
