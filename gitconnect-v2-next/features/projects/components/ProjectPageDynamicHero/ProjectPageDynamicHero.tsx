@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Box, Button, Container, Group, Overlay, Text, Title } from '@mantine/core';
-import { correctImageGetter } from '../../../lib/correctImageGetter';
+import { correctImageGetter } from '../../../../lib/correctImageGetter';
 import useStyles from './ProjectPageDynamicHero.styles';
 import { useState, useEffect } from 'react';
 

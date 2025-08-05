@@ -10,10 +10,10 @@ import {
   getSingleProjectByNameLowercase,
 } from '@/lib/projects';
 import { starProject, unstarProject } from '@/lib/stars';
-import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
-import ProjectPageDynamicContent from '@/components/ProjectPage/ProjectPageDynamicContent/ProjectPageDynamicContent';
-import { ProjectPageDynamicHero } from '@/components/ProjectPage/ProjectPageDynamicHero/ProjectPageDynamicHero';
-import RichTextEditorDisplay from '@/components/ProjectPage/RichTextEditorDisplay/RichTextEditorDisplay';
+import ProfilePageUserPanel from '@/features/profiles/components/ProfilePageUserPanel/ProfilePageUserPanel';
+import ProjectPageDynamicContent from '@/features/projects/components/ProjectPageDynamicContent/ProjectPageDynamicContent';
+import { ProjectPageDynamicHero } from '@/features/projects/components/ProjectPageDynamicHero/ProjectPageDynamicHero';
+import RichTextEditorDisplay from '@/features/projects/components/RichTextEditorDisplay/RichTextEditorDisplay';
 import LoadingPage from '../../../components/LoadingPage/LoadingPage';
 import { AuthContext } from '../../../context/AuthContext';
 

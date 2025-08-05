@@ -15,8 +15,8 @@ import {
 } from '@/lib/profiles';
 import { getAllUserProjectsWithUsernameLowercase } from '@/lib/projects';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
-import ProfilePageUserPanel from '@/components/ProfilePage/ProfilePageUserPanel/ProfilePageUserPanel';
-import ProfilePageProjectGrid from '@/components/ProfilePage/ProfilePageProjects/ProfilePageProjectGrid';
+import ProfilePageUserPanel from '@/features/profiles/components/ProfilePageUserPanel/ProfilePageUserPanel';
+import ProfilePageProjectGrid from '@/features/profiles/components/ProfilePageProjects/ProfilePageProjectGrid';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username_lowercase } = params as { username_lowercase: string };
@@ -142,7 +142,6 @@ const ProjectTabs = ({ isCurrentUser, activeTab, setActiveTab, publishedProjects
 
 
 export default function Portfolio({ initialProjects, initialProfile }: PortfolioProps) {
-  // All hooks at the top level
   const [activeTab, setActiveTab] = useState('first');
   const { userData, currentUser } = useContext(AuthContext);
   const router = useRouter();
@@ -234,7 +233,6 @@ export default function Portfolio({ initialProjects, initialProfile }: Portfolio
       publishedProjects = sortProjects(publishedProjects);
     }
 
-  // Render logic
   return (
     <>
       <PageHead profile={profile} username_lowercase={username_lowercase} />
