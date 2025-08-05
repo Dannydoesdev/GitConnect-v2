@@ -52,18 +52,6 @@ export default createStyles((theme) => ({
     },
   },
 
-  // buttons: {
-
-  //   [theme.fn.smallerThan('md')]: {
-  //     margin: 'auto',
-  //     minWidth: '30%',
-  //     maxWidth: '50%',
-  //     marginTop: '20px',
-  //     fontSize: rem(14),
-  //     // padding: '0 0 0 0',
-  //   },
-  // },
-
   buttons: {
     margin: 'auto',
     // marginRight: 10,
@@ -71,16 +59,12 @@ export default createStyles((theme) => ({
     fontSize: rem(16),
     // alignItem
 
-
     [theme.fn.smallerThan('md')]: {
       margin: 'auto',
       minWidth: '30%',
       maxWidth: '40%',
       marginTop: '20px',
       fontSize: rem(14),
-      // marginRight: 10,
-      // marginLeft: 10,
-      // padding: '0 0 0 0',
       padding: '0 0 0 0',
     },
 
@@ -89,7 +73,6 @@ export default createStyles((theme) => ({
       fontSize: rem(12),
       // margin: 'auto',
     },
-
   },
 
   control: {

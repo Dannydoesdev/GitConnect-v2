@@ -18,7 +18,7 @@ export interface QuickstartProfileTrimmed {
   location?: string;
   email?: string;
   bio?: string;
-}
+} 
 
 export interface QuickstartRepoTrimmed {
   id: number;
@@ -86,7 +86,7 @@ export type QuickstartProfile = {
   instagramUrl: string;
   openToWork: boolean;
   [key: string]: any; 
-};
+}| null;
 
 
 
@@ -120,28 +120,6 @@ export interface QuickstartRepoUploadData {
   reponame_lowercase?: string;
 }
 
-
-
-// export interface QuickstartRepoUploadData {
-//   name: string;
-//   username?: string;
-//   description: string | null;
-//   tags?: string[];
-//   repoid: number;
-//   id?: number;
-//   readme?: string | null;
-//   html_url?: string;
-//   license?: RepoLicense | string | null;
-//   forks_count?: number;
-//   stargazers_count?: number;
-//   watchers_count?: number;
-//   open_issues_count?: number;
-//   language?: string | null;
-//   mainLanguage?: string | null;
-//   languages_url?: string;
-//   languagePercententages?: string[] | null;
-// }
-
 export interface QuickstartRepoData {
   name: string;
   owner?: RepoOwner;
@@ -162,21 +140,5 @@ export interface QuickstartRepoData {
   mainLanguage?: string | null;
   languages_url?: string;
   languagePercententages?: string[] | null;
+  hidden?: boolean;
 }
-
-// export type QuickstartProjectData = {
-//   id: number;
-//   name: string;
-//   description: string;
-//   tags: string[];
-//   readme: string;
-//   html_url?: string;
-//   license?: string | null;
-//   forks_count?: number;
-//   stargazers_count?: number;
-//   watchers_count?: number;
-//   open_issues_count?: number;
-//   language?: string | null;
-//   mainLanguage?: string | null;
-//   languages_url?: string | null;
-// };

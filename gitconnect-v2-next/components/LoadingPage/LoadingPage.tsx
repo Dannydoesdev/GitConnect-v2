@@ -73,7 +73,7 @@ function LoadingGrid() {
         spacing='xl'
         // noWrap={true}
         cols={4}
-        verticalSpacing="xl"
+        verticalSpacing='xl'
         // display='flex'
         breakpoints={[
           { maxWidth: 1500, cols: 3, spacing: 'md' },
@@ -85,27 +85,20 @@ function LoadingGrid() {
           <Skeleton key={i} className={classes.skeleton} />
         ))}
       </SimpleGrid>
-     </Group>
+    </Group>
   );
 }
 
 export default function LoadingPage({}) {
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
 
   return (
-    <Group w='100%'  position='center' className={classes.inner}>
-      {/* <Container> */}
-      {/* <Group> */}
-      {/* <Skeleton width={50} height={50} circle mb='xl' /> */}
-        <Skeleton height={8} radius='xl' />
-        <Skeleton height={8} mt={6} radius='xl' />
-        <Skeleton height={8} mt={3} width='80%' radius='xl' />
-        {/* </Group> */}
+    <Group w='100%' position='center' className={classes.inner}>
+      <Skeleton height={8} radius='xl' />
+      <Skeleton height={8} mt={6} radius='xl' />
+      <Skeleton height={8} mt={3} width='80%' radius='xl' />
       <Space h={80} />
-        {/* <Space h='xl' /> */}
-
-        <LoadingGrid />
-      {/* </Container> */}
-      </Group>
+      <LoadingGrid />
+    </Group>
   );
 }

@@ -1,31 +1,13 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-// import Router from 'next/router';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/context/AuthContext';
 import { app, auth } from '@/firebase/clientApp';
-import { Dialog, Disclosure, RadioGroup } from '@headlessui/react';
 import {
-  ArrowPathIcon,
-  CheckIcon,
-  CloudArrowUpIcon,
-  Cog6ToothIcon,
-  EyeIcon,
-  FingerPrintIcon,
-  LockClosedIcon,
-  ServerIcon,
   SparklesIcon,
   StarIcon,
   UserGroupIcon,
 } from '@heroicons/react/20/solid';
-import {
-  Bars3Icon,
-  ClockIcon,
-  MinusSmallIcon,
-  PlusSmallIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
 import {
   Box,
   Button,
@@ -40,14 +22,6 @@ import { IconBrandDiscord, IconBrandGithub } from '@tabler/icons-react';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import mixpanel from 'mixpanel-browser';
 import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
-import { getCheckoutUrlTest } from '@/lib/stripe/stripePaymentTest';
-
-const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
-  { name: 'Company', href: '#' },
-];
 
 const useStyles = createStyles((theme) => ({
   iconDiscord: {
@@ -108,7 +82,7 @@ interface Pricing {
   tiers: pricingTier[];
 }
 
-// Define the possible keys for frequency values
+// Define the keys for frequency values
 type Frequency = 'monthly' | 'annually';
 
 type pricingTier = {
@@ -245,7 +219,8 @@ export default function LandingPage() {
       try {
         // Attempt popup OAuth
         await signInWithPopup(auth, provider).then((result) => {
-          const credential: any = GithubAuthProvider.credentialFromResult(result);
+          const credential: any =
+            GithubAuthProvider.credentialFromResult(result);
           const user = result.user;
           const userId = user.uid;
 
@@ -280,10 +255,10 @@ export default function LandingPage() {
 
   return (
     // <div className="bg-white">
-    <div className="bg-gray-900">
+    <div className='bg-gray-900'>
       <main>
         {/* Hero section */}
-        <div className="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
+        <div className='relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20'>
           {/* <img
             // src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2830&q=80&blend=111827&sat=-100&exp=15&blend-mode=multiply"
             src="/img/gitconnect.webp"
@@ -291,43 +266,49 @@ export default function LandingPage() {
             className="absolute inset-0 -z-10 h-full w-full object-cover"
           /> */}
           <div
-            className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-            aria-hidden="true"
+            className='absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80'
+            aria-hidden='true'
           >
             <div
-              className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+              className='relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]'
               style={{
                 clipPath:
                   'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
               }}
             />
           </div>
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+          <div className='mx-auto max-w-7xl px-6 lg:px-8'>
+            <div className='mx-auto max-w-2xl py-32 sm:py-48 lg:py-56'>
               {/* </div>  */}
-              <div className="text-center">
-                <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+              <div className='text-center'>
+                <h1 className='text-4xl font-bold tracking-tight text-white sm:text-6xl'>
                   Show the world what you’re building
                 </h1>
-                <p className="mt-6 text-lg leading-8 text-gray-300">
-                  GitConnect is a dedicated platform for developers to build their
-                  portfolio, connect with opportunities, and with each other.
+                <p className='mt-6 text-lg leading-8 text-gray-300'>
+                  GitConnect is a dedicated platform for developers to build
+                  their portfolio, connect with opportunities, and with each
+                  other.
                 </p>
 
-                <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <Link href="/signup" passHref legacyBehavior>
+                <div className='mt-10 flex flex-col sm:flex-row items-center justify-center gap-6'>
+                  <Link href='/signup' passHref legacyBehavior>
                     <Button
-                      component="a"
-                      variant="gradient"
+                      component='a'
+                      variant='gradient'
                       gradient={{ from: 'indigo', to: 'cyan' }}
-                      radius="lg"
-                      size="lg"
+                      radius='lg'
+                      size='lg'
                     >
                       Start your portfolio
                     </Button>
                   </Link>
-                  <Link href="/" passHref legacyBehavior>
-                    <Button component="a" variant="default" radius="lg" size="lg">
+                  <Link href='/' passHref legacyBehavior>
+                    <Button
+                      component='a'
+                      variant='default'
+                      radius='lg'
+                      size='lg'
+                    >
                       Explore Projects
                     </Button>
                   </Link>
@@ -336,11 +317,11 @@ export default function LandingPage() {
             </div>
           </div>
           <div
-            className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-            aria-hidden="true"
+            className='absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]'
+            aria-hidden='true'
           >
             <div
-              className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+              className='relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]'
               style={{
                 clipPath:
                   'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
@@ -350,33 +331,33 @@ export default function LandingPage() {
         </div>
 
         {/* FEATURES SECTION */}
-        <div className="bg-gray-900 py-24 sm:py-32">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl lg:text-center">
-              <h2 className="text-base font-semibold leading-7 text-indigo-400">
+        <div className='bg-gray-900 py-24 sm:py-32'>
+          <div className='mx-auto max-w-7xl px-6 lg:px-8'>
+            <div className='mx-auto max-w-2xl lg:text-center'>
+              <h2 className='text-base font-semibold leading-7 text-indigo-400'>
                 Share your new portfolio in 10 minutes
               </h2>
-              <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              <p className='mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl'>
                 Create your developer portfolio in minutes, not days.
               </p>
-              <p className="mt-6 text-lg leading-8 text-gray-300">
+              <p className='mt-6 text-lg leading-8 text-gray-300'>
                 Link GitConnect with GitHub to effortlessly create and share a
                 personalised portfolio of your work.
               </p>
             </div>
-            <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+            <div className='mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none'>
+              <dl className='grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3'>
                 {features.map((feature) => (
-                  <div key={feature.name} className="flex flex-col">
-                    <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
+                  <div key={feature.name} className='flex flex-col'>
+                    <dt className='flex items-center gap-x-3 text-base font-semibold leading-7 text-white'>
                       <feature.icon
-                        className="h-5 w-5 flex-none text-indigo-400"
-                        aria-hidden="true"
+                        className='h-5 w-5 flex-none text-indigo-400'
+                        aria-hidden='true'
                       />
                       {feature.name}
                     </dt>
-                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300">
-                      <p className="flex-auto">{feature.description}</p>
+                    <dd className='mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300'>
+                      <p className='flex-auto'>{feature.description}</p>
                     </dd>
                   </div>
                 ))}
@@ -387,42 +368,35 @@ export default function LandingPage() {
 
         {/* DANNYS SECTION */}
 
-        <div className="relative bg-gray-900 pt-48 pb-60">
-          <div className="mx-auto flex max-w-7xl flex-col-reverse md:flex-col-reverse lg:flex-row items-center gap-y-10 px-6 md:gap-y-8 lg:px-8 xl:items-stretch">
+        <div className='relative bg-gray-900 pt-48 pb-60'>
+          <div className='mx-auto flex max-w-7xl flex-col-reverse md:flex-col-reverse lg:flex-row items-center gap-y-10 px-6 md:gap-y-8 lg:px-8 xl:items-stretch'>
             {/* Danny's Introduction and CTA */}
-            <div className="w-full max-w-2xl xl:max-w-none xl:flex-auto lg:px-16 md:px-6 xl:px-16 xl:py-24">
-              <h1 className="text-4xl font-bold text-white">
+            <div className='w-full max-w-2xl xl:max-w-none xl:flex-auto lg:px-16 md:px-6 xl:px-16 xl:py-24'>
+              <h1 className='text-4xl font-bold text-white'>
                 Hi, I'm Danny - founder of GitConnect
               </h1>
-              <p className=" italic mt-4 text-lg text-white">
-                Devs are capable of incredible things, and our goal is to give you a place
-                to share whatever your ‘incredible thing’ might be. Whether you are a
-                budding developer looking to create a professional presence online or a
-                seasoned software engineer wanting to showcase your magnum opus -
-                GitConnect is for you.
+              <p className=' italic mt-4 text-lg text-white'>
+                Devs are capable of incredible things, and our goal is to give
+                you a place to share whatever your ‘incredible thing’ might be.
+                Whether you are a budding developer looking to create a
+                professional presence online or a seasoned software engineer
+                wanting to showcase your magnum opus - GitConnect is for you.
                 {/* Ever had a family member or significant other ask what you actually do for work, and haven't been able to provide a satisfying answer? Now you can show them GitConnect. */}
               </p>
-              <Link href="/portfolio/dannydoesdev" passHref legacyBehavior>
+              <Link href='/portfolio/dannydoesdev' passHref legacyBehavior>
                 <Button
-                  className="bg-white rounded-full text-gray-90 transition-colors"
-                  component="a"
-                  size="lg"
+                  className='bg-white rounded-full text-gray-90 transition-colors'
+                  component='a'
+                  size='lg'
                   // variant='outline'
-                  radius="md"
-                  variant="white"
-                  color="dark"
+                  radius='md'
+                  variant='white'
+                  color='dark'
                   // leftIcon={<IconBrandGithub size={18} />}
 
                   // color='white'
                   mt={40}
                   sx={(theme) => ({
-                    // leftIcon: {
-                    //   marginRight: theme.spacing.lg,
-                    // },
-                    // '&:hover': {
-                    //   backgroundColor: theme.colors.dark[6],
-                    // },
-
                     '&:hover': {
                       color: 'white',
                       backgroundColor: 'black',
@@ -452,11 +426,11 @@ export default function LandingPage() {
             </div>
 
             {/* Danny's Image */}
-            <div className="w-full max-w-md xl:w-80 xl:flex-none mt-8 h-96 md:h-80 xl:h-auto">
-              <div className="relative h-full md:-mx-8 xl:mx-0">
+            <div className='w-full max-w-md xl:w-80 xl:flex-none mt-8 h-96 md:h-80 xl:h-auto'>
+              <div className='relative h-full md:-mx-8 xl:mx-0'>
                 <img
-                  className="absolute inset-0 h-full w-full rounded-2xl bg-gray-800 object-cover shadow-2xl"
-                  src="https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/landing%2Fdanny-avatar_768x768.webp?alt=media&token=000c312d-1152-4120-9975-41bf0860c0fe"
+                  className='absolute inset-0 h-full w-full rounded-2xl bg-gray-800 object-cover shadow-2xl'
+                  src='https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/landing%2Fdanny-avatar_768x768.webp?alt=media&token=000c312d-1152-4120-9975-41bf0860c0fe'
                   alt="Danny's Image"
                 />
               </div>
@@ -467,7 +441,7 @@ export default function LandingPage() {
         {/* NEW PRICING SECTION */}
         {/* NOTE: Nested comments created using cmd + alt + '/' - nestedcomments ext  */}
 
-    {/*   
+        {/*   
        <>
         <div className="mx-auto mt-16 max-w-7xl px-6 sm:mt-32 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
@@ -728,41 +702,45 @@ export default function LandingPage() {
 
         {/* YOUR FEEDBACK / DISCORD SECTION */}
         <Space h={100} />
-        <div className="bg-white py-16 sm:py-24">
-          <div className="sm:px-6 lg:px-60">
-            <div className="relative isolate overflow-hidden bg-gray-900 px-6 py-24 shadow-2xl sm:rounded-3xl sm:px-24 xl:py-32">
+        <div className='bg-white py-16 sm:py-24'>
+          <div className='sm:px-6 lg:px-60'>
+            <div className='relative isolate overflow-hidden bg-gray-900 px-6 py-24 shadow-2xl sm:rounded-3xl sm:px-24 xl:py-32'>
               {/* Inner content wrapper */}
-              <div className="mx-auto max-w-7xl">
-                <h2 className="mx-auto max-w-2xl text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              <div className='mx-auto max-w-7xl'>
+                <h2 className='mx-auto max-w-2xl text-center text-3xl font-bold tracking-tight text-white sm:text-4xl'>
                   If you have ideas, we want to hear them.
                 </h2>
-                <p className="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300">
-                  We're in the early stages, but our future is ambitious. We are committed
-                  to helping developers connect and find meaningful work, with ambitious
-                  plans for career-accelerating tools.
+                <p className='mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300'>
+                  We're in the early stages, but our future is ambitious. We are
+                  committed to helping developers connect and find meaningful
+                  work, with ambitious plans for career-accelerating tools.
                 </p>
                 <br />
-                <p className="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300">
-                  Our users are our stakeholders, and we want our goals to align with
-                  yours. Join our Discord to share your input and help guide the
-                  platform’s development.
+                <p className='mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300'>
+                  Our users are our stakeholders, and we want our goals to align
+                  with yours. Join our Discord to share your input and help
+                  guide the platform’s development.
                 </p>
-                <div className="mt-10 flex items-center justify-center gap-x-6">
-                  <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
+                <div className='mt-10 flex items-center justify-center gap-x-6'>
+                  <Link
+                    href='https://discord.gg/hkajEH6WkW'
+                    passHref
+                    legacyBehavior
+                  >
                     <Button
-                      component="a"
-                      target="_blank"
-                      variant="gradient"
+                      component='a'
+                      target='_blank'
+                      variant='gradient'
                       gradient={{ from: '#4970f0', to: '#5865F2', deg: 133 }}
-                      radius="lg"
-                      size="lg"
-                      mt="xl"
+                      radius='lg'
+                      size='lg'
+                      mt='xl'
                       className={classes.buttonDiscord}
                     >
                       <IconBrandDiscord
                         size={24}
                         strokeWidth={1}
-                        color="white"
+                        color='white'
                         className={classes.iconDiscord}
                       />
                       Join the Discord
@@ -772,28 +750,28 @@ export default function LandingPage() {
               </div>
 
               <svg
-                viewBox="0 0 1024 1024"
-                className="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2"
-                aria-hidden="true"
+                viewBox='0 0 1024 1024'
+                className='absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2'
+                aria-hidden='true'
               >
                 <circle
                   cx={512}
                   cy={512}
                   r={512}
-                  fill="url(#759c1415-0410-454c-8f7c-9a820de03641)"
-                  fillOpacity="0.7"
+                  fill='url(#759c1415-0410-454c-8f7c-9a820de03641)'
+                  fillOpacity='0.7'
                 />
                 <defs>
                   <radialGradient
-                    id="759c1415-0410-454c-8f7c-9a820de03641"
+                    id='759c1415-0410-454c-8f7c-9a820de03641'
                     cx={0}
                     cy={0}
                     r={1}
-                    gradientUnits="userSpaceOnUse"
-                    gradientTransform="translate(512 512) rotate(90) scale(512)"
+                    gradientUnits='userSpaceOnUse'
+                    gradientTransform='translate(512 512) rotate(90) scale(512)'
                   >
-                    <stop stopColor="#7775D6" />
-                    <stop offset={1} stopColor="#E935C1" stopOpacity={0} />
+                    <stop stopColor='#7775D6' />
+                    <stop offset={1} stopColor='#E935C1' stopOpacity={0} />
                   </radialGradient>
                 </defs>
               </svg>

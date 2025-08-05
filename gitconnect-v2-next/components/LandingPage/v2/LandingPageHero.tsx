@@ -3,7 +3,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { auth } from '@/firebase/clientApp';
-import { Button, Container, Flex, Group, Space, Text, Title } from '@mantine/core';
+import {
+  Button,
+  Container,
+  Flex,
+  Group,
+  Space,
+  Text,
+  Title,
+} from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import useStyles from './LandingPageHero.styles';
@@ -22,14 +30,7 @@ export function HeroSection() {
 
       try {
         // Attempt popup OAuth
-        await signInWithPopup(auth, provider).then(() => {
-          // console.log(provider)
-          // console.log(auth.currentUser)
-          // console.log('Successfully signed up with Github');
-          // const userId = auth.currentUser?.uid;
-          // push to home after auth
-          // Router.push('/');
-        });
+        await signInWithPopup(auth, provider).then(() => {});
       } catch (error) {
         console.log(error);
         // alert(error)
@@ -48,48 +49,29 @@ export function HeroSection() {
             <Title className={classes.title}>
               <span className={classes.highlight}>GitConnect;</span>
               <br />
-              <Space h="xs" />
+              <Space h='xs' />
               The portfolio platform for devs.
             </Title>
-            <Text color="dimmed" mt="md">
-              GitConnect is a dedicated platform for developers to build their portfolio,
-              connect with opportunities, and with each other.
+            <Text color='dimmed' mt='md'>
+              GitConnect is a dedicated platform for developers to build their
+              portfolio, connect with opportunities, and with each other.
             </Text>
 
             <Flex
               mt={40}
-              // direction={{ xl: 'row', md:'row', xs: 'column' }}
               direction={{ base: 'column', md: 'column', sm: 'row', xs: 'row' }}
               // justify='center'
               justify={{ md: 'flex-start', sm: 'center' }}
-              align="center"
-              // className={classes.heroMobileLayout}
-              // position='center'
-              // {(theme) => ({ [theme.fn.smallerThan('sm')]: 'center' })}
-              // 'center'
+              align='center'
             >
-              {/* <Link href='/signup' passHref legacyBehavior>
+              <Link href='#' passHref legacyBehavior>
                 <Button
                   component='a'
                   variant='gradient'
+                  leftIcon={<IconBrandGithub size={18} />}
                   gradient={{ from: 'indigo', to: 'cyan' }}
                   radius='lg'
                   size='lg'
-
-                  className={classes.buttons}
-                >
-                  Claim Your Portfolio
-                </Button>
-              </Link> */}
-              {/* <Group grow mx='xl' mb="md" mt="xl"> */}
-              <Link href="#" passHref legacyBehavior>
-                <Button
-                  component="a"
-                  variant="gradient"
-                  leftIcon={<IconBrandGithub size={18} />}
-                  gradient={{ from: 'indigo', to: 'cyan' }}
-                  radius="lg"
-                  size="lg"
                   onClick={(e) => {
                     signupHandler(e);
                   }}
@@ -99,12 +81,12 @@ export function HeroSection() {
                 </Button>
               </Link>
               {/* </Group> */}
-              <Link href="/" passHref legacyBehavior>
+              <Link href='/' passHref legacyBehavior>
                 <Button
-                  component="a"
-                  variant="default"
-                  radius="lg"
-                  size="lg"
+                  component='a'
+                  variant='default'
+                  radius='lg'
+                  size='lg'
                   className={classes.buttons}
                   // className={classes.control}
                 >
@@ -116,13 +98,13 @@ export function HeroSection() {
 
           <Image
             // src={heroImage}
-            src="https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/landing%2Fhero_768x768.webp?alt=media&token=86d106e9-8486-4ffd-b1c8-479629bb7056"
+            src='https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/landing%2Fhero_768x768.webp?alt=media&token=86d106e9-8486-4ffd-b1c8-479629bb7056'
             width={600}
             height={600}
             priority={true}
             quality={70}
             className={classes.image}
-            alt="GitConnect Landing Hero image - 3D render of a galaxy popping out of a laptop"
+            alt='GitConnect Landing Hero image - 3D render of a galaxy popping out of a laptop'
           />
         </div>
       </div>

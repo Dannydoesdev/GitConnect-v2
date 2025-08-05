@@ -1,32 +1,14 @@
-import {
-  RichTextEditor,
-  Link,
-  useRichTextEditorContext,
-} from '@mantine/tiptap';
-import { useEditor } from '@tiptap/react';
-import { useState, useEffect, useContext } from 'react';
-import Highlight from '@tiptap/extension-highlight';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import TextAlign from '@tiptap/extension-text-align';
-import Superscript from '@tiptap/extension-superscript';
-import SubScript from '@tiptap/extension-subscript';
-import Image from '@tiptap/extension-image';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import { lowlight } from 'lowlight';
-import tsLanguageSyntax from 'highlight.js/lib/languages/typescript';
-import { Button, Center, Container, Group } from '@mantine/core';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
-import { db } from '../../firebase/clientApp';
+import { RichTextEditor, Link } from "@mantine/tiptap";
+import { useEditor } from "@tiptap/react";
+import { useState, useEffect } from "react";
+import Highlight from "@tiptap/extension-highlight";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import TextAlign from "@tiptap/extension-text-align";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { lowlight } from "lowlight";
+import tsLanguageSyntax from "highlight.js/lib/languages/typescript";
+import { Button, Center, Container, Group } from "@mantine/core";
 
 type CaseStudyProps = {
   repoId?: string;
@@ -34,14 +16,12 @@ type CaseStudyProps = {
   aiGeneratedContent?: any;
 };
 
-lowlight.registerLanguage('ts', tsLanguageSyntax);
+lowlight.registerLanguage("ts", tsLanguageSyntax);
 
-function EditableCaseStudy({
-  aiGeneratedContent,
-}: CaseStudyProps) {
-  const [editorContent, setEditorContent] = useState('');
+function EditableCaseStudy({ aiGeneratedContent }: CaseStudyProps) {
+  const [editorContent, setEditorContent] = useState("");
   const [content, setContent] = useState(aiGeneratedContent);
-  const [readme, setReadme] = useState('');
+  const [readme, setReadme] = useState("");
 
   const editor = useEditor({
     extensions: [
@@ -50,18 +30,18 @@ function EditableCaseStudy({
       }),
       CodeBlockLowlight.configure({
         HTMLAttributes: {
-          class: 'lowlight',
+          class: "lowlight",
         },
         lowlight,
       }),
       Underline,
       Link.configure({
         HTMLAttributes: {
-          target: '_blank',
+          target: "_blank",
         },
       }),
       Highlight,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content,
     onUpdate({ editor }) {
@@ -89,92 +69,90 @@ function EditableCaseStudy({
       <Container>
         <Center>
           <Button
-            component='a'
-            size='lg'
-            radius='md'
+            component="a"
+            size="lg"
+            radius="md"
             mt={40}
-            className='mx-auto'
+            className="mx-auto"
             onClick={handleSave}
             styles={(theme) => ({
               inner: {
-                flex: 'wrap',
+                flex: "wrap",
               },
               root: {
                 backgroundColor: theme.colors.green[9],
-                width: '40%',
-                [theme.fn.smallerThan('sm')]: {
-                  width: '70%',
+                width: "40%",
+                [theme.fn.smallerThan("sm")]: {
+                  width: "70%",
                 },
-                '&:hover': {
+                "&:hover": {
                   backgroundColor:
-                    theme.colorScheme === 'dark'
-                      ? theme.colors.dark[6]
-                      : theme.colors.blue[7],
+                    theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.blue[7],
                 },
               },
             })}
           >
-            {editor?.isEditable ? 'Save Changes' : 'Edit Text content'}
+            {editor?.isEditable ? "Save Changes" : "Edit Text content"}
           </Button>
         </Center>
-<Group position='center'>
-        <RichTextEditor
-          mt={40}
-          editor={editor}
-          w='90%'
-          // mx={200}
-          // styles={(theme) => ({
-          //   content: {
-          //     color: editor?.isEditable ? 'auto' : '#999',
-          //     minHeight: 500,
+        <Group position="center">
+          <RichTextEditor
+            mt={40}
+            editor={editor}
+            w="90%"
+            // mx={200}
+            // styles={(theme) => ({
+            //   content: {
+            //     color: editor?.isEditable ? 'auto' : '#999',
+            //     minHeight: 500,
 
-          //   },
-          //   root: {
-          //     cursor: editor?.isEditable ? 'auto' : 'not-allowed',
-          //   },
-          // })}
-        >
-          <RichTextEditor.Toolbar sticky stickyOffset={60}>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Bold />
-              <RichTextEditor.Italic />
-              <RichTextEditor.Underline />
-              <RichTextEditor.Strikethrough />
-              <RichTextEditor.ClearFormatting />
-              <RichTextEditor.Highlight />
-              <RichTextEditor.Code />
-            </RichTextEditor.ControlsGroup>
+            //   },
+            //   root: {
+            //     cursor: editor?.isEditable ? 'auto' : 'not-allowed',
+            //   },
+            // })}
+          >
+            <RichTextEditor.Toolbar sticky stickyOffset={60}>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Bold />
+                <RichTextEditor.Italic />
+                <RichTextEditor.Underline />
+                <RichTextEditor.Strikethrough />
+                <RichTextEditor.ClearFormatting />
+                <RichTextEditor.Highlight />
+                <RichTextEditor.Code />
+              </RichTextEditor.ControlsGroup>
 
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.H1 />
-              <RichTextEditor.H2 />
-              <RichTextEditor.H3 />
-              <RichTextEditor.H4 />
-            </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.H1 />
+                <RichTextEditor.H2 />
+                <RichTextEditor.H3 />
+                <RichTextEditor.H4 />
+              </RichTextEditor.ControlsGroup>
 
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Blockquote />
-              <RichTextEditor.Hr />
-              <RichTextEditor.BulletList />
-              <RichTextEditor.OrderedList />
-            </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Blockquote />
+                <RichTextEditor.Hr />
+                <RichTextEditor.BulletList />
+                <RichTextEditor.OrderedList />
+              </RichTextEditor.ControlsGroup>
 
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Link />
-              <RichTextEditor.Unlink />
-            </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Link />
+                <RichTextEditor.Unlink />
+              </RichTextEditor.ControlsGroup>
 
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.AlignLeft />
-              <RichTextEditor.AlignCenter />
-              <RichTextEditor.AlignJustify />
-              <RichTextEditor.AlignRight />
-            </RichTextEditor.ControlsGroup>
-          </RichTextEditor.Toolbar>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.AlignLeft />
+                <RichTextEditor.AlignCenter />
+                <RichTextEditor.AlignJustify />
+                <RichTextEditor.AlignRight />
+              </RichTextEditor.ControlsGroup>
+            </RichTextEditor.Toolbar>
 
-          <RichTextEditor.Content />
+            <RichTextEditor.Content />
           </RichTextEditor>
-          </Group>
+        </Group>
       </Container>
     </div>
   );

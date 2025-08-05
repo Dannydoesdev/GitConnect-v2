@@ -1,7 +1,4 @@
-// File: contexts/formContext.js
 import { createFormContext } from '@mantine/form';
-
-// export const [FormProvider, useForm] = createFormContext();
 
 interface ProjectFormValues {
   title: string;
@@ -22,6 +19,5 @@ interface ProjectFormValues {
 }
 
 
-// You can give context variables any name
 export const [ProjectFormProvider, useProjectFormContext, useProjectForm] =
   createFormContext<ProjectFormValues>();
