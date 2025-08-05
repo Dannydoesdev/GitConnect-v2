@@ -7,7 +7,6 @@ export async function getGithubProfileData(username: string) {
 
   try {
     const response = await octokit.users.getByUsername({ username });
-    // console.log(response.data)
     return response.data;
   } catch (error) {
     console.error(`Failed to get GitHub data for ${username}`, error);
@@ -24,27 +23,11 @@ export async function getGithubReposWithUsername(username: string) {
       username: username,
       sort: 'updated',
       per_page: 100,
-    })
-    
-      return response.data;
+    });
 
+    return response.data;
   } catch (error) {
     console.error(`Failed to get GitHub data for ${username}`, error);
     return null;
   }
-};
-
-
-  // return await octokit.users
-  //   .getByUsername({
-  //     username,
-  //   })
-  //   .then((response) => {
-  //     console.log(`response:`);
-  //     console.log(response.data);
-  //     return response.data;
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //   });
-// }
+}

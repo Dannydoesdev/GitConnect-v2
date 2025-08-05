@@ -1,4 +1,3 @@
-
 export function correctImageGetter(imageUrl: string, size?: number) {
   if (!imageUrl) {
     return '/images/placeholder.png';

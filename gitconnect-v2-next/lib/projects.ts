@@ -2,7 +2,7 @@ import {
   collection,
   collectionGroup,
   doc,
-  DocumentData, // serverTimestamp,
+  DocumentData,
   getDoc,
   getDocs,
   query,
@@ -10,7 +10,9 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/clientApp';
 
-export async function getSingleProjectByNameLowercase(repoNameLowercase: string) {
+export async function getSingleProjectByNameLowercase(
+  repoNameLowercase: string
+) {
   repoNameLowercase = repoNameLowercase.toLowerCase();
   const q = query(
     collectionGroup(db, 'repos'),
@@ -31,7 +33,6 @@ export async function getSingleProjectByNameLowercase(repoNameLowercase: string)
 }
 
 interface ProjectData {
-  // Define the properties of ProjectData here
   [key: string]: any;
 }
 
@@ -69,33 +70,9 @@ export async function getSingleProjectByName(repoName: string) {
 
     return {
       ...data,
-      // id: doc.id,
-      // stars: data.stars?.length ?? 0,
-      // views: data.views ?? 0,
     };
   });
   return projectData;
-  // return querySnapshot.docs.map((detail: any) => {
-  //   const docData = { ...detail.data() };
-  //   console.log('docData')
-  //   console.log(docData)
-  //   return {
-  //     // id,
-  //     docData,
-  //   };
-  // });
-
-  // const projectData: any = querySnapshot.docs.map((doc: any) => {
-  //   const data = doc.data();
-  //   if (!data) {
-  //     return null;
-  //   }
-
-  //   return {
-  //     ...data,
-  //   };
-  // });
-  // return projectData;
 }
 
 export async function getSingleProjectById(repoId: string) {
@@ -113,36 +90,30 @@ export async function getSingleProjectById(repoId: string) {
 
     return {
       ...data,
-      // id: doc.id,
-      // stars: data.stars?.length ?? 0,
-      // views: data.views ?? 0,
     };
   });
   return projectData;
 }
 
-export async function getSingleProjectByUserAndName(userName: string, repoName: string) {
+export async function getSingleProjectByUserAndName(
+  userName: string,
+  repoName: string
+) {
   const docRef = doc(db, `users/${userName}/repos/${repoName}`);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    // console.log('Document data:', docSnap.data());
-
     return docSnap.data();
-    // console.log('Document data:', docSnap.data());
   } else {
-    // docSnap.data() will be undefined in this case
     console.log('No such document!');
     return null;
   }
 }
 
-// export async function getAllUserAndProjectNameCombinationsLowercase(): Promise<{ projectname: string, username: string }[]> {
 export async function getAllUserAndProjectNameCombinationsLowercase() {
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
 
-  // const paths: { projectname: string, username: string }[] = querySnapshot.docs.map((doc: any) => {
   const paths: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
     if (!data) {
@@ -168,8 +139,6 @@ export async function getAllUserAndProjectNameCombinations() {
     return {
       projectname: data.name.toString(),
       username: data.owner?.login?.toString(),
-      // projectname: data.name.toString().toLowerCase(),
-      // username: data.owner?.login?.toString().toLowerCase(),
     };
   });
   return paths;
@@ -197,7 +166,6 @@ export async function getAllProjectIds() {
 
   const projectIds: any = querySnapshot.docs.map((doc: any) => {
     const data = doc.data();
-    // console.log(typeof data.id)
     if (!data || !data.id) {
       return null;
     }
@@ -208,10 +176,14 @@ export async function getAllProjectIds() {
   return projectIds;
 }
 
-// export async function getProjectTextEditorContent(userId: string, repoId: string): Promise<string | null> {
-
-export async function getProjectTextEditorContent(userId: string, repoId: string) {
-  const docRef = doc(db, `users/${userId}/repos/${repoId}/projectData/mainContent`);
+export async function getProjectTextEditorContent(
+  userId: string,
+  repoId: string
+) {
+  const docRef = doc(
+    db,
+    `users/${userId}/repos/${repoId}/projectData/mainContent`
+  );
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -223,10 +195,8 @@ export async function getProjectTextEditorContent(userId: string, repoId: string
   } else return null;
 }
 
-// export async function getAllCustomProjectData(userId: string, repoId: string): Promise<ProjectData[]> {
 export async function getAllCustomProjectData(userId: string, repoId: string) {
   const customProjectData: any = [];
-  // const customProjectData: ProjectData[] = [];
 
   const querySnapshot = await getDocs(
     collection(db, `users/${userId}/repos/${repoId}/projectData`)
@@ -242,11 +212,6 @@ export async function getAllProjectsSimple() {
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.forEach((doc: any) => {
-    // ...detail.data(),
-    // id: detail.id,
-    // console.log(doc.id, ' => ', doc.data());
-    // console.log({ ...doc.data() })
-    // console.log(detail.id)
     projects.push({ ...doc.data() });
 
     return projects;
@@ -286,24 +251,24 @@ export async function fetchProjects() {
 }
 
 export async function getAllProjectDataFromProfile(id: string) {
-  const projectQuery = query(collectionGroup(db, 'repos'), where('userId', '==', id));
+  const projectQuery = query(
+    collectionGroup(db, 'repos'),
+    where('userId', '==', id)
+  );
   const querySnapshot = await getDocs(projectQuery);
 
   return querySnapshot.docs.map((detail: any) => {
     const docData = { ...detail.data() };
 
     return {
-      // id,
       docData,
     };
   });
 }
 
-// TODO: Update this type to match the actual data structure and implement in codebase
 interface ProjectData {
   docData?: {
-    // Define the properties of docData here
-    [key: string]: any; // Replace with actual property types
+    [key: string]: any;
   };
 }
 
@@ -333,10 +298,10 @@ export async function getAllUserProjectsWithUsernameLowercaseTyped(
     );
 }
 
-// This function fetches all projects associated with a username from Firestore
-export async function getAllUserProjectsWithUsernameLowercase(usernameLowercase: string) {
+export async function getAllUserProjectsWithUsernameLowercase(
+  usernameLowercase: string
+) {
   usernameLowercase = usernameLowercase.toLowerCase();
-  // console.log('getAllUserProjectsWithUsernameLowercase, username: ', usernameLowercase);
   const projectQuery = query(
     collectionGroup(db, 'repos'),
     where('username_lowercase', '==', usernameLowercase)
@@ -355,162 +320,28 @@ export async function getAllUserProjectsWithUsernameLowercase(usernameLowercase:
     };
   });
 }
-// return querySnapshot.docs.map((detail: any) => {
-//   const docData = { ...detail.data() };
-
-//   return {
-//     // id,
-//     docData,
-//   };
-// });
-
-// const projectData: any = querySnapshot.docs.map((doc: any) => {
-//   const data = doc.data();
-//   console.log(data.reponame_lowercase);
-//   return {
-//     ...data,
-//     // username: data.userName,
-//   };
-// });
-// console.log(projectData)
-// return projectData;
-
-//   console.log('returned from getAllUserProjectsWithUsernameLowercase query:')
-//  querySnapshot.docs.map((doc: any) => {
-//     // console.log(doc.id, ' => ', doc.data());
-//     const docData = { ...doc.data() };
-//     projectData.push(docData)
-
-// return {
-// id,
-// docData,
-// id: docData.userId,
-// };
-// });
-
-// return projectData
-// let profileId = ''
-// let profileData: DocumentData[] = []
-
-//   try {
-//     const querySnapshot = await getDocs(collection(db, "users"));
-//     const userQuery = query(collection(db, 'users'), where('username_lowercase', '==', usernameLowercase));
-
-//     const userQuerySnapshot = await getDocs(userQuery);
-
-//     userQuerySnapshot.forEach((doc) => {
-//       console.log(doc.id, ' => ', doc.data());
-//     });
-
-//     // const docsArray = querySnapshot.docs;
-//     // const filteredDocs = docsArray.filter((doc: any) => {
-//     //   return doc.data().userName.toLowerCase() == username.toLowerCase()
-//     // });
-
-//     // console.log(filteredDocs)
-//     // const querySnapshot = await getDocs(collection(db, "users"));
-//     // querySnapshot.filter((doc) => {
-
-//     //   doc.data().userName.toLowerCase() == username.toLowerCase()
-//     // })
-
-//     querySnapshot.forEach((doc) => {
-//       if (doc.data().userName.toLowerCase() == username.toLowerCase()) {
-//         profileData.push(doc.data())
-//         profileId = doc.id
-
-//       }
-
-//     });
-//   } catch (e) {
-//     console.log("Error getting documents: ", e);
-//   } finally {
-//     const projectData = await getAllProjectDataFromProfile(profileId)
-//     return {
-//       projectData,
-//       id: profileId,
-//     }
-//   }
-// }
 
 export async function getAllUserProjectsWithUsername(username: string) {
-  // const idCollection = collection(db, 'users');
   let profileId = '';
   let profileData: DocumentData[] = [];
-  // const
-  // console.log('username', username)
 
   try {
     const querySnapshot = await getDocs(collection(db, 'users'));
-    // const docsArray = querySnapshot.docs;
-    // const filteredDocs = docsArray.filter((doc: any) => {
-    //   return doc.data().userName.toLowerCase() == username.toLowerCase()
-    // });
-
-    // console.log(filteredDocs)
-    // const querySnapshot = await getDocs(collection(db, "users"));
-    // querySnapshot.filter((doc) => {
-
-    //   doc.data().userName.toLowerCase() == username.toLowerCase()
-    // })
 
     querySnapshot.forEach((doc) => {
-      // console.log(doc.data())
-      // doc.data() is never undefined for query doc snapshots
       if (doc.data().userName.toLowerCase() == username.toLowerCase()) {
         profileData.push(doc.data());
         profileId = doc.id;
-        // console.log(doc.id)
-        // console.log(doc.data())
-        // console.log(doc.id, " => ", doc.data());
       }
     });
   } catch (e) {
     console.log('Error getting documents: ', e);
   } finally {
-    //  const projectData = getAllProjectDataFromProfile(profileData[0].id)
     const projectData = await getAllProjectDataFromProfile(profileId);
 
-    // console.log('profileData', profileData)
-    // console.log('projectData', projectData)
     return {
       projectData,
       id: profileId,
     };
   }
 }
-
-// const idQuery = query(collection(db, 'users'), where('userName', '==', username));
-
-// const idQuerySnapshot = await getDocs(idQuery);
-// idQuerySnapshot.forEach((doc) => {
-//   console.log('doctime')
-//   console.log(doc.id, ' => ', doc.data());
-// });
-// console.log('username', username)
-
-// const projectQuery = query(collectionGroup(db, 'repos'), where('userName', '==', username));
-// const querySnapshot = await getDocs(projectQuery);
-
-// return querySnapshot.docs.map((detail: any) => {
-//   console.log(...detail.data())
-//   const docData = { ...detail.data() };
-
-//   return {
-//     // id,
-//     id: docData.id,
-//     docData,
-//   };
-// });
-// }
-
-// return the data of the profiles
-
-// export async function getProjectData(id: string) {
-//   const projectQuery = query(
-//     collectionGroup(db, 'repos'),
-//     where('id', '==', id)
-//   );
-//   const querySnapshot = await getDocs(projectQuery);
-
-// }

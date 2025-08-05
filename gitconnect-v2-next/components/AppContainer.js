@@ -1,45 +1,28 @@
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
-import { app, auth } from '@/firebase/clientApp';
-import { CheckIcon } from '@heroicons/react/20/solid';
+import { useRouter } from 'next/router';
+import { auth } from '@/firebase/clientApp';
 import {
   AppShell,
   Avatar,
-  Box,
   Burger,
   Button,
-  Center,
-  Chip,
   createStyles,
-  Flex,
-  Footer,
   Group,
   Header,
-  List,
-  ListIcon,
-  ListItem,
-  Menu,
   Paper,
   rem,
-  SimpleGrid,
-  Stack,
   Text,
-  Title,
   Transition,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
 import { signOut } from 'firebase/auth';
-import { getCheckoutUrl } from '@/features/payments/lib/stripePaymentProd';
 import { AuthContext } from '../context/AuthContext';
-// import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { ColorSchemeToggle } from './ColorSchemeToggle/ColorSchemeToggle';
 
 const HEADER_HEIGHT = 70;
 
 const useStyles = createStyles((theme) => ({
-  // Adding Burger
   burger: {
     [theme.fn.largerThan('md')]: {
       display: 'none',
@@ -63,16 +46,9 @@ const useStyles = createStyles((theme) => ({
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
-    // alignItems: 'center',
-    // justifyContent: 'center',
     gap: theme.spacing.xs,
     paddingTop: theme.spacing.sm,
     paddingBottom: theme.spacing.sm,
-    // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-    // marginRight: theme.spacing.xs,
-    // marginLeft: theme.spacing.xs,
-    // marginRight: theme.spacing.lg,
-    // marginLeft: theme.spacing.lg,
 
     [theme.fn.largerThan('md')]: {
       display: 'none',
@@ -83,9 +59,6 @@ const useStyles = createStyles((theme) => ({
     [theme.fn.largerThan('md')]: {
       display: 'none',
     },
-    // [theme.fn.smallerThan('sm')]: {
-    //   display: 'none',
-    // },
   },
 
   link: {
@@ -94,13 +67,18 @@ const useStyles = createStyles((theme) => ({
     padding: `${rem(8)} ${rem(12)}`,
     borderRadius: theme.radius.sm,
     textDecoration: 'none',
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[0]
+        : theme.colors.gray[7],
     fontSize: theme.fontSizes.sm,
     fontWeight: 500,
 
     '&:hover': {
       backgroundColor:
-        theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
 
     [theme.fn.smallerThan('sm')]: {
@@ -114,9 +92,12 @@ const useStyles = createStyles((theme) => ({
 
   linkActive: {
     '&, &:hover': {
-      backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
-        .background,
-      color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+      backgroundColor: theme.fn.variant({
+        variant: 'light',
+        color: theme.primaryColor,
+      }).background,
+      color: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
+        .color,
     },
   },
   linkButtons: {
@@ -125,11 +106,11 @@ const useStyles = createStyles((theme) => ({
     },
     '&:hover': {
       backgroundColor:
-        theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[0],
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[4]
+          : theme.colors.gray[0],
     },
   },
-
-  // Burger finish
 
   card: {
     height: 440,
@@ -176,40 +157,12 @@ const useStyles = createStyles((theme) => ({
     alignItems: 'center',
     height: '100%',
     flexWrap: 'no-wrap',
-    // <Group position="apart" align="center" height="100%">
   },
 
   colorToggle: {
     marginTop: 4,
   },
 }));
-
-const tiers = [
-  {
-    name: 'Monthly',
-    id: 'tier-hobby',
-    href: '#',
-    priceMonthly: '$15 AUD',
-    description: 'Monthly subscription - discount codes available.',
-    features: [
-      'Unlimited projects',
-      // 'Get featured more often',
-      'Influence the roadmap - join the Discord Pro chat',
-      'Add blogs - coming soon',
-      'AI integration (images and project copy) - coming soon',
-      // 'Custom URL - coming soon',
-      // 'Paid Project board - coming soon',
-      // 'Video integration - coming soon',
-      // 'Advanced analytics',
-      // '24-hour support response time'
-    ],
-    featured: false,
-  },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
 
 export const AppContainer = ({ children }, props) => {
   const { userData, currentUser } = useContext(AuthContext);
@@ -224,20 +177,11 @@ export const AppContainer = ({ children }, props) => {
     setIsPro(newPremiumStatus);
   }, [userData]);
 
-  // console.log(`userData: ${userData}`);
-  // console.log(userData)
-  // const premiumButton = () => {
-  //   <Group position="center">
-  //     <Button onClick={open}>Open centered Modal</Button>
-  //   </Group>;
-  // };
-
   const signOutHandler = async (e) => {
     e.preventDefault();
     await signOut(auth).then(() => {
       Router.push('/');
     });
-    // Router.push("/login")
   };
 
   const signInHandler = (e) => {
@@ -253,10 +197,9 @@ export const AppContainer = ({ children }, props) => {
   const links = [
     { label: 'Home', link: '/' },
     { label: 'About', link: '/landing' },
-    // { label: 'Pricing', link: '/pricing' },
-    // { label: 'Add Project', link: '/getrepos' },
+    // { label: 'Pricing', link: '/pricing' }, // Removing pricing for now
     { label: 'Add Project', link: `/addproject` },
-    // Only include the Portfolio link if userData is available
+    // Link to quickstart if user is anonymous, otherwise link to portfolio
     {
       label: 'Portfolio',
       link: userData
@@ -265,10 +208,6 @@ export const AppContainer = ({ children }, props) => {
           : `/portfolio/${userData.username_lowercase}`
         : '#',
     },
-    // { label: 'Portfolio', link: `/portfolio/${userData.username_lowercase}` },
-    // href={userData.isAnonymous ? `/quickstart/${userData.uid}` : `/portfolio/${userData.username_lowercase}`}
-    // { label: 'Profile', link: `/profiles/${userData.userId}` },
-    // { label: 'Sign Out', link: '/login' },
   ];
 
   const [active, setActive] = useState(links[0].link);
@@ -279,31 +218,26 @@ export const AppContainer = ({ children }, props) => {
       legacyBehavior
       key={link.label}
       href={link.link}
-      className={cx(classes.link, { [classes.linkActive]: active === link.link })}
-      // onClick={(event) => {
-      //   event.preventDefault();
-      //   setActive(link.link);
-      //   // toggle();
-      //   close();
-      // }}
+      className={cx(classes.link, {
+        [classes.linkActive]: active === link.link,
+      })}
     >
       <Button
-        component="a"
-        size="xs"
-        color="gray"
-        variant="subtle"
+        component='a'
+        size='xs'
+        color='gray'
+        variant='subtle'
         onClick={(event) => {
-          // event.preventDefault();
           setActive(link.link);
-          // toggle();
           close();
         }}
-        // className={cx(classes.link, { [classes.linkActive]: active === link.link })}
         className={classes.linkButtons}
-        // className={cx(classes.link, { [classes.linkActive]: active === link.link })
         sx={(theme) => ({
           fontSize: '16px',
-          color: theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+          color:
+            theme.colorScheme === 'dark'
+              ? theme.colors.white
+              : theme.colors.dark,
         })}
       >
         {link.label}
@@ -315,64 +249,40 @@ export const AppContainer = ({ children }, props) => {
     <AppShell
       styles={{
         main: {
-          // background: "#FFFFFF",
           width: '100vw',
           height: '100vg',
           paddingLeft: '0px',
           paddingRight: '0px',
-          // marginBottom: '20px', // causing scroll bar to appear
         },
       }}
-      // boolean fixed = fixed on every single page
       fixed={true}
-      //can pass a component in now
-
-      // pass in the header and use divs with CSS styling instead of 'Group'
       header={
-        // p = padding size
-        // <Header height={70} padding={20}>
         <Header className={classes.header}>
-          <Group position="apart" align="center" height="100%">
+          <Group position='apart' align='center' height='100%'>
             <Group>
-              {/* <div style={{ display: 'flex', alignItems: 'center', height:"100%" }}> */}
-              <Link href="/" passHref legacyBehavior>
+              <Link href='/' passHref legacyBehavior>
                 <Text
-                  component="a"
-                  // color={theme.colorScheme === 'dark' ? 'dark' : 'gray'}
-                  size="xl"
-                  weight="bolder"
+                  component='a'
+                  size='xl'
+                  weight='bolder'
                   className={classes.navBrand}
                 >
                   GitConnect;
                 </Text>
               </Link>
-              {/* <ColorModeSwitcher /> */}
               <ColorSchemeToggle />
             </Group>
 
-            {/* NAV BUTTONS FOR SIGNED IN USER */}
-
+            {/* Nav buttons for signed in user */}
             {currentUser ? (
               <>
-                {/* Removing these nav items for now */}
-
-                {/* <Link href='/userinfo' passHref legacyBehavior>
-                    <Text
-                      component='a'
-                      className='dark:text-white'
-                      size='md'
-                      weight='bolder'
-                    >
-                      User
-                    </Text>
-                  </Link> */}
-                <Group className={classes.responsiveHide} position="center">
-                  <Link href="/landing" passHref legacyBehavior>
+                <Group className={classes.responsiveHide} position='center'>
+                  <Link href='/landing' passHref legacyBehavior>
                     <Button
-                      component="a"
-                      size="xs"
-                      color="gray"
-                      variant="subtle"
+                      component='a'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
@@ -384,31 +294,14 @@ export const AppContainer = ({ children }, props) => {
                       About
                     </Button>
                   </Link>
-                  {/* <Link href="/getrepos" passHref legacyBehavior>
-                    <Button
-                      component="a"
-                      size="xs"
-                      color="gray"
-                      variant="subtle"
-                      sx={(theme) => ({
-                        fontSize: '16px',
-                        color:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.white
-                            : theme.colors.dark,
-                      })}
-                    >
-                      Add Project
-                    </Button>
-                  </Link> */}
 
                   {userData && !userData.isAnonymous && (
-                    <Link href="/addproject" passHref legacyBehavior>
+                    <Link href='/addproject' passHref legacyBehavior>
                       <Button
-                        component="a"
-                        size="xs"
-                        color="gray"
-                        variant="subtle"
+                        component='a'
+                        size='xs'
+                        color='gray'
+                        variant='subtle'
                         sx={(theme) => ({
                           fontSize: '16px',
                           color:
@@ -421,7 +314,6 @@ export const AppContainer = ({ children }, props) => {
                       </Button>
                     </Link>
                   )}
-                  {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
                   <Link
                     href={
                       userData
@@ -434,10 +326,10 @@ export const AppContainer = ({ children }, props) => {
                     legacyBehavior
                   >
                     <Button
-                      component="a"
-                      size="xs"
-                      color="gray"
-                      variant="subtle"
+                      component='a'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
@@ -452,10 +344,10 @@ export const AppContainer = ({ children }, props) => {
                   {userData && userData.isAnonymous && (
                     <Link href={'/quickstart'} passHref legacyBehavior>
                       <Button
-                        component="a"
-                        size="xs"
-                        color="gray"
-                        variant="subtle"
+                        component='a'
+                        size='xs'
+                        color='gray'
+                        variant='subtle'
                         sx={(theme) => ({
                           fontSize: '16px',
                           color:
@@ -470,7 +362,7 @@ export const AppContainer = ({ children }, props) => {
                   )}
                 </Group>
 
-                {/* REMOVING PRICING FOR NOW */}
+                {/* Removing pricing for now */}
                 {/* {!isPro && (
                   <Link href="/pricing" passHref legacyBehavior>
                     <Button
@@ -519,28 +411,27 @@ export const AppContainer = ({ children }, props) => {
                     onClick={toggle}
                     onClose={close}
                     className={classes.burger}
-                    size="sm"
+                    size='sm'
                   />
 
                   <Transition
-                    // transition="pop-top-right"
-                    transition="slide-left"
-                    // transition='scale'
+                    transition='slide-left'
                     duration={600}
                     mounted={opened}
-                    timingFunction="ease-in-out"
+                    timingFunction='ease-in-out'
                   >
                     {(styles) => (
-                      <Paper className={classes.dropdown} withBorder style={styles}>
+                      <Paper
+                        className={classes.dropdown}
+                        withBorder
+                        style={styles}
+                      >
                         {items}
                       </Paper>
                     )}
                   </Transition>
-                  {/* add profile picture as nav bar avatar to go to /pages/profiles  */}
-                  {/* <Link href={`/profiles/${userData.userId}`} passHref legacyBehavior> */}
                   <Link
                     // if user is anonymous - use uid
-                    // href={`/portfolio/${userData.username_lowercase}`}
                     href={
                       userData
                         ? userData.isAnonymous
@@ -552,21 +443,19 @@ export const AppContainer = ({ children }, props) => {
                     legacyBehavior
                   >
                     <Avatar
-                      component="a"
-                      radius="xl"
-                      size="md"
+                      component='a'
+                      radius='xl'
+                      size='md'
                       src={userData.userPhotoLink}
                     />
                   </Link>
 
-                  <Link href="#" passHref legacyBehavior>
+                  <Link href='#' passHref legacyBehavior>
                     <Button
-                      component="a"
-                      size="xs"
+                      component='a'
+                      size='xs'
                       onClick={(e) => signOutHandler(e)}
-                      // className='mx-auto'
                       sx={(theme) => ({
-                        // subscribe to color scheme changes
                         backgroundColor:
                           theme.colorScheme === 'dark'
                             ? theme.colors.dark[5]
@@ -580,22 +469,15 @@ export const AppContainer = ({ children }, props) => {
               </>
             ) : (
               <>
-                <Group className={classes.responsiveHide} position="center">
-                  <Link href="/landing" passHref legacyBehavior>
+                <Group className={classes.responsiveHide} position='center'>
+                  <Link href='/landing' passHref legacyBehavior>
                     <Button
-                      component="a"
-                      size="xs"
-                      color="gray"
-                      variant="subtle"
-                      // color='indigo'
-                      // onClick={(e) => signInHandler(e)}
-                      // onClick={signInHandler}
-                      // className='mx-auto'
+                      component='a'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
                       sx={(theme) => ({
                         fontSize: '16px',
-                        // textDecoration: 'underline',
-                        // border: '1px solid black',
-                        // subscribe to color scheme changes
                         color:
                           theme.colorScheme === 'dark'
                             ? theme.colors.white
@@ -607,10 +489,10 @@ export const AppContainer = ({ children }, props) => {
                   </Link>
                   <Link href={'/quickstart'} passHref legacyBehavior>
                     <Button
-                      component="a"
-                      size="xs"
-                      color="gray"
-                      variant="subtle"
+                      component='a'
+                      size='xs'
+                      color='gray'
+                      variant='subtle'
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
@@ -622,10 +504,7 @@ export const AppContainer = ({ children }, props) => {
                       Quickstart
                     </Button>
                   </Link>
-
-                  {/* <Group className={classes.responsiveHide} position="center"> */}
-
-                  {/* REMOVING PRICING FOR NOW */}
+                  {/* Removing pricing for now */}
                   {/* <Link href="/pricing" passHref legacyBehavior>
                     <Button
                       component="a"
@@ -644,28 +523,13 @@ export const AppContainer = ({ children }, props) => {
                     </Button>
                     </Link> */}
                 </Group>
-                {/* <Link href='/landing' passHref legacyBehavior>
-                    <Text
-                      component='a'
-                      className='dark:text-white'
-                      // color= {theme.white}
-                      size='md'
-                      weight='bolder'
-                    >
-                      About
-                    </Text>
-                  </Link> */}
-
                 <Group>
-                  <Link href="#" passHref legacyBehavior>
+                  <Link href='#' passHref legacyBehavior>
                     <Button
-                      component="a"
-                      size="xs"
+                      component='a'
+                      size='xs'
                       onClick={(e) => signInHandler(e)}
-                      // onClick={signInHandler}
-                      // className='mx-auto'
                       sx={(theme) => ({
-                        // subscribe to color scheme changes
                         backgroundColor:
                           theme.colorScheme === 'dark'
                             ? theme.colors.dark[5]
@@ -675,15 +539,12 @@ export const AppContainer = ({ children }, props) => {
                       Sign in
                     </Button>
                   </Link>
-                  <Link href="#" passHref legacyBehavior>
+                  <Link href='#' passHref legacyBehavior>
                     <Button
-                      component="a"
-                      size="xs"
+                      component='a'
+                      size='xs'
                       onClick={(e) => registerHandler(e)}
-                      // onClick={registerHandler}
-                      // className='mx-auto'
                       sx={(theme) => ({
-                        // subscribe to color scheme changes
                         backgroundColor:
                           theme.colorScheme === 'dark'
                             ? theme.colors.dark[5]
@@ -704,8 +565,6 @@ export const AppContainer = ({ children }, props) => {
     </AppShell>
   );
 };
-
-// Removing the footer for now
 
 // footer={
 //   <Footer height={60} p="md">

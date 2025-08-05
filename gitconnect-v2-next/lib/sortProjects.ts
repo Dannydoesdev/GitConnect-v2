@@ -5,11 +5,10 @@ interface Project {
   id: string;
   stars: number;
   views: number;
-  [key: string]: any; // Include other properties as well
+  [key: string]: any;
 }
 
 function calculateScore(
-  // project: Project,
   project: any,
   starWeight: number,
   viewWeight: number
@@ -22,7 +21,6 @@ function calculateScore(
 }
 
 function sortProjectsByWeightedScore(
-  // projects: Project[],
   projects: any,
   starWeight: number,
   viewWeight: number
@@ -35,7 +33,6 @@ function sortProjectsByWeightedScore(
 }
 
 export async function getAllPublicProjectsAndSort() {
-  // const projects: any = [];
   const q = query(collectionGroup(db, 'repos'), where('hidden', '==', false));
   const querySnapshot = await getDocs(q);
 
@@ -43,7 +40,6 @@ export async function getAllPublicProjectsAndSort() {
     const data = doc.data();
     return {
       ...data,
-      // id: doc.id,
       stars: data.stars?.length ?? 0,
       views: data.views ?? 0,
     };

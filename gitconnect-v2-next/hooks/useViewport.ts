@@ -54,7 +54,7 @@ export default function useViewportForImageSize(
 }
 
 // Used when only userId and repoId are available
-// CAUTION - this function will call firestore every time viewport changes
+// NOTE - this function will call firestore every time viewport changes - not currently in use
 export function useViewportFetchFromFirestore(userId: string, repoId: string) {
   const { height, width } = useViewportSize();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -78,7 +78,6 @@ export function useViewportFetchFromFirestore(userId: string, repoId: string) {
       );
       const docData = await getDoc(docRef);
       const coverImage = docData.data()?.coverImage;
-      // console.log(coverImage)
 
       if (typeof coverImage === 'string') {
         setImageUrl(coverImage);
