@@ -31,7 +31,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { signOut } from 'firebase/auth';
-import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
+import { getCheckoutUrl } from '@/features/payments/lib/stripePaymentProd';
 import { AuthContext } from '../context/AuthContext';
 // import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { ColorSchemeToggle } from './ColorSchemeToggle/ColorSchemeToggle';

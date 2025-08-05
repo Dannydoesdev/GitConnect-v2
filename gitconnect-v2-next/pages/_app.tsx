@@ -20,10 +20,6 @@ import { AuthProvider } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import '@fontsource/inter';
 
-// Previous solution here for future ref - just for icons for notitap
-// import '@unocss/reset/tailwind.css'
-// import 'uno.css'
-
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const router = useRouter();
@@ -92,7 +88,6 @@ export default function App(props: AppProps) {
             <ModalsProvider>
               <Notifications />
               <AuthProvider>
-                {/* <AuthProviderAnonymous> */}
                 <Provider>
                   {/* Introducing the following change to prevent hydration errors - but needs full testing */}
                   {isClient ? (
@@ -112,7 +107,6 @@ export default function App(props: AppProps) {
                     <SpeedInsights />
                   </AppContainer> */}
                 </Provider>
-                {/* </AuthProviderAnonymous> */}
               </AuthProvider>
             </ModalsProvider>
           </MantineProvider>

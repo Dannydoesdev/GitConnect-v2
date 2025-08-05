@@ -1,12 +1,12 @@
-import { FirebaseApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { FirebaseApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import {
   addDoc,
   collection,
   getFirestore,
   onSnapshot,
-} from "firebase/firestore";
-import { getFunctions, httpsCallable } from "firebase/functions";
+} from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 // Help from @pixegami - https://www.youtube.com/watch?v=xi3F2Zv91UE
 
@@ -16,14 +16,14 @@ export const getCheckoutUrl = async (
 ): Promise<string> => {
   const auth = getAuth(app);
   const userId = auth.currentUser?.uid;
-  if (!userId) throw new Error("User is not authenticated");
+  if (!userId) throw new Error('User is not authenticated');
 
   const db = getFirestore(app);
   const checkoutSessionRef = collection(
     db,
-    "users",
+    'users',
     userId,
-    "checkout_sessions"
+    'checkout_sessions'
   );
 
   const docRef = await addDoc(checkoutSessionRef, {
@@ -44,7 +44,7 @@ export const getCheckoutUrl = async (
         reject(new Error(`An error occurred: ${error.message}`));
       }
       if (url) {
-        console.log("Stripe Checkout URL:", url);
+        console.log('Stripe Checkout URL:', url);
         unsubscribe();
         resolve(url);
       }
@@ -58,20 +58,18 @@ export const getPortalUrl = async (app: FirebaseApp): Promise<string> => {
 
   let dataWithUrl: any;
   try {
-    // const functions = getFunctions(app, "us-central1");
-    const functions = getFunctions(app, "australia-southeast1");
+    const functions = getFunctions(app, 'australia-southeast1');
     const functionRef = httpsCallable(
       functions,
-      "ext-firestore-stripe-payments-createPortalLink"
+      'ext-firestore-stripe-payments-createPortalLink'
     );
     const { data } = await functionRef({
       customerId: user?.uid,
       returnUrl: window.location.origin,
     });
 
-    // Add a type to the data
     dataWithUrl = data as { url: string };
-    console.log("Reroute to Stripe portal: ", dataWithUrl.url);
+    console.log('Reroute to Stripe portal: ', dataWithUrl.url);
   } catch (error) {
     console.error(error);
   }
@@ -80,7 +78,7 @@ export const getPortalUrl = async (app: FirebaseApp): Promise<string> => {
     if (dataWithUrl.url) {
       resolve(dataWithUrl.url);
     } else {
-      reject(new Error("No url returned"));
+      reject(new Error('No url returned'));
     }
   });
 };
