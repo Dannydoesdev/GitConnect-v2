@@ -35,17 +35,18 @@ const dbhost =
   (db.toJSON() as { settings?: { host?: string } }).settings?.host ?? '';
 
 // NOTE - firestore won't work with this setup on dev unless you configure and run the emulator
+// if (
+//   process.env.NODE_ENV === 'development' &&
+//   process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST &&
+//   !dbhost.startsWith('localhost')
+// ) {
+
+// Swap out if clause above with the clause below to use emulator with prod builds:
 if (
-  process.env.NODE_ENV === 'development' &&
+  process.env.NODE_ENV &&
   process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST &&
   !dbhost.startsWith('localhost')
 ) {
-  // Swap out if clause above with the clause below to use emulator with prod builds:
-  // if (
-  //   process.env.NODE_ENV &&
-  //   process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST &&
-  //   !dbhost.startsWith('localhost')
-  // ) {
   connectFirestoreEmulator(db, 'localhost', 8080);
   // console.log('After connecting to emulator, dbhost:', (db.toJSON() as { settings?: { host?: string } }).settings?.host);
 }

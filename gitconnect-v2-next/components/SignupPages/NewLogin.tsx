@@ -82,20 +82,13 @@ export function LoginPage() {
           const user = result.user;
 
           const userId = user.uid;
-          // Log mixpanel if not dev mode
-          if (process.env.NODE_ENV === 'development') {
-            // mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
-            // mixpanel.identify(userId);
-            // mixpanel.track('Logged In', {
-            //   'Login Type': 'GitHub',
-            // });
-          } else {
-            mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
+          if (
+            process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' &&
+            process.env.NEXT_PUBLIC_MIXPANEL_TOKEN
+          ) {
+            mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { debug: false });
             mixpanel.identify(userId);
-
-            mixpanel.track('Logged In', {
-              'Login Type': 'GitHub',
-            });
+            mixpanel.track('Logged In', { 'Login Type': 'GitHub' });
           }
         });
       } catch (error) {

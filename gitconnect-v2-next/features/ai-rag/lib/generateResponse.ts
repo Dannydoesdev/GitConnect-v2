@@ -1,7 +1,8 @@
-import client from './InitiateClient';
+import getWeaviateClient from './InitiateClient';
 
 // Generate a 'dynamic' response (based on free text query from Weaviate
 export async function generateDynamicResponse(username: string, query: string) {
+  const client = await getWeaviateClient();
   let myCollection = client.collections.get('ProjectsGpt3');
 
   // Inject query into pre-formatted helper text
@@ -31,6 +32,7 @@ export async function generateDynamicResponse(username: string, query: string) {
 
 // Generate a project summary of a specific repo from Weaviate
 export async function generateProjectDescription(username: string, reponame: string) {
+  const client = await getWeaviateClient();
   let myCollection = client.collections.get('ProjectsGpt3');
 
   // Inject query into pre-formatted helper text
@@ -51,6 +53,7 @@ export async function generateProjectDescription(username: string, reponame: str
 }
 
 export async function generateUserWorkSummary(username: string) {
+  const client = await getWeaviateClient();
   let myCollection = client.collections.get('ProjectsGpt3');
 
   const result = await myCollection.generate.nearText(

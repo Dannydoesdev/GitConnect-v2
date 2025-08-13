@@ -4,6 +4,7 @@ import * as functions from 'firebase-functions';
 import * as logger from 'firebase-functions/logger';
 import { onRequest } from 'firebase-functions/v2/https';
 import * as nodemailer from 'nodemailer';
+import fetch from 'node-fetch';
 
 initializeApp();
 
@@ -11,14 +12,14 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate(async (user) => {
   const emailConfig = functions.config().email;
   if (emailConfig && emailConfig.password) {
     logger.info('Email config found');
-    logger.info('Email config: ', functions.config().email);
+    // logger.info('Email config: ', functions.config().email);
   }
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'daniel.t.mcgee@gmail.com',
-      pass: functions.config().email.password,
+      user: functions.config().email?.user,
+      pass: functions.config().email?.password,
     },
   });
   logger.info('Function triggered: New user sign-up detected test.');
@@ -31,8 +32,8 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate(async (user) => {
   );
 
   const mailOptions = {
-    from: 'daniel.t.mcgee@gmail.com',
-    to: 'daniel.t.mcgee@gmail.com',
+    from: functions.config().email?.from,
+    to: functions.config().email?.to,
     subject: 'New GitConnect Sign Up',
     text: `A new user ${displayName} has signed up with email: ${email}`,
   };
@@ -167,4 +168,31 @@ export const addLowercaseUsernameAndReponameInReposAndMainContentCollections =
 
     await batch.commit();
     res.status(200).send('Added lowercase_username in mainContent documents.');
+  });
+
+// Revalidate ISR pages server-side on project content changes
+exports.revalidateOnProjectChange = functions.firestore
+  .document('users/{userId}/repos/{repoId}/projectData/mainContent')
+  .onWrite(async (change) => {
+    try {
+      const cfg = functions.config();
+      const token = cfg.revalidate?.token;
+      const site = cfg.revalidate?.site || process.env.NEXT_PUBLIC_SITE_URL;
+      if (!token || !site) {
+        logger.info('Revalidation not configured; skipping');
+        return;
+      }
+      const data = change.after.exists ? change.after.data() : change.before.data();
+      const username = data?.username_lowercase;
+      const reponame = data?.reponame_lowercase;
+      const paths = ['/', username && reponame ? `/portfolio/${username}/${reponame}` : null].filter(
+        Boolean
+      ) as string[];
+      for (const path of paths) {
+        const url = `${site}/api/revalidate?secret=${token}&path=${encodeURIComponent(path)}`;
+        await fetch(url, { method: 'POST' });
+      }
+    } catch (error: unknown) {
+      logger.error('Error triggering revalidation', error);
+    }
   });

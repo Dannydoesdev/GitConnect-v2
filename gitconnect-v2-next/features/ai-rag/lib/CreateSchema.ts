@@ -1,8 +1,9 @@
 import { generative, vectorizer } from 'weaviate-client';
-import client from './InitiateClient';
+import getWeaviateClient from './InitiateClient';
 
 export async function createWeaviateSchema() {
   try {
+    const client = await getWeaviateClient();
     // Check if the defined collection already exists
     const collectionProjectsExists =
       (await client.collections.exists('ProjectsGpt3')) || false;
@@ -109,6 +110,7 @@ export async function createWeaviateSchema() {
 
 export async function createGpt4Schema() {
   try {
+    const client = await getWeaviateClient();
     // Check if the defined collection already exists
     const collectionExists = (await client.collections.exists('ProjectsGpt4')) || false;
 
@@ -212,6 +214,7 @@ export async function createGpt4Schema() {
 
 export async function createReposSchema() {
   try {
+    const client = await getWeaviateClient();
     // Check if the defined collection already exists
     const collectionReposExists = (await client.collections.exists('Repos')) || false;
 

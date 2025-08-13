@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { HomePageProjectCard } from './HomePageProjectCard';
 import { Space, SimpleGrid, Stack, Grid, Group, Text, Title, Skeleton, rem, useMantineTheme, Button, Center } from '@mantine/core';
 import LoadingPage from "../../LoadingPage/LoadingPage";
-import { getAllPublicProjectsAndSortWithTimeStamp } from '@/lib/sortProjectsWithTimestamp';
+import { getAllPublicProjectsAndSortWithTimeStamp } from '@/lib/sortProjectsWithTimestampBatching';
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 
 interface Project {
