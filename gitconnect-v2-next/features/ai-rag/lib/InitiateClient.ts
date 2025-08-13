@@ -1,16 +1,20 @@
 import weaviate, { WeaviateClient } from 'weaviate-client';
 
-const client: WeaviateClient = await weaviate.connectToWeaviateCloud(
-  process.env.WCD_URL ?? '',
-  {
-    authCredentials: new weaviate.ApiKey(process.env.WCD_API_KEY || ''),
-    headers: {
-      'X-OpenAI-Api-Key': process.env.OPENAI_WEAVIATE_APIKEY || '',
-    }
-  } 
-)
+let cachedClient: WeaviateClient | null = null;
 
-// Confirm Weaviate client connection
-console.log(`Weaviate client is ${(await client.isReady()) ? 'connected' : 'not connected'}`)
+export async function getWeaviateClient(): Promise<WeaviateClient> {
+  if (cachedClient) return cachedClient;
+  if (typeof process === 'undefined') {
+    throw new Error('Weaviate client can only be initialized server-side');
+  }
+  const url = process.env.WCD_URL ?? '';
+  const apiKey = process.env.WCD_API_KEY ?? '';
+  const openaiKey = process.env.OPENAI_WEAVIATE_APIKEY ?? '';
+  cachedClient = await weaviate.connectToWeaviateCloud(url, {
+    authCredentials: new weaviate.ApiKey(apiKey),
+    headers: { 'X-OpenAI-Api-Key': openaiKey },
+  });
+  return cachedClient;
+}
 
-export default client
+export default getWeaviateClient;

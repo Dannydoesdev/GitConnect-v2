@@ -14,7 +14,9 @@ export function LoginPage() {
   const { classes } = useStyles();
 
   const Router = useRouter();
-  mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
+  if (process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' && process.env.NEXT_PUBLIC_MIXPANEL_TOKEN) {
+    mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { debug: false });
+  }
 
   // Don't re-render the Github provider until the router changes (eg user is pushed home)
   const loginHandler = useCallback(
