@@ -7,7 +7,6 @@ storage.rules
 /firebase/emulator
 firebase-debug.log
 **/firestore-debug.log
-**/firebase-debug.log
 pubsub-debug.log
 firebase.json
 ui-debug.log
@@ -26,6 +25,15 @@ functions/*.log
 /.pnp
 .pnp.js
 
+# yarn - from top level .gitignore
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+!.yarn/cache
+
 # tests
 /test
 
@@ -43,12 +51,15 @@ functions/*.log
 /build
 
 # misc
-*.DS_Store
+.vscode
+/.vscode
 .DS_Store
+*.DS_Store
 /.DS_Store
 ../.DS_Store
 **/.DS_Store
 *.pem
+.vscode/settings.json
 
 # logs
 *.log
@@ -68,6 +79,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+*/**/.env*.local
 */.env*.local
 functions/.env
 **/.env
@@ -80,4 +92,3 @@ functions/.env
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-functions/.env
