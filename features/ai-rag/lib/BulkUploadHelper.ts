@@ -1,9 +1,10 @@
 import { generateUuid5 } from 'weaviate-client';
 import type { WeaviateRepoUploadData } from '@/features/ai-rag/types/weaviate';
-import client from './InitiateClient';
+import client, { getWeaviateClient } from './InitiateClient';
 
 const weaviateBulkUploadHelper = async (userProjectData: WeaviateRepoUploadData[]) => {
   try {
+    const client = await getWeaviateClient();
     const projectsCollection = client.collections.get('ProjectsGpt3');
     // const projectsCollection = client.collections.get('ProjectsGpt4');
 

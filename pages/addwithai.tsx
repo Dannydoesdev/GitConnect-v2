@@ -10,7 +10,6 @@ import {
 import { useForm } from '@mantine/form';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
-import OpenAI from 'openai';
 import { AuthContext } from '../context/AuthContext';
 
 type AiCaseStudyProps = {
@@ -19,83 +18,70 @@ type AiCaseStudyProps = {
 };
 
 const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
-  const [projectTitle, setProjectTitle] = useState('');
-  const [purpose, setPurpose] = useState('');
-  const [challenges, setChallenges] = useState('');
-  const [outcomes, setOutcomes] = useState('');
-  const [approach, setApproach] = useState('');
-  const [technology, setTechnology] = useState('');
-  const [nextSteps, setNextSteps] = useState('');
-  const [readme, setReadme] = useState('');
-  const [outputLanguage, setOutputLanguage] = useState('');
-
   const { userData } = useContext(AuthContext);
 
   const form = useForm({
     initialValues: {
-      projectTitle: `${projectTitle}`,
-      purpose: `${purpose}`,
-      challenges: `${challenges}`,
-      outcomes: `${outcomes}`,
-      approach: `${approach}`,
-      technology: `${technology}`,
-      nextSteps: `${nextSteps}`,
+      projectTitle: '',
+      purpose: '',
+      challenges: '',
+      outcomes: '',
+      approach: '',
+      technology: '',
+      nextSteps: '',
+    },
+    validate: {
+      projectTitle: (value) =>
+        value.length < 2
+          ? 'Project title must have at least 2 characters'
+          : null,
+      // approach: (value) => (value.length < 10 ? 'Please provide a more detailed approach' : null),
+      // technology: (value) => (value.length < 5 ? 'Please specify the technologies used' : null),
     },
   });
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const handleSubmit = async (values: typeof form.values) => {
+    // Hardcode values for testing
+    // const prompt = `I want to create a case study for my project to add to my portfolio. Here are the details:
+    // - Project Title: Sample Project
+    // - Approach: Adopted microservices architecture, followed agile methodologies
+    // - Technology: Python, Flask, PostgreSQL, Docker
+    // - Challenges: Performance optimization, building a scalable architecture
+    // - Outcomes: Improved application performance by 50%, built a scalable solution
+    // - Next Steps: Integrate machine learning for predictive analysis, adopt continuous deployment
 
-    let projectTitle = 'My Project';
-    let challenges =
-      'Performance optimization, building a scalable architecture';
-    let outcomes =
-      'Improved application performance by 50%, built a scalable solution';
-    let approach =
-      'Adopted microservices architecture, followed agile methodologies';
-    let technology = 'Python, Flask, PostgreSQL, Docker';
-    let nextSteps =
-      'Integrate machine learning for predictive analysis, adopt continuous deployment';
-    let readme = 'My README content';
-    let outputLanguage = 'Markdown';
-    let style = 'Casual';
-    let length = 'Medium';
+    // Please create a professional case study in Markdown format with a medium length.`;
 
-    const model = 'gpt-3.5-turbo';
-
-    const userMessage = `You are an intelligent assistant that crafts personalized software project case studies. Given the user's preferences for length, style, and formatting, create an engaging narrative from the provided project details. Include sections such as Introduction, Purpose, Approach, Technology Used, Challenges, Outcomes, and Next Steps. Adapt the content and structure as per unique elements in the user's inputs, and introduce new headings when necessary.`;
-
-    const systemMessage = `I want to create a case study for my project. Here are the details:
-    - Project Title: ${projectTitle}
-    - Purpose: ${purpose}
-    - Approach: ${approach}
-    - Technology: ${technology}
-    - Challenges: ${challenges}
-    - Outcomes: ${outcomes}
-    - Next Steps: ${nextSteps}
-    - README: ${readme}
-    - Output Language: ${outputLanguage}
-    - Style: ${style}
-    - Length: ${length}`;
+    const prompt = `I want to create a case study for my project to add to my portfolio. Here are the details:
+    - Project Title: ${values.projectTitle || 'My Project'}
+    - Approach: ${values.approach || 'Not specified'}
+    - Technology: ${values.technology || 'Not specified'}
+    - Challenges: ${values.challenges || 'Not specified'}
+    - Outcomes: ${values.outcomes || 'Not specified'}
+    - Next Steps: ${values.nextSteps || 'Not specified'}
+    
+    Please create a professional case study in Markdown format with a medium length.`;
 
     try {
-      const completion = await openai.chat.completions.create({
-        model: model,
-        messages: [
-          { role: 'system', content: systemMessage },
-          { role: 'user', content: userMessage },
-        ],
-        max_tokens: 800,
+      const response = await axios.post('/api/ai/chatgpt', {
+        prompt: prompt,
       });
-      const generatedStudy = completion.choices[0]?.message?.content?.trim();
+      const generatedStudy = response.data?.message?.trim();
 
-      console.log(generatedStudy);
+      console.log('Generated case study:', generatedStudy);
+
+      // Handle the generated content - customise this based on needs
+      if (generatedStudy) {
+        // Example: Navigate to the project editor with this content
+        // router.push(`/portfolio/edit/${repoId}?content=${encodeURIComponent(generatedStudy)}`);
+      }
     } catch (error) {
       console.error('Failed to generate case study:', error);
+      // alert('Failed to generate case study. Please try again.');
     }
   };
 
+  // Handle dynamically importing README content
   function handleImportReadme() {
     const readmeUrl = `/api/profiles/projects/edit/readme`;
     axios
@@ -129,42 +115,43 @@ const AddWithAI = ({ repoId }: AiCaseStudyProps) => {
               theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
           })}
         >
-          {/* <form onSubmit={handleSubmit}> */}
-          <TextInput
-            label='Project Title'
-            placeholder='The name of your project'
-            {...form.getInputProps('projectTitle')}
-          />
-          <Textarea
-            label='Approach'
-            placeholder='Describe the approach taken'
-            {...form.getInputProps('approach')}
-          />
-          <TextInput
-            label='Technology'
-            placeholder='Describe the technology used'
-            {...form.getInputProps('technology')}
-          />
-          <TextInput
-            label='Challenges'
-            placeholder='Describe the challenges faced'
-            {...form.getInputProps('challenges')}
-          />
-          <TextInput
-            label='Outcomes'
-            placeholder='Describe the outcomes'
-            {...form.getInputProps('outcomes')}
-          />
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <TextInput
+              label='Project Title'
+              placeholder='The name of your project'
+              {...form.getInputProps('projectTitle')}
+            />
+            <Textarea
+              label='Approach'
+              placeholder='Describe the approach taken'
+              {...form.getInputProps('approach')}
+            />
+            <TextInput
+              label='Technology'
+              placeholder='Describe the technology used'
+              {...form.getInputProps('technology')}
+            />
+            <TextInput
+              label='Challenges'
+              placeholder='Describe the challenges faced'
+              {...form.getInputProps('challenges')}
+            />
+            <TextInput
+              label='Outcomes'
+              placeholder='Describe the outcomes'
+              {...form.getInputProps('outcomes')}
+            />
 
-          <TextInput
-            label='Next Steps'
-            placeholder='Describe the next steps'
-            {...form.getInputProps('nextSteps')}
-          />
+            <TextInput
+              label='Next Steps'
+              placeholder='Describe the next steps'
+              {...form.getInputProps('nextSteps')}
+            />
 
-          <Button variant='filled' fullWidth mt='md' onClick={handleSubmit}>
-            Generate Case Study{' '}
-          </Button>
+            <Button type='submit' variant='filled' fullWidth mt='md'>
+              Generate Case Study
+            </Button>
+          </form>
         </Paper>
       </Container>
     </div>

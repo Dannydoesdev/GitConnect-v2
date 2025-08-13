@@ -128,12 +128,16 @@ export default function PricingPage() {
   }, [userData]);
 
   const upgradeToPremiumMonthly = async () => {
-    const priceId = 'price_1O8cptCT5BNNo8lFuDcGOAcM';
+    if (process.env.NEXT_PUBLIC_ENABLE_PAYMENTS !== 'true') return;
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY as string;
+    if (!priceId) return;
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
   const upgradeToPremiumAnnual = async () => {
-    const priceId = 'price_1O8cq0CT5BNNo8lFWd3e5TYy';
+    if (process.env.NEXT_PUBLIC_ENABLE_PAYMENTS !== 'true') return;
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ANNUAL as string;
+    if (!priceId) return;
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
