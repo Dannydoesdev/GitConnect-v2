@@ -1,4 +1,4 @@
-import { IconEye, IconMessageCircle, IconStar } from '@tabler/icons-react';
+import { IconEye, IconStar } from '@tabler/icons-react';
 import {
   Card,
   Text,
@@ -27,7 +27,9 @@ export function HomePageProjectCard({
 }: ImageCardProps) {
   const { classes, theme } = useStyles();
 
-  const imageUrl = image && typeof image === 'string' ? correctImageGetter(image, 768) : '/img/gc-sml.webp';
+  const originalImageUrl = image && typeof image === 'string' ? correctImageGetter(image, 768) : '/img/gc-sml.webp';
+  const isGif = originalImageUrl.includes('.gif');
+  const imageUrl = isGif ? `/api/image/convert?imageUrl=${encodeURIComponent(originalImageUrl)}` : originalImageUrl;
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
@@ -45,7 +47,6 @@ export function HomePageProjectCard({
           className={classes.card}
           radius='md'
           component='a'
-          // href={link}
         >
          
           <Box
@@ -60,15 +61,11 @@ export function HomePageProjectCard({
           >
             <Image
               src={imageUrl}
+              unoptimized={imageUrl.includes('.gif')}
               className='image'
               style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
               sizes='(max-width: 768px) 100vw, (max-width: 1079px) 50vw, (max-width: 1500px) 33vw, 25vw'
-                //  sizes='(max-width: 768px) 100vw, (max-width: 520px) 50vw, 33vw'
               fill={true}
-              // width={768}
-              // height={768}
-              // width={800}
-              // height={600}
               quality={75}
               priority={index && index <= 6 ? true : false}
               alt={customTitle || githubTitleFormatted || 'Project thumbnail'}
@@ -82,7 +79,6 @@ export function HomePageProjectCard({
             <div>
               <Text
                 size='xl'
-                // pb='md'
                 className={classes.title}
                 weight={600}
               >
@@ -97,19 +93,14 @@ export function HomePageProjectCard({
         pl={20}
         pr={20}
         noWrap={true}
-        // spacing="xs"
-        // mt='sm'
         className={classes.group}
       >
         <Center>
-          {/* Note - positioning hack to resolve nested link issues (temporary) */}
-
           <Link href={profileUrl} passHref legacyBehavior>
             <Avatar
               component='a'
               radius='xl'
               size={29}
-              // mr="xs"
               src={avatar}
 
             />
