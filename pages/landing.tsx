@@ -201,12 +201,16 @@ export default function LandingPage() {
   }, [userData]);
 
   const upgradeToPremiumMonthly = async () => {
-    const priceId = 'price_1O8cptCT5BNNo8lFuDcGOAcM';
+    if (process.env.NEXT_PUBLIC_ENABLE_PAYMENTS !== 'true') return;
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY as string;
+    if (!priceId) return;
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
   const upgradeToPremiumAnnual = async () => {
-    const priceId = 'price_1O8cq0CT5BNNo8lFWd3e5TYy';
+    if (process.env.NEXT_PUBLIC_ENABLE_PAYMENTS !== 'true') return;
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ANNUAL as string;
+    if (!priceId) return;
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     Router.push(checkoutUrl);
   };
@@ -225,18 +229,20 @@ export default function LandingPage() {
           const userId = user.uid;
 
           if (process.env.NODE_ENV === 'development') {
-            // mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
+            // mixpanel.init('NEXT_PUBLIC_MIXPANEL_TOKEN', { debug: true });
             // mixpanel.identify(userId);
             // mixpanel.track('Signed In', {
             //   'Signup Type': 'GitHub',
             // });
           } else {
-            mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
-            mixpanel.identify(userId);
-
-            mixpanel.track('Signed up', {
-              'Signup Type': 'GitHub',
-            });
+            if (
+              process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' &&
+              process.env.NEXT_PUBLIC_MIXPANEL_TOKEN
+            ) {
+              mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { debug: false });
+              mixpanel.identify(userId);
+              mixpanel.track('Signed up', { 'Signup Type': 'GitHub' });
+            }
           }
         });
       } catch (error) {
@@ -430,7 +436,8 @@ export default function LandingPage() {
               <div className='relative h-full md:-mx-8 xl:mx-0'>
                 <img
                   className='absolute inset-0 h-full w-full rounded-2xl bg-gray-800 object-cover shadow-2xl'
-                  src='https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/landing%2Fdanny-avatar_768x768.webp?alt=media&token=000c312d-1152-4120-9975-41bf0860c0fe'
+                  // src='https://firebasestorage.googleapis.com/v0/b/gitconnect-86655.appspot.com/o/landing%2Fdanny-avatar_768x768.webp?alt=media&token=000c312d-1152-4120-9975-41bf0860c0fe'
+                  src='/img/landing/danny-avatar_768x768.webp'
                   alt="Danny's Image"
                 />
               </div>
@@ -718,10 +725,10 @@ export default function LandingPage() {
                 <br />
                 <p className='mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300'>
                   Our users are our stakeholders, and we want our goals to align
-                  with yours. Join our Discord to share your input and help
+                  with yours. Share your input and help
                   guide the platform’s development.
                 </p>
-                <div className='mt-10 flex items-center justify-center gap-x-6'>
+                {/* <div className='mt-10 flex items-center justify-center gap-x-6'>
                   <Link
                     href='https://discord.gg/hkajEH6WkW'
                     passHref
@@ -746,7 +753,7 @@ export default function LandingPage() {
                       Join the Discord
                     </Button>
                   </Link>
-                </div>
+                </div> */}
               </div>
 
               <svg

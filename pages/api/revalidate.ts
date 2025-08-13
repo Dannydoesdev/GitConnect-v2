@@ -10,8 +10,9 @@ export default async function handler(
   }
 
   try {
-    // Revalidate the home page
-    await res.revalidate('/');
+    // Revalidate a specific path or default to home page
+    const path = (req.query.path as string) || '/';
+    await res.revalidate(path);
     return res.json({ revalidated: true });
   } catch (err) {
     // If there was an error, Next.js will continue to show the last successfully generated page

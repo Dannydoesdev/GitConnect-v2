@@ -34,6 +34,7 @@ import {
 } from 'firebase/firestore';
 import DOMPurify from 'isomorphic-dompurify';
 import { useAtom } from 'jotai';
+import { triggerHomepageRevalidation } from '@/utils/revalidation';
 // import { getPremiumStatusProd } from '@/lib/stripe/getPremiumStatusProd';
 // import { isAllowedToPublishProject } from '@/lib/stripe/isAllowedToPublishProject';
 // import { getCheckoutUrl } from '@/lib/stripe/stripePaymentProd';
@@ -243,14 +244,6 @@ export default function EditPortfolioProject({
           { merge: true }
         );
 
-        // Trigger revalidation of the homepage
-        const revalidateRes = await fetch(
-          `/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`
-        );
-        if (!revalidateRes.ok) {
-          console.warn('Failed to revalidate homepage');
-        }
-
         setUnsavedChanges(false);
         setUnsavedChangesSettings(false);
       } catch (error) {
@@ -273,6 +266,8 @@ export default function EditPortfolioProject({
           autoClose: 2000,
         });
         close();
+        // Trigger homepage revalidation to update the project list
+        await triggerHomepageRevalidation();
 
         setTimeout(() => {
           router.push(`/portfolio/${userName}/${repoName}`);
@@ -481,13 +476,8 @@ export default function EditPortfolioProject({
 
       await setDoc(hiddenStatusRef, { hidden: true }, { merge: true });
 
-      // Trigger revalidation of the homepage
-      const revalidateRes = await fetch(
-        `/api/revalidate?secret=${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`
-      );
-      if (!revalidateRes.ok) {
-        console.warn('Failed to revalidate homepage');
-      }
+      // Trigger homepage revalidation to update the project list
+      await triggerHomepageRevalidation();
     } catch (error) {
       console.log(error);
       notifications.update({

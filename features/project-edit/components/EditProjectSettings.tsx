@@ -177,7 +177,9 @@ function ProjectSettingsModal({
     });
 
   const upgradeToPremium = async () => {
-    const priceId = 'price_1O80UbCT5BNNo8lF98l4hlov';
+    if (process.env.NEXT_PUBLIC_ENABLE_PAYMENTS !== 'true') return;
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_PROJECT as string;
+    if (!priceId) return;
     const checkoutUrl = await getCheckoutUrl(app, priceId);
     router.push(checkoutUrl);
   };
@@ -379,7 +381,7 @@ function ProjectSettingsModal({
                       size='sm'
                       px={40}
                       onClick={
-                        coverImage
+                        (coverImage || process.env.NODE_ENV === 'development')
                           ? () => handlePublish(form.values)
                           : () =>
                               notifications.show({

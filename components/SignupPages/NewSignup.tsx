@@ -64,7 +64,9 @@ export function SignupPage() {
   const { classes } = useStyles();
   const Router = useRouter();
 
-  mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: true });
+  if (process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' && process.env.NEXT_PUBLIC_MIXPANEL_TOKEN) {
+    mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { debug: false });
+  }
 
   const signupHandler = useCallback(
     async (e: any) => {
@@ -84,15 +86,13 @@ export function SignupPage() {
           const user = result.user;
           const userId = user.uid;
 
-          if (process.env.NODE_ENV === 'development') {
-            // mixpanel tracking code for development
-          } else {
-            mixpanel.init('13152890549909d8a9fe73e4daf06e43', { debug: false });
+          if (
+            process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' &&
+            process.env.NEXT_PUBLIC_MIXPANEL_TOKEN
+          ) {
+            mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, { debug: false });
             mixpanel.identify(userId);
-
-            mixpanel.track('Signed up', {
-              'Signup Type': 'GitHub',
-            });
+            mixpanel.track('Signed up', { 'Signup Type': 'GitHub' });
           }
         });
         // AuthContext and the parent component will handle the rest
