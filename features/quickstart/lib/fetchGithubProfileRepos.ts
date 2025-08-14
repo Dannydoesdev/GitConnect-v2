@@ -37,7 +37,7 @@ export async function getGithubReposWithUsername(username: string) {
     if (error.status === 403 && error.response?.data?.message?.includes('rate limit exceeded')) {
       console.error(`GitHub API rate limit exceeded when fetching repos for "${username}"`);
     } else {
-      console.error(`Failed to get GitHub repos for "${username}"`, error);
+      console.error('Failed to get GitHub user data for "%s"', username, error);
     }
     // Pass through the original error so we can handle it properly upstream
     throw error;
