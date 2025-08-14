@@ -1,7 +1,6 @@
 import { Octokit } from '@octokit/rest';
 
 //  More info on getByUsername octokit: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
-
 export async function getGithubProfileData(username: string) {
   const octokit = new Octokit();
 
@@ -9,7 +8,7 @@ export async function getGithubProfileData(username: string) {
     const response = await octokit.users.getByUsername({ username });
     return response.data;
   } catch (error) {
-    console.error('Failed to get GitHub data for %s', username, error);
+    console.error('Failed to get GitHub data for "%s"', username, error);
     return null;
   }
 }
@@ -27,7 +26,7 @@ export async function getGithubReposWithUsername(username: string) {
 
     return response.data;
   } catch (error) {
-    console.error('Failed to get GitHub data for %s', username, error);
+    console.error('Failed to get GitHub repos for "%s"', username, error);
     return null;
   }
 }
