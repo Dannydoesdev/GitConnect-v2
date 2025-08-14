@@ -9,7 +9,7 @@ export async function getGithubProfileData(username: string) {
     const response = await octokit.users.getByUsername({ username });
     return response.data;
   } catch (error) {
-    console.error(`Failed to get GitHub data for ${username}`, error);
+    console.error('Failed to get GitHub data for %s', username, error);
     return null;
   }
 }
@@ -27,7 +27,7 @@ export async function getGithubReposWithUsername(username: string) {
 
     return response.data;
   } catch (error) {
-    console.error(`Failed to get GitHub data for ${username}`, error);
+    console.error('Failed to get GitHub data for %s', username, error);
     return null;
   }
 }
