@@ -9,7 +9,7 @@
 ## GitConnect (Open Source)
 
 This is the open-source version of GitConnect, a Next.js + Firebase project for building developer portfolios from GitHub data.
-
+<!---
 ### Quickstart
 - Node 18+
 - Copy `.env.example` to `.env.local` and fill required keys.
@@ -23,7 +23,7 @@ Please see `SECURITY.md` for how to report vulnerabilities.
 
 ### License
 MIT
-
+--->
 ---
 
 ## Introduction
