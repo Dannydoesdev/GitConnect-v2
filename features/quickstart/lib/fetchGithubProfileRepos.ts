@@ -14,7 +14,7 @@ export async function getGithubProfileData(username: string) {
     } else if (error.status === 404) {
       console.error(`GitHub user "${username}" not found`);
     } else {
-      console.error(`Failed to get GitHub user data for "${username}"`, error);
+      console.error('Failed to get GitHub user data for "%s"', username, error);
     }
     // Pass through the original error so we can handle it properly upstream
     throw error;
