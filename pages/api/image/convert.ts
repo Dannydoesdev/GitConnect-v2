@@ -8,29 +8,18 @@ const cache = new LRUCache<string, Buffer>({
   ttl: 1000 * 60 * 60, // 1 hour
 });
 
-const ALLOWED_DOMAINS: string[] = ['firebasestorage.googleapis.com'];
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { imageUrl } = req.query;
 
-  if (!imageUrl || typeof imageUrl !== 'string') {
+  if (
+    !imageUrl ||
+    typeof imageUrl !== 'string' ||
+    !imageUrl.startsWith('https://firebasestorage.googleapis.com/')
+  ) {
     return res.status(400).json({ error: 'Image URL is not valid' });
-  }
-
-  try {
-    const parsedUrl = new URL(imageUrl);
-
-    if (
-      (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') ||
-      !ALLOWED_DOMAINS.includes(parsedUrl.hostname)
-    ) {
-      return res.status(400).json({ error: 'Image URL is not allowed' });
-    }
-  } catch {
-    return res.status(400).json({ error: 'Invalid image URL' });
   }
 
   const cachedImage = cache.get(imageUrl);
