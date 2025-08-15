@@ -32,77 +32,125 @@ const URLInput = ({ label, form, name }: URLInputProps) => (
   />
 );
 
-const extractUsernameFromURL = (url: string, platform: string) => {
-  url = url.toLowerCase();
-  platform = platform.toLowerCase();
-  // Check if the input is already a username
-  if (!url.includes(platform)) return url;
+// Functions for easy UX to add social media buttons on profiles
+// First, extract usernames if user pasted URLs
+const extractUsernameFromURL = (input: string, platform: string) => {
+  const inputNormalised = (input || '').trim();
+  if (!inputNormalised) return '';
 
-  let regex: RegExp;
+  const platformKey = (platform || '').toLowerCase();
 
-  switch (platform) {
-    case 'linkedin':
-      regex = /linkedin\.com\/in\/([\w\-\_À-ÿ%]+)/;
-      break;
-    case 'twitter':
-      regex = /twitter\.com\/@?([A-z0-9_]+)/;
-      break;
-    case 'medium':
-      regex = /medium\.com\/@?([A-z0-9]+)/;
-      break;
-    case 'hashnode':
-      regex = /([a-zA-Z0-9]+)\.hashnode\.dev/;
-      break;
-    case 'codepen':
-      regex = /codepen\.io\/([A-z0-9]+)/;
-      break;
-    case 'dribbble':
-      regex = /dribbble\.com\/([A-z0-9]+)/;
-      break;
-    case 'behance':
-      regex = /behance\.net\/([A-z0-9]+)/;
-      break;
-    case 'devTo':
-      regex = /dev\.to\/([A-z0-9]+)/;
-      break;
-    case 'youtube':
-      regex = /youtube\.com\/(?:channel|user)\/([A-z0-9-\_]+)/;
-      break;
-    case 'twitch':
-      regex = /twitch\.tv\/([A-z0-9]+)/;
-      break;
-    case 'discord':
-      regex = /discord\.com\/users\/([A-z0-9]+)/;
-      break;
-    case 'stackoverflow':
-      regex = /stackoverflow\.com\/users\/([A-z0-9]+)/;
-      break;
-    case 'facebook':
-      regex = /facebook\.com\/([A-z0-9]+)/;
-      break;
-    case 'instagram':
-      regex = /instagram\.com\/([A-z0-9_]+)/;
-      break;
-    default:
-      regex = new RegExp(`${platform}\\.\\w+\\/([a-zA-Z0-9_.-]+)`);
+  const looksLikeUrl =
+    /^[a-z][a-z0-9+.-]*:\/\//i.test(inputNormalised) ||
+    inputNormalised.toLowerCase().includes('/') ||
+    inputNormalised.toLowerCase().includes('.');
+
+  // If it's not URL-like, treat "@handle" as a handle
+  if (!looksLikeUrl) return inputNormalised.replace(/^@/, '');
+
+  // YouTube supports /@handle
+  if (platformKey === 'youtube') {
+    const youtubeHandleMatch = inputNormalised.match(
+      /(?:^|https?:\/\/)?(?:www\.)?youtube\.com\/@(?<username>[A-Za-z0-9._-]{3,30})(?:\/|$)/
+    );
+    if (youtubeHandleMatch?.groups?.username)
+      return youtubeHandleMatch.groups.username;
   }
 
-  const match = url.match(regex);
-  return match ? match[1] : url;
+  let pattern: RegExp;
+  switch (platformKey) {
+    case 'linkedin':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?linkedin\.com\/in\/(?<username>[A-Za-z0-9-]+)(?:\/|$)/i;
+      break;
+    case 'twitter': // supports x.com and twitter.com
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/@?(?<username>[A-Za-z0-9_]+)(?:\/|$)/i;
+      break;
+    case 'medium':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?medium\.com\/@?(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'hashnode':
+      pattern =
+        /(?:^|https?:\/\/)?(?<username>[A-Za-z0-9]+)\.hashnode\.dev(?:\/|$)/i;
+      break;
+    case 'codepen':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?codepen\.io\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'dribbble':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?dribbble\.com\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'behance':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?behance\.net\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'devto':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?dev\.to\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'youtube': // legacy forms
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?youtube\.com\/(?:channel|user)\/(?<username>[A-Za-z0-9_-]+)(?:\/|$)/i;
+      break;
+    case 'twitch':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?twitch\.tv\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'discord':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?discord\.com\/users\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'stackoverflow':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?stackoverflow\.com\/users\/(?<username>[0-9]+)(?:\/|$)/i;
+      break;
+    case 'facebook':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?facebook\.com\/(?<username>[A-Za-z0-9.]+)(?:\/|$)/i;
+      break;
+    case 'instagram':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?instagram\.com\/(?<username>[A-Za-z0-9._]+)(?:\/|$)/i;
+      break;
+    case 'github':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?github\.com\/(?<username>[A-Za-z0-9-]+)(?:\/|$)/i;
+      break;
+    case 'gitlab':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?gitlab\.com\/(?<username>[A-Za-z0-9-]+)(?:\/|$)/i;
+      break;
+    default:
+      pattern = new RegExp(
+        `(?:^|https?:\\/\\/).*${platformKey}\\.\\w+\\/(?<username>[A-Za-z0-9_.-]+)(?:\\/|$)`,
+        'i'
+      );
+  }
+
+  const match = inputNormalised.match(pattern);
+  if (match?.groups?.username) return match.groups.username;
+
+  return inputNormalised.replace(/^@/, '');
 };
 
+// Use extracted username for standard format buttons
 const formatSocialURL = (input: string, platform: string) => {
   if (!input) return '';
+  const platformKey = (platform || '').toLowerCase();
+  const username = extractUsernameFromURL(input, platformKey);
 
-  // Extract username from the input URL or partial URL
-  const username = extractUsernameFromURL(input, platform);
-  switch (platform) {
+  switch (platformKey) {
     case 'github':
       return `https://github.com/${username}`;
+    case 'gitlab':
+      return `https://gitlab.com/${username}`;
     case 'linkedin':
       return `https://www.linkedin.com/in/${username}`;
     case 'twitter':
-      return `https://twitter.com/${username}`;
+      return `https://x.com/${username}`;
     case 'medium':
       return `https://medium.com/@${username}`;
     case 'hashnode':
@@ -113,7 +161,7 @@ const formatSocialURL = (input: string, platform: string) => {
       return `https://dribbble.com/${username}`;
     case 'behance':
       return `https://www.behance.net/${username}`;
-    case 'devTo':
+    case 'devto':
       return `https://dev.to/${username}`;
     case 'youtube':
       return `https://www.youtube.com/@${username}`;
@@ -128,7 +176,7 @@ const formatSocialURL = (input: string, platform: string) => {
     case 'instagram':
       return `https://www.instagram.com/${username}`;
     default:
-      return '';
+      return input;
   }
 };
 
