@@ -24,7 +24,7 @@ export async function saveQuickstartProject(
     // Run extra server functions for readme and languages etc:
 
     const readme = await fetchReadmeNoapi(userName, repoName);
-    const languages = await fetchLanguages(projectData.languages_url);
+    const languages = await fetchLanguages(userName, repoName);
 
     const parentDocRef = doc(db, `usersAnonymous/${userid}/reposAnonymous/${repoid}`);
 
