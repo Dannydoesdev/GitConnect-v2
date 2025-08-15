@@ -27,9 +27,13 @@ module.exports = function withTwin(nextConfig) {
               sourceMaps: dev,
               presets: [
                 [
-                  '@babel/preset-react',
-                  { runtime: 'automatic', importSource: '@emotion/react' },
                   'next/babel',
+                  {
+                    'preset-react': {
+                      runtime: 'automatic',
+                      importSource: '@emotion/react',
+                    },
+                  },
                 ],
               ],
               plugins: [
