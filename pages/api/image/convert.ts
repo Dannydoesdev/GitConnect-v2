@@ -23,9 +23,43 @@ export default async function handler(
   try {
     const parsedUrl = new URL(imageUrl);
 
+    // Only allow exact hostname match, no subdomains
+    const isAllowedDomain = ALLOWED_DOMAINS.some(
+      (domain) => parsedUrl.hostname === domain
+    );
+    // Optionally, block requests to private IPs
+    const net = require('net');
+    const dns = require('dns').promises;
+    let isPrivateIp = false;
+    try {
+      const addresses = await dns.lookup(parsedUrl.hostname, { all: true });
+      isPrivateIp = addresses.some((addr) => {
+        // IPv4 private ranges
+        if (net.isIPv4(addr.address)) {
+          return (
+            addr.address.startsWith('10.') ||
+            addr.address.startsWith('192.168.') ||
+            addr.address.startsWith('172.') &&
+            (() => {
+              const second = parseInt(addr.address.split('.')[1], 10);
+              return second >= 16 && second <= 31;
+            })()
+          );
+        }
+        // IPv6 private range
+        if (net.isIPv6(addr.address)) {
+          return addr.address.startsWith('fd') || addr.address === '::1';
+        }
+        return false;
+      });
+    } catch {
+      // If DNS lookup fails, treat as not private
+      isPrivateIp = false;
+    }
     if (
       (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') ||
-      !ALLOWED_DOMAINS.includes(parsedUrl.hostname)
+      !isAllowedDomain ||
+      isPrivateIp
     ) {
       return res.status(400).json({ error: 'Image URL is not allowed' });
     }
