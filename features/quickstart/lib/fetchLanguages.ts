@@ -1,24 +1,14 @@
 import axios from 'axios';
 
 // Utility function to fetch language breakdown usage in repo and return as an array of string with language and percentage
+// Accept owner and repo, construct the URL internally to prevent SSRF
 export const fetchLanguages = async (
-  languagesUrl?: string | null
+  owner: string,
+  repo: string
 ): Promise<string[] | null> => {
-  if (!languagesUrl) return null;
-
-  // Validate that languagesUrl is a GitHub API languages endpoint
+  if (!owner || !repo) return null;
   try {
-    const urlObj = new URL(languagesUrl);
-    // Only allow https://api.github.com/repos/{owner}/{repo}/languages
-    if (
-      urlObj.protocol !== 'https:' ||
-      urlObj.hostname !== 'api.github.com' ||
-      !/^\/repos\/[^\/]+\/[^\/]+\/languages$/.test(urlObj.pathname)
-    ) {
-      console.error('Invalid languagesUrl:', languagesUrl);
-      return null;
-    }
-
+    const languagesUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/languages`;
     const response = await axios.get(languagesUrl);
     const data: { [key: string]: number } = response.data;
 

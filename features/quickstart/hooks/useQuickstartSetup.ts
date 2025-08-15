@@ -243,7 +243,7 @@ export function useQuickstartSetup() {
         .filter((repo) => selectedRepos.includes(repo.id.toString()))
         .map(async (repo) => {
           const readme = await fetchReadme(username, repo.name);
-          const languages = await fetchLanguages(repo.languages_url);
+          const languages = await fetchLanguages(username, repo.name);
           return {
             reponame_lowercase: repo?.name.toLowerCase(),
             ...repo,
