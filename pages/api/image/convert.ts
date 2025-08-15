@@ -8,11 +8,29 @@ const cache = new LRUCache<string, Buffer>({
   ttl: 1000 * 60 * 60, // 1 hour
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const ALLOWED_DOMAINS: string[] = ['firebasestorage.googleapis.com'];
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { imageUrl } = req.query;
 
   if (!imageUrl || typeof imageUrl !== 'string') {
-    return res.status(400).json({ error: 'Image URL is required' });
+    return res.status(400).json({ error: 'Image URL is not valid' });
+  }
+
+  try {
+    const parsedUrl = new URL(imageUrl);
+
+    if (
+      (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') ||
+      !ALLOWED_DOMAINS.includes(parsedUrl.hostname)
+    ) {
+      return res.status(400).json({ error: 'Image URL is not allowed' });
+    }
+  } catch {
+    return res.status(400).json({ error: 'Invalid image URL' });
   }
 
   const cachedImage = cache.get(imageUrl);
@@ -27,7 +45,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const metadata = await sharp(imageBuffer).metadata();
 
     if (metadata.format === 'gif' && metadata.pages && metadata.pages > 1) {
-      const output = await sharp(imageBuffer, { animated: false }).png().toBuffer();
+      const output = await sharp(imageBuffer, { animated: false })
+        .png()
+        .toBuffer();
       cache.set(imageUrl, output);
       res.setHeader('X-Cache', 'MISS');
       res.setHeader('Content-Type', 'image/png');
