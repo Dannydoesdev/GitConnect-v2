@@ -25,80 +25,132 @@ interface URLInputProps {
 
 // Reusable URL Input
 const URLInput = ({ label, form, name }: URLInputProps) => (
-  <TextInput label={label} placeholder={`${label} URL`} {...form.getInputProps(name)} />
+  <TextInput
+    label={label}
+    placeholder={`${label} URL`}
+    {...form.getInputProps(name)}
+  />
 );
 
-const extractUsernameFromURL = (url: string, platform: string) => {
-  url = url.toLowerCase();
-  platform = platform.toLowerCase();
-  // Check if the input is already a username
-  if (!url.includes(platform)) return url;
+// Functions for easy UX to add social media buttons on profiles
+// First, extract usernames if user pasted URLs
+const extractUsernameFromURL = (input: string, platform: string) => {
+  const inputNormalised = (input || '').trim();
+  if (!inputNormalised) return '';
 
-  let regex: RegExp;
+  const platformKey = (platform || '').toLowerCase();
 
-  switch (platform) {
-    case 'linkedin':
-      regex = /linkedin\.com\/in\/([\w\-\_À-ÿ%]+)/;
-      break;
-    case 'twitter':
-      regex = /twitter\.com\/@?([A-z0-9_]+)/;
-      break;
-    case 'medium':
-      regex = /medium\.com\/@?([A-z0-9]+)/;
-      break;
-    case 'hashnode':
-      regex = /([a-zA-Z0-9]+)\.hashnode\.dev/;
-      break;
-    case 'codepen':
-      regex = /codepen\.io\/([A-z0-9]+)/;
-      break;
-    case 'dribbble':
-      regex = /dribbble\.com\/([A-z0-9]+)/;
-      break;
-    case 'behance':
-      regex = /behance\.net\/([A-z0-9]+)/;
-      break;
-    case 'devTo':
-      regex = /dev\.to\/([A-z0-9]+)/;
-      break;
-    case 'youtube':
-      regex = /youtube\.com\/(?:channel|user)\/([A-z0-9-\_]+)/;
-      break;
-    case 'twitch':
-      regex = /twitch\.tv\/([A-z0-9]+)/;
-      break;
-    case 'discord':
-      regex = /discord\.com\/users\/([A-z0-9]+)/;
-      break;
-    case 'stackoverflow':
-      regex = /stackoverflow\.com\/users\/([A-z0-9]+)/;
-      break;
-    case 'facebook':
-      regex = /facebook\.com\/([A-z0-9]+)/;
-      break;
-    case 'instagram':
-      regex = /instagram\.com\/([A-z0-9_]+)/;
-      break;
-    default:
-      regex = new RegExp(`${platform}\\.\\w+\\/([a-zA-Z0-9_.-]+)`);
+  const looksLikeUrl =
+    /^[a-z][a-z0-9+.-]*:\/\//i.test(inputNormalised) ||
+    inputNormalised.toLowerCase().includes('/') ||
+    inputNormalised.toLowerCase().includes('.');
+
+  // If it's not URL-like, treat "@handle" as a handle
+  if (!looksLikeUrl) return inputNormalised.replace(/^@/, '');
+
+  // YouTube supports /@handle
+  if (platformKey === 'youtube') {
+    const youtubeHandleMatch = inputNormalised.match(
+      /(?:^|https?:\/\/)?(?:www\.)?youtube\.com\/@(?<username>[A-Za-z0-9._-]{3,30})(?:\/|$)/
+    );
+    if (youtubeHandleMatch?.groups?.username)
+      return youtubeHandleMatch.groups.username;
   }
 
-  const match = url.match(regex);
-  return match ? match[1] : url;
+  let pattern: RegExp;
+  switch (platformKey) {
+    case 'linkedin':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?linkedin\.com\/in\/(?<username>[A-Za-z0-9-]+)(?:\/|$)/i;
+      break;
+    case 'twitter': // supports x.com and twitter.com
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/@?(?<username>[A-Za-z0-9_]+)(?:\/|$)/i;
+      break;
+    case 'medium':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?medium\.com\/@?(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'hashnode':
+      pattern =
+        /(?:^|https?:\/\/)?(?<username>[A-Za-z0-9]+)\.hashnode\.dev(?:\/|$)/i;
+      break;
+    case 'codepen':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?codepen\.io\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'dribbble':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?dribbble\.com\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'behance':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?behance\.net\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'devto':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?dev\.to\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'youtube': // legacy forms
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?youtube\.com\/(?:channel|user)\/(?<username>[A-Za-z0-9_-]+)(?:\/|$)/i;
+      break;
+    case 'twitch':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?twitch\.tv\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'discord':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?discord\.com\/users\/(?<username>[A-Za-z0-9]+)(?:\/|$)/i;
+      break;
+    case 'stackoverflow':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?stackoverflow\.com\/users\/(?<username>[0-9]+)(?:\/|$)/i;
+      break;
+    case 'facebook':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?facebook\.com\/(?<username>[A-Za-z0-9.]+)(?:\/|$)/i;
+      break;
+    case 'instagram':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?instagram\.com\/(?<username>[A-Za-z0-9._]+)(?:\/|$)/i;
+      break;
+    case 'github':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?github\.com\/(?<username>[A-Za-z0-9-]+)(?:\/|$)/i;
+      break;
+    case 'gitlab':
+      pattern =
+        /(?:^|https?:\/\/)?(?:www\.)?gitlab\.com\/(?<username>[A-Za-z0-9-]+)(?:\/|$)/i;
+      break;
+    default:
+      pattern = new RegExp(
+        `(?:^|https?:\\/\\/).*${platformKey}\\.\\w+\\/(?<username>[A-Za-z0-9_.-]+)(?:\\/|$)`,
+        'i'
+      );
+  }
+
+  const match = inputNormalised.match(pattern);
+  if (match?.groups?.username) return match.groups.username;
+
+  return inputNormalised.replace(/^@/, '');
 };
 
+// Use extracted username for standard format buttons
 const formatSocialURL = (input: string, platform: string) => {
   if (!input) return '';
+  const platformKey = (platform || '').toLowerCase();
+  const username = extractUsernameFromURL(input, platformKey);
 
-  // Extract username from the input URL or partial URL
-  const username = extractUsernameFromURL(input, platform);
-  switch (platform) {
+  switch (platformKey) {
     case 'github':
       return `https://github.com/${username}`;
+    case 'gitlab':
+      return `https://gitlab.com/${username}`;
     case 'linkedin':
       return `https://www.linkedin.com/in/${username}`;
     case 'twitter':
-      return `https://twitter.com/${username}`;
+      return `https://x.com/${username}`;
     case 'medium':
       return `https://medium.com/@${username}`;
     case 'hashnode':
@@ -109,7 +161,7 @@ const formatSocialURL = (input: string, platform: string) => {
       return `https://dribbble.com/${username}`;
     case 'behance':
       return `https://www.behance.net/${username}`;
-    case 'devTo':
+    case 'devto':
       return `https://dev.to/${username}`;
     case 'youtube':
       return `https://www.youtube.com/@${username}`;
@@ -124,7 +176,7 @@ const formatSocialURL = (input: string, platform: string) => {
     case 'instagram':
       return `https://www.instagram.com/${username}`;
     default:
-      return '';
+      return input;
   }
 };
 
@@ -201,7 +253,10 @@ interface ProfilePageUserPanelSettingsProps {
 }
 
 // Await async data then populate the form
-function loadInitialValuesFromPropsOrState(formData: any, props: any): Promise<any> {
+function loadInitialValuesFromPropsOrState(
+  formData: any,
+  props: any
+): Promise<any> {
   return new Promise((resolve) => {
     const dataToShow = formData ?? props;
     resolve(dataToShow);
@@ -217,7 +272,6 @@ const ProfilePageUserPanelSettings = ({
   open,
   close,
 }: ProfilePageUserPanelSettingsProps) => {
-
   const [formData, setFormData] = useAtom(quickstartProfilePanelForm);
 
   const form = useForm({
@@ -324,13 +378,25 @@ const ProfilePageUserPanelSettings = ({
     { value: 'sass', label: 'SASS', group: 'Styling + Components' },
     { value: 'less', label: 'LESS', group: 'Styling + Components' },
     { value: 'postcss', label: 'PostCSS', group: 'Styling + Components' },
-    { value: 'tailwindcss', label: 'Tailwind CSS', group: 'Styling + Components' },
+    {
+      value: 'tailwindcss',
+      label: 'Tailwind CSS',
+      group: 'Styling + Components',
+    },
     { value: 'mantineui', label: 'Mantine UI', group: 'Styling + Components' },
     { value: 'bootstrap', label: 'Bootstrap', group: 'Styling + Components' },
-    { value: 'materialui', label: 'Material UI', group: 'Styling + Components' },
+    {
+      value: 'materialui',
+      label: 'Material UI',
+      group: 'Styling + Components',
+    },
     { value: 'chakraui', label: 'Chakra UI', group: 'Styling + Components' },
     { value: 'antdesign', label: 'Ant Design', group: 'Styling + Components' },
-    { value: 'materializecss', label: 'Materialize CSS', group: 'Styling + Components' },
+    {
+      value: 'materializecss',
+      label: 'Materialize CSS',
+      group: 'Styling + Components',
+    },
   ]);
 
   const handleSubmit = () => {
@@ -349,7 +415,7 @@ const ProfilePageUserPanelSettings = ({
       codepenUrl: formatSocialURL(form.values.codepenUsername, 'codepen'),
       dribbbleUrl: formatSocialURL(form.values.dribbbleUsername, 'dribbble'),
       behanceUrl: formatSocialURL(form.values.behanceUsername, 'behance'),
-      devToUrl: formatSocialURL(form.values.devToUsername, 'devTo'),
+      devToUrl: formatSocialURL(form.values.devToUsername, 'devto'),
       youtubeUrl: formatSocialURL(form.values.youtubeUsername, 'youtube'),
       twitchUrl: formatSocialURL(form.values.twitchUsername, 'twitch'),
       discordUrl: formatSocialURL(form.values.discordUsername, 'discord'),
@@ -361,23 +427,59 @@ const ProfilePageUserPanelSettings = ({
       instagramUrl: formatSocialURL(form.values.instagramUsername, 'instagram'),
 
       // Extract and format usernames correctly
-      githubUsername: extractUsernameFromURL(form.values.githubUsername, 'github'),
-      linkedinUsername: extractUsernameFromURL(form.values.linkedinUsername, 'linkedin'),
-      twitterUsername: extractUsernameFromURL(form.values.twitterUsername, 'twitter'),
-      mediumUsername: extractUsernameFromURL(form.values.mediumUsername, 'medium'),
-      hashnodeUsername: extractUsernameFromURL(form.values.hashnodeUsername, 'hashnode'),
-      codepenUsername: extractUsernameFromURL(form.values.codepenUsername, 'codepen'),
-      dribbbleUsername: extractUsernameFromURL(form.values.dribbbleUsername, 'dribbble'),
-      behanceUsername: extractUsernameFromURL(form.values.behanceUsername, 'behance'),
-      devToUsername: extractUsernameFromURL(form.values.devToUsername, 'devTo'),
-      youtubeUsername: extractUsernameFromURL(form.values.youtubeUsername, 'youtube'),
-      twitchUsername: extractUsernameFromURL(form.values.twitchUsername, 'twitch'),
-      discordUsername: extractUsernameFromURL(form.values.discordUsername, 'discord'),
+      githubUsername: extractUsernameFromURL(
+        form.values.githubUsername,
+        'github'
+      ),
+      linkedinUsername: extractUsernameFromURL(
+        form.values.linkedinUsername,
+        'linkedin'
+      ),
+      twitterUsername: extractUsernameFromURL(
+        form.values.twitterUsername,
+        'twitter'
+      ),
+      mediumUsername: extractUsernameFromURL(
+        form.values.mediumUsername,
+        'medium'
+      ),
+      hashnodeUsername: extractUsernameFromURL(
+        form.values.hashnodeUsername,
+        'hashnode'
+      ),
+      codepenUsername: extractUsernameFromURL(
+        form.values.codepenUsername,
+        'codepen'
+      ),
+      dribbbleUsername: extractUsernameFromURL(
+        form.values.dribbbleUsername,
+        'dribbble'
+      ),
+      behanceUsername: extractUsernameFromURL(
+        form.values.behanceUsername,
+        'behance'
+      ),
+      devToUsername: extractUsernameFromURL(form.values.devToUsername, 'devto'),
+      youtubeUsername: extractUsernameFromURL(
+        form.values.youtubeUsername,
+        'youtube'
+      ),
+      twitchUsername: extractUsernameFromURL(
+        form.values.twitchUsername,
+        'twitch'
+      ),
+      discordUsername: extractUsernameFromURL(
+        form.values.discordUsername,
+        'discord'
+      ),
       stackoverflowUsername: extractUsernameFromURL(
         form.values.stackoverflowUsername,
         'stackoverflow'
       ),
-      facebookUsername: extractUsernameFromURL(form.values.facebookUsername, 'facebook'),
+      facebookUsername: extractUsernameFromURL(
+        form.values.facebookUsername,
+        'facebook'
+      ),
       instagramUsername: extractUsernameFromURL(
         form.values.instagramUsername,
         'instagram'
@@ -392,62 +494,66 @@ const ProfilePageUserPanelSettings = ({
 
   return (
     <Modal
-      size="xl"
-      radius="sm"
+      size='xl'
+      radius='sm'
       // fullScreen
       transitionProps={{ transition: 'fade', duration: 200 }}
       // size='80%'
-      padding="lg"
+      padding='lg'
       opened={opened}
       onClose={close}
-      title="Profile Settings"
+      title='Profile Settings'
       scrollAreaComponent={ScrollArea.Autosize}
       centered
     >
-      <Stack pr="md" pl="md" spacing="xl">
-        <TextInput label="Name" placeholder="John Doe" {...form.getInputProps('name')} />
+      <Stack pr='md' pl='md' spacing='xl'>
         <TextInput
-          label="Location"
-          placeholder="Sydney, Australia"
+          label='Name'
+          placeholder='John Doe'
+          {...form.getInputProps('name')}
+        />
+        <TextInput
+          label='Location'
+          placeholder='Sydney, Australia'
           {...form.getInputProps('location')}
         />
         <TextInput
-          label="Public Contact Email"
-          placeholder="The email you want users to see - feel free to leave this blank"
+          label='Public Contact Email'
+          placeholder='The email you want users to see - feel free to leave this blank'
           {...form.getInputProps('publicEmail')}
         />
 
         <TextInput
-          label="Personal Website"
-          placeholder="Your personal website, portfolio etc"
+          label='Personal Website'
+          placeholder='Your personal website, portfolio etc'
           {...form.getInputProps('website')}
         />
         <TextInput
-          label="Headline"
-          placeholder="Full-Stack Developer | Tech Enthusiast"
+          label='Headline'
+          placeholder='Full-Stack Developer | Tech Enthusiast'
           {...form.getInputProps('headline')}
         />
         <TextInput
-          label="Company"
-          placeholder="Gitconnect"
+          label='Company'
+          placeholder='Gitconnect'
           {...form.getInputProps('company')}
         />
         <TextInput
-          label="Position"
-          placeholder="Early Adopter"
+          label='Position'
+          placeholder='Early Adopter'
           {...form.getInputProps('position')}
         />
 
         <Switch
-          label="Open To Work"
+          label='Open To Work'
           {...form.getInputProps('openToWork', { type: 'checkbox' })}
         />
         {/* <Space h={1} /> */}
 
         {/* <Switch label="Visible To Public" {...form.getInputProps('visibleToPublic', { type: 'checkbox' })} /> */}
         <Textarea
-          label="Bio"
-          placeholder="A passionate developer who loves playing with new technology & building impactful web apps. I keep up to date with the developer community through awesome platforms like GitConnect..."
+          label='Bio'
+          placeholder='A passionate developer who loves playing with new technology & building impactful web apps. I keep up to date with the developer community through awesome platforms like GitConnect...'
           autosize
           minRows={2}
           maxRows={7}
@@ -455,7 +561,7 @@ const ProfilePageUserPanelSettings = ({
         />
         {/* <Space h={4} /> */}
         <MultiSelect
-          label="Tech Stack"
+          label='Tech Stack'
           data={data}
           searchable
           creatable
@@ -470,16 +576,16 @@ const ProfilePageUserPanelSettings = ({
         />
         {/* Checkbox Group for Skills */}
         <Checkbox.Group
-          mt="sm"
-          mb="md"
-          label="Skills"
-          description="Pick the categories that best describe your skills & experience"
+          mt='sm'
+          mb='md'
+          label='Skills'
+          description='Pick the categories that best describe your skills & experience'
           {...form.getInputProps('skills')}
         >
           <Spoiler
             maxHeight={140}
-            showLabel="Show all categories"
-            hideLabel="Hide"
+            showLabel='Show all categories'
+            hideLabel='Hide'
             styles={(theme) => ({
               control: {
                 marginTop: 15,
@@ -487,36 +593,36 @@ const ProfilePageUserPanelSettings = ({
               },
             })}
           >
-            <Group spacing="xl" mt="md">
-              <Checkbox value="frontend" label="Frontend" />
-              <Checkbox value="backend" label="Backend" />
-              <Checkbox value="databases" label="Databases" />
-              <Checkbox value="fullstack" label="Fullstack" />
-              <Checkbox value="cloud" label="Cloud" />
-              <Checkbox value="games" label="Games" />
-              <Checkbox value="machinelearning" label="Machine Learning" />
-              <Checkbox value="ai" label="AI" />
-              <Checkbox value="developmenttools" label="Development Tools" />
-              <Checkbox value="apps" label="Apps" />
-              <Checkbox value="design" label="Design" />
-              <Checkbox value="automation" label="Automation" />
-              <Checkbox value="components" label="Components" />
-              <Checkbox value="libraries" label="Libraries" />
-              <Checkbox value="opensource" label="Open Source" />
-              <Checkbox value="mobile" label="Mobile" />
-              <Checkbox value="web" label="Web" />
-              <Checkbox value="desktop" label="Desktop" />
-              <Checkbox value="datascience" label="Data Science" />
-              <Checkbox value="security" label="Security" />
-              <Checkbox value="devops" label="DevOps" />
-              <Checkbox value="testing" label="Testing" />
-              <Checkbox value="security" label="Security" />
-              <Checkbox value="hardware" label="Hardware" />
-              <Checkbox value="education" label="Education" />
-              <Checkbox value="community" label="Community" />
-              <Checkbox value="social" label="Social" />
-              <Checkbox value="ecommerce" label="Ecommerce" />
-              <Checkbox value="entertainment" label="Entertainment" />
+            <Group spacing='xl' mt='md'>
+              <Checkbox value='frontend' label='Frontend' />
+              <Checkbox value='backend' label='Backend' />
+              <Checkbox value='databases' label='Databases' />
+              <Checkbox value='fullstack' label='Fullstack' />
+              <Checkbox value='cloud' label='Cloud' />
+              <Checkbox value='games' label='Games' />
+              <Checkbox value='machinelearning' label='Machine Learning' />
+              <Checkbox value='ai' label='AI' />
+              <Checkbox value='developmenttools' label='Development Tools' />
+              <Checkbox value='apps' label='Apps' />
+              <Checkbox value='design' label='Design' />
+              <Checkbox value='automation' label='Automation' />
+              <Checkbox value='components' label='Components' />
+              <Checkbox value='libraries' label='Libraries' />
+              <Checkbox value='opensource' label='Open Source' />
+              <Checkbox value='mobile' label='Mobile' />
+              <Checkbox value='web' label='Web' />
+              <Checkbox value='desktop' label='Desktop' />
+              <Checkbox value='datascience' label='Data Science' />
+              <Checkbox value='security' label='Security' />
+              <Checkbox value='devops' label='DevOps' />
+              <Checkbox value='testing' label='Testing' />
+              <Checkbox value='security' label='Security' />
+              <Checkbox value='hardware' label='Hardware' />
+              <Checkbox value='education' label='Education' />
+              <Checkbox value='community' label='Community' />
+              <Checkbox value='social' label='Social' />
+              <Checkbox value='ecommerce' label='Ecommerce' />
+              <Checkbox value='entertainment' label='Entertainment' />
               {/* ... (other checkboxes) */}
             </Group>
           </Spoiler>
@@ -525,8 +631,8 @@ const ProfilePageUserPanelSettings = ({
 
         <Spoiler
           maxHeight={300}
-          showLabel="Show all socials"
-          hideLabel="Hide"
+          showLabel='Show all socials'
+          hideLabel='Hide'
           styles={(theme) => ({
             control: {
               marginTop: 15,
@@ -534,84 +640,90 @@ const ProfilePageUserPanelSettings = ({
             },
           })}
         >
-          <Stack spacing="lg">
+          <Stack spacing='lg'>
             <TextInput
-              label="Github Username"
-              placeholder="e.g. johndoedev"
+              label='Github Username'
+              placeholder='e.g. johndoedev'
               {...form.getInputProps('githubUsername')}
             />
             <TextInput
-              label="Linkedin Username"
-              placeholder="e.g. johnmakedoe"
+              label='Linkedin Username'
+              placeholder='e.g. johnmakedoe'
               {...form.getInputProps('linkedinUsername')}
             />
             <TextInput
-              label="Twitter Username"
-              placeholder="e.g. @johndoesopinions"
+              label='Twitter Username'
+              placeholder='e.g. @johndoesopinions'
               {...form.getInputProps('twitterUsername')}
             />
             <TextInput
-              label="Medium Username"
-              placeholder="e.g. @johndoestories"
+              label='Medium Username'
+              placeholder='e.g. @johndoestories'
               {...form.getInputProps('mediumUsername')}
             />
             <TextInput
-              label="Hashnode Username"
-              placeholder="e.g. johndoeblogs"
+              label='Hashnode Username'
+              placeholder='e.g. johndoeblogs'
               {...form.getInputProps('hashnodeUsername')}
             />
             <TextInput
-              label="Codepen Username"
-              placeholder="e.g. johndoescode"
+              label='Codepen Username'
+              placeholder='e.g. johndoescode'
               {...form.getInputProps('codepenUsername')}
             />
             <TextInput
-              label="Dribbble Username"
-              placeholder="e.g. johndoe_designs"
+              label='Dribbble Username'
+              placeholder='e.g. johndoe_designs'
               {...form.getInputProps('dribbbleUsername')}
             />
             <TextInput
-              label="Behance Username"
-              placeholder="e.g. johndoe_studio"
+              label='Behance Username'
+              placeholder='e.g. johndoe_studio'
               {...form.getInputProps('behanceUsername')}
             />
             <TextInput
-              label="Dev.to Username"
-              placeholder="e.g. johndoe.to"
+              label='Dev.to Username'
+              placeholder='e.g. johndoe.to'
               {...form.getInputProps('devToUsername')}
             />
             <TextInput
-              label="Youtube Username"
-              placeholder="e.g. JohnDoeProductions"
+              label='Youtube Username'
+              placeholder='e.g. JohnDoeProductions'
               {...form.getInputProps('youtubeUsername')}
             />
             <TextInput
-              label="Twitch Username"
-              placeholder="e.g. johndoegaming"
+              label='Twitch Username'
+              placeholder='e.g. johndoegaming'
               {...form.getInputProps('twitchUsername')}
             />
             <TextInput
-              label="Stackoverflow Username"
-              placeholder="e.g. johndoe12345"
+              label='Stackoverflow Username'
+              placeholder='e.g. johndoe12345'
               {...form.getInputProps('stackoverflowUsername')}
             />
             <TextInput
-              label="Instagram Username"
-              placeholder="e.g. johndoesgram"
+              label='Instagram Username'
+              placeholder='e.g. johndoesgram'
               {...form.getInputProps('instagramUsername')}
             />
           </Stack>
         </Spoiler>
 
-        <Group position="center" pb="lg">
-          <Button variant="filled" radius="sm" w="40%" mt="md" onClick={handleSubmit}>
+        <Group position='center' pb='lg'>
+          <Button
+            variant='filled'
+            radius='sm'
+            w='40%'
+            mt='md'
+            onClick={handleSubmit}
+          >
             Save Changes
           </Button>
           <Button
-            variant="outline"
-            radius="sm"
-            w="40%"
-            mt="sm"
+            variant='outline'
+            radius='sm'
+            w='40%'
+            mt='sm'
             onClick={handleCancelChanges}
           >
             Cancel Changes
