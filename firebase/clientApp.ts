@@ -3,7 +3,10 @@ import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getStorage, ref } from 'firebase/storage';
-import { getVertexAI, getGenerativeModel } from 'firebase/vertexai';
+import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+} from 'firebase/app-check';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -26,6 +29,55 @@ if (!getApps().length) {
 
 export const app = firebaseApp;
 export const auth = getAuth(app);
+
+// --- App Check Setup ---
+function setupAppCheck() {
+  // Only run once browser env established
+  if (typeof window !== 'undefined') {
+    if (process.env.NODE_ENV === 'development') {
+      // For local development, use the debug provider
+      (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true; // Prints a debug token to console - add this to firebase console
+
+      initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider('dummy-key-for-dev-only'), // This isn't used if a debug token is registered in Firebase Console
+        isTokenAutoRefreshEnabled: true,
+      });
+      console.log(
+        'App Check Debug mode enabled. Look for debug token in console.'
+      );
+    } else if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') {
+      // For staging/Vercel preview deployments
+      if (!process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_STAGING) {
+        console.error(
+          'Missing NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_STAGING for staging environment'
+        );
+      }
+      initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(
+          process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_STAGING!
+        ),
+        isTokenAutoRefreshEnabled: true,
+      });
+    } else {
+      // For production - (NODE_ENV === 'production' || NEXT_PUBLIC_VERCEL_ENV === 'production')
+      if (!process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_PROD) {
+        console.error(
+          'Missing NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_PROD for production environment'
+        );
+      }
+      initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(
+          process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_PROD!
+        ),
+        isTokenAutoRefreshEnabled: true,
+      });
+    }
+  } else {
+    console.log('App Check setup skipped: Not in a browser environment.');
+  }
+}
+
+setupAppCheck();
 
 // init firestore
 const db = getFirestore(firebaseApp);
