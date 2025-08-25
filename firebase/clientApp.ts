@@ -30,51 +30,31 @@ if (!getApps().length) {
 export const app = firebaseApp;
 export const auth = getAuth(app);
 
-// --- App Check Setup ---
+// --- App Check (ReCaptcha) Setup ---
 function setupAppCheck() {
-  // Only run once browser env established
-  if (typeof window !== 'undefined') {
-    if (process.env.NODE_ENV === 'development') {
-      // For local development, use the debug provider
-      (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true; // Prints a debug token to console - add this to firebase console
-
-      initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider('dummy-key-for-dev-only'), // This isn't used if a debug token is registered in Firebase Console
-        isTokenAutoRefreshEnabled: true,
-      });
-      console.log(
-        'App Check Debug mode enabled. Look for debug token in console.'
-      );
-    } else if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') {
-      // For staging/Vercel preview deployments
-      if (!process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_STAGING) {
-        console.error(
-          'Missing NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_STAGING for staging environment'
-        );
-      }
-      initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider(
-          process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_STAGING!
-        ),
-        isTokenAutoRefreshEnabled: true,
-      });
-    } else {
-      // For production - (NODE_ENV === 'production' || NEXT_PUBLIC_VERCEL_ENV === 'production')
-      if (!process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_PROD) {
-        console.error(
-          'Missing NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_PROD for production environment'
-        );
-      }
-      initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider(
-          process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY_PROD!
-        ),
-        isTokenAutoRefreshEnabled: true,
-      });
-    }
-  } else {
-    console.log('App Check setup skipped: Not in a browser environment.');
+  if (typeof window === 'undefined') {
+    return;
   }
+  // For local development, use the debug provider
+  if (process.env.NODE_ENV === 'development') {
+    if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_LOCAL_DEBUG_KEY) {
+      // Use a stored debug token if available
+      (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN =
+        process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_LOCAL_DEBUG_KEY;
+    } else {
+      // Will print a new token on first run - store in Firebase & .env
+      (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    }
+  }
+
+  // Initialize App Check with the ReCaptcha provider
+  // In development, this will use the debug token if it has been set
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(
+      process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY!
+    ),
+    isTokenAutoRefreshEnabled: true,
+  });
 }
 
 setupAppCheck();
@@ -121,6 +101,3 @@ if (process.env.NODE_ENV === 'development') {
 
 export { analytics, db };
 // logEvent(analytics, 'notification_received');
-
-// Initialize the Vertex AI service
-// export const vertexAI = getVertexAI(app);
