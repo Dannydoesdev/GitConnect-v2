@@ -47,7 +47,7 @@ function setupAppCheck() {
     }
   }
 
-  // Initialize App Check with the ReCaptcha provider
+  // Initialise App Check with the ReCaptcha provider
   // In development, this will use the debug token if it has been set
   initializeAppCheck(app, {
     provider: new ReCaptchaEnterpriseProvider(
