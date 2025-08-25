@@ -3,7 +3,10 @@ import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getStorage, ref } from 'firebase/storage';
-import { getVertexAI, getGenerativeModel } from 'firebase/vertexai';
+import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+} from 'firebase/app-check';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -26,6 +29,35 @@ if (!getApps().length) {
 
 export const app = firebaseApp;
 export const auth = getAuth(app);
+
+// --- App Check (ReCaptcha) Setup ---
+function setupAppCheck() {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  // For local development, use the debug provider
+  if (process.env.NODE_ENV === 'development') {
+    if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_LOCAL_DEBUG_KEY) {
+      // Use a stored debug token if available
+      (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN =
+        process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_LOCAL_DEBUG_KEY;
+    } else {
+      // Will print a new token on first run - store in Firebase & .env
+      (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    }
+  }
+
+  // Initialise App Check with the ReCaptcha provider
+  // In development, this will use the debug token if it has been set
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(
+      process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY!
+    ),
+    isTokenAutoRefreshEnabled: true,
+  });
+}
+
+setupAppCheck();
 
 // init firestore
 const db = getFirestore(firebaseApp);
@@ -69,6 +101,3 @@ if (process.env.NODE_ENV === 'development') {
 
 export { analytics, db };
 // logEvent(analytics, 'notification_received');
-
-// Initialize the Vertex AI service
-// export const vertexAI = getVertexAI(app);
