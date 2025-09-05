@@ -12,15 +12,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { imageUrl } = req.query;
+  const { imagePath } = req.query;
 
-  if (
-    !imageUrl ||
-    typeof imageUrl !== 'string' ||
-    !imageUrl.startsWith('https://firebasestorage.googleapis.com/')
-  ) {
-    return res.status(400).json({ error: 'Image URL is not valid' });
+  if (!imagePath || typeof imagePath !== 'string') {
+    return res.status(400).json({ error: 'Image path is not valid' });
   }
+
+  const imageUrl = `https://firebasestorage.googleapis.com/${imagePath}`;
 
   const cachedImage = cache.get(imageUrl);
   if (cachedImage) {

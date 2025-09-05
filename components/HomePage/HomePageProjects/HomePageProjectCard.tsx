@@ -29,7 +29,9 @@ export function HomePageProjectCard({
 
   const originalImageUrl = image && typeof image === 'string' ? correctImageGetter(image, 768) : '/img/gc-sml.webp';
   const isGif = originalImageUrl.includes('.gif');
-  const imageUrl = isGif ? `/api/image/convert?imageUrl=${encodeURIComponent(originalImageUrl)}` : originalImageUrl;
+  const firebasePrefix = 'https://firebasestorage.googleapis.com/';
+  const imagePath = isGif ? originalImageUrl.substring(firebasePrefix.length) : '';
+  const imageUrl = isGif ? `/api/image/convert?imagePath=${encodeURIComponent(imagePath)}` : originalImageUrl;
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
