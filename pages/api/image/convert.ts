@@ -20,9 +20,18 @@ export default async function handler(
       throw new Error('Invalid imageUrl');
     }
     parsedUrl = new URL(imageUrl);
+    const ALLOWED_HOSTS = ['firebasestorage.googleapis.com'];
+    // Check exact hostname match after normalisation
+    const normalisedHost = parsedUrl.hostname.replace(/\.$/, '').toLowerCase();
+    // Prevent credentials, ports, or suspicious paths
     if (
       parsedUrl.protocol !== 'https:' ||
-      parsedUrl.hostname !== 'firebasestorage.googleapis.com'
+      !ALLOWED_HOSTS.includes(normalisedHost) ||
+      parsedUrl.port || 
+      parsedUrl.username || 
+      parsedUrl.password || 
+      // Disallow path traversal
+      parsedUrl.pathname.includes('..')
     ) {
       throw new Error('Invalid imageUrl');
     }
