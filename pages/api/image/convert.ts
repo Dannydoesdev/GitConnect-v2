@@ -14,15 +14,23 @@ export default async function handler(
 ) {
   const { imageUrl } = req.query;
 
-  if (
-    !imageUrl ||
-    typeof imageUrl !== 'string' ||
-    !imageUrl.startsWith('https://firebasestorage.googleapis.com/')
-  ) {
+  let parsedUrl: URL;
+  try {
+    if (!imageUrl || typeof imageUrl !== 'string') {
+      throw new Error('Invalid imageUrl');
+    }
+    parsedUrl = new URL(imageUrl);
+    if (
+      parsedUrl.protocol !== 'https:' ||
+      parsedUrl.hostname !== 'firebasestorage.googleapis.com'
+    ) {
+      throw new Error('Invalid imageUrl');
+    }
+  } catch {
     return res.status(400).json({ error: 'Image URL is not valid' });
   }
 
-  const cachedImage = cache.get(imageUrl);
+  const cachedImage = cache.get(parsedUrl.href);
   if (cachedImage) {
     res.setHeader('X-Cache', 'HIT');
     res.setHeader('Content-Type', 'image/png');
@@ -30,14 +38,14 @@ export default async function handler(
   }
 
   try {
-    const imageBuffer = await fetch(imageUrl).then((res) => res.buffer());
+    const imageBuffer = await fetch(parsedUrl.href).then((res) => res.buffer());
     const metadata = await sharp(imageBuffer).metadata();
 
     if (metadata.format === 'gif' && metadata.pages && metadata.pages > 1) {
       const output = await sharp(imageBuffer, { animated: false })
         .png()
         .toBuffer();
-      cache.set(imageUrl, output);
+      cache.set(parsedUrl.href, output);
       res.setHeader('X-Cache', 'MISS');
       res.setHeader('Content-Type', 'image/png');
       return res.status(200).send(output);
