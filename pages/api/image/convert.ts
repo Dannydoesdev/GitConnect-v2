@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import sharp from 'sharp';
 import fetch from 'node-fetch';
 import { LRUCache } from 'lru-cache';
+import path from 'path';
 
 const cache = new LRUCache<string, Buffer>({
   max: 500,
@@ -12,17 +13,37 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { imageUrl } = req.query;
+  const { imagePath } = req.query;
 
-  if (
-    !imageUrl ||
-    typeof imageUrl !== 'string' ||
-    !imageUrl.startsWith('https://firebasestorage.googleapis.com/')
-  ) {
-    return res.status(400).json({ error: 'Image URL is not valid' });
+  // Prevent path traversal attacks
+  if (!imagePath || typeof imagePath !== 'string' || imagePath.includes('..')) {
+    return res.status(400).json({ error: 'A valid image path is required.' });
   }
 
-  const cachedImage = cache.get(imageUrl);
+  // Sanitise the path to prevent any lingering traversal attempts
+  const sanitisedPath = path.normalize(imagePath).replace(/^(\.\.(\/|\\|$))+/, '');
+
+  if (sanitisedPath.includes('..') || path.isAbsolute(sanitisedPath)) {
+    return res.status(400).json({ error: 'Invalid image path detected.' });
+  }
+
+  const imageUrl = `https://firebasestorage.googleapis.com/${sanitisedPath}`;
+
+  // Final validation to ensure the URL is well-formed and for the correct domain
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(imageUrl);
+    if (
+      parsedUrl.protocol !== 'https:' ||
+      parsedUrl.hostname !== 'firebasestorage.googleapis.com'
+    ) {
+      throw new Error('Invalid hostname');
+    }
+  } catch (error) {
+    return res.status(400).json({ error: 'Malformed image URL' });
+  }
+
+  const cachedImage = cache.get(parsedUrl.href);
   if (cachedImage) {
     res.setHeader('X-Cache', 'HIT');
     res.setHeader('Content-Type', 'image/png');
@@ -30,14 +51,14 @@ export default async function handler(
   }
 
   try {
-    const imageBuffer = await fetch(imageUrl).then((res) => res.buffer());
+    const imageBuffer = await fetch(parsedUrl).then((res) => res.buffer());
     const metadata = await sharp(imageBuffer).metadata();
 
     if (metadata.format === 'gif' && metadata.pages && metadata.pages > 1) {
       const output = await sharp(imageBuffer, { animated: false })
         .png()
         .toBuffer();
-      cache.set(imageUrl, output);
+      cache.set(parsedUrl.href, output);
       res.setHeader('X-Cache', 'MISS');
       res.setHeader('Content-Type', 'image/png');
       return res.status(200).send(output);
