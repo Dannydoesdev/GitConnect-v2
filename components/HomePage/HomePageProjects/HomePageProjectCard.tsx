@@ -12,6 +12,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { correctImageGetter } from '../../../lib/correctImageGetter';
+import { gifConverter } from '@/lib/gifConverter';
 
 export function HomePageProjectCard({
   image,
@@ -29,9 +30,7 @@ export function HomePageProjectCard({
 
   const originalImageUrl = image && typeof image === 'string' ? correctImageGetter(image, 768) : '/img/gc-sml.webp';
   const isGif = originalImageUrl.includes('.gif');
-  const firebasePrefix = 'https://firebasestorage.googleapis.com/';
-  const imagePath = isGif ? originalImageUrl.substring(firebasePrefix.length) : '';
-  const imageUrl = isGif ? `/api/image/convert?imagePath=${encodeURIComponent(imagePath)}` : originalImageUrl;
+  const imageUrl = isGif ? gifConverter(originalImageUrl) : originalImageUrl;
 
   function replaceUnderscoresAndDashes(input: string): string {
     return input.replace(/[_-]/g, ' ');
