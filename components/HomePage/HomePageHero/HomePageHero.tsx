@@ -137,8 +137,8 @@ export function HeroLanding() {
               <span>the </span> portfolio platform for devs
             </Title> */}
             <Text className={classes.description} size='xl' mt='xs'>
-              Create your portfolio{' '}
-              <span className={classes.emphasis}>in minutes, not days, </span>
+              Create your dev portfolio from GitHub{' '}
+              <span className={classes.emphasis}>in minutes, </span>
               <span className={classes.emphasisTwo}>for free.</span>
               <br />
               {/* <span>the </span> portfolio platform for devs */}

@@ -6,8 +6,7 @@ export default createStyles((theme, _params, getRef) => {
   return {
     card: {
       position: 'relative',
-      // Edit height dynamically on screen size changes
-      height: 310,
+      height: 240,
       paddingBottom: '30px',
       backgroundColor:
         theme.colorScheme === 'dark'
@@ -17,6 +16,21 @@ export default createStyles((theme, _params, getRef) => {
       [`&:hover .${image}`]: {
         transform: 'scale(1.03)',
       },
+       [theme.fn.largerThan(700)]: {
+      height: 280,
+      // paddingBottom: theme.spacing.xl * 3,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
+       [theme.fn.largerThan(1200)]: {
+      height: 340,
+      // paddingBottom: theme.spacing.xl * 3,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
+      [theme.fn.largerThan(1800)]: {
+      height: 380,
+      // paddingBottom: theme.spacing.xl * 3,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
     },
 
     image: {

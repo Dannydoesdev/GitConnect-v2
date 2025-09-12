@@ -5,7 +5,7 @@ import type { GetStaticProps, NextPage } from 'next';
 import { Container, Space } from '@mantine/core';
 import { getAllPublicProjectsAndSortWithTimeStamp } from '@/lib/sortProjectsWithTimestamp';
 import { HeroLanding } from '@/components/HomePage/HomePageHero/HomePageHero';
-import HomePageProjectGrid from '@/components/HomePage/HomePageProjects/HomePageProjectGridNoScroll';
+import HomePageProjectGrid from '@/components/HomePage/HomePageProjects/HomePageProjectGrid';
 
 export const getStaticProps: GetStaticProps = async () => {
   const sortedProjects = await getAllPublicProjectsAndSortWithTimeStamp();
@@ -24,9 +24,7 @@ const Index: NextPage = ({ sortedProjects }: any) => {
       <HeroLanding />
       <Space h='xl' />
       <Space h='xl' />
-      <Container size={2200}
-        // px='xl'
-      >
+      <Container size={2250}>
         <HomePageProjectGrid projects={sortedProjects} />
       </Container>
     </>

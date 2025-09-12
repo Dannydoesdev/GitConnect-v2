@@ -9,8 +9,9 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    minHeight: '50vh',
-    maxHeight: '80vh',
+    height: 530,
+    minHeight: '30vh',
+    // maxHeight: '60vh',
     marginTop: 100,
     paddingTop: 10,
     paddingBottom: 70,
@@ -21,9 +22,14 @@ export default createStyles((theme) => ({
     justifyContent: 'flex-end',
     zIndex: 1,
     position: 'relative',
+    [theme.fn.smallerThan(1800)]: {
+      height: 440,
+      // paddingBottom: theme.spacing.xl * 3,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
 
     [theme.fn.smallerThan('sm')]: {
-      height: 500,
+      height: 400,
       // paddingBottom: theme.spacing.xl * 3,
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
@@ -113,11 +119,11 @@ export default createStyles((theme) => ({
   },
 
   emphasisTwo: {
-    fontWeight: 500,
+    fontWeight: 450,
   },
 
   emphasis: {
-    fontWeight: 500,
+    // fontWeight: 500,
   },
 
   beta: {

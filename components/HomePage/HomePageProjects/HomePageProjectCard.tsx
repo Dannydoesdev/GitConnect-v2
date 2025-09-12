@@ -48,6 +48,7 @@ export function HomePageProjectCard({
           className={classes.card}
           radius='md'
           component='a'
+          h='(max-width: 768px) 100vw, (max-width: 1079px) 50vw, (max-width: 1800px) 33vw, 25vw'
         >
          
           <Box
@@ -65,7 +66,7 @@ export function HomePageProjectCard({
               unoptimized={imageUrl.includes('.gif')}
               className='image'
               style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
-              // sizes='(max-width: 768px) 100vw, (max-width: 1079px) 50vw, (max-width: 1500px) 33vw, 25vw'
+              sizes='(max-width: 768px) 100vw, (max-width: 1079px) 50vw, (max-width: 1500px) 33vw, 25vw'
               fill={true}
               quality={75}
               priority={index && index <= 6 ? true : false}
