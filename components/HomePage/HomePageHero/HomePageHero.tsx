@@ -34,7 +34,7 @@ export function HeroLanding() {
         <Image
           src='/img/gitconnect.webp'
           className='image'
-          style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
+          style={{ objectFit: 'scale-down', transition: 'transform 500ms ease' }}
           sizes='100vw'
           fill={true}
           quality={100}
@@ -43,7 +43,8 @@ export function HeroLanding() {
         />
       </Box>
       <Overlay
-        gradient='linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgb(0 0 0 / 89%) 40%)'
+        // gradient='linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgb(0 0 0 / 89%) 40%)'
+        gradient='linear-gradient(180deg, rgb(0 0 0 / 70%) 0%, rgb(0 0 0 / 86%) 40%)'
         opacity={1}
         zIndex={0}
       />
@@ -137,9 +138,9 @@ export function HeroLanding() {
               <span>the </span> portfolio platform for devs
             </Title> */}
             <Text className={classes.description} size='xl' mt='xs'>
-              Create your dev portfolio from GitHub{' '}
-              <span className={classes.emphasis}>in minutes, </span>
-              <span className={classes.emphasisTwo}>for free.</span>
+              Create a visual portfolio from your GitHub projects in minutes.{' '}
+              {/* <span className={classes.emphasis}>in minutes, </span> */}
+              {/* <span className={classes.emphasisTwo}>for free.</span> */}
               <br />
               {/* <span>the </span> portfolio platform for devs */}
               {/* Share what you've been building with the world */}
@@ -149,11 +150,17 @@ export function HeroLanding() {
               {/* Create. Share. Collaborate. Inspire. */}
               {/* GitConnect is a dedicated platform for developers to build their portfolio, connect with opportunities, and with eachother. */}
             </Text>
-            <Stack>
+              <Stack
+                sx={(theme) => ({
+                  [theme.fn.smallerThan(720)]: {
+                    alignItems: 'center',
+                  },
+                })}
+            >
               <Link href='/signup' passHref legacyBehavior>
                 <Button
                   component='a'
-                  size='lg'
+                  size='md'
                   radius='md'
                   variant='white'
                   color='dark'
@@ -166,7 +173,7 @@ export function HeroLanding() {
                     },
                     width: '25%',
                     [theme.fn.smallerThan('sm')]: {
-                      width: '70%',
+                      width: '60%',
                     },
                   })}
                 >

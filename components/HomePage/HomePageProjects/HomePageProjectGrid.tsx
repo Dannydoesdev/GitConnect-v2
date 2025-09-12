@@ -33,7 +33,7 @@ const HomePageProjectGrid = ({ projects }: HomePageProjectGridProps) => {
       breakpoints={[
         { maxWidth: 1800, cols: 3, spacing: 'lg' },
         { maxWidth: 1200, cols: 2, spacing: 'sm' },
-        { maxWidth: 700, cols: 1, spacing: 'sm' },
+        { maxWidth: 720, cols: 1, spacing: 'sm' },
       ]}
     >
       {projects.map((project: Project, index: number) => (

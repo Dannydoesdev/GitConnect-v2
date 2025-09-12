@@ -138,6 +138,7 @@ const useStyles = createStyles((theme) => ({
     height: 70,
     padding: 20,
     zIndex: 3,
+    boxShadow: '0px -7px 20px 0px #9a9a9a',
 
     [theme.fn.smallerThan('sm')]: {
       paddingRight: 5,
@@ -527,14 +528,16 @@ export const AppContainer = ({ children }, props) => {
                   <Link href='#' passHref legacyBehavior>
                     <Button
                       component='a'
-                      size='xs'
+                        size='xs'
+                         color='gray'
+                        variant='filled'
                       onClick={(e) => signInHandler(e)}
-                      sx={(theme) => ({
-                        backgroundColor:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.dark[5]
-                            : theme.colors.blue[6],
-                      })}
+                      // sx={(theme) => ({
+                      //   backgroundColor:
+                      //     theme.colorScheme === 'dark'
+                      //       ? theme.colors.dark[5]
+                      //       : theme.colors.blue[6],
+                      // })}
                     >
                       Sign in
                     </Button>
@@ -542,14 +545,16 @@ export const AppContainer = ({ children }, props) => {
                   <Link href='#' passHref legacyBehavior>
                     <Button
                       component='a'
-                      size='xs'
+                        size='xs'
+                        color='gray'
+                        variant='filled'
                       onClick={(e) => registerHandler(e)}
-                      sx={(theme) => ({
-                        backgroundColor:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.dark[5]
-                            : theme.colors.blue[6],
-                      })}
+                      // sx={(theme) => ({
+                      //   backgroundColor:
+                      //     theme.colorScheme === 'dark'
+                      //       ? theme.colors.dark[5]
+                      //       : theme.colors.blue[6],
+                      // })}
                     >
                       Register
                     </Button>

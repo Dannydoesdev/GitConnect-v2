@@ -9,29 +9,51 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    height: 530,
-    minHeight: '30vh',
+    // height: 500,
+    // marginLeft: '20px',
+    height: '40vh',
+    // minHeight: '35vh',
     // maxHeight: '60vh',
     marginTop: 100,
-    paddingTop: 10,
+    paddingTop: 50,
     paddingBottom: 70,
     maxWidth: '80rem',
-    marginBottom: -30,
+    marginBottom: -20,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
     zIndex: 1,
     position: 'relative',
     [theme.fn.smallerThan(1800)]: {
-      height: 440,
+      height: 500,
+      // height: '50vh',
       // paddingBottom: theme.spacing.xl * 3,
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
 
-    [theme.fn.smallerThan('sm')]: {
-      height: 400,
+    [theme.fn.smallerThan(1200)]: {
+      height: 500,
+      marginLeft: '25px',
+      // height: '50vh',
       // paddingBottom: theme.spacing.xl * 3,
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
+     [theme.fn.smallerThan(720)]: {
+        height: 400,
+       textAlign: 'center',
+       justifyContent: 'center',
+       alignContent: 'center',
+       //  margin: 'auto',
+       marginTop: '65px',
+       paddingBottom: '0px',
+       marginRight: '0px',
+       marginLeft:'0px',
+              marginBottom:'-30px',
+       //  marginBottom '-40px',
+
+      // height: '50vh',
+      // paddingBottom: theme.spacing.xl * 3,
+      // paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
   },
 
@@ -152,9 +174,10 @@ export default createStyles((theme) => ({
     maxWidth: 600,
     lineHeight: 1.7,
 
-    [theme.fn.smallerThan('sm')]: {
+    [theme.fn.smallerThan(720)]: {
       maxWidth: '100%',
       fontSize: theme.fontSizes.sm,
+      display: 'none',
     },
   },
 
