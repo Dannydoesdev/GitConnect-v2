@@ -6,8 +6,9 @@ export default createStyles((theme, _params, getRef) => {
   return {
     card: {
       position: 'relative',
-      height: 280,
-      paddingBottom: '20px',
+      // Edit height dynamically on screen size changes
+      height: 310,
+      paddingBottom: '30px',
       backgroundColor:
         theme.colorScheme === 'dark'
           ? theme.colors.dark[6]

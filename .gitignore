@@ -1,25 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# firebase
-firestore.rules
-firestore.indexes.json
-storage.rules
-/firebase/emulator
-firebase-debug.log
-**/firestore-debug.log
-pubsub-debug.log
-firebase.json
-ui-debug.log
-**/.runtimeconfig.json
-functions/firestore-debug.log
-functions/pubsub-debug.log
-functions/*.log
-/functions/local_db_export
-
-# backup
-/backup
-**/backup
-
 # dependencies
 /node_modules
 /.pnp
@@ -37,9 +17,6 @@ functions/*.log
 # tests
 /test
 
-# mantine stuff
-/src
-
 # testing
 /coverage
 
@@ -51,25 +28,15 @@ functions/*.log
 /build
 
 # misc
-.vscode
 /.vscode
-.DS_Store
 *.DS_Store
 /.DS_Store
-../.DS_Store
 **/.DS_Store
 *.pem
-.vscode/settings.json
 
 # logs
-*.log
 **/*.log
-.log*
-.log
-functions/*.log
-/functions/firestore-debug.log
-/functions/ui-debug.log
-/functions/pubsub-debug.log
+/functions/*.log
 
 # debug
 npm-debug.log*
@@ -78,13 +45,9 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
-*/**/.env*.local
-*/.env*.local
+**/.env*.local
 functions/.env
 **/.env
-**/.env.local
-**/.env.example.local
 
 # vercel
 .vercel
@@ -92,3 +55,16 @@ functions/.env
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# firebase
+firestore.rules
+firestore.indexes.json
+storage.rules
+/firebase/emulator
+firebase.json
+**/.runtimeconfig.json
+/extensions
+
+# backup
+/backup
+**/backup

@@ -14,7 +14,7 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       sortedProjects,
     },
-    revalidate: 3600,
+    revalidate: 600,
   };
 };
 
@@ -24,7 +24,9 @@ const Index: NextPage = ({ sortedProjects }: any) => {
       <HeroLanding />
       <Space h='xl' />
       <Space h='xl' />
-      <Container fluid>
+      <Container size={2200}
+        // px='xl'
+      >
         <HomePageProjectGrid projects={sortedProjects} />
       </Container>
     </>

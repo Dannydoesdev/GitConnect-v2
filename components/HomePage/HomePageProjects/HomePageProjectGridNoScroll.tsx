@@ -24,7 +24,8 @@ interface HomePageProjectGridProps {
 const HomePageProjectGrid = ({ projects }: HomePageProjectGridProps) => {
   return (
     <SimpleGrid
-      cols={4}
+    mx='lg'
+      cols={3}
       spacing='xl'
       breakpoints={[
         { maxWidth: 1500, cols: 3, spacing: 'md' },

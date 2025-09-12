@@ -1,13 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { FieldValue } from 'firebase-admin/firestore';
 import { getAdminDb } from '@/firebase/adminApp';
+import { FieldValue } from 'firebase-admin/firestore';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method === 'POST') {
+      if (process.env.NODE_ENV === 'development') {
+        res.status(405).json({ message: 'Local environment.' });
+        return;
+      }
+
       const adminDb = getAdminDb();
 
       const userId = req.body.userId;
@@ -19,11 +21,7 @@ export default async function handler(
         throw new Error('Invalid userId or repoId type');
       }
 
-      const projectRef = adminDb
-        .collection('users')
-        .doc(userId)
-        .collection('repos')
-        .doc(repoId);
+      const projectRef = adminDb.collection('users').doc(userId).collection('repos').doc(repoId);
 
       await projectRef.update({
         views: FieldValue.increment(1),
