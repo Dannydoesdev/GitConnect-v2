@@ -34,7 +34,7 @@ export function HeroLanding() {
         <Image
           src='/img/gitconnect.webp'
           className='image'
-          style={{ objectFit: 'cover', transition: 'transform 500ms ease' }}
+          style={{ objectFit: 'scale-down', transition: 'transform 500ms ease' }}
           sizes='100vw'
           fill={true}
           quality={100}
@@ -43,7 +43,7 @@ export function HeroLanding() {
         />
       </Box>
       <Overlay
-        gradient='linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgb(0 0 0 / 89%) 40%)'
+        gradient='linear-gradient(180deg, rgb(0 0 0 / 70%) 0%, rgb(0 0 0 / 86%) 40%)'
         opacity={1}
         zIndex={0}
       />
@@ -103,28 +103,6 @@ export function HeroLanding() {
                     Learn more
                   </Text>
                 </Link>
-                {/* <Link
-                  href='https://discord.gg/hkajEH6WkW'
-                  passHref
-                  legacyBehavior
-                >
-                  <Text
-                    component='a'
-                    target='_blank'
-                    className={classes.description}
-                    weight={500}
-                    size='xs'
-                    underline={false}
-                    mt='sm'
-                    sx={(theme) => ({
-                      '&:hover': {
-                        backgroundColor: theme.colors.dark[6],
-                      },
-                    })}
-                  >
-                    Join the Discord
-                  </Text>
-                </Link> */}
               </Group>
             </Stack>
           </>
@@ -133,27 +111,23 @@ export function HeroLanding() {
             <Title className={classes.title}>
               Welcome to GitConnect; <br />
             </Title>
-            {/* <Title className={classes.titleTwo}>
-              <span>the </span> portfolio platform for devs
-            </Title> */}
             <Text className={classes.description} size='xl' mt='xs'>
-              Create your portfolio{' '}
-              <span className={classes.emphasis}>in minutes, not days,</span>
-              <span className={classes.emphasisTwo}>for free.</span>
+              Create a visual portfolio from your GitHub projects in minutes.{' '}
               <br />
-              {/* <span>the </span> portfolio platform for devs */}
-              {/* Share what you've been building with the world */}
               Share what you're building with peers, clients & employers.
               <br />
-              {/* <span className={classes.emphasisThree}>..or to your mum!</span> */}
-              {/* Create. Share. Collaborate. Inspire. */}
-              {/* GitConnect is a dedicated platform for developers to build their portfolio, connect with opportunities, and with eachother. */}
             </Text>
-            <Stack>
+              <Stack
+                sx={(theme) => ({
+                  [theme.fn.smallerThan(720)]: {
+                    alignItems: 'center',
+                  },
+                })}
+            >
               <Link href='/signup' passHref legacyBehavior>
                 <Button
                   component='a'
-                  size='lg'
+                  size='md'
                   radius='md'
                   variant='white'
                   color='dark'
@@ -166,7 +140,7 @@ export function HeroLanding() {
                     },
                     width: '25%',
                     [theme.fn.smallerThan('sm')]: {
-                      width: '70%',
+                      width: '60%',
                     },
                   })}
                 >
@@ -192,26 +166,6 @@ export function HeroLanding() {
                     Learn more
                   </Text>
                 </Link>
-                {/* <Link href="https://discord.gg/hkajEH6WkW" passHref legacyBehavior>
-                  <Text
-                    component="a"
-                    target="_blank"
-                    className={classes.description}
-                    weight={500}
-                    // underline={true}
-                    // italic={true}
-                    size="xs"
-                    underline={false}
-                    mt="sm"
-                    sx={(theme) => ({
-                      '&:hover': {
-                        backgroundColor: theme.colors.dark[6],
-                      },
-                    })}
-                  >
-                    Join the Discord
-                  </Text>
-                </Link> */}
               </Group>
             </Stack>
           </>

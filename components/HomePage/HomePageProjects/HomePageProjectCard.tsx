@@ -43,11 +43,12 @@ export function HomePageProjectCard({
         <Card
           p='xl'
           mt={8}
-          mb='sm'
+          mb='lg'
           shadow='lg'
           className={classes.card}
           radius='md'
           component='a'
+          h='(max-width: 768px) 100vw, (max-width: 1079px) 50vw, (max-width: 1800px) 33vw, 25vw'
         >
          
           <Box
