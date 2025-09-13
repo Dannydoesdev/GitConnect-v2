@@ -18,17 +18,14 @@ export default createStyles((theme, _params, getRef) => {
       },
        [theme.fn.largerThan(700)]: {
       height: 280,
-      // paddingBottom: theme.spacing.xl * 3,
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
        [theme.fn.largerThan(1200)]: {
       height: 340,
-      // paddingBottom: theme.spacing.xl * 3,
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
       [theme.fn.largerThan(1800)]: {
       height: 380,
-      // paddingBottom: theme.spacing.xl * 3,
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
     },
@@ -80,12 +77,8 @@ export default createStyles((theme, _params, getRef) => {
 
     author: {
       color: theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[9],
-      // weight: 700,
-      // color: theme.colors.dark[2],
       position: 'relative',
       zIndex: 2,
-      // top: '-60px',
-      // left: '25px',
       padding: '0px 12px',
       display: 'block',
     },

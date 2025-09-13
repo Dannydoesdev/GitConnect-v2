@@ -1,5 +1,3 @@
-// Static version of the homepage with no infinite scroll:
-
 import React from 'react';
 import type { GetStaticProps, NextPage } from 'next';
 import { Container, Space } from '@mantine/core';
