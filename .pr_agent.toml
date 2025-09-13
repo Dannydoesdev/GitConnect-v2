@@ -1,0 +1,21 @@
+[config]
+disable_auto_feedback = true
+
+[pr_code_suggestions]
+suggestions_depth = "selective"
+suggestions_score_threshold = 7
+publish_output_no_suggestions = false
+enable_help_text = false
+
+[pr_reviewer]
+num_max_findings = 2
+enable_help_text = false
+enable_review_labels_security = false
+enable_review_labels_effort = false
+extra_instructions = """\
+Only report critical bugs, crashes, security issues, or risky logic.
+Skip minor style, formatting, and low‑impact nits.
+"""
+
+[pr_description]
+publish_labels = false
