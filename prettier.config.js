@@ -1,12 +1,14 @@
-import { type Config } from "prettier";
+/**
+ * @see https://prettier.io/docs/configuration
+ * @type {import("prettier").Config}
+ */
 
-const config: Config = {
+const config = {
    endOfLine: 'lf',
    semi: true,
    singleQuote: true,
    tabWidth: 2,
    trailingComma: 'es5',
-   printWidth: 120,
    importOrder: [
      '^(react/(.*)$)|^(react$)',
      '^(next/(.*)$)|^(next$)',

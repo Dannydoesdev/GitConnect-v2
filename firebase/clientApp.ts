@@ -3,7 +3,6 @@ import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getStorage, ref } from 'firebase/storage';
-import { getVertexAI, getGenerativeModel } from 'firebase/vertexai';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -47,7 +46,7 @@ if (
   process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST &&
   !dbhost.startsWith('localhost')
 ) {
-  connectFirestoreEmulator(db, 'localhost', 8080);
+  // connectFirestoreEmulator(db, 'localhost', 8080);
   // console.log('After connecting to emulator, dbhost:', (db.toJSON() as { settings?: { host?: string } }).settings?.host);
 }
 
@@ -69,6 +68,3 @@ if (process.env.NODE_ENV === 'development') {
 
 export { analytics, db };
 // logEvent(analytics, 'notification_received');
-
-// Initialize the Vertex AI service
-// export const vertexAI = getVertexAI(app);

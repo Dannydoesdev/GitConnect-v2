@@ -6,8 +6,8 @@ export default createStyles((theme, _params, getRef) => {
   return {
     card: {
       position: 'relative',
-      height: 280,
-      paddingBottom: '20px',
+      height: 240,
+      paddingBottom: '30px',
       backgroundColor:
         theme.colorScheme === 'dark'
           ? theme.colors.dark[6]
@@ -16,6 +16,18 @@ export default createStyles((theme, _params, getRef) => {
       [`&:hover .${image}`]: {
         transform: 'scale(1.03)',
       },
+       [theme.fn.largerThan(700)]: {
+      height: 280,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
+       [theme.fn.largerThan(1200)]: {
+      height: 340,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
+      [theme.fn.largerThan(1800)]: {
+      height: 380,
+      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    },
     },
 
     image: {
@@ -65,12 +77,8 @@ export default createStyles((theme, _params, getRef) => {
 
     author: {
       color: theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[9],
-      // weight: 700,
-      // color: theme.colors.dark[2],
       position: 'relative',
       zIndex: 2,
-      // top: '-60px',
-      // left: '25px',
       padding: '0px 12px',
       display: 'block',
     },

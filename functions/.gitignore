@@ -19,3 +19,5 @@ firestore-debug.log
 .env
 .runtimeconfig.json
 local_db_export/
+local_db_110925/
+firebase_backups/

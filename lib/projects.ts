@@ -114,16 +114,25 @@ export async function getAllUserAndProjectNameCombinationsLowercase() {
   const q = query(collectionGroup(db, 'repos'));
   const querySnapshot = await getDocs(q);
 
-  const paths: any = querySnapshot.docs.map((doc: any) => {
-    const data = doc.data();
-    if (!data) {
-      return null;
-    }
-    return {
-      projectname: data.reponame_lowercase.toString(),
-      username_lowercase: data.username_lowercase.toString(),
-    };
-  });
+  const paths: any = querySnapshot.docs
+    .map((doc: any) => {
+      const data = doc.data();
+      if (!data || !data.reponame_lowercase || !data.username_lowercase) {
+        console.error(
+          'Problematic entry in getAllUserAndProjectNameCombinationsLowercase:',
+          'doc path:',
+          doc.ref.path,
+          'doc data:',
+          data
+        );
+        return null;
+      }
+      return {
+        projectname: data.reponame_lowercase.toString(),
+        username_lowercase: data.username_lowercase.toString(),
+      };
+    })
+    .filter((path: any) => path !== null);
   return paths;
 }
 

@@ -43,7 +43,7 @@ export function HomePageProjectCard({
         <Card
           p='xl'
           mt={8}
-          mb='sm'
+          mb='lg'
           shadow='lg'
           className={classes.card}
           radius='md'
