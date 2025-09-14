@@ -9,8 +9,6 @@ export default createStyles((theme) => ({
   },
 
   container: {
-    // height: 500,
-    // marginLeft: '20px',
     height: '40vh',
     // minHeight: '35vh',
     // maxHeight: '60vh',
@@ -93,10 +91,8 @@ export default createStyles((theme) => ({
 
   emphasisThree: { fontSize: 15, fontWeight: 600 },
 
-  emphasisTwo: { fontWeight: 450 },
-
-  emphasis: {
-    // fontWeight: 500,
+  emphasisTwo: {
+    fontWeight: 450,
   },
 
   beta: {
@@ -131,13 +127,11 @@ export default createStyles((theme) => ({
     maxWidth: 600,
 
     [theme.fn.smallerThan('sm')]: {
-      // maxWidth: '100%',
       fontSize: theme.fontSizes.lg,
     },
   },
 
   control: {
-    // marginTop: theme.spacing.xl * 1.5,
     marginTop: `calc(${theme.spacing.xl} * 1.5)`,
     backgroundColor:
       theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[6],

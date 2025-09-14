@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { auth } from '@/firebase/clientApp';
-import { Button, Group, Space } from '@mantine/core';
+import { Button, Group, Space, useMantineTheme } from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import { Edit3, Share2, Eye, Users, Briefcase } from 'lucide-react';
@@ -30,6 +30,7 @@ const coreBenefits = [
 
 export default function LandingPage() {
   const Router = useRouter();
+  const { colorScheme } = useMantineTheme()
 
   const signupHandler = useCallback(
     async (e: any) => {
@@ -90,8 +91,8 @@ export default function LandingPage() {
                   <Link href='/' passHref legacyBehavior>
                     <Button
                       component='a'
-                      variant='filled'
-                      color='gray'
+                      variant='gradient'
+                      gradient={colorScheme === 'dark' ? { from: '#585858', to: '#6d6d6d', deg: 92 } : { from: '#5d0cff', to: '#565fd4', deg: 92 }}
                       radius='lg'
                       size='lg'
                     >
@@ -227,7 +228,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* FOUNDER */}
+        {/* DANNY SECTION */}
         <section className='relative bg-gray-900 pt-28 pb-40'>
           <div className='mx-auto flex max-w-7xl flex-col-reverse lg:flex-row items-center gap-y-10 px-6 lg:px-8 xl:items-stretch'>
             <div className='w-full max-w-2xl xl:max-w-none xl:flex-auto lg:px-16 xl:px-18 xl:py-16'>
@@ -285,7 +286,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* CONTRIBUTE */}
+        {/* CONTRIBUTE SECTION */}
         <Space h={60} />
         <section className='bg-white py-8 sm:py-12'>
           <div className='sm:px-3 md:px-30 lg:px-40 xl:px-70'>

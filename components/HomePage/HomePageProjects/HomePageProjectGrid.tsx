@@ -37,7 +37,7 @@ const HomePageProjectGrid = ({ projects }: HomePageProjectGridProps) => {
       ]}
     >
       {projects.map((project: Project, index: number) => (
-        <div key={`${project.id}-${index}`}>
+        <div key={project.id}>
           <HomePageProjectCard
             image={project.coverImage || ''}
             githubTitle={project.name}

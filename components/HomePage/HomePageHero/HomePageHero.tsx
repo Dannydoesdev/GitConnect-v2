@@ -18,7 +18,7 @@ import { theme } from 'twin.macro';
 export function HeroLanding() {
   const { classes } = useStyles();
 
-  const { userData, currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   return (
     <div className={classes.hero}>
       <Box
@@ -144,7 +144,6 @@ export function HeroLanding() {
                     },
                   })}
                 >
-                  {/* Create your portfolio in minutes, not days. */}
                   Join GitConnect
                 </Button>
               </Link>
