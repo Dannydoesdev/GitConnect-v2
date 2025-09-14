@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     if (req.method === 'POST') {
       if (process.env.NODE_ENV === 'development') {
-        res.status(405).json({ message: 'Local environment.' });
+        res.status(403).json({ message: 'This endpoint is disabled in development.' });
         return;
       }
 

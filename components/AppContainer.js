@@ -23,16 +23,9 @@ import { ColorSchemeToggle } from './ColorSchemeToggle/ColorSchemeToggle';
 const HEADER_HEIGHT = 70;
 
 const useStyles = createStyles((theme) => ({
-  burger: {
-    [theme.fn.largerThan('md')]: {
-      display: 'none',
-    },
-  },
+  burger: { [theme.fn.largerThan('md')]: { display: 'none' } },
 
-  root: {
-    position: 'relative',
-    zIndex: 1,
-  },
+  root: { position: 'relative', zIndex: 1 },
 
   dropdown: {
     position: 'absolute',
@@ -50,16 +43,10 @@ const useStyles = createStyles((theme) => ({
     paddingTop: theme.spacing.sm,
     paddingBottom: theme.spacing.sm,
 
-    [theme.fn.largerThan('md')]: {
-      display: 'none',
-    },
+    [theme.fn.largerThan('md')]: { display: 'none' },
   },
 
-  links: {
-    [theme.fn.largerThan('md')]: {
-      display: 'none',
-    },
-  },
+  links: { [theme.fn.largerThan('md')]: { display: 'none' } },
 
   link: {
     display: 'block',
@@ -72,33 +59,26 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 500,
 
     '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      backgroundColor:
+        theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     },
 
-    [theme.fn.smallerThan('sm')]: {
-      borderRadius: 0,
-      padding: theme.spacing.md,
-    },
-    [theme.fn.largerThan('md')]: {
-      display: 'none',
-    },
+    [theme.fn.smallerThan('sm')]: { borderRadius: 0, padding: theme.spacing.md },
+    [theme.fn.largerThan('md')]: { display: 'none' },
   },
 
   linkActive: {
     '&, &:hover': {
-      backgroundColor: theme.fn.variant({
-        variant: 'light',
-        color: theme.primaryColor,
-      }).background,
+      backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
+        .background,
       color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
     },
   },
   linkButtons: {
-    [theme.fn.largerThan('md')]: {
-      display: 'none',
-    },
+    [theme.fn.largerThan('md')]: { display: 'none' },
     '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[0],
+      backgroundColor:
+        theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[0],
     },
   },
 
@@ -118,17 +98,13 @@ const useStyles = createStyles((theme) => ({
     lineHeight: 0,
   },
 
-  responsiveHide: {
-    [theme.fn.smallerThan('md')]: {
-      display: 'none',
-    },
-  },
+  responsiveHide: { [theme.fn.smallerThan('md')]: { display: 'none' } },
 
   header: {
     height: 70,
     padding: 20,
     zIndex: 3,
-    boxShadow: '0px -7px 20px 0px #9a9a9a',
+    boxShadow: `0px -9px 20px 0px ${theme.colors.gray[5]}`,
 
     [theme.fn.smallerThan('sm')]: {
       paddingRight: 5,
@@ -150,9 +126,7 @@ const useStyles = createStyles((theme) => ({
     flexWrap: 'no-wrap',
   },
 
-  colorToggle: {
-    marginTop: 4,
-  },
+  colorToggle: { marginTop: 4 },
 }));
 
 export const AppContainer = ({ children }, props) => {
@@ -209,9 +183,7 @@ export const AppContainer = ({ children }, props) => {
       legacyBehavior
       key={link.label}
       href={link.link}
-      className={cx(classes.link, {
-        [classes.linkActive]: active === link.link,
-      })}
+      className={cx(classes.link, { [classes.linkActive]: active === link.link })}
     >
       <Button
         component="a"
@@ -249,7 +221,12 @@ export const AppContainer = ({ children }, props) => {
           <Group position="apart" align="center" height="100%">
             <Group>
               <Link href="/" passHref legacyBehavior>
-                <Text component="a" size="xl" weight="bolder" className={classes.navBrand}>
+                <Text
+                  component="a"
+                  size="xl"
+                  weight="bolder"
+                  className={classes.navBrand}
+                >
                   GitConnect;
                 </Text>
               </Link>
@@ -269,7 +246,9 @@ export const AppContainer = ({ children }, props) => {
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
-                          theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
                       })}
                     >
                       About
@@ -286,7 +265,9 @@ export const AppContainer = ({ children }, props) => {
                         sx={(theme) => ({
                           fontSize: '16px',
                           color:
-                            theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.white
+                              : theme.colors.dark,
                         })}
                       >
                         Add Project
@@ -312,7 +293,9 @@ export const AppContainer = ({ children }, props) => {
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
-                          theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
                       })}
                     >
                       Portfolio
@@ -328,7 +311,9 @@ export const AppContainer = ({ children }, props) => {
                         sx={(theme) => ({
                           fontSize: '16px',
                           color:
-                            theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.white
+                              : theme.colors.dark,
                         })}
                       >
                         Quickstart
@@ -369,7 +354,12 @@ export const AppContainer = ({ children }, props) => {
                     passHref
                     legacyBehavior
                   >
-                    <Avatar component="a" radius="xl" size="md" src={userData.userPhotoLink} />
+                    <Avatar
+                      component="a"
+                      radius="xl"
+                      size="md"
+                      src={userData.userPhotoLink}
+                    />
                   </Link>
 
                   <Link href="#" passHref legacyBehavior>
@@ -396,12 +386,21 @@ export const AppContainer = ({ children }, props) => {
                     <Button
                       component="a"
                       size="xs"
-                      color="gray"
+                      color={theme.colorScheme === 'dark' ? 'gray' : 'indigo'}
                       variant="subtle"
+                      radius="md"
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
-                          theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                        '&:hover': {
+                          backgroundColor:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.dark[9]
+                              : theme.colors.gray[0],
+                        },
                       })}
                     >
                       About
@@ -411,12 +410,21 @@ export const AppContainer = ({ children }, props) => {
                     <Button
                       component="a"
                       size="xs"
-                      color="gray"
+                      color={theme.colorScheme === 'dark' ? 'gray' : 'indigo'}
                       variant="subtle"
+                      radius="md"
                       sx={(theme) => ({
                         fontSize: '16px',
                         color:
-                          theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
+                          theme.colorScheme === 'dark'
+                            ? theme.colors.white
+                            : theme.colors.dark,
+                        '&:hover': {
+                          backgroundColor:
+                            theme.colorScheme === 'dark'
+                              ? theme.colors.dark[9]
+                              : theme.colors.gray[0],
+                        },
                       })}
                     >
                       Quickstart
@@ -428,7 +436,7 @@ export const AppContainer = ({ children }, props) => {
                     <Button
                       component="a"
                       size="xs"
-                      color="gray"
+                      color={theme.colorScheme === 'dark' ? 'gray' : 'indigo'}
                       variant="filled"
                       onClick={(e) => signInHandler(e)}
                     >
@@ -439,7 +447,7 @@ export const AppContainer = ({ children }, props) => {
                     <Button
                       component="a"
                       size="xs"
-                      color="gray"
+                      color={theme.colorScheme === 'dark' ? 'gray' : 'indigo'}
                       variant="filled"
                       onClick={(e) => registerHandler(e)}
                     >

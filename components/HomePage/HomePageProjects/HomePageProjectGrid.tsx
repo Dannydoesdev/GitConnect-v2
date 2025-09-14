@@ -6,7 +6,7 @@ interface Project {
   id: string;
   name: string;
   projectTitle?: string;
-  coverImage: string;
+  coverImage?: string;
   owner: {
     login: string;
     avatar_url: string;

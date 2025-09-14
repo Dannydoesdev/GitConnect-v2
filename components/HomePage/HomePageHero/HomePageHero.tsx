@@ -13,6 +13,7 @@ import {
 } from '@mantine/core';
 import { AuthContext } from '../../../context/AuthContext';
 import useStyles from './HomePageHero.styles';
+import { theme } from 'twin.macro';
 
 export function HeroLanding() {
   const { classes } = useStyles();
@@ -23,11 +24,11 @@ export function HeroLanding() {
       <Box
         sx={() => ({
           position: 'absolute',
+          backgroundColor: 'black',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          // backgroundSize: 'cover',
           transition: 'transform 500ms ease',
         })}
       >
@@ -51,18 +52,17 @@ export function HeroLanding() {
         {currentUser ? (
           <>
             <Title className={classes.title}>
-              Discover what the
+              Share your creations {' '}
               <br />
             </Title>
-            <Title className={classes.titleThree}>
-              world is building <br />
-            </Title>
             <Text className={classes.description} size='xl' mt='xs'>
-              Show the world what{' '}
-              <span className={classes.emphasis}>you're creating</span>
-              {/* Create. Share. Collaborate. Inspire. */}
+              Impress your friends, inspire your peers
             </Text>
-            <Stack>
+            <Stack sx={(theme) => ({
+              [theme.fn.smallerThan(720)]: {
+                alignItems: 'center',
+              },
+            })}>
               <Link href='/addproject' passHref legacyBehavior>
                 <Button
                   component='a'
@@ -83,7 +83,7 @@ export function HeroLanding() {
                     },
                   })}
                 >
-                  Add a project
+                  Add Projects
                 </Button>
               </Link>
               <Group ml={1} mt='md' spacing='xl'>
@@ -113,16 +113,16 @@ export function HeroLanding() {
             </Title>
             <Text className={classes.description} size='xl' mt='xs'>
               Create a visual portfolio from your GitHub projects in minutes.{' '}
-              <br />
-              Share what you're building with peers, clients & employers.
+              {/* <br /> */}
+              {/* Share what you're building with peers, clients & employers. */}
               <br />
             </Text>
-              <Stack
-                sx={(theme) => ({
-                  [theme.fn.smallerThan(720)]: {
-                    alignItems: 'center',
-                  },
-                })}
+            <Stack
+              sx={(theme) => ({
+                [theme.fn.smallerThan(720)]: {
+                  alignItems: 'center',
+                },
+              })}
             >
               <Link href='/signup' passHref legacyBehavior>
                 <Button
